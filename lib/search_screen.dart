@@ -13,12 +13,13 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
 
+  var _currentQuery = "";
   var _searchResults = [];
   Timer? _debounceTimer;
 
   // TEMPORARY FOR TESTING
   Future<List<String>> getResults(String query) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 200));
     Random rand = Random();
     List<String> results = List.generate(50, (index) {
       return 'Result #${rand.nextInt(1000)}';
@@ -27,15 +28,18 @@ class _SearchScreenState extends State<SearchScreen> {
   }
   
     void _onSearchChanged(String query) async {
+      _currentQuery = query;
       if(_debounceTimer != null) {
         _debounceTimer!.cancel();
       }
-      _debounceTimer = Timer(Durations.medium1, () async {
+      _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       if (query.isNotEmpty) {
         List<String> results = await getResults(query);
-        setState(() {
-          _searchResults = results;
-        });
+        if (_currentQuery.isNotEmpty) {
+          setState(() {
+            _searchResults = results;
+          });
+        }
       } else {
         setState(() {
           _searchResults = [];
