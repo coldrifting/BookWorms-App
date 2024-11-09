@@ -1,4 +1,6 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:flutter/material.dart';
+//import 'package:bookworms_app/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -18,35 +20,68 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: SearchScreen(),
+        home: Navigation(),
       ),
     );
   }
 }
 
-class AppState extends ChangeNotifier {
-  
-}
-
-class SearchScreen extends StatefulWidget {
+class Navigation extends StatefulWidget {
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<Navigation> createState() => _Navigation();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _Navigation extends State<Navigation> {
+  var selectedPageIdx = 0;
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("BOOKWORMS"),
+    return Scaffold(
+      bottomNavigationBar: 
+        NavigationBar(
+          backgroundColor: Colors.green[200],
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+          selectedIndex: selectedPageIdx,
+          onDestinationSelected: (int idx) {
+            setState(() {
+              selectedPageIdx = idx;
+            });
+          },
+          destinations: const [
+            NavigationDestination(
+              selectedIcon: Icon(Icons.home), 
+              icon: Icon(Icons.home_outlined), 
+              label: "Home"
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.collections_bookmark_rounded), 
+              icon: Icon(Icons.collections_bookmark_outlined), 
+              label: "Bookshelf"
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.search_rounded), 
+              icon: Icon(Icons.search_outlined), 
+              label: "Search"
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.show_chart), 
+              icon: Icon(Icons.show_chart), 
+              label: "Progress"
+            ),
+            NavigationDestination(
+              selectedIcon: Icon(Icons.account_circle_rounded), 
+              icon: Icon(Icons.account_circle_outlined), 
+              label: "Profile"
+            ),
           ],
         ),
-      ),
-    );
+        body: <Widget>[
+          Center(child: Text("Page Home")),
+          Center(child: Text("Page Bookshelves")),
+          Center(child: Text("Page Search")),
+          Center(child: Text("Page Progress")),
+          Center(child: Text("Page Account"))
+        ][selectedPageIdx]
+      );
   }
 }
-
-
