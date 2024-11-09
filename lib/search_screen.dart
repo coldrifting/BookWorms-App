@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 //import 'package:provider/provider.dart';
 import 'dart:math';
@@ -12,6 +14,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
 
   var _searchResults = [];
+  Timer? _debounceTimer;
 
   // TEMPORARY FOR TESTING
   Future<List<String>> getResults(String query) async {
@@ -22,18 +25,29 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     return results;
   }
-
+  
     void _onSearchChanged(String query) async {
-    if (query.isNotEmpty) {
-      List<String> results = await getResults(query);
-      setState(() {
-        _searchResults = results;
-      });
-    } else {
-      setState(() {
-        _searchResults = [];
-      });
-    }
+      if(_debounceTimer != null) {
+        _debounceTimer!.cancel();
+      }
+      _debounceTimer = Timer(Durations.medium1, () async {
+      if (query.isNotEmpty) {
+        List<String> results = await getResults(query);
+        setState(() {
+          _searchResults = results;
+        });
+      } else {
+        setState(() {
+          _searchResults = [];
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
   }
 
   @override
