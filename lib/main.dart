@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:flutter/material.dart';
-//import 'package:bookworms_app/search_screen.dart';
+import 'package:bookworms_app/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -20,13 +20,15 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: Navigation(),
+        home: const Navigation(),
       ),
     );
   }
 }
 
 class Navigation extends StatefulWidget {
+  const Navigation({super.key});
+
   @override
   State<Navigation> createState() => _Navigation();
 }
@@ -37,6 +39,11 @@ class _Navigation extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: 
+      AppBar(
+        title: const Text("App bar title"),
+        backgroundColor:  Colors.green[200],
+      ),
       bottomNavigationBar: 
         NavigationBar(
           backgroundColor: Colors.green[200],
@@ -76,11 +83,11 @@ class _Navigation extends State<Navigation> {
           ],
         ),
         body: <Widget>[
-          Center(child: Text("Page Home")),
-          Center(child: Text("Page Bookshelves")),
-          Center(child: Text("Page Search")),
-          Center(child: Text("Page Progress")),
-          Center(child: Text("Page Account"))
+          const Center(child: Text("Page Home")),
+          const Center(child: Text("Page Bookshelves")),
+          const SearchScreen(),
+          const Center(child: Text("Page Progress")),
+          const Center(child: Text("Page Account"))
         ][selectedPageIdx]
       );
   }
