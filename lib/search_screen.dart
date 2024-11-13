@@ -12,6 +12,9 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  static const _defaultResponseLength = 10;
+  static const _expandedResponseLength = 50;
+
   var _activeSearch = false;
   var _currentQuery = "";
   var _searchResults = [];
@@ -61,10 +64,11 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   // TEMPORARY FOR TESTING
-  Future<List<String>> getResults(String query) async {
+  Future<List<String>> getResults(String query, bool expanded) async {
     await Future.delayed(const Duration(milliseconds: 200));
     Random rand = Random();
-    List<String> results = List.generate(50, (index) {
+    var count = expanded ? _expandedResponseLength : _defaultResponseLength;
+    List<String> results = List.generate(count, (index) {
       return 'Result #${rand.nextInt(1000)}';
     });
     return results;
@@ -77,7 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       if (query.isNotEmpty) {
-        List<String> results = await getResults(query);
+        List<String> results = await getResults(query, false);
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
           setState(() {
             _searchResults = results;
@@ -94,6 +98,13 @@ class _SearchScreenState extends State<SearchScreen> {
           _searchResults = [];
         });
       }
+    });
+  }
+
+  void _onShowMorePressed() async {
+    List<String> results = await getResults(_currentQuery, true);
+    setState(() {
+      _searchResults.addAll(results);
     });
   }
 
@@ -177,13 +188,12 @@ class _SearchScreenState extends State<SearchScreen> {
               )
             ],
           );
-        } else {
+        } else if (_searchResults.length == 10) {
           return Row(
               children: [
                 Expanded(
-                  flex: 1,
                   child: TextButton(
-                    onPressed: () => {}, 
+                    onPressed: _onShowMorePressed, 
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.grey[700],
                     ),
