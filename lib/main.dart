@@ -85,7 +85,7 @@ class _Navigation extends State<Navigation> {
         body: <Widget>[
           const Center(child: Text("Page Home")),
           const Center(child: Text("Page Bookshelves")),
-          SearchScreen(),
+          const SearchScreen(),
           const Center(child: Text("Page Progress")),
           const Center(child: Text("Page Account"))
         ][selectedPageIdx]

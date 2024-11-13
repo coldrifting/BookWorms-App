@@ -18,6 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Timer? _debounceTimer;
   late FocusNode _focusNode;
   late TextEditingController _controller;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -25,6 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _focusNode = FocusNode();
     _focusNode.addListener(_focusListener);
     _controller = TextEditingController();
+    _scrollController = ScrollController();
   }
 
   @override
@@ -76,10 +78,16 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       if (query.isNotEmpty) {
         List<String> results = await getResults(query);
-        if (_currentQuery.isNotEmpty) {
+        if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
           setState(() {
             _searchResults = results;
           });
+          if(_scrollController.hasClients) {
+            _scrollController.animateTo(
+              0.0, 
+              duration: const Duration(milliseconds: 300), 
+              curve: Curves.easeInOut);
+          }
         }
       } else {
         setState(() {
@@ -90,56 +98,20 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   @override
-  Widget build(BuildContext scontext) {
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Scaffold(
         body: Center(
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                      child: SearchBar(
-                        leading: const Icon(Icons.search),
-                        hintText: "Find a book",
-                        focusNode: _focusNode,
-                        controller: _controller,
-                        onChanged: _onSearchChanged,
-                        shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        )),
-                        shadowColor: const WidgetStatePropertyAll(Colors.transparent),
-                      ),
-                    ),
-                  if (_activeSearch) 
-                    Row(
-                      children: [
-                        const SizedBox(width: 8.0),
-                        TextButton(
-                          onPressed: exitActiveSearch,
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.black,
-                          ),
-                          child: const Text("Cancel"),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
+              searchBar(),
               Expanded(
                 child: !_activeSearch
-                    ? const Center(child: Text("Browse"))
+                    ? Center(child: browseScreen())
                     : _searchResults.isEmpty
-                      ? const Center(child: Text("Recent"))
-                      : ListView.builder(
-                          itemCount: _searchResults.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(_searchResults[index]),
-                            );
-                          }
-                      )
+                      ? Center(child: recentsScreen())
+                      : resultsScreen()
               ),
             ],
           ),
@@ -147,4 +119,82 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
     );
   }
+
+  Widget searchBar() {
+    return Row(
+      children: [
+        Expanded(
+            child: SearchBar(
+              leading: const Icon(Icons.search),
+              hintText: "Find a book",
+              focusNode: _focusNode,
+              controller: _controller,
+              onChanged: _onSearchChanged,
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              )),
+              shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+            ),
+          ),
+        if (_activeSearch) 
+          Row(
+            children: [
+              const SizedBox(width: 8.0),
+              TextButton(
+                onPressed: exitActiveSearch,
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.black,
+                ),
+                child: const Text("Cancel"),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+
+  Widget browseScreen() {
+    return const Text("Browse");
+  }
+
+  Widget recentsScreen() {
+    return const Text("Recent");
+  }
+
+  Widget resultsScreen() {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: _searchResults.length + 1,
+      itemBuilder: (context, index) {
+        if(index != _searchResults.length) {
+          return Column(
+            children: [
+              ListTile(
+                title: Text(_searchResults[index]),
+              ),
+              const Divider(
+                color: Colors.grey,
+              )
+            ],
+          );
+        } else {
+          return Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: TextButton(
+                    onPressed: () => {}, 
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey[700],
+                    ),
+                    child: const Text("Show More"),
+                  ),
+                ),
+              ],
+            );
+        }
+      }
+    );
+  }
 }
+
