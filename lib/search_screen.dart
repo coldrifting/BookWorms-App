@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -127,21 +126,17 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            children: [
-              searchBar(),
-              Expanded(
-                child: !_isInActiveSearch
-                    ? Center(child: browseScreen())
-                    : _searchResults.isEmpty
-                      ? Center(child: recentsScreen())
-                      : resultsScreen()
-              ),
-            ],
+      child: Column(
+        children: [
+          searchBar(),
+          Expanded(
+            child: !_isInActiveSearch
+                ? Center(child: browseScreen())
+                : _searchResults.isEmpty
+                  ? Center(child: recentsScreen())
+                  : resultsScreen()
           ),
-        ),
+        ],
       ),
     );
   }
@@ -192,7 +187,7 @@ class _SearchScreenState extends State<SearchScreen> {
       controller: _scrollController,
       itemCount: _searchResults.length + 1,
       itemBuilder: (context, index) {
-        if(index != _searchResults.length) {
+        if (index != _searchResults.length) {
           return Column(
             children: [
               ListTile(
@@ -218,6 +213,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             );
         }
+        return null;
       }
     );
   }

@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/book_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +84,7 @@ class _Navigation extends State<Navigation> {
           ],
         ),
         body: <Widget>[
-          const Center(child: Text("Page Home")),
+          const BookDetailsScreen(),
           const Center(child: Text("Page Bookshelves")),
           const SearchScreen(),
           const Center(child: Text("Page Progress")),
