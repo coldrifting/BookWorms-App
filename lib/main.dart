@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:bookworms_app/search_screen.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -35,7 +33,18 @@ class Navigation extends StatefulWidget {
 }
 
 class _Navigation extends State<Navigation> {
-  var selectedPageIdx = 0;
+  var selectedPageIndex = 0;
+  final List<Widget> pages = const <Widget>[
+    BookDetailsScreen(),
+    Center(
+      child: Text("Page Bookshelves")),
+    SearchScreen(),
+    Center(
+      child: Text("Page Progress")
+      ),
+    Center(
+      child: Text("Page Account"))
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +54,21 @@ class _Navigation extends State<Navigation> {
           title: const Text("App bar title"),
           backgroundColor:  Colors.green[200],
         ),
+      body: IndexedStack(
+        index: selectedPageIndex,
+        children: pages,
+      ),
       bottomNavigationBar: 
         NavigationBar(
           backgroundColor: Colors.green[200],
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          selectedIndex: selectedPageIdx,
-          onDestinationSelected: (int idx) {
+          selectedIndex: selectedPageIndex,
+          onDestinationSelected: (int index) {
             setState(() {
-              selectedPageIdx = idx;
+              selectedPageIndex = index;
             });
           },
-          destinations: const [
+          destinations: const <NavigationDestination>[
             NavigationDestination(
               selectedIcon: Icon(Icons.home), 
               icon: Icon(Icons.home_outlined), 
@@ -83,13 +96,6 @@ class _Navigation extends State<Navigation> {
             ),
           ],
         ),
-        body: <Widget>[
-          const BookDetailsScreen(),
-          const Center(child: Text("Page Bookshelves")),
-          const SearchScreen(),
-          const Center(child: Text("Page Progress")),
-          const Center(child: Text("Page Account"))
-        ][selectedPageIdx]
       );
   }
 }
