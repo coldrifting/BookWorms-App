@@ -41,10 +41,10 @@ class _Navigation extends State<Navigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: 
-      AppBar(
-        title: const Text("App bar title"),
-        backgroundColor:  Colors.green[200],
-      ),
+        AppBar(
+          title: const Text("App bar title"),
+          backgroundColor:  Colors.green[200],
+        ),
       bottomNavigationBar: 
         NavigationBar(
           backgroundColor: Colors.green[200],
