@@ -195,10 +195,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 title: TextButton(
                   child: Text(_searchResults[index]),
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => BookDetailsScreen()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BookDetailsScreen()));
                   },
                 ),
               ),

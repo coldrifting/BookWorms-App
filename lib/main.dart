@@ -1,5 +1,5 @@
+import 'package:bookworms_app/Utils.dart';
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/book_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -14,12 +14,16 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider<AppState>(
       create: (context) => AppState(),
       child: MaterialApp(
+        navigatorKey: Utils.mainNav,
         title: 'BookWorms',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: const Navigation(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const Navigation(),
+        },
       ),
     );
   }
@@ -33,17 +37,15 @@ class Navigation extends StatefulWidget {
 }
 
 class _Navigation extends State<Navigation> {
-  var selectedPageIndex = 0;
-  final List<Widget> pages = const <Widget>[
-    BookDetailsScreen(),
-    Center(
-      child: Text("Page Bookshelves")),
-    SearchScreen(),
-    Center(
-      child: Text("Page Progress")
-      ),
-    Center(
-      child: Text("Page Account"))
+  int selectedIndex = 0; // Selected navigation tab
+  
+  // Navigation bar page paths
+  final List<String> pages = const [
+    "/homepage",
+    "/bookshelvespage",
+    "/searchpage",
+    "/progresspage",
+    "/profilepage",
   ];
 
   @override
@@ -54,18 +56,42 @@ class _Navigation extends State<Navigation> {
           title: const Text("App bar title"),
           backgroundColor:  Colors.green[200],
         ),
-      body: IndexedStack(
-        index: selectedPageIndex,
-        children: pages,
-      ),
+        body: Navigator(
+          key: Utils.homeNav,
+          initialRoute: pages[selectedIndex],
+          onGenerateRoute: (RouteSettings settings) {
+            Widget page;
+            switch (settings.name) {
+              case '/bookshelvespage':
+                page = const Text("Bookshelves Page");
+                break;
+              case '/searchpage':
+                page = const SearchScreen();
+                break;
+              case '/progresspage':
+                page = const Text("Progress Page");
+                break;
+              case '/profilepage':
+                page = const Text("Profile Page");
+                break;
+              default:
+                page = const Text("Home Page");
+            }
+            return PageRouteBuilder(
+              pageBuilder: (_, __, ___) => page,
+              transitionDuration: const Duration(seconds: 0)
+            );
+          },
+        ),
       bottomNavigationBar: 
         NavigationBar(
           backgroundColor: Colors.green[200],
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          selectedIndex: selectedPageIndex,
+          selectedIndex: selectedIndex,
           onDestinationSelected: (int index) {
             setState(() {
-              selectedPageIndex = index;
+              selectedIndex = index;
+              Utils.homeNav.currentState?.pushReplacementNamed(pages[index]);
             });
           },
           destinations: const <NavigationDestination>[
