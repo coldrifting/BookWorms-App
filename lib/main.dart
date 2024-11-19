@@ -1,5 +1,6 @@
 import 'package:bookworms_app/Utils.dart';
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/book_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,7 @@ class _Navigation extends State<Navigation> {
     "/searchpage",
     "/progresspage",
     "/profilepage",
+    "/bookdetailspage",
   ];
 
   @override
@@ -73,6 +75,9 @@ class _Navigation extends State<Navigation> {
                 break;
               case '/profilepage':
                 page = const Text("Profile Page");
+                break;
+              case '/bookdetailspage':
+                page = const BookDetailsScreen();
                 break;
               default:
                 page = const Text("Home Page");

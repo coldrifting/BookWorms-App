@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bookworms_app/Utils.dart';
 import 'package:bookworms_app/book_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -195,10 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 title: TextButton(
                   child: Text(_searchResults[index]),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BookDetailsScreen()));
+                    Utils.homeNav.currentState!.pushNamed('/bookdetailspage');
                   },
                 ),
               ),
