@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bookworms_app/Utils.dart';
-import 'package:bookworms_app/book_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 

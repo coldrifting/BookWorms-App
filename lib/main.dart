@@ -15,16 +15,12 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider<AppState>(
       create: (context) => AppState(),
       child: MaterialApp(
-        navigatorKey: Utils.mainNav,
         title: 'BookWorms',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const Navigation(),
-        },
+        home: const Navigation()
       ),
     );
   }
@@ -38,9 +34,10 @@ class Navigation extends StatefulWidget {
 }
 
 class _Navigation extends State<Navigation> {
-  int selectedIndex = 0; // Selected navigation tab
+  // Selected navigation tab (0-4)
+  int selectedIndex = 0;
   
-  // Navigation bar page paths
+  // Home navigation page paths
   final List<String> pages = const [
     "/homepage",
     "/bookshelvespage",
@@ -50,6 +47,7 @@ class _Navigation extends State<Navigation> {
     "/bookdetailspage",
   ];
 
+  /// Main widget containing app bar, page navigator, and bottom bar
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,45 +86,50 @@ class _Navigation extends State<Navigation> {
             );
           },
         ),
-      bottomNavigationBar: 
-        NavigationBar(
-          backgroundColor: Colors.green[200],
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          selectedIndex: selectedIndex,
-          onDestinationSelected: (int index) {
-            setState(() {
-              selectedIndex = index;
-              Utils.homeNav.currentState?.pushReplacementNamed(pages[index]);
-            });
-          },
-          destinations: const <NavigationDestination>[
-            NavigationDestination(
-              selectedIcon: Icon(Icons.home), 
-              icon: Icon(Icons.home_outlined), 
-              label: "Home"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-              icon: Icon(Icons.collections_bookmark_outlined), 
-              label: "Bookshelf"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.search_rounded), 
-              icon: Icon(Icons.search_outlined), 
-              label: "Search"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.show_chart), 
-              icon: Icon(Icons.show_chart), 
-              label: "Progress"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.account_circle_rounded), 
-              icon: Icon(Icons.account_circle_outlined), 
-              label: "Profile"
-            ),
-          ],
+      bottomNavigationBar: navigationBar()
+    );
+  }
+
+  /// Bottom global navigation bar
+  /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs
+  Widget navigationBar() {
+    return NavigationBar(
+      backgroundColor: Colors.green[200],
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+      selectedIndex: selectedIndex,
+      onDestinationSelected: (int index) {
+        setState(() {
+          selectedIndex = index;
+          Utils.homeNav.currentState?.pushReplacementNamed(pages[index]);
+        });
+      },
+      destinations: const <NavigationDestination>[
+        NavigationDestination(
+          selectedIcon: Icon(Icons.home), 
+          icon: Icon(Icons.home_outlined), 
+          label: "Home"
         ),
-      );
+        NavigationDestination(
+          selectedIcon: Icon(Icons.collections_bookmark_rounded), 
+          icon: Icon(Icons.collections_bookmark_outlined), 
+          label: "Bookshelf"
+        ),
+        NavigationDestination(
+          selectedIcon: Icon(Icons.search_rounded), 
+          icon: Icon(Icons.search_outlined), 
+          label: "Search"
+        ),
+        NavigationDestination(
+          selectedIcon: Icon(Icons.show_chart), 
+          icon: Icon(Icons.show_chart), 
+          label: "Progress"
+        ),
+        NavigationDestination(
+          selectedIcon: Icon(Icons.account_circle_rounded), 
+          icon: Icon(Icons.account_circle_outlined), 
+          label: "Profile"
+        ),
+      ],
+    );
   }
 }
