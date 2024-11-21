@@ -1,8 +1,8 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/book_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/search_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() => runApp(const MyApp());
 
@@ -33,69 +33,62 @@ class Navigation extends StatefulWidget {
 }
 
 class _Navigation extends State<Navigation> {
-  var selectedPageIndex = 0;
-  final List<Widget> pages = const <Widget>[
-    BookDetailsScreen(),
-    Center(
-      child: Text("Page Bookshelves")),
-    SearchScreen(),
-    Center(
-      child: Text("Page Progress")
-      ),
-    Center(
-      child: Text("Page Account"))
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: 
-        AppBar(
-          title: const Text("App bar title"),
-          backgroundColor:  Colors.green[200],
-        ),
-      body: IndexedStack(
-        index: selectedPageIndex,
-        children: pages,
-      ),
-      bottomNavigationBar: 
-        NavigationBar(
-          backgroundColor: Colors.green[200],
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          selectedIndex: selectedPageIndex,
-          onDestinationSelected: (int index) {
-            setState(() {
-              selectedPageIndex = index;
-            });
-          },
-          destinations: const <NavigationDestination>[
-            NavigationDestination(
-              selectedIcon: Icon(Icons.home), 
-              icon: Icon(Icons.home_outlined), 
-              label: "Home"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-              icon: Icon(Icons.collections_bookmark_outlined), 
-              label: "Bookshelf"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.search_rounded), 
-              icon: Icon(Icons.search_outlined), 
-              label: "Search"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.show_chart), 
-              icon: Icon(Icons.show_chart), 
-              label: "Progress"
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(Icons.account_circle_rounded), 
+    return CupertinoTabScaffold(
+      tabBar: CupertinoTabBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            activeIcon: Icon(Icons.home), 
+            icon: Icon(Icons.home_outlined), 
+            label: "Home"
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Icon(Icons.collections_bookmark_rounded), 
+            icon: Icon(Icons.collections_bookmark_outlined), 
+            label: "Bookshelf"
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Icon(Icons.search_rounded), 
+            icon: Icon(Icons.search_outlined), 
+            label: "Search"
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Icon(Icons.show_chart), 
+            icon: Icon(Icons.show_chart), 
+            label: "Progress"
+          ),
+          BottomNavigationBarItem(
+              activeIcon: Icon(Icons.account_circle_rounded), 
               icon: Icon(Icons.account_circle_outlined), 
               label: "Profile"
-            ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+      tabBuilder: (BuildContext context, int index) {
+        return CupertinoTabView(
+          builder: (BuildContext context) {
+            Widget tab;
+            switch(index) {
+              case 1:
+                tab = Scaffold(body: Center(child: Text("Page Bookshelves")));
+                break;
+              case 2:
+                tab = SearchScreen();
+                break;
+              case 3:
+                tab = Scaffold(body: Center(child: Text("Page Progress")));
+                break;
+              case 4:
+                tab = Scaffold(body: Center(child: Text("Page Account")));
+                break;
+              default:
+                tab = Scaffold(body: Center(child: Text("Page Home")));
+            }
+            return tab;
+          },
+        );
+      },
+    );
   }
 }

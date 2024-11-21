@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bookworms_app/book_details_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -125,19 +126,26 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          searchBar(),
-          Expanded(
-            child: !_isInActiveSearch
-                ? Center(child: browseScreen())
-                : _searchResults.isEmpty
-                  ? Center(child: recentsScreen())
-                  : resultsScreen()
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text("Search")
+      ),
+      child: Material(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              searchBar(),
+              Expanded(
+                child: !_isInActiveSearch
+                    ? Center(child: browseScreen())
+                    : _searchResults.isEmpty
+                      ? Center(child: recentsScreen())
+                      : resultsScreen()
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -195,10 +203,13 @@ class _SearchScreenState extends State<SearchScreen> {
                 title: TextButton(
                   child: Text(_searchResults[index]),
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => BookDetailsScreen()));
+                    Navigator.of(context).push(
+                      CupertinoPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return BookDetailsScreen();
+                        },  
+                      ),
+                    );
                   },
                 ),
               ),

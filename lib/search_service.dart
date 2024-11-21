@@ -2,39 +2,41 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class BookSummary {
-  final String cover;
+  final String image;
   final String title;
-  final String author;
+  final List<String> authors;
   final String? difficulty;
   final double? rating;
 
   const BookSummary({
-    required this.cover,
+    required this.image,
     required this.title,
-    required this.author,
+    required this.authors,
     required this.difficulty,
     required this.rating
   });
 
   factory BookSummary.fromJson(Map<String, dynamic> json) {
     return BookSummary(
-      cover: json['cover'],
+      image: json['image'],
       title: json['title'],
-      author: json['author'],
+      authors: List<String>.from(json['authors']),
       difficulty: json['difficulty'],
-      rating: json['rating']
+      rating: (json['rating'] as num).toDouble()
     );
   }
 }
 
 class SearchService {
   Future<List<BookSummary>> getBookSummaries() async {
-    final response = await http.get(Uri.parse("https://youtube.com"));
+    final response = await http.get(Uri.parse('http://10.0.2.2:5247/search?query=The'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      print(data);
+      print("---------------------------------------------------------------------");
       final List<BookSummary> bookSummaries = [];
-      for (var i = 0; i < data['results'].length; i++) {
-        final entry = data['results'][i];
+      for (var i = 0; i < data.length; i++) {
+        final entry = data[i];
         bookSummaries.add(BookSummary.fromJson(entry));
       }
       return bookSummaries;
@@ -42,4 +44,9 @@ class SearchService {
       throw Exception('ERROR DETECTED ; WEE WOO WEE WOO ; SOUND THE ALARMS ; THIS IS NOT A DRILL ; THREAT EMINENT ; THE BRITISH ARE COMING');
     }
   }
+}
+
+void main() {
+  var ss = SearchService();
+  ss.getBookSummaries();
 }

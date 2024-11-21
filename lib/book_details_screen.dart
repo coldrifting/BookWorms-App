@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsScreen extends StatefulWidget {
@@ -18,14 +19,21 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      controller: _scrollController,
-      children: [
-        Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg"),
-        bookDetails(),
-        actionButtons(),
-        reviewList(),
-      ]
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text("The Giving Tree")
+      ),
+      child: Scaffold(
+        body: ListView(
+          controller: _scrollController,
+          children: [
+            Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg"),
+            bookDetails(),
+            actionButtons(),
+            reviewList(),
+          ]
+        ),
+      ),
     );
   }
 
