@@ -32,8 +32,6 @@ class SearchService {
     final response = await http.get(Uri.parse('http://10.0.2.2:5247/search?query=The'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
-      print("---------------------------------------------------------------------");
       final List<BookSummary> bookSummaries = [];
       for (var i = 0; i < data.length; i++) {
         final entry = data[i];
@@ -44,9 +42,4 @@ class SearchService {
       throw Exception('ERROR DETECTED ; WEE WOO WEE WOO ; SOUND THE ALARMS ; THIS IS NOT A DRILL ; THREAT EMINENT ; THE BRITISH ARE COMING');
     }
   }
-}
-
-void main() {
-  var ss = SearchService();
-  ss.getBookSummaries();
 }

@@ -193,7 +193,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               ListTile(
                 title: TextButton(
-                  child: Text(_searchResults[index]),
+                  child: bookResult(),
                   onPressed: () {
                     Utils.homeNav.currentState!.pushNamed('/bookdetailspage');
                   },
@@ -221,6 +221,27 @@ class _SearchScreenState extends State<SearchScreen> {
         }
         return null;
       }
+    );
+  }
+
+  Widget bookResult() {
+    return Row(
+      children: [
+        Image.network(
+          "https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg",
+          width: 150,
+        ),
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text("Book Title"),
+              Text("Book Author"),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
