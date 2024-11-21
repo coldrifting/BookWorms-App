@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bookworms_app/Utils.dart';
 import 'package:bookworms_app/search_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -184,7 +185,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               ListTile(
                 title: TextButton(
-                  child: Text(_searchResults[index]),
+                  child: searchResult(index),
                   onPressed: () {
                     Utils.homeNav.currentState!.pushNamed('/bookdetailspage');
                   },
@@ -212,6 +213,28 @@ class _SearchScreenState extends State<SearchScreen> {
         }
         return null;
       }
+    );
+  }
+
+  Widget searchResult(int index) {
+    BookSummary searchResult = _searchResults[index];
+    // If an image is empty, a sized box is shown.
+    Widget bookImage = searchResult.image.isEmpty ? const SizedBox(width: 8.0) : Image.memory(base64Decode(searchResult.image));
+    return Row(
+      children: [
+        bookImage,
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(searchResult.title),
+              // Multiple authors may exist. The first is shown.
+              Text(searchResult.authors[0]),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
