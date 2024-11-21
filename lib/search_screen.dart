@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bookworms_app/Utils.dart';
+import 'package:bookworms_app/search_service.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -18,6 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
   var _currentQuery = "";
   var _searchResults = [];
   Timer? _debounceTimer;
+  late SearchService _searchService;
   late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
@@ -25,6 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    _searchService = SearchService();
     _focusNode = FocusNode();
     _focusNode.addListener(_onSearchBarFocusChanged);
     _textEditingcontroller = TextEditingController();
@@ -69,17 +71,6 @@ class _SearchScreenState extends State<SearchScreen> {
     _focusNode.addListener(_onSearchBarFocusChanged);
   }
 
-  /// Simulates a network call for testing purposes
-  Future<List<String>> getResults(String query, bool expanded) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    Random rand = Random();
-    var count = expanded ? _expandedResultLength : _defaultResultLength;
-    List<String> results = List.generate(count, (index) {
-      return 'Result #${rand.nextInt(1000)}';
-    });
-    return results;
-  }
-
   /// Callback for when the search query is changed
   /// Fetches and sets the default results once the debounce timer has expired.
   void _onSearchQueryChanged(String query) async {
@@ -92,7 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty
       if (query.isNotEmpty) {
-        List<String> results = await getResults(query, false);
+        List<BookSummary> results = await _searchService.getBookSummaries(query, _defaultResultLength);
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
           setState(() {
@@ -117,7 +108,7 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Callback for when the 'Show More' button is pressed
   /// Fetches and appends the expanded results to the default results
   void _onShowMorePressed() async {
-    List<String> results = await getResults(_currentQuery, true);
+    List<BookSummary> results = await _searchService.getBookSummaries(_currentQuery, _expandedResultLength);
     setState(() {
       _searchResults.addAll(results);
     });

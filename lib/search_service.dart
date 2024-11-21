@@ -28,12 +28,10 @@ class BookSummary {
 }
 
 class SearchService {
-  Future<List<BookSummary>> getBookSummaries() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:5247/search?query=The'));
+  Future<List<BookSummary>> getBookSummaries(String query, int resultLength) async {
+    final response = await http.get(Uri.parse('http://10.0.2.2:5247/search?query=$query'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
-      print("---------------------------------------------------------------------");
       final List<BookSummary> bookSummaries = [];
       for (var i = 0; i < data.length; i++) {
         final entry = data[i];
@@ -41,12 +39,7 @@ class SearchService {
       }
       return bookSummaries;
     } else {
-      throw Exception('ERROR DETECTED ; WEE WOO WEE WOO ; SOUND THE ALARMS ; THIS IS NOT A DRILL ; THREAT EMINENT ; THE BRITISH ARE COMING');
+      throw Exception('An error occured when fetching search results');
     }
   }
-}
-
-void main() {
-  var ss = SearchService();
-  ss.getBookSummaries();
 }
