@@ -30,11 +30,16 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         bookDetails(),
         Container(
           color: const Color.fromARGB(255, 239, 239, 239),
-          child: Column(
-            children: [
-              actionButtons(),
-              reviewList(),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 5),
+                actionButtons(),
+                const SizedBox(height: 15),
+                reviewList(),
+              ],
+            ),
           ),
         ),
       ]
@@ -106,25 +111,22 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// Buttons for saving a book to a bookshelf, locating a near library, and
   /// rating the book difficulty.
   Widget actionButtons() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ElevatedButton.icon(
-            icon: const Icon(Icons.bookmark),
-            onPressed: (() => {}),
-            label: const Text("Save")),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.account_balance),
-            onPressed: (() => {}),
-            label: const Text("Locate")),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.fitness_center),
-            onPressed: (() => {}),
-            label: const Text("Rate")),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton.icon(
+          icon: const Icon(Icons.bookmark),
+          onPressed: (() => {}),
+          label: const Text("Save")),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.account_balance),
+          onPressed: (() => {}),
+          label: const Text("Locate")),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.fitness_center),
+          onPressed: (() => {}),
+          label: const Text("Rate")),
+      ],
     );
   }
 
@@ -133,10 +135,103 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     List<Widget> reviews = [];
     for (var i = 0; i < 30; i++) {
         reviews.add(Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text("REVIEW $i"),
+          padding: const EdgeInsets.only(bottom: 24.0),
+          child: userReview(),
         ));
     }
-    return Column(children: reviews);
-  }  
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+          const Text(
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            "Reviews  |  4.9★",
+            ),
+          IconButton(
+            onPressed: (() => {}), 
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
+        ...reviews,
+      ],
+    );
+  } 
+
+  Widget userReview() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+      BoxShadow(
+        color: Colors.grey.withOpacity(0.3),
+        spreadRadius: 1,
+        blurRadius: 5,
+      ),
+    ], // Rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton( // Temporary button until an image replacement is made.
+                      onPressed: (() => {}), 
+                      icon: const Icon(Icons.person),
+                    ),
+                    const SizedBox(width: 5),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          "Zoe West"
+                        ),
+                        Text("★★★★★"), // To be replaced with star calculation.
+                      ],
+                    ),
+                    const SizedBox(width: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200], // Background color
+                        borderRadius: BorderRadius.circular(10), // Rounded corners
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+                        child: Text("Parent"),
+                      ),
+                    ),
+                  ],
+                ),
+                const Text("1 day ago"),
+              ],
+            ),
+            const Text(
+              textAlign: TextAlign.justify,
+              "My child loves the giving tree! It sparked such great conversations about kindness and sharing."
+              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: (() => {}), 
+                  icon: const Icon(Icons.more_horiz),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  } 
 }
