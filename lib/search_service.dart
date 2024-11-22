@@ -31,7 +31,7 @@ class BookSummary {
 class SearchService {
   // Retrieves the book summaries of the given query from the back-end server.
   Future<List<BookSummary>> getBookSummaries(String query, int resultLength) async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:5247/search?query=$query'));
+    final response = await http.get(Uri.parse('http://10.0.2.2:5247/search/title?query=$query'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List<BookSummary> bookSummaries = [];
