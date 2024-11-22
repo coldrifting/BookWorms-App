@@ -16,6 +16,7 @@ class BookSummary {
     required this.rating
   });
 
+  // Decodes the JSON to create a BookSummary object.
   factory BookSummary.fromJson(Map<String, dynamic> json) {
     return BookSummary(
       image: json['image'],
@@ -28,6 +29,7 @@ class BookSummary {
 }
 
 class SearchService {
+  // Retrieves the book summaries of the given query from the back-end server.
   Future<List<BookSummary>> getBookSummaries(String query, int resultLength) async {
     final response = await http.get(Uri.parse('http://10.0.2.2:5247/search?query=$query'));
     if (response.statusCode == 200) {

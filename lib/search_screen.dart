@@ -19,6 +19,7 @@ class _SearchScreenState extends State<SearchScreen> {
   var _currentQuery = "";
   var _searchResults = [];
   Timer? _debounceTimer;
+
   late SearchService _searchService;
   late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
@@ -42,55 +43,59 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  /// Callback for when there is a change to the search bar focus
-  /// Sets the state of the search
+  /// Callback for when there is a change to the search bar focus.
+  /// Sets the state of the search.
   void _onSearchBarFocusChanged() {
     setState(() {
       _isInActiveSearch = _focusNode.hasFocus;
     });
-    // Unregisters the focus listener if the search has become active
+
+    // Unregisters the focus listener if the search has become active.
     if (_isInActiveSearch) {
       _focusNode.removeListener(_onSearchBarFocusChanged);
     }
   } 
 
-  /// Callback for when the 'Cancel' button is pressed
-  /// Unfocuses and clears the search bar; clears the search results
+  /// Callback for when the 'Cancel' button is pressed.
+  /// Unfocuses and clears the search bar; clears the search results.
   void _onCancelPressed() {
     setState(() {
       if (_focusNode.hasFocus) {
         _focusNode.unfocus();
       }
-      // If the search bar is unfocused, the callback will not be called
+      // If the search bar is unfocused, the callback will not be called.
       else {
         _isInActiveSearch = false;
       }
       _searchResults.clear();
       _textEditingcontroller.clear();
     });
-    // Reregister the search listener
+    // Reregister the search listener.
     _focusNode.addListener(_onSearchBarFocusChanged);
   }
 
-  /// Callback for when the search query is changed
+  /// Callback for when the search query is changed.
   /// Fetches and sets the default results once the debounce timer has expired.
   void _onSearchQueryChanged(String query) async {
-    // Maintain the most recent state of the query
-    // This state may change during a network call
+    // Maintain the most recent state of the query.
+    // This state may change during a network call.
     _currentQuery = query;
     if (_debounceTimer != null) {
       _debounceTimer!.cancel();
     }
+
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
-      // Only fetch results if the query is non-empty
+      // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
         List<BookSummary> results = await _searchService.getBookSummaries(query, _defaultResultLength);
-        // Update the search results if the most recent state of the query is non-empty and the search bar is focused
+
+        // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
           setState(() {
             _searchResults = results;
           });
-          // Scroll to the top of the list
+
+          // Scroll to the top of the list.
           if (_scrollController.hasClients) {
             _scrollController.animateTo(
               0.0, 
@@ -106,8 +111,8 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  /// Callback for when the 'Show More' button is pressed
-  /// Fetches and appends the expanded results to the default results
+  /// Callback for when the 'Show More' button is pressed.
+  /// Fetches and appends the expanded results to the default results.
   void _onShowMorePressed() async {
     List<BookSummary> results = await _searchService.getBookSummaries(_currentQuery, _expandedResultLength);
     setState(() {
@@ -115,6 +120,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
+ /// Sub-section containing the search bar and the search result area.
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -134,6 +140,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  /// The search bar widget sends textbox information when the user types.
   Widget searchBar() {
     return Row(
       children: [
@@ -167,14 +174,17 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  /// Sub-section containing recommended books.
   Widget browseScreen() {
-    return const Text("Browse");
+    return const Text("Browse Subpage");
   }
 
+  /// Sub-section containing recently-searched books.
   Widget recentsScreen() {
-    return const Text("Recent");
+    return const Text("Recents Subpage");
   }
 
+  /// Sub-section containing books corresponding to the user's query.
   Widget resultsScreen() {
     return ListView.builder(
       controller: _scrollController,
@@ -185,8 +195,14 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               ListTile(
                 title: TextButton(
+                  style: TextButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero
+                    ),
+                  ),
                   child: searchResult(index),
                   onPressed: () {
+                    // Navigate to the book details page upon clicking a book tile.
                     Utils.homeNav.currentState!.pushNamed('/bookdetailspage');
                   },
                 ),
@@ -216,6 +232,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  /// Widget corresponding to a single book summary for the given user's query.
   Widget searchResult(int index) {
     BookSummary searchResult = _searchResults[index];
     // If an image is empty, a sized box is shown.
@@ -223,14 +240,24 @@ class _SearchScreenState extends State<SearchScreen> {
     return Row(
       children: [
         bookImage,
-        Padding(
-          padding: const EdgeInsets.all(16.0),
+        const SizedBox(width: 24.0),
+        Expanded(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(searchResult.title),
+              Text(style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16, 
+                  fontWeight: FontWeight.bold,
+                ),
+                searchResult.title
+              ),
               // Multiple authors may exist. The first is shown.
-              Text(searchResult.authors[0]),
+              Text(style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                ),
+              searchResult.authors[0]),
             ],
           ),
         ),

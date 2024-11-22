@@ -34,10 +34,10 @@ class Navigation extends StatefulWidget {
 }
 
 class _Navigation extends State<Navigation> {
-  // Selected navigation tab (0-4)
+  // Selected navigation tab (0-4).
   int selectedIndex = 0;
   
-  // Home navigation page paths
+  // Home navigation page paths.
   final List<String> pages = const [
     "/homepage",
     "/bookshelvespage",
@@ -47,7 +47,7 @@ class _Navigation extends State<Navigation> {
     "/bookdetailspage",
   ];
 
-  /// Main widget containing app bar, page navigator, and bottom bar
+  /// Main widget containing app bar, page navigator, and bottom bar.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,22 +63,22 @@ class _Navigation extends State<Navigation> {
             Widget page;
             switch (settings.name) {
               case '/bookshelvespage':
-                page = const Text("Bookshelves Page");
+                page = const Center(child: Text("Bookshelves Page"));
                 break;
               case '/searchpage':
                 page = const SearchScreen();
                 break;
               case '/progresspage':
-                page = const Text("Progress Page");
+                page = const Center(child: Text("Progress Page"));
                 break;
               case '/profilepage':
-                page = const Text("Profile Page");
+                page = const Center(child: Text("Profile Page"));
                 break;
               case '/bookdetailspage':
                 page = const BookDetailsScreen();
                 break;
               default:
-                page = const Text("Home Page");
+                page = const Center(child: Text("Home Page"));
             }
             return PageRouteBuilder(
               pageBuilder: (_, __, ___) => page,
@@ -90,8 +90,8 @@ class _Navigation extends State<Navigation> {
     );
   }
 
-  /// Bottom global navigation bar
-  /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs
+  /// Bottom global navigation bar.
+  /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs.
   Widget navigationBar() {
     return NavigationBar(
       backgroundColor: Colors.green[200],

@@ -13,14 +13,19 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    // The initial offset allows for a partial section of the book to be shown
+    // on the book details view.
     _scrollController = ScrollController(initialScrollOffset: 250);
   }
 
+  /// The entire book details page, containing book image, details, action buttons,
+  /// and reviews.
   @override
   Widget build(BuildContext context) {
     return ListView(
       controller: _scrollController,
       children: [
+        // Temporary image for testing purposes.
         Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg"),
         bookDetails(),
         Container(
@@ -36,6 +41,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
+  /// Sub-section containing book information such as title, author, rating,
+  /// difficulty, and description.
   Widget bookDetails() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -96,6 +103,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
+  /// Buttons for saving a book to a bookshelf, locating a near library, and
+  /// rating the book difficulty.
   Widget actionButtons() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -119,11 +128,15 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
+  // Temporarily generate a list of reviews for testing.
   Widget reviewList() {
     List<Widget> reviews = [];
-    for (var i = 0; i < 1000; i++) {
-        reviews.add(Text("REVIEW $i"));
-      }
+    for (var i = 0; i < 30; i++) {
+        reviews.add(Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text("REVIEW $i"),
+        ));
+    }
     return Column(children: reviews);
   }  
 }
