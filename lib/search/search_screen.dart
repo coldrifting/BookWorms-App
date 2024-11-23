@@ -100,7 +100,8 @@ class _SearchScreenState extends State<SearchScreen> {
             _scrollController.animateTo(
               0.0, 
               duration: const Duration(milliseconds: 300), 
-              curve: Curves.easeInOut);
+              curve: Curves.easeInOut
+            );
           }
         }
       } else {
@@ -184,6 +185,11 @@ class _SearchScreenState extends State<SearchScreen> {
     return const Text("Recents Subpage");
   }
 
+  void _onBookClicked(int index) async {
+    BookExtended results = await _searchService.getBookExtended(_searchResults[index].id);
+    Utils.homeNav.currentState!.pushNamed('/bookdetailspage');
+  }
+
   /// Sub-section containing books corresponding to the user's query.
   Widget resultsScreen() {
     return ListView.builder(
@@ -201,10 +207,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   child: searchResult(index),
-                  onPressed: () {
-                    // Navigate to the book details page upon clicking a book tile.
-                    Utils.homeNav.currentState!.pushNamed('/bookdetailspage');
-                  },
+                  onPressed: () { _onBookClicked(index); },
                 ),
               ),
               const Divider(

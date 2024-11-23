@@ -137,7 +137,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     for (var i = 0; i < 30; i++) {
       reviews.add(const Padding(
         padding: EdgeInsets.only(bottom: 18.0),
-        child: UserReview(name: 'Zoe West', 
+        child: UserReview(
+          name: 'Zoe West', 
           icon: Icons.person , 
           role: "Parent", 
           date: "11/22/2024", 
@@ -146,21 +147,22 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         ),
       ));
     }
-    return Column(
+
+    return Column( // Replace with lazy loading.
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-          const Text(
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            "Reviews  |  4.9★",
+            const Text(
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "Reviews  |  4.9★",
             ),
-          IconButton(
-            onPressed: (() => {}), 
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      ),
+            IconButton(
+              onPressed: (() => {}), 
+              icon: const Icon(Icons.add),
+            ),
+          ],
+        ),
         ...reviews,
       ],
     );

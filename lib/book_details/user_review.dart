@@ -25,69 +25,73 @@ class UserReview extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
-      BoxShadow(
-        color: Colors.grey.withOpacity(0.3),
-        spreadRadius: 1,
-        blurRadius: 5,
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 5,
+          ),
+        ], // Rounded corners
       ),
-    ], // Rounded corners
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(icon),
-                    const SizedBox(width: 5),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        Icon(icon),
+                        const SizedBox(width: 5),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            _getStarRatingText(starRating),
+                          ],
+                        ),
+                        const SizedBox(width: 20),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200], // Background color
+                            borderRadius: BorderRadius.circular(5), // Rounded corners
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                            child: Text(role),
                           ),
                         ),
-                        _getStarRatingText(starRating),
                       ],
                     ),
-                    const SizedBox(width: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200], // Background color
-                        borderRadius: BorderRadius.circular(10), // Rounded corners
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-                        child: Text(role),
-                      ),
-                    ),
+                    _getDateText(date),
                   ],
                 ),
-                _getDateText(date),
-              ],
-            ),
-            Text(
-              reviewText,
-              textAlign: TextAlign.justify,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: (() => {}), 
-                  icon: const Icon(Icons.more_horiz),
+                Text(
+                  reviewText,
+                  textAlign: TextAlign.justify,
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                onPressed: (() => {}), 
+                icon: const Icon(Icons.more_horiz),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
