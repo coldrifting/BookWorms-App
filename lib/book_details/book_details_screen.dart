@@ -1,3 +1,4 @@
+import 'package:bookworms_app/book_details/user_review.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsScreen extends StatefulWidget {
@@ -134,10 +135,16 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   Widget reviewList() {
     List<Widget> reviews = [];
     for (var i = 0; i < 30; i++) {
-        reviews.add(Padding(
-          padding: const EdgeInsets.only(bottom: 24.0),
-          child: userReview(),
-        ));
+      reviews.add(const Padding(
+        padding: EdgeInsets.only(bottom: 18.0),
+        child: UserReview(name: 'Zoe West', 
+          icon: Icons.person , 
+          role: "Parent", 
+          date: "11/22/2024", 
+          reviewText: "My child loves the giving tree! It sparked such great conversations about kindness and sharing.", 
+          starRating: "4.5"
+        ),
+      ));
     }
     return Column(
       children: [
@@ -156,82 +163,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       ),
         ...reviews,
       ],
-    );
-  } 
-
-  Widget userReview() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [
-      BoxShadow(
-        color: Colors.grey.withOpacity(0.3),
-        spreadRadius: 1,
-        blurRadius: 5,
-      ),
-    ], // Rounded corners
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    IconButton( // Temporary button until an image replacement is made.
-                      onPressed: (() => {}), 
-                      icon: const Icon(Icons.person),
-                    ),
-                    const SizedBox(width: 5),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                          "Zoe West"
-                        ),
-                        Text("★★★★★"), // To be replaced with star calculation.
-                      ],
-                    ),
-                    const SizedBox(width: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200], // Background color
-                        borderRadius: BorderRadius.circular(10), // Rounded corners
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-                        child: Text("Parent"),
-                      ),
-                    ),
-                  ],
-                ),
-                const Text("1 day ago"),
-              ],
-            ),
-            const Text(
-              textAlign: TextAlign.justify,
-              "My child loves the giving tree! It sparked such great conversations about kindness and sharing."
-              ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: (() => {}), 
-                  icon: const Icon(Icons.more_horiz),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   } 
 }

@@ -1,8 +1,8 @@
 import 'package:bookworms_app/Utils.dart';
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/book_details_screen.dart';
+import 'package:bookworms_app/book_details/book_details_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/search_screen.dart';
+import 'package:bookworms_app/search/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(const MyApp());

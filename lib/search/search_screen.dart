@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bookworms_app/Utils.dart';
-import 'package:bookworms_app/search_service.dart';
+import 'package:bookworms_app/search/search_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
