@@ -75,7 +75,11 @@ class _Navigation extends State<Navigation> {
                 page = const Center(child: Text("Profile Page"));
                 break;
               case '/bookdetailspage':
-                page = const BookDetailsScreen();
+                final args = settings.arguments as Map<String, dynamic>;
+                page = BookDetailsScreen(
+                  summaryData: args['summary'], 
+                  extendedData: args['extended']
+                );
                 break;
               default:
                 page = const Center(child: Text("Home Page"));

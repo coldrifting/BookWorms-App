@@ -1,8 +1,17 @@
-import 'package:bookworms_app/book_details/user_review.dart';
+import 'package:bookworms_app/book_details/review_widget.dart';
+import 'package:bookworms_app/models/BookExtended.dart';
+import 'package:bookworms_app/models/BookSummary.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsScreen extends StatefulWidget {
-  const BookDetailsScreen({super.key});
+  final BookSummary summaryData;
+  final BookExtended extendedData;
+
+  const BookDetailsScreen({
+    super.key,
+    required this.summaryData,
+    required this.extendedData
+  });
 
   @override
   State<BookDetailsScreen> createState() => _BookDetailsScreenState();
@@ -10,6 +19,8 @@ class BookDetailsScreen extends StatefulWidget {
 
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late ScrollController _scrollController;
+  late BookSummary bookSummary;
+  late BookExtended bookExtended;
 
   @override
   void initState() {
@@ -17,6 +28,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     // The initial offset allows for a partial section of the book to be shown
     // on the book details view.
     _scrollController = ScrollController(initialScrollOffset: 250);
+    bookSummary = widget.summaryData;
+    bookExtended = widget.extendedData;
   }
 
   /// The entire book details page, containing book image, details, action buttons,
@@ -28,7 +41,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       children: [
         // Temporary image for testing purposes.
         Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg"),
-        bookDetails(),
+        _bookDetails(),
         Container(
           color: const Color.fromARGB(255, 239, 239, 239),
           child: Padding(
@@ -36,9 +49,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 5),
-                actionButtons(),
+                _actionButtons(),
                 const SizedBox(height: 15),
-                reviewList(),
+                _reviewList(),
               ],
             ),
           ),
@@ -49,52 +62,52 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Sub-section containing book information such as title, author, rating,
   /// difficulty, and description.
-  Widget bookDetails() {
+  Widget _bookDetails() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const Text(
-            style: TextStyle(
+          Text(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold, 
                 fontSize: 28,
              ),
-            "The Giving Tree"
+            bookSummary.title
           ),
-          const Text(
-            style: TextStyle(
+          Text(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontStyle: FontStyle.italic,
                 fontSize: 18,
             ), 
-            "Shel Silverstein"
+            bookSummary.authors[0] // Temporarily the first author
           ),
-          const Padding(
-            padding: EdgeInsets.all(12.0),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
             child: Text(
               style: 
-              TextStyle(
+              const TextStyle(
                 fontSize: 16.0
               ),
-              "Level A   |   4.9★"
+              "Level ${bookSummary.difficulty}   |   ${bookSummary.rating}★"
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: RichText(
               textAlign: TextAlign.justify,
-              text: const TextSpan(
-                style: TextStyle(
+              text: TextSpan(
+                style: const TextStyle(
                   color: Colors.black, 
                   fontSize: 16.0,
                 ), // Regular text
                 children: <TextSpan>[
-                  TextSpan(
+                  const TextSpan(
                     text: 'Description: ',
                     style: TextStyle(fontWeight: FontWeight.bold), // Bold text
                   ),
                   TextSpan(
-                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tincidunt dictum sem eget aliquam. Quisque finibus mi et dui dignissim malesuada. Phasellus et tellus enim. Orci varius natoque penatibus ...',
+                    text: bookExtended.description,
                   ),
                 ],
               ),
@@ -111,7 +124,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Buttons for saving a book to a bookshelf, locating a near library, and
   /// rating the book difficulty.
-  Widget actionButtons() {
+  Widget _actionButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -131,31 +144,26 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
-  // Temporarily generate a list of reviews for testing.
-  Widget reviewList() {
-    List<Widget> reviews = [];
-    for (var i = 0; i < 30; i++) {
-      reviews.add(const Padding(
-        padding: EdgeInsets.only(bottom: 18.0),
-        child: UserReview(
-          name: 'Zoe West', 
-          icon: Icons.person , 
-          role: "Parent", 
-          date: "11/22/2024", 
-          reviewText: "My child loves the giving tree! It sparked such great conversations about kindness and sharing.", 
-          starRating: "4.5"
-        ),
-      ));
-    }
+  /// Sub-section for the list of review objects.
+  Widget _reviewList() {
+    // Generate the list of review widgets.
+    var reviewCount = bookExtended.reviews.length;
+    List<Widget> reviews = List.generate(
+      reviewCount,
+      (index) => Padding(
+        padding: const EdgeInsets.only(bottom: 18.0),
+        child: ReviewWidget(review: bookExtended.reviews[index]),
+      )
+    );
 
     return Column( // Replace with lazy loading.
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              "Reviews  |  4.9★",
+            Text(
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "Reviews  |  ${bookSummary.rating}",
             ),
             IconButton(
               onPressed: (() => {}), 

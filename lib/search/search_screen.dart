@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:bookworms_app/Utils.dart';
-import 'package:bookworms_app/search/search_service.dart';
+import 'package:bookworms_app/services/book_details_service.dart';
+import 'package:bookworms_app/models/BookExtended.dart';
+import 'package:bookworms_app/models/BookSummary.dart';
+import 'package:bookworms_app/services/search_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -21,6 +24,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Timer? _debounceTimer;
 
   late SearchService _searchService;
+  late BookDetailsService _bookDetailsService;
   late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
@@ -29,6 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     _searchService = SearchService();
+    _bookDetailsService = BookDetailsService();
     _focusNode = FocusNode();
     _focusNode.addListener(_onSearchBarFocusChanged);
     _textEditingcontroller = TextEditingController();
@@ -131,10 +136,10 @@ class _SearchScreenState extends State<SearchScreen> {
           searchBar(),
           Expanded(
             child: !_isInActiveSearch
-                ? Center(child: browseScreen())
+                ? Center(child: _browseScreen())
                 : _searchResults.isEmpty
-                  ? Center(child: recentsScreen())
-                  : resultsScreen()
+                  ? Center(child: _recentsScreen())
+                  : _resultsScreen()
           ),
         ],
       ),
@@ -158,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
               shadowColor: const WidgetStatePropertyAll(Colors.transparent),
             ),
           ),
-        if (_isInActiveSearch) 
+        if (_isInActiveSearch)
           Row(
             children: [
               const SizedBox(width: 8.0),
@@ -176,22 +181,28 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   /// Sub-section containing recommended books.
-  Widget browseScreen() {
+  Widget _browseScreen() {
     return const Text("Browse Subpage");
   }
 
   /// Sub-section containing recently-searched books.
-  Widget recentsScreen() {
+  Widget _recentsScreen() {
     return const Text("Recents Subpage");
   }
 
+  /// Clicking a book navigates to the book's detail page.
   void _onBookClicked(int index) async {
-    BookExtended results = await _searchService.getBookExtended(_searchResults[index].id);
-    Utils.homeNav.currentState!.pushNamed('/bookdetailspage');
+    BookExtended results = await _bookDetailsService.getBookExtended(_searchResults[index].id);
+    Utils.homeNav.currentState!.pushNamed(
+      '/bookdetailspage',
+      arguments: {
+        'summary': _searchResults[index],
+        'extended': results
+    });
   }
 
   /// Sub-section containing books corresponding to the user's query.
-  Widget resultsScreen() {
+  Widget _resultsScreen() {
     return ListView.builder(
       controller: _scrollController,
       itemCount: _searchResults.length + 1,
