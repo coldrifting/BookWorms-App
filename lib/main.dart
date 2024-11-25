@@ -1,8 +1,8 @@
 import 'package:bookworms_app/Utils.dart';
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/book_details_screen.dart';
+import 'package:bookworms_app/book_details/book_details_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/search_screen.dart';
+import 'package:bookworms_app/search/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(const MyApp());
@@ -75,7 +75,11 @@ class _Navigation extends State<Navigation> {
                 page = const Center(child: Text("Profile Page"));
                 break;
               case '/bookdetailspage':
-                page = const BookDetailsScreen();
+                final args = settings.arguments as Map<String, dynamic>;
+                page = BookDetailsScreen(
+                  summaryData: args['summary'], 
+                  extendedData: args['extended']
+                );
                 break;
               default:
                 page = const Center(child: Text("Home Page"));
