@@ -256,7 +256,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget searchResult(int index) {
     BookSummary searchResult = _searchResults[index];
     // If an image is empty, a sized box is shown.
-    Widget bookImage = searchResult.image.isEmpty ? const SizedBox(width: 8.0) : Image.memory(base64Decode(searchResult.image));
+    //Widget bookImage = searchResult.image.isEmpty ? const SizedBox(width: 8.0) : Image.memory(base64Decode(searchResult.image));
+    Widget bookImage = const SizedBox(width: 8.0);
     return Row(
       children: [
         bookImage,
@@ -273,11 +274,13 @@ class _SearchScreenState extends State<SearchScreen> {
                 searchResult.title
               ),
               // Multiple authors may exist. The first is shown.
-              Text(style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
-                ),
-              searchResult.authors[0]),
+              Text(
+                style: const TextStyle(color: Colors.black54, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+                searchResult.authors.isNotEmpty 
+                ? searchResult.authors.map((author) => author).join(', ')
+                : "Unknown Author(s)",
+              ),
             ],
           ),
         ),

@@ -41,7 +41,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(bookSummary.title),
+        title: Text(bookSummary.title, overflow: TextOverflow.ellipsis),
         backgroundColor: Colors.green[200],
          leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -92,15 +92,18 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Book title
           Text(
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+            textAlign: TextAlign.center,
             bookSummary.title,
           ),
           // Book author(s)
           Text(
             style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 18), 
+            textAlign: TextAlign.center,
             bookSummary.authors.isNotEmpty 
             ? bookSummary.authors.map((author) => author).join('\n')
             : "Unknown Author(s)",
@@ -166,12 +169,18 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     const SizedBox(height: 16),
     const Divider(height: 1),
     const SizedBox(height: 16),
-    // To do: Do not include if the page count is 0 or if the strings are empty.
-    _detailText("Pages", "${bookExtended.pageCount}"),
-    _detailText("ISBN-10", bookExtended.isbn10),
-    _detailText("ISBN-13", bookExtended.isbn13),
-    _detailText("Publisher", bookExtended.publisher),
-    _detailText("Published", bookExtended.publishDate),
+
+    // Do not include the details if they have empty values.
+    if (bookExtended.pageCount > 0)
+      _detailText("Pages", "${bookExtended.pageCount}"),
+    if (bookExtended.isbn10.isNotEmpty)
+      _detailText("ISBN-10", bookExtended.isbn10),
+    if (bookExtended.isbn13.isNotEmpty)
+      _detailText("ISBN-13", bookExtended.isbn13),
+    if (bookExtended.publisher.isNotEmpty)
+      _detailText("Publisher", bookExtended.publisher),
+    if (bookExtended.publishDate.isNotEmpty)
+      _detailText("Published", bookExtended.publishDate),
   ];
 }
 

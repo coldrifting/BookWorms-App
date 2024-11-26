@@ -1,4 +1,5 @@
 import 'package:bookworms_app/models/UserReview.dart';
+import 'package:bookworms_app/user_icons.dart';
 import 'package:flutter/material.dart';
 
 class ReviewWidget extends StatelessWidget {
@@ -82,13 +83,13 @@ class ReviewWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.person), // Temporary Icon
+            UserIcons.getIcon(review.icon),
             const SizedBox(width: 5),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  review.username, // Temporary username (replace with name)
+                  review.name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -106,16 +107,16 @@ class ReviewWidget extends StatelessWidget {
     );
   }
 
-  /// Constructs an icon for the user's role.
+  /// Constructs a widget for the user's role.
   Widget _buildRole() {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(5),
       ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-        child: Text("Parent"), // Temporary role
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+        child: Text(review.role),
       ),
     );
   }

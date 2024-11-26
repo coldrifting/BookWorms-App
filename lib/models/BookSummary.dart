@@ -2,7 +2,7 @@
 /// book details screen.
 class BookSummary {
   final String id;
-  final String image;
+  //final String image;
   final String title;
   final List<String> authors;
   final String difficulty;
@@ -10,7 +10,7 @@ class BookSummary {
 
   const BookSummary({
     required this.id,
-    required this.image,
+    //required this.image,
     required this.title,
     required this.authors,
     required this.difficulty,
@@ -21,7 +21,7 @@ class BookSummary {
   factory BookSummary.fromJson(Map<String, dynamic> json) {
     return BookSummary(
       id: json['bookId'],
-      image: json['image'],
+      //image: json['image'],
       title: json['title'],
       authors: List<String>.from(json['authors']),
       difficulty: json['difficulty'],
