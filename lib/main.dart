@@ -1,6 +1,4 @@
-import 'package:bookworms_app/Utils.dart';
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/book_details/book_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/search/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -37,59 +35,32 @@ class _Navigation extends State<Navigation> {
   // Selected navigation tab (0-4).
   int selectedIndex = 0;
   
-  // Home navigation page paths.
-  final List<String> pages = const [
-    "/homepage",
-    "/bookshelvespage",
-    "/searchpage",
-    "/progresspage",
-    "/profilepage",
-    "/bookdetailspage",
+  // Navigation page widgets.
+  final List<Widget> pages = const <Widget>[
+    Center(child: Text("Home Page")),
+    Center(child: Text("Bookshelves Page")),
+    SearchScreen(),
+    Center(child: Text("Progress Page")),
+    Center(child: Text("Profile Page")),
   ];
+
 
   /// Main widget containing app bar, page navigator, and bottom bar.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: 
-        AppBar(
-          title: const Text("App bar title"),
-          backgroundColor:  Colors.green[200],
-        ),
-        body: Navigator(
-          key: Utils.homeNav,
-          initialRoute: pages[selectedIndex],
-          onGenerateRoute: (RouteSettings settings) {
-            Widget page;
-            switch (settings.name) {
-              case '/bookshelvespage':
-                page = const Center(child: Text("Bookshelves Page"));
-                break;
-              case '/searchpage':
-                page = const SearchScreen();
-                break;
-              case '/progresspage':
-                page = const Center(child: Text("Progress Page"));
-                break;
-              case '/profilepage':
-                page = const Center(child: Text("Profile Page"));
-                break;
-              case '/bookdetailspage':
-                final args = settings.arguments as Map<String, dynamic>;
-                page = BookDetailsScreen(
-                  summaryData: args['summary'], 
-                  extendedData: args['extended']
-                );
-                break;
-              default:
-                page = const Center(child: Text("Home Page"));
-            }
-            return PageRouteBuilder(
-              pageBuilder: (_, __, ___) => page,
-              transitionDuration: const Duration(seconds: 0)
-            );
-          },
-        ),
+      body: IndexedStack(
+        index: selectedIndex,
+        children: List.generate(pages.length, (index) {
+          return Navigator(
+            onGenerateRoute: (settings) {
+              return MaterialPageRoute(
+                builder: (context) => pages[index],
+              );
+            },
+          );
+        }),
+      ),
       bottomNavigationBar: navigationBar()
     );
   }
@@ -104,7 +75,6 @@ class _Navigation extends State<Navigation> {
       onDestinationSelected: (int index) {
         setState(() {
           selectedIndex = index;
-          Utils.homeNav.currentState?.pushReplacementNamed(pages[index]);
         });
       },
       destinations: const <NavigationDestination>[
