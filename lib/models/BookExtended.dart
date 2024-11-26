@@ -2,13 +2,13 @@ import 'package:bookworms_app/models/UserReview.dart';
 
 /// More detailed book information that shows on the book details screen.
 class BookExtended {
-  final String? description;
-  final List<String>? subjects;
-  final String? isbn10;
-  final String? isbn13;
-  final String? publisher;
-  final String? publishDate;
-  final int? pageCount;
+  final String description;
+  final List<String> subjects;
+  final String isbn10;
+  final String isbn13;
+  final String publisher;
+  final String publishDate;
+  final int pageCount;
   final List<UserReview> reviews;
 
   const BookExtended({

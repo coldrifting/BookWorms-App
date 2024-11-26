@@ -5,8 +5,8 @@ class BookSummary {
   final String image;
   final String title;
   final List<String> authors;
-  final String? difficulty;
-  final double? rating;
+  final String difficulty;
+  final double rating;
 
   const BookSummary({
     required this.id,

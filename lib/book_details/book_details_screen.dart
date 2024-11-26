@@ -22,6 +22,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late BookSummary bookSummary;
   late BookExtended bookExtended;
 
+  var isExpanded = false; // Denotes if the description/book information is expanded.
+  var maxLength = 500; // Max length of the shortened description.
+
   @override
   void initState() {
     super.initState();
@@ -75,61 +78,110 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// Sub-section containing book information such as title, author, rating,
   /// difficulty, and description.
   Widget _bookDetails() {
+
+    var difficulty = bookSummary.difficulty.isEmpty ? "N/A" : bookSummary.difficulty;
+    var rating = bookSummary.rating == 0 ? "Unrated" : "${bookSummary.rating}★";
+
+    // Toggles the expansion of the description/book information.
+    void toggleExpansion() {
+      setState(() {
+        isExpanded = !isExpanded;
+      });
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
+          // Book title
           Text(
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, 
-                fontSize: 28,
-             ),
-            bookSummary.title
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+            bookSummary.title,
           ),
+          // Book author(s)
           Text(
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-                fontSize: 18,
-            ), 
-            bookSummary.authors[0] // Temporarily the first author
+            style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 18), 
+            bookSummary.authors.isNotEmpty 
+            ? bookSummary.authors.map((author) => author).join('\n')
+            : "Unknown Author(s)",
           ),
+          // Book difficulty and rating
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Text(
-              style: 
-              const TextStyle(
-                fontSize: 16.0
-              ),
-              "Level ${bookSummary.difficulty}   |   ${bookSummary.rating}★"
+              style: const TextStyle(fontSize: 16.0),
+              "Level $difficulty   |   $rating"
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: RichText(
-              textAlign: TextAlign.justify,
-              text: TextSpan(
-                style: const TextStyle(
-                  color: Colors.black, 
-                  fontSize: 16.0,
-                ), // Regular text
-                children: <TextSpan>[
+          // Book description (including extra book details)
+          _description(),
+          IconButton(
+            icon: Icon(
+              isExpanded 
+              ? Icons.keyboard_arrow_up_sharp 
+              : Icons.keyboard_arrow_down_sharp
+            ),
+            onPressed: toggleExpansion,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Contains the written description and additional book details including the ISBN(s)
+  /// publisher information, and number of pages.
+  Widget _description() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            // If not expanded, 5 lines are shown at most with ellipsis present.
+            maxLines: isExpanded ? null : 5,
+            overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+            text: TextSpan(
+              style: const TextStyle(color: Colors.black, fontSize: 16.0),
+              children: <TextSpan>[
+                if (bookExtended.description.isNotEmpty) ...[
                   const TextSpan(
                     text: 'Description: ',
                     style: TextStyle(fontWeight: FontWeight.bold), // Bold text
                   ),
-                  TextSpan(
-                    text: bookExtended.description,
-                  ),
-                ],
-              ),
+                  TextSpan(text: bookExtended.description),
+                ] else 
+                  const TextSpan(text: 'No description available.'),
+              ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.keyboard_arrow_down_sharp),
-            onPressed: () => {},
-          ),
-        ]
+          if (isExpanded) ..._expandedDetails()
+        ],
+      ),
+    );
+  }
+
+  /// Additional book details displayed upon expanded.
+  List<Widget> _expandedDetails() {
+  return [
+    const SizedBox(height: 16),
+    const Divider(height: 1),
+    const SizedBox(height: 16),
+    // To do: Do not include if the page count is 0 or if the strings are empty.
+    _detailText("Pages", "${bookExtended.pageCount}"),
+    _detailText("ISBN-10", bookExtended.isbn10),
+    _detailText("ISBN-13", bookExtended.isbn13),
+    _detailText("Publisher", bookExtended.publisher),
+    _detailText("Published", bookExtended.publishDate),
+  ];
+}
+
+  /// Creates book detail text given the label and the text value.
+  Widget _detailText(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Text(
+        "$label: $value",
+        style: const TextStyle(fontSize: 16),
       ),
     );
   }
@@ -186,5 +238,5 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         ...reviews,
       ],
     );
-  } 
+  }
 }
