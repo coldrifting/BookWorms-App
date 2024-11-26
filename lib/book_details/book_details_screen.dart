@@ -36,27 +36,39 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// and reviews.
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      controller: _scrollController,
-      children: [
-        // Temporary image for testing purposes.
-        Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg"),
-        _bookDetails(),
-        Container(
-          color: const Color.fromARGB(255, 239, 239, 239),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 5),
-                _actionButtons(),
-                const SizedBox(height: 15),
-                _reviewList(),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(bookSummary.title),
+        backgroundColor: Colors.green[200],
+         leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: ListView(
+        controller: _scrollController,
+        children: [
+          // Temporary image for testing purposes.
+          Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg"),
+          _bookDetails(),
+          Container(
+            color: const Color.fromARGB(255, 239, 239, 239),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 5),
+                  _actionButtons(),
+                  const SizedBox(height: 15),
+                  _reviewList(),
+                ],
+              ),
             ),
           ),
-        ),
-      ]
+        ]
+      ),
     );
   }
 

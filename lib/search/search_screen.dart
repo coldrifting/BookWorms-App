@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:bookworms_app/Utils.dart';
+import 'package:bookworms_app/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book_details_service.dart';
 import 'package:bookworms_app/models/BookExtended.dart';
 import 'package:bookworms_app/models/BookSummary.dart';
@@ -133,7 +133,9 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
+          const SizedBox(height: 26),
           searchBar(),
+          const SizedBox(height: 8),
           Expanded(
             child: !_isInActiveSearch
                 ? Center(child: _browseScreen())
@@ -193,12 +195,16 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Clicking a book navigates to the book's detail page.
   void _onBookClicked(int index) async {
     BookExtended results = await _bookDetailsService.getBookExtended(_searchResults[index].id);
-    Utils.homeNav.currentState!.pushNamed(
-      '/bookdetailspage',
-      arguments: {
-        'summary': _searchResults[index],
-        'extended': results
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookDetailsScreen(
+          summaryData: _searchResults[index],
+          extendedData: results,
+        )
+      )
+    );
+
   }
 
   /// Sub-section containing books corresponding to the user's query.
