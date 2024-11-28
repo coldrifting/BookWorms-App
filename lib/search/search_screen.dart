@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:bookworms_app/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book_details_service.dart';
-import 'package:bookworms_app/models/BookExtended.dart';
-import 'package:bookworms_app/models/BookSummary.dart';
-import 'package:bookworms_app/services/search_service.dart';
+import 'package:bookworms_app/models/book_extended.dart';
+import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/services/book_images_service.dart';
+import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -22,8 +23,9 @@ class _SearchScreenState extends State<SearchScreen> {
   var _searchResults = [];
   Timer? _debounceTimer;
 
-  late SearchService _searchService;
+  late BookSummariesService _bookSummariesService;
   late BookDetailsService _bookDetailsService;
+  late BookImagesService _bookImagesService;
   late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
@@ -31,8 +33,9 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _searchService = SearchService();
+    _bookSummariesService = BookSummariesService();
     _bookDetailsService = BookDetailsService();
+    _bookImagesService = BookImagesService();
     _focusNode = FocusNode();
     _focusNode.addListener(_onSearchBarFocusChanged);
     _textEditingcontroller = TextEditingController();
@@ -91,7 +94,12 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await _searchService.getBookSummaries(query, _defaultResultLength);
+        List<BookSummary> results = await _bookSummariesService.getBookSummaries(query, _defaultResultLength);
+        List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
+        List<Image> bookImages = await _bookImagesService.getBookImages(bookIds);
+        for (int i = 0; i < results.length; i++) {
+          results[i].setImage(bookImages[i]);
+        }
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
@@ -119,7 +127,7 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Callback for when the 'Show More' button is pressed.
   /// Fetches and appends the expanded results to the default results.
   void _onShowMorePressed() async {
-    List<BookSummary> results = await _searchService.getBookSummaries(_currentQuery, _expandedResultLength);
+    List<BookSummary> results = await _bookSummariesService.getBookSummaries(_currentQuery, _expandedResultLength);
     setState(() {
       _searchResults.addAll(results);
     });
@@ -193,7 +201,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Clicking a book navigates to the book's detail page.
   void _onBookClicked(int index) async {
-    BookExtended results = await _bookDetailsService.getBookExtended(_searchResults[index].id);
+    BookExtended results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -254,9 +262,7 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Widget corresponding to a single book summary for the given user's query.
   Widget searchResult(int index) {
     BookSummary searchResult = _searchResults[index];
-    // If an image is empty, a sized box is shown.
-    //Widget bookImage = searchResult.image.isEmpty ? const SizedBox(width: 8.0) : Image.memory(base64Decode(searchResult.image));
-    Widget bookImage = const SizedBox(width: 8.0);
+    Image bookImage = searchResult.image!;
     return Row(
       children: [
         bookImage,

@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/UserReview.dart';
+import 'package:bookworms_app/models/user_review.dart';
 
 /// More detailed book information that shows on the book details screen.
 class BookExtended {

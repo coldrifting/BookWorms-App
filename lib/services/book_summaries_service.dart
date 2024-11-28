@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:bookworms_app/models/BookSummary.dart';
+import 'package:bookworms_app/models/book_summary.dart';
 import 'package:http/http.dart' as http;
 
-class SearchService {
+class BookSummariesService {
   final http.Client client;
 
-  SearchService({http.Client? client}) : client = client ?? http.Client();
+  BookSummariesService({http.Client? client}) : client = client ?? http.Client();
 
   // Retrieve the book summaries of the given query from the server.
   Future<List<BookSummary>> getBookSummaries(String query, int resultLength) async {
@@ -19,7 +19,7 @@ class SearchService {
       }
       return bookSummaries;
     } else {
-      throw Exception('An error occured when fetching search results.');
+      throw Exception('An error occured when fetching book summaries.');
     }
   }
 }

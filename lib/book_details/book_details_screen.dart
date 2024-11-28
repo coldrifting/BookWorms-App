@@ -1,6 +1,6 @@
 import 'package:bookworms_app/book_details/review_widget.dart';
-import 'package:bookworms_app/models/BookExtended.dart';
-import 'package:bookworms_app/models/BookSummary.dart';
+import 'package:bookworms_app/models/book_extended.dart';
+import 'package:bookworms_app/models/book_summary.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsScreen extends StatefulWidget {
