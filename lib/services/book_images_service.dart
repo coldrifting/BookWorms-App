@@ -5,8 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:archive/archive.dart';
 
 class BookImagesService {
+  final http.Client client;
+
+  BookImagesService({http.Client? client}) : client = client ?? http.Client();
+
   Future<List<Image>> getBookImages(List<String> bookIds) async {
-    final response = await http.post(
+    final response = await client.post(
       Uri.parse('http://10.0.2.2:5247/books/covers'),
       headers: {
         'Accept': 'application/json',
@@ -28,4 +32,8 @@ class BookImagesService {
       throw Exception('An error occurred when fetching the book image.');
     }
   }
+}
+main() async {
+  BookImagesService bis = BookImagesService();
+  bis.getBookImages(["1IleAgAAQBAJ"]);
 }

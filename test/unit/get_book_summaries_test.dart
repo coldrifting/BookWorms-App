@@ -3,13 +3,11 @@ import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'mocks/get_book_summaries_test.mocks.dart';
+import 'mocks/http_client_test.mocks.dart';
 
-@GenerateMocks([http.Client])
 void main() {
-  group('SearchService', () {
+  group('BookSummariesService', () {
     late BookSummariesService bookSummariesService;
     late MockClient mockClient;
 
