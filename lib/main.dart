@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:bookworms_app/search/search_screen.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(const BookWorms());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BookWorms extends StatelessWidget {
+  const BookWorms({super.key});
 
   @override
   Widget build(BuildContext context) {

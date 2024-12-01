@@ -26,6 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
   late BookSummariesService _bookSummariesService;
   late BookDetailsService _bookDetailsService;
   late BookImagesService _bookImagesService;
+  
   late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
@@ -74,11 +75,24 @@ class _SearchScreenState extends State<SearchScreen> {
       else {
         _isInActiveSearch = false;
       }
+
       _searchResults.clear();
       _textEditingcontroller.clear();
     });
+
     // Reregister the search listener.
     _focusNode.addListener(_onSearchBarFocusChanged);
+  }
+
+  /// Fetches the search results and the corresponding images.
+  Future<List<BookSummary>> getResults(String query, int resultLength) async {
+    List<BookSummary> results = await _bookSummariesService.getBookSummaries(query, _defaultResultLength);
+    List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
+    List<Image> bookImages = await _bookImagesService.getBookImages(bookIds);
+    for (int i = 0; i < results.length; i++) {
+      results[i].setImage(bookImages[i]);
+    }
+    return results;
   }
 
   /// Callback for when the search query is changed.
@@ -94,12 +108,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await _bookSummariesService.getBookSummaries(query, _defaultResultLength);
-        List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
-        List<Image> bookImages = await _bookImagesService.getBookImages(bookIds);
-        for (int i = 0; i < results.length; i++) {
-          results[i].setImage(bookImages[i]);
-        }
+        List<BookSummary> results = await getResults(query, _defaultResultLength);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
@@ -127,16 +136,26 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Callback for when the 'Show More' button is pressed.
   /// Fetches and appends the expanded results to the default results.
   void _onShowMorePressed() async {
-    List<BookSummary> results = await _bookSummariesService.getBookSummaries(_currentQuery, _expandedResultLength);
+    List<BookSummary> results = await getResults(_currentQuery, _expandedResultLength);
     setState(() {
       _searchResults.addAll(results);
     });
   }
 
- /// Sub-section containing the search bar and the search result area.
+ /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    // The sub-widget is determined by the current search status.
+    Widget mainContent;
+    if (!_isInActiveSearch) {
+      mainContent = Center(child: _browseScreen());
+    } else if (_searchResults.isEmpty) {
+      mainContent = Center(child: _recentsScreen());
+    } else {
+      mainContent = _resultsScreen();
+    }
+  
+     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
@@ -144,18 +163,14 @@ class _SearchScreenState extends State<SearchScreen> {
           searchBar(),
           const SizedBox(height: 8),
           Expanded(
-            child: !_isInActiveSearch
-                ? Center(child: _browseScreen())
-                : _searchResults.isEmpty
-                  ? Center(child: _recentsScreen())
-                  : _resultsScreen()
+            child: mainContent
           ),
         ],
       ),
     );
   }
 
-  /// The search bar widget sends textbox information when the user types.
+  /// Search queries are entered in the search bar widget.
   Widget searchBar() {
     return Row(
       children: [
@@ -189,17 +204,18 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  /// Sub-section containing recommended books.
+  /// Sub-widget containing recommended books.
   Widget _browseScreen() {
     return const Text("Browse Subpage");
   }
 
-  /// Sub-section containing recently-searched books.
+  /// Sub-widget containing recently viewed books.
   Widget _recentsScreen() {
     return const Text("Recents Subpage");
   }
 
-  /// Clicking a book navigates to the book's detail page.
+  /// Callback for when a search result is selected.
+  /// Fetches the book's details and navigates to the book's details page.
   void _onBookClicked(int index) async {
     BookExtended results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
     Navigator.push(
@@ -211,10 +227,9 @@ class _SearchScreenState extends State<SearchScreen> {
         )
       )
     );
-
   }
 
-  /// Sub-section containing books corresponding to the user's query.
+  /// Sub-widget containing the search results corresponding to the most recently processed search query.
   Widget _resultsScreen() {
     return ListView.builder(
       controller: _scrollController,
@@ -259,7 +274,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  /// Widget corresponding to a single book summary for the given user's query.
+  /// The results corresponding to a search query are displayed in a search result widget.
   Widget searchResult(int index) {
     BookSummary searchResult = _searchResults[index];
     Image bookImage = searchResult.image!;
@@ -278,7 +293,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 searchResult.title
               ),
-              // Multiple authors may exist. The first is shown.
               Text(
                 style: const TextStyle(color: Colors.black54, fontSize: 14),
                 overflow: TextOverflow.ellipsis,
@@ -293,4 +307,3 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
-
