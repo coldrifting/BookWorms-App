@@ -19,17 +19,17 @@ void main() {
     test('returns a list of BookSummaries if the http call completes successfully', () async {
       final mockResponse = jsonEncode([
         {
-          'bookId': '1',
-          'title': 'Book 1',
+          'bookId': 'Id 1',
+          'title': 'Title 1',
           'authors': ['Author 1'],
-          'difficulty': 'easy',
+          'difficulty': 'Difficulty 1',
           'rating': 1.0
         },
         {
-          'bookId': '2',
-          'title': 'Book 2',
+          'bookId': 'Id 2',
+          'title': 'Title 2',
           'authors': ['Author 2'],
-          'difficulty': 'medium',
+          'difficulty': 'Difficulty 2',
           'rating': 2.0
         }
       ]);
@@ -42,16 +42,16 @@ void main() {
       expect(result, isA<List<BookSummary>>());
       expect(result.length, 2);
 
-      expect(result[0].id, '1');
-      expect(result[0].title, 'Book 1');
+      expect(result[0].id, 'Id 1');
+      expect(result[0].title, 'Title 1');
       expect(result[0].authors, ['Author 1']);
-      expect(result[0].difficulty, 'easy');
+      expect(result[0].difficulty, 'Difficulty 1');
       expect(result[0].rating, 1.0);
 
-      expect(result[1].id, '2');
-      expect(result[1].title, 'Book 2');
+      expect(result[1].id, 'Id 2');
+      expect(result[1].title, 'Title 2');
       expect(result[1].authors, ['Author 2']);
-      expect(result[1].difficulty, 'medium');
+      expect(result[1].difficulty, 'Difficulty 2');
       expect(result[1].rating, 2.0);
     });
 

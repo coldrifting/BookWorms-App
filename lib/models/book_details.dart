@@ -1,7 +1,7 @@
 import 'package:bookworms_app/models/user_review.dart';
 
 /// More detailed book information that shows on the book details screen.
-class BookExtended {
+class BookDetails {
   final String description;
   final List<String> subjects;
   final String isbn10;
@@ -11,7 +11,7 @@ class BookExtended {
   final int pageCount;
   final List<UserReview> reviews;
 
-  const BookExtended({
+  const BookDetails({
     required this.description,
     required this.subjects,
     required this.isbn10,
@@ -23,8 +23,8 @@ class BookExtended {
   });
 
   // Decodes the JSON to create a BookExtended object.
-  factory BookExtended.fromJson(Map<String, dynamic> json) {
-    return BookExtended(
+  factory BookDetails.fromJson(Map<String, dynamic> json) {
+    return BookDetails(
       description: json['description'],
       subjects: List<String>.from(json['subjects']),
       isbn10: json['isbn10'],

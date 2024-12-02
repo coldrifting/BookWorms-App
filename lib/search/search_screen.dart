@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bookworms_app/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book_details_service.dart';
-import 'package:bookworms_app/models/book_extended.dart';
+import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
@@ -217,13 +217,13 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Callback for when a search result is selected.
   /// Fetches the book's details and navigates to the book's details page.
   void _onBookClicked(int index) async {
-    BookExtended results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
+    BookDetails results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BookDetailsScreen(
           summaryData: _searchResults[index],
-          extendedData: results,
+          detailsData: results,
         )
       )
     );
