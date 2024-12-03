@@ -41,9 +41,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(bookSummary.title, overflow: TextOverflow.ellipsis),
-        backgroundColor: Colors.green[200],
-         leading: IconButton(
+        title: Text(bookSummary.title, style: const TextStyle(color: Colors.white, overflow: TextOverflow.ellipsis)),
+        backgroundColor: Colors.green[800],
+        leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
