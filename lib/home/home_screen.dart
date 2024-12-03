@@ -61,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Displays the up-to-date progress of the currently-selected child.
   Widget _progressTracker() {
     return Container(
       height: 200,
