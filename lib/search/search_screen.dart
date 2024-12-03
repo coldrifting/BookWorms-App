@@ -5,7 +5,6 @@ import 'package:bookworms_app/models/BookExtended.dart';
 import 'package:bookworms_app/models/BookSummary.dart';
 import 'package:bookworms_app/services/search_service.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
