@@ -3,9 +3,12 @@ import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:flutter/material.dart';
 
+/// The [BookDetailsScreen] contains detailed information regarding a
+/// specific book. It also displays relevant user reviews and actions to
+/// "save", "locate", and "rate" the book.
 class BookDetailsScreen extends StatefulWidget {
-  final BookSummary summaryData;
-  final BookDetails detailsData;
+  final BookSummary summaryData;  // Overview book data
+  final BookDetails detailsData;  // More specific book data
 
   const BookDetailsScreen({
     super.key,
@@ -17,8 +20,9 @@ class BookDetailsScreen extends StatefulWidget {
   State<BookDetailsScreen> createState() => _BookDetailsScreenState();
 }
 
+/// The state of the [BookDetailsScreen].
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
-  late ScrollController _scrollController;
+  late ScrollController _scrollController; // Sets initial screen offset.
   late BookSummary bookSummary;
   late BookDetails bookDetails;
 
@@ -40,6 +44,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Book details app bar
       appBar: AppBar(
         title: Text(bookSummary.title, style: const TextStyle(color: Colors.white, overflow: TextOverflow.ellipsis)),
         backgroundColor: Colors.green[800],
@@ -50,10 +55,11 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           },
         ),
       ),
+      // Book details content
       body: ListView(
         controller: _scrollController,
         children: [
-          // Temporary image for testing purposes.
+          // Temporary image for demo purposes
           Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg"),
           _bookDetails(),
           Container(
@@ -78,7 +84,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// Sub-section containing book information such as title, author, rating,
   /// difficulty, and description.
   Widget _bookDetails() {
-
     var difficulty = bookSummary.difficulty.isEmpty ? "N/A" : bookSummary.difficulty;
     var rating = bookSummary.rating == 0 ? "Unrated" : "${bookSummary.rating}★";
 
@@ -118,6 +123,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           ),
           // Book description (including extra book details)
           _description(),
+          // "Expand" icon
           IconButton(
             icon: Icon(
               isExpanded 
@@ -170,7 +176,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     const Divider(height: 1),
     const SizedBox(height: 16),
 
-    // Do not include the details if they have empty values.
+    // Empty details are not included.
     if (bookDetails.pageCount > 0)
       _detailText("Pages", "${bookDetails.pageCount}"),
     if (bookDetails.isbn10.isNotEmpty)
@@ -217,7 +223,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
-  /// Sub-section for the list of review objects.
+  /// The list of review widgets corresponding to the given book.
   Widget _reviewList() {
     // Generate the list of review widgets.
     var reviewCount = bookDetails.reviews.length;

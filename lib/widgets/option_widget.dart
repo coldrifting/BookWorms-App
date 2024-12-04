@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// The [OptionWidget] displays a selectable box with an icon and name.
 class OptionWidget extends StatelessWidget {
   final String name;
   final IconData icon;
@@ -37,5 +38,4 @@ class OptionWidget extends StatelessWidget {
       ),
     );
   } 
-
 }

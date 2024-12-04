@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
 
+/// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
+/// user is able to add a new bookshelf here, or access their current bookshelves.
 class BookshelvesScreen extends StatefulWidget {
   const BookshelvesScreen({super.key});
 
@@ -9,6 +11,7 @@ class BookshelvesScreen extends StatefulWidget {
   State<BookshelvesScreen> createState() => _BookshelvesScreenState();
 }
 
+/// The state of [BookshelvesScreen].
 class _BookshelvesScreenState extends State<BookshelvesScreen> { 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +74,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               Colors.grey[200],
               Colors.grey[800]
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -102,7 +106,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  /// A bookshelf includes the title, book covers, and authors.
+  /// A bookshelf includes the title, book cover(s), and author(s).
   Widget _bookshelfWidget(String name, List<String> images, List<List<String>> authors, Color? mainColor, Color? accentColor) {
     return Container(
       decoration: BoxDecoration(
@@ -139,8 +143,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  /// The three book cover images widget. Each image is laid out diagonally
-  /// across the container.
+  /// Displays some of the book cover(s) in the bookshelf. Each image is 
+  /// laid out diagonally across the container.
   Widget _imageLayoutWidget(List<String> images) {
     return SizedBox(
       width: 100, 

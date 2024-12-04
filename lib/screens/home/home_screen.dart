@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 // Books used for the demo
 import 'package:bookworms_app/demo_books.dart';
 
+/// The [HomeScreen] contains an overview of the selected child's app data.
+/// Specifically, it displays curated and personal bookshelves, as well as the
+/// child's progress toward goals.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -11,14 +14,17 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+/// The state of the [HomeScreen].
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Home app bar
       appBar: AppBar(
         title: const Text("Johnny's Home", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green[800],
       ),
+      // Bookshelves list
       body: ListView(
         children: [
           const SizedBox(height: 16),
@@ -36,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Displays the up-to-date progress of the currently-selected child.
+  /// Empty for now.
   Widget _progressTracker() {
     return Container(
       height: 200,

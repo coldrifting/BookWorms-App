@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:archive/archive.dart';
 
+/// The [BookDetailsService] handles the retrieval of book images from the server.
 class BookImagesService {
   final http.Client client;
 
   BookImagesService({http.Client? client}) : client = client ?? http.Client();
 
+  // Retrieve the book images of the corresponding bookIds from the server.
   Future<List<Image>> getBookImages(List<String> bookIds) async {
     final response = await client.post(
       Uri.parse('http://10.0.2.2:5247/books/covers'),

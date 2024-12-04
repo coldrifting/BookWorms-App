@@ -2,6 +2,9 @@ import 'package:bookworms_app/models/user_review.dart';
 import 'package:bookworms_app/icons/user_icons.dart';
 import 'package:flutter/material.dart';
 
+/// The [ReviewWidget] captures a single user corresponding to a specific
+/// book. A user review contains the user's icon, name, role, star rating,
+/// review text, and the date of the review.
 class ReviewWidget extends StatelessWidget {
   final UserReview review;
 

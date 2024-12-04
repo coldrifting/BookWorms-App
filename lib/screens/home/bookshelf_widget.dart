@@ -2,6 +2,9 @@ import 'package:bookworms_app/models/book_summary.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+/// The [BookshelfWidget] displays an overview of a user's bookshelf. It
+/// includes a short display of book covers, the bookshelf title, and some
+/// authors present in the bookshelf.
 class BookshelfWidget extends StatelessWidget {
   final String name;
   final List<String> images;
@@ -37,13 +40,15 @@ class BookshelfWidget extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
-              child: Text( // Bookshelf name
+              // Bookshelf name
+              child: Text(
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 name,
               ),
             ),
+            // List of bookshelf books
             Expanded(
-              child: ListView( // List of bookshelf books
+              child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
                   _bookPreview(image: images[0], book: books[0]),
@@ -62,7 +67,8 @@ class BookshelfWidget extends StatelessWidget {
     );
   }
 
-  /// Displays book summary information with the book cover, title, author, rating, and difficulty.
+  /// Displays book summary information with the book cover, title, author, 
+  /// rating, and difficulty.
   Widget _bookPreview({required String image, required BookSummary book}) {
     var difficulty = book.difficulty.isEmpty ? "N/A" : book.difficulty;
     var rating = book.rating == 0 ? "Unrated" : "${book.rating}★";
@@ -84,7 +90,8 @@ class BookshelfWidget extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 225),
             child: Column(
               children: [
-                Text( // Book title
+                // Book title
+                Text(
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 18, 
@@ -95,7 +102,8 @@ class BookshelfWidget extends StatelessWidget {
                   maxLines: 2,
                   book.title,
                 ),
-                Text( // Book author
+                // Book author
+                Text(
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16, overflow: TextOverflow.ellipsis), 
                   maxLines: 1,

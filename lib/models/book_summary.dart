@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Simple book information that shows on the search screen, as well as the
-/// book details screen.
+/// Simple book summary information and book image.
 class BookSummary {
   final String id;
   final String title;

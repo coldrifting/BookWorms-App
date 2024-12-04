@@ -9,6 +9,8 @@ import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:flutter/material.dart';
 
+/// The [SearchScreen] displays a search bar and a scrollable list of 
+/// relevant books related to the query typed in by the user.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -16,6 +18,7 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
+/// The state of the [SearchScreen].
 class _SearchScreenState extends State<SearchScreen> {
   static const _defaultResultLength = 10;
   static const _expandedResultLength = 50;

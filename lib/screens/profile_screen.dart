@@ -1,6 +1,7 @@
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
+/// The [ProfileScreen] displays relevant settings options for the user account.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -8,6 +9,7 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
+/// The state of the [ProfileScreen].
 class _ProfileScreenState extends State<ProfileScreen> { 
   @override
   Widget build(BuildContext context) {  

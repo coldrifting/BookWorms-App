@@ -1,6 +1,8 @@
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
+/// The [ProgressScreen] contains information about the selected child's
+/// progress toward their set custom goals.
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
 
@@ -8,6 +10,7 @@ class ProgressScreen extends StatefulWidget {
   State<ProgressScreen> createState() => _ProgressScreenState();
 }
 
+/// The state of the [ProgressScreen].
 class _ProgressScreenState extends State<ProgressScreen> { 
   @override
   Widget build(BuildContext context) { 
