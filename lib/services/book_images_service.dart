@@ -33,7 +33,3 @@ class BookImagesService {
     }
   }
 }
-main() async {
-  BookImagesService bis = BookImagesService();
-  bis.getBookImages(["1IleAgAAQBAJ"]);
-}
