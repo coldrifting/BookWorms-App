@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-// Books used for the demo
-import 'package:bookworms_app/demo_books.dart';
+import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
 
 class BookshelvesScreen extends StatefulWidget {
   const BookshelvesScreen({super.key});
@@ -77,7 +76,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-
+  /// The labeled button for creating a bookshelf.
   Widget _createBookshelfWidget() {
     return Container(
       decoration: BoxDecoration(
@@ -102,7 +101,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  /// A bookshelf including the title, book covers, and authors.
+  /// A bookshelf includes the title, book covers, and authors.
   Widget _bookshelfWidget(String name, List<String> images, List<List<String>> authors, Color? mainColor, Color? accentColor) {
     return Container(
       decoration: BoxDecoration(
@@ -179,13 +178,13 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  // Prints the first num of authors.
-  String _printFirstAuthors(List<List<String>> authors, int num) {
+  // Prints the first 'count' of authors.
+  String _printFirstAuthors(List<List<String>> authors, int count) {
     String authorsList = "";
     int authorCount = 0;
     for (var bookAuthors in authors) {
       for (var author in bookAuthors) {
-        if (authorCount == num) {
+        if (authorCount == count) {
           return "${authorsList}and more";
         }
         authorCount++;
