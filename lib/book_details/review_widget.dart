@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/UserReview.dart';
+import 'package:bookworms_app/models/user_review.dart';
 import 'package:bookworms_app/user_icons.dart';
 import 'package:flutter/material.dart';
 

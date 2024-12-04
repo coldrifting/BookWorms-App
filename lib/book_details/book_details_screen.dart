@@ -1,16 +1,16 @@
 import 'package:bookworms_app/book_details/review_widget.dart';
-import 'package:bookworms_app/models/BookExtended.dart';
-import 'package:bookworms_app/models/BookSummary.dart';
+import 'package:bookworms_app/models/book_details.dart';
+import 'package:bookworms_app/models/book_summary.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsScreen extends StatefulWidget {
   final BookSummary summaryData;
-  final BookExtended extendedData;
+  final BookDetails detailsData;
 
   const BookDetailsScreen({
     super.key,
     required this.summaryData,
-    required this.extendedData
+    required this.detailsData
   });
 
   @override
@@ -20,7 +20,7 @@ class BookDetailsScreen extends StatefulWidget {
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late ScrollController _scrollController;
   late BookSummary bookSummary;
-  late BookExtended bookExtended;
+  late BookDetails bookDetails;
 
   var isExpanded = false; // Denotes if the description/book information is expanded.
   var maxLength = 500; // Max length of the shortened description.
@@ -32,7 +32,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     // on the book details view.
     _scrollController = ScrollController(initialScrollOffset: 250);
     bookSummary = widget.summaryData;
-    bookExtended = widget.extendedData;
+    bookDetails = widget.detailsData;
   }
 
   /// The entire book details page, containing book image, details, action buttons,
@@ -146,12 +146,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             text: TextSpan(
               style: const TextStyle(color: Colors.black, fontSize: 16.0),
               children: <TextSpan>[
-                if (bookExtended.description.isNotEmpty) ...[
+                if (bookDetails.description.isNotEmpty) ...[
                   const TextSpan(
                     text: 'Description: ',
                     style: TextStyle(fontWeight: FontWeight.bold), // Bold text
                   ),
-                  TextSpan(text: bookExtended.description),
+                  TextSpan(text: bookDetails.description),
                 ] else 
                   const TextSpan(text: 'No description available.'),
               ],
@@ -171,16 +171,16 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     const SizedBox(height: 16),
 
     // Do not include the details if they have empty values.
-    if (bookExtended.pageCount > 0)
-      _detailText("Pages", "${bookExtended.pageCount}"),
-    if (bookExtended.isbn10.isNotEmpty)
-      _detailText("ISBN-10", bookExtended.isbn10),
-    if (bookExtended.isbn13.isNotEmpty)
-      _detailText("ISBN-13", bookExtended.isbn13),
-    if (bookExtended.publisher.isNotEmpty)
-      _detailText("Publisher", bookExtended.publisher),
-    if (bookExtended.publishDate.isNotEmpty)
-      _detailText("Published", bookExtended.publishDate),
+    if (bookDetails.pageCount > 0)
+      _detailText("Pages", "${bookDetails.pageCount}"),
+    if (bookDetails.isbn10.isNotEmpty)
+      _detailText("ISBN-10", bookDetails.isbn10),
+    if (bookDetails.isbn13.isNotEmpty)
+      _detailText("ISBN-13", bookDetails.isbn13),
+    if (bookDetails.publisher.isNotEmpty)
+      _detailText("Publisher", bookDetails.publisher),
+    if (bookDetails.publishDate.isNotEmpty)
+      _detailText("Published", bookDetails.publishDate),
   ];
 }
 
@@ -220,12 +220,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// Sub-section for the list of review objects.
   Widget _reviewList() {
     // Generate the list of review widgets.
-    var reviewCount = bookExtended.reviews.length;
+    var reviewCount = bookDetails.reviews.length;
     List<Widget> reviews = List.generate(
       reviewCount,
       (index) => Padding(
         padding: const EdgeInsets.only(bottom: 18.0),
-        child: ReviewWidget(review: bookExtended.reviews[index]),
+        child: ReviewWidget(review: bookDetails.reviews[index]),
       )
     );
 

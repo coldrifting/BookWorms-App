@@ -1,16 +1,20 @@
 import 'dart:convert';
-import 'package:bookworms_app/models/BookExtended.dart';
+import 'package:bookworms_app/models/book_details.dart';
 import 'package:http/http.dart' as http;
 
 class BookDetailsService {
+  final http.Client client;
+
+  BookDetailsService({http.Client? client}) : client = client ?? http.Client();
+
   // Retrieve and decode extended book data from the server.
-  Future<BookExtended> getBookExtended(String bookId) async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:5247/books/$bookId/details'));
+  Future<BookDetails> getBookDetails(String bookId) async {
+    final response = await client.get(Uri.parse('http://10.0.2.2:5247/books/$bookId/details'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return BookExtended.fromJson(data);
+      return BookDetails.fromJson(data);
     } else {
-      throw Exception('An error occurred when fetching book details.');
+      throw Exception('An error occurred when fetching the book details.');
     }
   }
 }
