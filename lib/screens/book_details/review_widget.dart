@@ -1,5 +1,5 @@
 import 'package:bookworms_app/models/user_review.dart';
-import 'package:bookworms_app/user_icons.dart';
+import 'package:bookworms_app/icons/user_icons.dart';
 import 'package:flutter/material.dart';
 
 class ReviewWidget extends StatelessWidget {

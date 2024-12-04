@@ -18,9 +18,10 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         backgroundColor: Colors.green[800],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
           children: [
+            const SizedBox(height: 16),
             _createBookshelfWidget(),
             const SizedBox(height: 16),
             _bookshelfWidget(

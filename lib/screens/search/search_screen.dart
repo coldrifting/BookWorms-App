@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:bookworms_app/book_details/book_details_screen.dart';
-import 'package:bookworms_app/search/browse_screen.dart';
-import 'package:bookworms_app/search/recents_screen.dart';
+import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
+import 'package:bookworms_app/screens/search/browse_screen.dart';
+import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/services/book_details_service.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
@@ -158,7 +158,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   
      return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
           const SizedBox(height: 26),

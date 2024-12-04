@@ -1,8 +1,10 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/bookshelves_screen.dart';
-import 'package:bookworms_app/home/home_screen.dart';
+import 'package:bookworms_app/screens/bookshelves_screen.dart';
+import 'package:bookworms_app/screens/home/home_screen.dart';
+import 'package:bookworms_app/screens/profile_screen.dart';
+import 'package:bookworms_app/screens/progress_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/search/search_screen.dart';
+import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(const BookWorms());
@@ -42,8 +44,8 @@ class _Navigation extends State<Navigation> {
     HomeScreen(),
     BookshelvesScreen(),
     SearchScreen(),
-    Center(child: Text("Progress Page")),
-    Center(child: Text("Profile Page")),
+    ProgressScreen(),
+    ProfileScreen(),
   ];
 
 

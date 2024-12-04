@@ -1,4 +1,4 @@
-import 'package:bookworms_app/book_details/review_widget.dart';
+import 'package:bookworms_app/screens/book_details/review_widget.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:flutter/material.dart';
