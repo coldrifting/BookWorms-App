@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bookworms_app/book_details/book_details_screen.dart';
 import 'package:bookworms_app/search/browse_screen.dart';
+import 'package:bookworms_app/search/recents_screen.dart';
 import 'package:bookworms_app/services/book_details_service.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
@@ -149,9 +150,9 @@ class _SearchScreenState extends State<SearchScreen> {
     // The sub-widget is determined by the current search status.
     Widget mainContent;
     if (!_isInActiveSearch) {
-      mainContent = const Center(child: BrowseScreen());
+      mainContent = const BrowseScreen();
     } else if (_searchResults.isEmpty) {
-      mainContent = Center(child: _recentsScreen());
+      mainContent = const RecentsScreen();
     } else {
       mainContent = _resultsScreen();
     }
@@ -203,11 +204,6 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
       ],
     );
-  }
-
-  /// Sub-widget containing recently viewed books.
-  Widget _recentsScreen() {
-    return const Text("Recents Subpage");
   }
 
   /// Callback for when a search result is selected.
