@@ -1,3 +1,4 @@
+import 'package:bookworms_app/screens/book_details/create_review_widget.dart';
 import 'package:bookworms_app/screens/book_details/review_widget.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
@@ -171,10 +172,10 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Additional book details displayed upon expanded.
   List<Widget> _expandedDetails() {
-  return [
-    const SizedBox(height: 16),
-    const Divider(height: 1),
-    const SizedBox(height: 16),
+    return [
+      const SizedBox(height: 16),
+      const Divider(height: 1),
+      const SizedBox(height: 16),
 
     // Empty details are not included.
     if (bookDetails.pageCount > 0)
@@ -245,13 +246,22 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               "Reviews  |  ${bookSummary.rating}",
             ),
             IconButton(
-              onPressed: (() => {}), 
+              onPressed: (addReview), 
               icon: const Icon(Icons.add),
             ),
           ],
         ),
         ...reviews,
       ],
+    );
+  }
+
+  void addReview() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateReviewWidget(bookId: bookSummary.id)
+      )
     );
   }
 }

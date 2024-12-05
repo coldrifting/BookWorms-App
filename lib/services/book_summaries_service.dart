@@ -8,7 +8,7 @@ class BookSummariesService {
 
   BookSummariesService({http.Client? client}) : client = client ?? http.Client();
 
-  // Retrieve the book summaries of the given query from the server.
+  // Retrieve and decode the book summaries of the given query from the server.
   Future<List<BookSummary>> getBookSummaries(String query, int resultLength) async {
     final response = await client.get(Uri.parse('http://10.0.2.2:5247/search/title?query=$query'));
     if (response.statusCode == 200) {

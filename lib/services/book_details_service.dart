@@ -8,7 +8,7 @@ class BookDetailsService {
 
   BookDetailsService({http.Client? client}) : client = client ?? http.Client();
 
-  // Retrieve and decode extended book data from the server.
+  // Retrieve and decode the extended book data of the book id from the server.
   Future<BookDetails> getBookDetails(String bookId) async {
     final response = await client.get(Uri.parse('http://10.0.2.2:5247/books/$bookId/details'));
     if (response.statusCode == 200) {

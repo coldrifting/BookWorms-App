@@ -10,7 +10,7 @@ class BookImagesService {
 
   BookImagesService({http.Client? client}) : client = client ?? http.Client();
 
-  // Retrieve the book images of the corresponding bookIds from the server.
+// Retrieve and decode the book images of the book ids from the server.
   Future<List<Image>> getBookImages(List<String> bookIds) async {
     final response = await client.post(
       Uri.parse('http://10.0.2.2:5247/books/covers'),
