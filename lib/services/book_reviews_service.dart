@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bookworms_app/models/user_review.dart';
+import 'package:bookworms_app/services/services_shared.dart';
 import 'package:http/http.dart' as http;
 
 class BookReviewsService {
@@ -10,7 +11,7 @@ class BookReviewsService {
   // Send the user review data to the server.
   Future<UserReview> sendReview(String bookId, String text, double starRating) async {
     final response = await client.put(
-      Uri.parse('http://10.0.2.2:5247/books/$bookId/review?username=parent0'),
+      Uri.parse('http://${ServicesShared.serverAddress}/books/$bookId/review?username=parent0'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
