@@ -23,7 +23,8 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
     if (_formKey.currentState?.validate() ?? false) {
       BookReviewsService bookReviewsService = BookReviewsService();
       bookReviewsService.sendReview(widget.bookId, _content, _rating);
-      Navigator.of(context).pop();  
+      _rating = 0.0;
+      Navigator.of(context).pop();
     }
   }
 
@@ -54,21 +55,25 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
     );
   }
 
+  /// The user can select the number of stars they rate the book.
   Widget _reviewStarRating() {
     return Center(
       child: RatingBar.builder(
         glow: false,
-        initialRating: 3,
-        minRating: 1,
         direction: Axis.horizontal,
         allowHalfRating: true,
+        minRating: 0.5,
         itemCount: 5,
-        itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+        itemPadding: const EdgeInsets.symmetric(horizontal: 3.0),
         itemBuilder: (context, _) => const Icon(
-        Icons.star,
+          Icons.star,
           color: Colors.amber,
         ),
-        onRatingUpdate: (rating) {  },
+        onRatingUpdate: (rating) {  
+          setState(() {
+            _rating = rating;
+          });
+        },
       ),
     );
   }

@@ -67,7 +67,7 @@ class ReviewWidget extends StatelessWidget {
 
     return Row(children: 
       List.generate(5, (index) {
-        if (index < rating.floor()) {
+        if (index + 1 <= rating.floor()) {
           return buildStarIcon(Icons.star);
         } else if (index < rating) {
           return buildStarIcon(Icons.star_half);
