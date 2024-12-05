@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:http/http.dart' as http;
 
+/// The [BookDetailsService] handles the retrieval of book details from the server.
 class BookDetailsService {
   final http.Client client;
 

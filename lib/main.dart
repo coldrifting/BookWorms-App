@@ -1,12 +1,17 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/bookshelves_screen.dart';
-import 'package:bookworms_app/home/home_screen.dart';
+import 'package:bookworms_app/screens/bookshelves_screen.dart';
+import 'package:bookworms_app/screens/home/home_screen.dart';
+import 'package:bookworms_app/screens/profile_screen.dart';
+import 'package:bookworms_app/screens/progress_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/search/search_screen.dart';
+import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(const BookWorms());
 
+/// Bookworms is a virtual book search solution for children's books.
+/// It allows for the saving of books to bookshelves, the tracking of
+/// a child's goals, and creating classrooms to assign readings to students.
 class BookWorms extends StatelessWidget {
   const BookWorms({super.key});
 
@@ -26,6 +31,8 @@ class BookWorms extends StatelessWidget {
   }
 }
 
+/// The [Navigation] deals with the main bottom bar navigation between the
+/// "Home", "Bookshelves", "Search", "Progress", and "Profile" screens.
 class Navigation extends StatefulWidget {
   const Navigation({super.key});
 
@@ -33,6 +40,7 @@ class Navigation extends StatefulWidget {
   State<Navigation> createState() => _Navigation();
 }
 
+/// The state of the [Navigation].
 class _Navigation extends State<Navigation> {
   // Selected navigation tab (0-4).
   int selectedIndex = 0;
@@ -42,8 +50,8 @@ class _Navigation extends State<Navigation> {
     HomeScreen(),
     BookshelvesScreen(),
     SearchScreen(),
-    Center(child: Text("Progress Page")),
-    Center(child: Text("Profile Page")),
+    ProgressScreen(),
+    ProfileScreen(),
   ];
 
 

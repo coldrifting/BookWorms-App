@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:bookworms_app/book_details/book_details_screen.dart';
-import 'package:bookworms_app/search/browse_screen.dart';
-import 'package:bookworms_app/search/recents_screen.dart';
+import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
+import 'package:bookworms_app/screens/search/browse_screen.dart';
+import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/services/book_details_service.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
@@ -9,6 +9,8 @@ import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:flutter/material.dart';
 
+/// The [SearchScreen] displays a search bar and a scrollable list of 
+/// relevant books related to the query typed in by the user.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -16,6 +18,7 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
+/// The state of the [SearchScreen].
 class _SearchScreenState extends State<SearchScreen> {
   static const _defaultResultLength = 10;
   static const _expandedResultLength = 50;
@@ -158,7 +161,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   
      return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
         children: [
           const SizedBox(height: 26),

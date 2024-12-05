@@ -3,6 +3,8 @@ import 'package:bookworms_app/models/book_summary.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+/// The [RecentsScreen] displays a scrollable list of books that have been 
+/// recently searched or interacted with by the user.
 class RecentsScreen extends StatefulWidget {
   const RecentsScreen({super.key});
 
@@ -10,6 +12,7 @@ class RecentsScreen extends StatefulWidget {
   State<RecentsScreen> createState() => _RecentsScreenState();
 }
 
+/// The state of the [RecentsScreen].
 class _RecentsScreenState extends State<RecentsScreen> { 
 
   // Temporary for demo.
@@ -46,7 +49,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
     );
   }
 
-  /// Recently-viewed books subpage.
+  /// Recently-viewed books subpage containing a list of books.
   Widget _recentsWidget() {
     return ListView.builder(
       itemCount: 4,
@@ -76,7 +79,10 @@ class _RecentsScreenState extends State<RecentsScreen> {
   /// Individual book search result, including the book image and overview details.
   Widget searchResult(int index) {
     BookSummary searchResult = _books[index];
-    CachedNetworkImage bookImage = CachedNetworkImage(imageUrl: _images[index], width: 150);
+    CachedNetworkImage bookImage = CachedNetworkImage(
+      imageUrl: _images[index], 
+      width: 150
+    );
     return Row(
       children: [
         bookImage,
@@ -105,5 +111,4 @@ class _RecentsScreenState extends State<RecentsScreen> {
       ],
     );
   }
-
 }

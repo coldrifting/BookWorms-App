@@ -1,6 +1,6 @@
 import 'package:bookworms_app/models/user_review.dart';
 
-/// More detailed book information that shows on the book details screen.
+/// More detailed book information, not including the book summary info.
 class BookDetails {
   final String description;
   final List<String> subjects;

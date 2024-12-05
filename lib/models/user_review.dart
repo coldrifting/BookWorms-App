@@ -3,7 +3,6 @@ class UserReview {
   final String name;
   final String role;
   final String icon;
-  //final String date;
   final String text;
   final double starRating;
 
@@ -11,7 +10,6 @@ class UserReview {
     required this.name,
     required this.role,
     required this.icon,
-    //required this.date,
     required this.text,
     required this.starRating,
   });
@@ -22,7 +20,6 @@ class UserReview {
       name: json['reviewerName'],
       role: json['reviewerRole'],
       icon: json['reviewerIcon'],
-      //date: json['date'],
       starRating: (json['starRating'] as num).toDouble(),
       text: json['reviewText']
     );
