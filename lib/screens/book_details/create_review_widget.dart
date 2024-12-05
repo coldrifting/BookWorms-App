@@ -1,5 +1,6 @@
 import 'package:bookworms_app/services/book_reviews_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class CreateReviewWidget extends StatefulWidget {
   final String bookId;
@@ -54,21 +55,21 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
   }
 
   Widget _reviewStarRating() {
-    return Column(
-      children: [
-        Text('Rating: ${_rating.toStringAsFixed(1)} / 5.0'),
-        Slider(
-          value: _rating,
-          min: 0.0,
-          max: 5.0,
-          divisions: 10,
-          onChanged: (value) {
-            setState(() {
-              _rating = value;
-            });
-          },
+    return Center(
+      child: RatingBar.builder(
+        glow: false,
+        initialRating: 3,
+        minRating: 1,
+        direction: Axis.horizontal,
+        allowHalfRating: true,
+        itemCount: 5,
+        itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+        itemBuilder: (context, _) => const Icon(
+        Icons.star,
+          color: Colors.amber,
         ),
-      ]
+        onRatingUpdate: (rating) {  },
+      ),
     );
   }
 
