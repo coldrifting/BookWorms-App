@@ -28,8 +28,3 @@ class BookReviewsService {
     }
   }
 }
-main() async {
-  var brs = BookReviewsService();
-  var ur = await brs.sendReview('1IleAgAAQBAJ', 'THE GIVING TREE IS VERY EPIC AND COOL', 5);
-  print(ur);
-}

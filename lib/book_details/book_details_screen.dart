@@ -1,3 +1,4 @@
+import 'package:bookworms_app/book_details/create_review_widget.dart';
 import 'package:bookworms_app/book_details/review_widget.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
@@ -165,24 +166,24 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Additional book details displayed upon expanded.
   List<Widget> _expandedDetails() {
-  return [
-    const SizedBox(height: 16),
-    const Divider(height: 1),
-    const SizedBox(height: 16),
+    return [
+      const SizedBox(height: 16),
+      const Divider(height: 1),
+      const SizedBox(height: 16),
 
-    // Do not include the details if they have empty values.
-    if (bookDetails.pageCount > 0)
-      _detailText("Pages", "${bookDetails.pageCount}"),
-    if (bookDetails.isbn10.isNotEmpty)
-      _detailText("ISBN-10", bookDetails.isbn10),
-    if (bookDetails.isbn13.isNotEmpty)
-      _detailText("ISBN-13", bookDetails.isbn13),
-    if (bookDetails.publisher.isNotEmpty)
-      _detailText("Publisher", bookDetails.publisher),
-    if (bookDetails.publishDate.isNotEmpty)
-      _detailText("Published", bookDetails.publishDate),
-  ];
-}
+      // Do not include the details if they have empty values.
+      if (bookDetails.pageCount > 0)
+        _detailText("Pages", "${bookDetails.pageCount}"),
+      if (bookDetails.isbn10.isNotEmpty)
+        _detailText("ISBN-10", bookDetails.isbn10),
+      if (bookDetails.isbn13.isNotEmpty)
+        _detailText("ISBN-13", bookDetails.isbn13),
+      if (bookDetails.publisher.isNotEmpty)
+        _detailText("Publisher", bookDetails.publisher),
+      if (bookDetails.publishDate.isNotEmpty)
+        _detailText("Published", bookDetails.publishDate),
+    ];
+  }
 
   /// Creates book detail text given the label and the text value.
   Widget _detailText(String label, String value) {
@@ -239,13 +240,22 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               "Reviews  |  ${bookSummary.rating}",
             ),
             IconButton(
-              onPressed: (() => {}), 
+              onPressed: (addReview), 
               icon: const Icon(Icons.add),
             ),
           ],
         ),
         ...reviews,
       ],
+    );
+  }
+
+  void addReview() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateReviewWidget(bookId: bookSummary.id)
+      )
     );
   }
 }
