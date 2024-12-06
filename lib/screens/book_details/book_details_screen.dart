@@ -61,7 +61,10 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       body: ListView(
         controller: _scrollController,
         children: [
-          SizedBox(
+          // Temporary hardcode for demo.
+          bookSummary.title == "The Giving Tree" 
+          ? Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg") 
+          : SizedBox(
             width: double.infinity,
             child: FittedBox(
               fit: BoxFit.cover, 
