@@ -156,8 +156,31 @@ class _SearchScreenState extends State<SearchScreen> {
       mainContent = const BrowseScreen();
     } else if (_currentQuery.isEmpty) {
       mainContent = const RecentsScreen();
-    } else {
+    } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen();
+    } else {
+       mainContent = Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.search_off,
+          size: 50.0,
+          color: Colors.grey[500],
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          "No Results",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    ),
+  );
     }
   
     return Scaffold(
