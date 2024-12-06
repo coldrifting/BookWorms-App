@@ -25,7 +25,7 @@ class Demo {
   static var book9 = BookSummary(id: "", title: "Beauty and the Beast", authors: ["Teddy Slater"], difficulty: "Level E", rating: 5.0);
   static var book10 = BookSummary(id: "", title: "Hansel and Gretel", authors: ["Brothers Grimm"], difficulty: "Level E", rating: 4.6);
 
-  static var authors1 = ["Margarel Wise Brown"];
+  static var authors1 = ["Margaret Wise Brown"];
   static var authors2 = ["Norman Bridwell"];
   static var authors3 = ["H. A. Rey"];
   static var authors4 = ["Antoine de Saint-Exupery"];
