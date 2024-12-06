@@ -1,16 +1,11 @@
-# bookworms_app
+# BookWorms - Mobile App
 
-A new Flutter project.
+This repository contains all the code for the frontend server of the BookWorms capstone project, including fetching data from the server's REST API and creating the UI for the app.
 
-## Getting Started
+### About
 
-This project is a starting point for a Flutter application.
+This application is constructed using Flutter in Dart. For debugging purposes, we recommend using Android Studio's built-in emulator. 
 
-A few resources to get you started if this is your first Flutter project:
+### Contributors
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The primary contributors to this portion of the application have been Braden Fiedel and Josie Fiedel.
