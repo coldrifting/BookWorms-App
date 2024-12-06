@@ -228,3 +228,9 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/android,flutter,androidstudio
+
+
+windows/flutter/CMakeLists.txt
+windows/flutter/generated_*
+linux/flutter/generated*
+macos/Flutter/Generated*
