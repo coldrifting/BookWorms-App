@@ -1,3 +1,4 @@
+import 'package:bookworms_app/icons/user_icons.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -23,10 +24,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Icon(
-              size: 120.0,
-              color: Colors.red[900],
-              Icons.account_circle
+            SizedBox(
+              width: 120,
+              height: 120,
+              child: UserIcons.getIcon("")
             ),
             const Center(
               child: Row(

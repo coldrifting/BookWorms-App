@@ -1,3 +1,4 @@
+import 'package:bookworms_app/icons/user_icons.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           Container(
-            height: 165,
+            height: 180,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.green[800],
@@ -39,17 +40,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 bottomRight: Radius.circular(24),
               ),
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
-                  size: 120.0,
-                  color: Colors.white,
-                  Icons.account_circle
+                SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: UserIcons.getIcon("")
                 ),
-                Text(
+                const Text(
                   style: TextStyle(color: Colors.white, fontSize: 20),
-                  "Linda"
+                  "Audrey Hepburn"
+                ),
+                const Text(
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                  "@AudHep"
                 ),
               ],
             ),

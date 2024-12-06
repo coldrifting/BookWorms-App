@@ -67,7 +67,7 @@ class ReviewWidget extends StatelessWidget {
 
     return Row(children: 
       List.generate(5, (index) {
-        if (index < rating.floor()) {
+        if (index + 1 <= rating.floor()) {
           return buildStarIcon(Icons.star);
         } else if (index < rating) {
           return buildStarIcon(Icons.star_half);
@@ -127,6 +127,6 @@ class ReviewWidget extends StatelessWidget {
   /// From the given date, determines the human-readable version comparative
   /// to today's date. Right now, it returns a default string.
   Widget _buildDate(String date) {
-    return const Text("1 day ago");
+    return const Text("");
   }
 }
