@@ -20,11 +20,11 @@ class BookReviewsService {
         "reviewText": text
       })
     );
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
       return UserReview.fromJson(data);
     } else {
-      throw Exception('An error occurred when fetching the book image.');
+      throw Exception('An error occurred when sending the review.');
     }
   }
 }
