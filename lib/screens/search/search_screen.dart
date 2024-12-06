@@ -154,23 +154,29 @@ class _SearchScreenState extends State<SearchScreen> {
     Widget mainContent;
     if (!_isInActiveSearch) {
       mainContent = const BrowseScreen();
-    } else if (_searchResults.isEmpty) {
+    } else if (_currentQuery.isEmpty) {
       mainContent = const RecentsScreen();
     } else {
       mainContent = _resultsScreen();
     }
   
-     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 26),
-          searchBar(),
-          const SizedBox(height: 8),
-          Expanded(
-            child: mainContent
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Search", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.green[800],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            searchBar(),
+            const SizedBox(height: 8),
+            Expanded(
+              child: mainContent
+            ),
+          ],
+        ),
       ),
     );
   }
