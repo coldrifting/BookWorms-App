@@ -127,6 +127,6 @@ class ReviewWidget extends StatelessWidget {
   /// From the given date, determines the human-readable version comparative
   /// to today's date. Right now, it returns a default string.
   Widget _buildDate(String date) {
-    return const Text("1 day ago");
+    return const Text("");
   }
 }

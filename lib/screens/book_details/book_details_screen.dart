@@ -244,7 +244,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           children: [
             Text(
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              "Reviews  |  ${bookSummary.rating}",
+              "Reviews  |  ${bookSummary.rating}★",
             ),
             IconButton(
               onPressed: (addReview), 
