@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
+import 'package:bookworms_app/services/services_shared.dart';
 import 'mocks/http_client_test.mocks.dart';
 
 void main() {
@@ -21,7 +22,7 @@ void main() {
       final mockZipResponse = createMockZipFile(1);
 
       when(mockClient.post(
-        Uri.parse('http://10.0.2.2:5247/books/covers'),
+        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response.bytes(mockZipResponse, 200));
@@ -37,7 +38,7 @@ void main() {
       final mockZipResponse = createMockZipFile(5);
 
       when(mockClient.post(
-        Uri.parse('http://10.0.2.2:5247/books/covers'),
+        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response.bytes(mockZipResponse, 200));
@@ -51,7 +52,7 @@ void main() {
 
     test('throws an exception if the http call fails', () async {
       when(mockClient.post(
-        Uri.parse('http://10.0.2.2:5247/books/covers'),
+        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response('Not Found', 404));

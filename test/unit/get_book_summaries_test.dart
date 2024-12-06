@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
+import 'package:bookworms_app/services/services_shared.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
@@ -34,7 +35,7 @@ void main() {
         }
       ]);
       
-      when(mockClient.get(Uri.parse('http://10.0.2.2:5247/search/title?query=test')))
+      when(mockClient.get(Uri.parse('http://${ServicesShared.serverAddress}/search/title?query=test')))
           .thenAnswer((_) async => http.Response(mockResponse, 200));
 
       final result = await bookSummariesService.getBookSummaries('test', 2);
@@ -56,7 +57,7 @@ void main() {
     });
 
     test('throws an exception if the http call fails', () async {
-      when(mockClient.get(Uri.parse('http://10.0.2.2:5247/search/title?query=test')))
+      when(mockClient.get(Uri.parse('http://${ServicesShared.serverAddress}/search/title?query=test')))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(() async => await bookSummariesService.getBookSummaries('test', 2), throwsException);

@@ -50,6 +50,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         title: Text(bookSummary.title, style: const TextStyle(color: Colors.white, overflow: TextOverflow.ellipsis)),
         backgroundColor: Colors.green[800],
         leading: IconButton(
+          color: Colors.white,
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
@@ -248,7 +249,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           children: [
             Text(
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              "Reviews  |  ${bookSummary.rating}",
+              "Reviews  |  ${bookSummary.rating}★",
             ),
             IconButton(
               onPressed: (addReview), 

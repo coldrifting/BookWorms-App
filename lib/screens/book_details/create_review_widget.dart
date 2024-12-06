@@ -1,5 +1,6 @@
 import 'package:bookworms_app/services/book_reviews_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class CreateReviewWidget extends StatefulWidget {
   final String bookId;
@@ -22,7 +23,8 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
     if (_formKey.currentState?.validate() ?? false) {
       BookReviewsService bookReviewsService = BookReviewsService();
       bookReviewsService.sendReview(widget.bookId, _content, _rating);
-      Navigator.of(context).pop();  
+      _rating = 0.0;
+      Navigator.of(context).pop();
     }
   }
 
@@ -53,22 +55,26 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
     );
   }
 
+  /// The user can select the number of stars they rate the book.
   Widget _reviewStarRating() {
-    return Column(
-      children: [
-        Text('Rating: ${_rating.toStringAsFixed(1)} / 5.0'),
-        Slider(
-          value: _rating,
-          min: 0.0,
-          max: 5.0,
-          divisions: 10,
-          onChanged: (value) {
-            setState(() {
-              _rating = value;
-            });
-          },
+    return Center(
+      child: RatingBar.builder(
+        glow: false,
+        direction: Axis.horizontal,
+        allowHalfRating: true,
+        minRating: 0.5,
+        itemCount: 5,
+        itemPadding: const EdgeInsets.symmetric(horizontal: 3.0),
+        itemBuilder: (context, _) => const Icon(
+          Icons.star,
+          color: Colors.amber,
         ),
-      ]
+        onRatingUpdate: (rating) {  
+          setState(() {
+            _rating = rating;
+          });
+        },
+      ),
     );
   }
 

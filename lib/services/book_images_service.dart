@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:bookworms_app/services/services_shared.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:archive/archive.dart';
@@ -13,7 +14,7 @@ class BookImagesService {
 // Retrieve and decode the book images of the book ids from the server.
   Future<List<Image>> getBookImages(List<String> bookIds) async {
     final response = await client.post(
-      Uri.parse('http://10.0.2.2:5247/books/covers'),
+      Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
