@@ -1,3 +1,4 @@
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 /// The [OptionWidget] displays a selectable box with an icon and name.
@@ -16,8 +17,8 @@ class OptionWidget extends StatelessWidget {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        border: Border.all(color: Colors.grey[800] ?? Colors.black),
+        color: COLOR_LGREY,
+        border: Border.all(color: COLOR_DGREY ?? COLOR_BLACK),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Padding(

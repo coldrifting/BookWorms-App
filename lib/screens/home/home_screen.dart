@@ -1,5 +1,6 @@
 //import 'package:bookworms_app/models/BookSummary.dart';
 import 'package:bookworms_app/screens/home/bookshelf_widget.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 // Books used for the demo
 import 'package:bookworms_app/demo_books.dart';
@@ -21,8 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       // Home app bar
       appBar: AppBar(
-        title: const Text("Johnny's Home", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green[800],
+        title: const Text("Johnny's Home", style: TextStyle(color: COLOR_WHITE)),
+        backgroundColor: COLOR_GREEN,
       ),
       // Bookshelves list
       body: ListView(
@@ -47,10 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: COLOR_WHITE,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: COLOR_BLACK.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),

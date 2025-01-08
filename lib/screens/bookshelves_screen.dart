@@ -1,3 +1,4 @@
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
@@ -17,8 +18,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Johnny's Bookshelves", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green[800],
+        title: const Text("Johnny's Bookshelves", style: TextStyle(color: COLOR_WHITE)),
+        backgroundColor: COLOR_GREEN,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -85,8 +86,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   Widget _createBookshelfWidget() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        border: Border.all(color: Colors.grey[800] ?? Colors.black),
+        color: COLOR_LGREY,
+        border: Border.all(color: COLOR_DGREY ?? COLOR_BLACK),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -111,7 +112,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     return Container(
       decoration: BoxDecoration(
         color: mainColor,
-        border: Border.all(color: accentColor ?? Colors.black),
+        border: Border.all(color: accentColor ?? COLOR_BLACK),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

@@ -1,5 +1,6 @@
 import 'package:bookworms_app/models/user_review.dart';
 import 'package:bookworms_app/icons/user_icons.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 /// The [ReviewWidget] captures a single user corresponding to a specific
@@ -17,15 +18,15 @@ class ReviewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: COLOR_WHITE,
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
+            color: COLOR_GREY.withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 5,
           ),
-        ], // Rounded corners
+        ],
       ),
       child: Column(
         children: [
@@ -62,7 +63,7 @@ class ReviewWidget extends StatelessWidget {
   Widget _buildStarRating(double rating) {
     // The star size and color is reused, but the icon differs.
     Widget buildStarIcon(IconData data) {
-      return Icon(data, size: 14, color: Colors.amber);
+      return Icon(data, size: 14, color: COLOR_YELLOW);
     }
 
     return Row(children: 
@@ -114,7 +115,7 @@ class ReviewWidget extends StatelessWidget {
   Widget _buildRole() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: COLOR_LGREY,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Padding(

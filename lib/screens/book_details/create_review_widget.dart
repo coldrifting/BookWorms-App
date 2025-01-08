@@ -1,4 +1,5 @@
 import 'package:bookworms_app/services/book_reviews_service.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -67,7 +68,7 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
         itemPadding: const EdgeInsets.symmetric(horizontal: 3.0),
         itemBuilder: (context, _) => const Icon(
           Icons.star,
-          color: Colors.amber,
+          color: COLOR_YELLOW,
         ),
         onRatingUpdate: (rating) {  
           setState(() {

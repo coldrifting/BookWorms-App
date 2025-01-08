@@ -1,4 +1,5 @@
 import 'package:bookworms_app/icons/user_icons.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +17,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {  
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Parent Profile", style: TextStyle(color: Colors.white)),
+        title: const Text("Parent Profile", style: TextStyle(color: COLOR_WHITE)),
         centerTitle: true,
-        backgroundColor: Colors.green[800],
+        backgroundColor: COLOR_GREEN,
       ),
       body: Column(
         children: [
@@ -26,10 +27,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 180,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.green[800],
+              color: COLOR_GREEN,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.4),
+                  color: COLOR_BLACK.withOpacity(0.4),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 3),
@@ -49,11 +50,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: UserIcons.getIcon("")
                 ),
                 const Text(
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(color: COLOR_WHITE, fontSize: 20),
                   "Audrey Hepburn"
                 ),
                 const Text(
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                  style: TextStyle(color: COLOR_WHITE, fontSize: 14),
                   "@AudHep"
                 ),
               ],

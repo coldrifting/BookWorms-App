@@ -2,6 +2,7 @@ import 'package:bookworms_app/screens/book_details/create_review_widget.dart';
 import 'package:bookworms_app/screens/book_details/review_widget.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 /// The [BookDetailsScreen] contains detailed information regarding a
@@ -47,10 +48,10 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     return Scaffold(
       // Book details app bar
       appBar: AppBar(
-        title: Text(bookSummary.title, style: const TextStyle(color: Colors.white, overflow: TextOverflow.ellipsis)),
-        backgroundColor: Colors.green[800],
+        title: Text(bookSummary.title, style: const TextStyle(color: COLOR_WHITE, overflow: TextOverflow.ellipsis)),
+        backgroundColor: COLOR_GREEN,
         leading: IconButton(
-          color: Colors.white,
+          color: COLOR_WHITE,
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
@@ -160,7 +161,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             maxLines: isExpanded ? null : 5,
             overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             text: TextSpan(
-              style: const TextStyle(color: Colors.black, fontSize: 16.0),
+              style: const TextStyle(color: COLOR_BLACK, fontSize: 16.0),
               children: <TextSpan>[
                 if (bookDetails.description.isNotEmpty) ...[
                   const TextSpan(
