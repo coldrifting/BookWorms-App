@@ -17,8 +17,8 @@ class OptionWidget extends StatelessWidget {
     return Container(
       height: 100,
       decoration: BoxDecoration(
-        color: COLOR_LGREY,
-        border: Border.all(color: COLOR_DGREY ?? COLOR_BLACK),
+        color: COLOR_GREY_L,
+        border: Border.all(color: COLOR_GREY_D ?? COLOR_BLACK),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Padding(

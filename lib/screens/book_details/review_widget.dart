@@ -115,7 +115,7 @@ class ReviewWidget extends StatelessWidget {
   Widget _buildRole() {
     return Container(
       decoration: BoxDecoration(
-        color: COLOR_LGREY,
+        color: COLOR_GREY_L,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Padding(

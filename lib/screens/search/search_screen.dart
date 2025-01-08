@@ -286,7 +286,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: TextButton(
                     onPressed: _onShowMorePressed, 
                     style: TextButton.styleFrom(
-                      foregroundColor: COLOR_DGREY,
+                      foregroundColor: COLOR_GREY_D,
                     ),
                     child: const Text("Show More"),
                   ),
