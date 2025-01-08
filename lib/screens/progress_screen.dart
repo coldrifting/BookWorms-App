@@ -1,4 +1,5 @@
 import 'package:bookworms_app/icons/user_icons.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -17,8 +18,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget build(BuildContext context) { 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Johnny's Progress", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green[800],
+        title: const Text("Johnny's Progress", style: TextStyle(color: COLOR_WHITE)),
+        backgroundColor: COLOR_GREEN,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

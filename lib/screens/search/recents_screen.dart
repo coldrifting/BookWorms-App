@@ -1,5 +1,6 @@
 import 'package:bookworms_app/demo_books.dart';
 import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -31,9 +32,9 @@ class _RecentsScreenState extends State<RecentsScreen> {
                 Tab(text: "Recents"),
                 Tab(text: "Advanced Search"),
               ],
-              labelColor: Colors.green[800],
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.green[800],
+              labelColor: COLOR_GREEN,
+              unselectedLabelColor: COLOR_GREY,
+              indicatorColor: COLOR_GREEN,
             ),
             Expanded(
               child: TabBarView(
@@ -68,7 +69,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
               ),
             ),
             const Divider(
-              color: Colors.grey,
+              color: COLOR_GREY,
             )
           ],
         );
@@ -99,7 +100,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
                 searchResult.title
               ),
               Text(
-                style: const TextStyle(color: Colors.black54, fontSize: 14),
+                style: const TextStyle(color: COLOR_BLACK, fontSize: 14),
                 overflow: TextOverflow.ellipsis,
                 searchResult.authors.isNotEmpty 
                 ? searchResult.authors.map((author) => author).join(', ')

@@ -1,4 +1,5 @@
 import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -23,10 +24,10 @@ class BookshelfWidget extends StatelessWidget {
       height: 335,
       // Bookshelf shadow
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: COLOR_WHITE,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: COLOR_BLACK.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),

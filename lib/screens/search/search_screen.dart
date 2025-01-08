@@ -7,6 +7,7 @@ import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 /// The [SearchScreen] displays a search bar and a scrollable list of 
@@ -159,7 +160,7 @@ class _SearchScreenState extends State<SearchScreen> {
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen();
     } else {
-       mainContent = Center(
+       mainContent = const Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -167,15 +168,15 @@ class _SearchScreenState extends State<SearchScreen> {
         Icon(
           Icons.search_off,
           size: 50.0,
-          color: Colors.grey[500],
+          color: COLOR_GREY,
         ),
-        const SizedBox(height: 8),
-        const Text(
+        SizedBox(height: 8),
+        Text(
           "No Results",
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.grey,
+            color: COLOR_GREY,
           ),
         ),
       ],
@@ -185,8 +186,8 @@ class _SearchScreenState extends State<SearchScreen> {
   
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Search", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green[800],
+        title: const Text("Search", style: TextStyle(color: COLOR_WHITE)),
+        backgroundColor: COLOR_GREEN,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -228,7 +229,7 @@ class _SearchScreenState extends State<SearchScreen> {
               TextButton(
                 onPressed: _onCancelPressed,
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.black,
+                  foregroundColor: COLOR_BLACK,
                 ),
                 child: const Text("Cancel"),
               ),
@@ -274,7 +275,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               const Divider(
-                color: Colors.grey,
+                color: COLOR_GREY,
               )
             ],
           );
@@ -285,7 +286,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: TextButton(
                     onPressed: _onShowMorePressed, 
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey[700],
+                      foregroundColor: COLOR_GREY_D,
                     ),
                     child: const Text("Show More"),
                   ),

@@ -3,6 +3,7 @@ import 'package:bookworms_app/screens/bookshelves_screen.dart';
 import 'package:bookworms_app/screens/home/home_screen.dart';
 import 'package:bookworms_app/screens/profile_screen.dart';
 import 'package:bookworms_app/screens/progress_screen.dart';
+import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -79,7 +80,7 @@ class _Navigation extends State<Navigation> {
   /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs.
   Widget navigationBar() {
     return NavigationBar(
-      backgroundColor: Colors.green[800],
+      backgroundColor: COLOR_GREEN,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
       selectedIndex: selectedIndex,
       onDestinationSelected: (int index) {
@@ -90,27 +91,27 @@ class _Navigation extends State<Navigation> {
       destinations: const <NavigationDestination>[
         NavigationDestination(
           selectedIcon: Icon(Icons.home), 
-          icon: Icon(Icons.home_outlined, color: Colors.white), 
+          icon: Icon(Icons.home_outlined, color: COLOR_WHITE), 
           label: "Home"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-          icon: Icon(Icons.collections_bookmark_outlined, color: Colors.white), 
+          icon: Icon(Icons.collections_bookmark_outlined, color: COLOR_WHITE), 
           label: "Bookshelf"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.search_rounded), 
-          icon: Icon(Icons.search_outlined, color: Colors.white), 
+          icon: Icon(Icons.search_outlined, color: COLOR_WHITE), 
           label: "Search"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.show_chart), 
-          icon: Icon(Icons.show_chart, color: Colors.white), 
+          icon: Icon(Icons.show_chart, color: COLOR_WHITE), 
           label: "Progress"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.account_circle_rounded), 
-          icon: Icon(Icons.account_circle_outlined, color: Colors.white), 
+          icon: Icon(Icons.account_circle_outlined, color: COLOR_WHITE), 
           label: "Profile"
         ),
       ],
