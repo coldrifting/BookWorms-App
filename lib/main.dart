@@ -3,6 +3,8 @@ import 'package:bookworms_app/screens/bookshelves_screen.dart';
 import 'package:bookworms_app/screens/home/home_screen.dart';
 import 'package:bookworms_app/screens/profile_screen.dart';
 import 'package:bookworms_app/screens/progress_screen.dart';
+import 'package:bookworms_app/screens/welcome_screen.dart';
+import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
@@ -26,8 +28,33 @@ class BookWorms extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
         ),
-        home: const Navigation()
+        home: const SplashScreen()
       ),
+    );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Future.delayed(const Duration(seconds: 2), () async {
+      final token = await getToken();
+      if (token != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Navigation()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+        );
+      }
+    });
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }
