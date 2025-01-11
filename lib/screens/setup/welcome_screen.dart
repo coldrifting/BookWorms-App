@@ -2,6 +2,8 @@ import 'package:bookworms_app/screens/setup/login_screen.dart';
 import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
+/// The [WelcomeScreen] is what the user sees after the splash screen if they are
+/// not already logged in. It provides the option to either "login" or "register".
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -9,6 +11,7 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
+/// The state of the [WelcomeScreen].
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {

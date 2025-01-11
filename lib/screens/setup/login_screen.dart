@@ -35,46 +35,49 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // Username text field
-          TextField(
-            controller: _usernameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter username'
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Username text field
+            TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter username'
+              ),
             ),
-          ),
-          // Password text field
-          TextField(
-            obscureText: true,
-            controller: _passwordController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter password'
+            const SizedBox(height: 16),
+            // Password text field
+            TextField(
+              obscureText: true,
+              controller: _passwordController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter password'
+              ),
             ),
-          ),
-          // "LOGIN" button
-          TextButton(
-            onPressed: () {
-              setState(() {
-                // Attempt to log in the user with the provided credentials.
-                _loginService.loginUser(_usernameController.text, _passwordController.text);
-
-                // Navigate to the home screen.
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const Navigation()),
-                );
-              });
-            },
-            child: const Text('LOGIN'),
-          ),
-        ],
+            const SizedBox(height: 16),
+            // "LOGIN" button
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  // Attempt to log in the user with the provided credentials.
+                  _loginService.loginUser(_usernameController.text, _passwordController.text);
+        
+                  // Navigate to the home screen.
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const Navigation()),
+                  );
+                });
+              },
+              child: const Text('LOGIN'),
+            ),
+          ],
+        ),
       ),
     );
   }
-
-
-
 }
