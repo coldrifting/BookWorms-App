@@ -1,6 +1,7 @@
 import 'package:bookworms_app/models/user_review.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [ReviewWidget] captures a single user corresponding to a specific
@@ -16,6 +17,8 @@ class ReviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Container(
       decoration: BoxDecoration(
         color: colorWhite,
@@ -34,8 +37,8 @@ class ReviewWidget extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                _buildHeader(),
-                const SizedBox(height: 6),
+                _buildHeader(textTheme),
+                addVerticalSpace(6),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -80,7 +83,7 @@ class ReviewWidget extends StatelessWidget {
   }
 
   /// The review header containing icon, username, star rating, role, and date.
-  Widget _buildHeader() {
+  Widget _buildHeader(TextTheme textTheme) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -88,21 +91,18 @@ class ReviewWidget extends StatelessWidget {
         Row(
           children: [
             UserIcons.getIcon(review.icon),
-            const SizedBox(width: 5),
+            addHorizontalSpace(5),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   review.firstName,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: textTheme.titleSmall,
                 ),
                 _buildStarRating(review.starRating),
               ],
             ),
-            const SizedBox(width: 20),
+            addHorizontalSpace(20),
             _buildRole(),
           ],
         ),

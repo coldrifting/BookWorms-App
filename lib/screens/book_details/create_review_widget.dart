@@ -1,5 +1,6 @@
 import 'package:bookworms_app/services/book_reviews_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -47,7 +48,7 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _reviewStarRating(),
-              const SizedBox(height: 16.0),
+              addVerticalSpace(16),
               _reviewContent(),
             ],
           ),

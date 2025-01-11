@@ -1,6 +1,7 @@
 import 'package:bookworms_app/screens/setup/login_screen.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [WelcomeScreen] is what the user sees after the splash screen if they are
@@ -16,24 +17,24 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: Container(
-        color: colorGreen,
+        decoration: _gradient(),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
                 "BookWorms",
-                style: themeData.textTheme.headlineLargeWhite,
+                style: textTheme.displaySmallWhite,
               ),
               Text(
                 "Discover stories that inspire.\nStart exploring today!",
                 textAlign: TextAlign.center,
-                style: themeData.textTheme.bodyLargeWhite,
+                style: textTheme.bodyLargeWhite,
               ),
-              const SizedBox(height: 32),
+              addVerticalSpace(32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -51,7 +52,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       "LOGIN",
                       )
                   ),
-                  const SizedBox(width: 32),
+                  addHorizontalSpace(32),
                   TextButton(
                     onPressed: () => {}, 
                     style: TextButton.styleFrom(
@@ -63,10 +64,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 64),
+              addVerticalSpace(64),
           ],),
         ),
       )
+    );
+  }
+
+  BoxDecoration _gradient() {
+    return const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment(0.8, 1),
+        colors: <Color>[
+          Color(0xff1f005c),
+          Color(0xff5b0060),
+          Color(0xff870160),
+          Color(0xffac255e),
+          Color(0xffca485c),
+          Color(0xffe16b5c),
+          Color(0xfff39060),
+          Color(0xffffb56b),
+        ],
+      ),
     );
   }
 }

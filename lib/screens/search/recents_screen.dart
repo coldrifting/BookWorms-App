@@ -1,6 +1,7 @@
 import 'package:bookworms_app/demo_books.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -87,7 +88,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
     return Row(
       children: [
         bookImage,
-        const SizedBox(width: 24.0),
+        addHorizontalSpace(24),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

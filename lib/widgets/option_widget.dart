@@ -1,4 +1,5 @@
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [OptionWidget] displays a selectable box with an icon and name.
@@ -29,7 +30,7 @@ class OptionWidget extends StatelessWidget {
               size: 48,
               icon
             ),
-            const SizedBox(width: 16),
+            addHorizontalSpace(16),
             Text(
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               name

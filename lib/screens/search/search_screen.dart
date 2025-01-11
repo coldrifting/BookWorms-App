@@ -8,6 +8,7 @@ import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [SearchScreen] displays a search bar and a scrollable list of 
@@ -160,28 +161,28 @@ class _SearchScreenState extends State<SearchScreen> {
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen();
     } else {
-       mainContent = const Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.search_off,
-          size: 50.0,
-          color: colorGrey,
+      mainContent = Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.search_off,
+              size: 50.0,
+              color: colorGrey,
+            ),
+            addVerticalSpace(8),
+            const Text(
+              "No Results",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: colorGrey,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 8),
-        Text(
-          "No Results",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colorGrey,
-          ),
-        ),
-      ],
-    ),
-  );
+      );
     }
   
     return Scaffold(
@@ -193,9 +194,9 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           children: [
-            const SizedBox(height: 8),
+            addVerticalSpace(8),
             searchBar(),
-            const SizedBox(height: 8),
+            addVerticalSpace(8),
             Expanded(
               child: mainContent
             ),
@@ -225,7 +226,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (_isInActiveSearch)
           Row(
             children: [
-              const SizedBox(width: 8.0),
+              addVerticalSpace(8),
               TextButton(
                 onPressed: _onCancelPressed,
                 style: TextButton.styleFrom(
@@ -306,7 +307,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Row(
       children: [
         bookImage,
-        const SizedBox(width: 24.0),
+        addHorizontalSpace(24),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

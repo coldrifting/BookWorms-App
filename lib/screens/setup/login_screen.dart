@@ -1,4 +1,5 @@
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/services/account/login_service.dart';
 
@@ -48,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintText: 'Enter username'
               ),
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             // Password text field
             TextField(
               obscureText: true,
@@ -58,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintText: 'Enter password'
               ),
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             // "LOGIN" button
             TextButton(
               onPressed: () {

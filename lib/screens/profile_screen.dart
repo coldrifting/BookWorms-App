@@ -1,5 +1,6 @@
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -60,20 +61,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                SizedBox(height: 10),
-                OptionWidget(name: "Edit Profile", icon: Icons.account_circle),
-                SizedBox(height: 10),
-                OptionWidget(name: "Manage Children", icon: Icons.groups_rounded),
-                SizedBox(height: 10),
-                OptionWidget(name: "Settings", icon: Icons.settings),
-                SizedBox(height: 10),
-                Divider(),
-                SizedBox(height: 10),
-                OptionWidget(name: "Log Out", icon: Icons.logout_outlined),
+                addVerticalSpace(10),
+                const OptionWidget(name: "Edit Profile", icon: Icons.account_circle),
+                addVerticalSpace(10),
+                const OptionWidget(name: "Manage Children", icon: Icons.groups_rounded),
+                addVerticalSpace(10),
+                const OptionWidget(name: "Settings", icon: Icons.settings),
+                addVerticalSpace(10),
+                const Divider(),
+                addVerticalSpace(10),
+                const OptionWidget(name: "Log Out", icon: Icons.logout_outlined),
               ],
             ),
           ),

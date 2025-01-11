@@ -1,3 +1,4 @@
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [BrowseScreen] contains a few options for browsing by a specific keyword.
@@ -25,13 +26,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
               "Browse By"
             ),
             _selectOption("Reading Level"),
-            const SizedBox(height: 10),
+            addVerticalSpace(10),
             _selectOption("Topic"),
-            const SizedBox(height: 10),
+            addVerticalSpace(10),
             _selectOption("Theme"),
-            const SizedBox(height: 10),
+            addVerticalSpace(10),
             _selectOption("Most Popular"),
-            const SizedBox(height: 10),
+            addVerticalSpace(10),
             _selectOption("Highest Rated"),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
@@ -25,9 +26,9 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
           children: [
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             _createBookshelfWidget(),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             _bookshelfWidget(
               "Recommended Books",
               [Demo.image1, Demo.image2, Demo.image3],
@@ -35,7 +36,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               Colors.yellow[200],
               Colors.yellow[800]
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             _bookshelfWidget(
               "Ms. Wilson's Class Reading List",
               [Demo.image4, Demo.image5, Demo.image6],
@@ -43,7 +44,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               Colors.red[200],
               Colors.red[800]
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             _bookshelfWidget(
               "Currently Reading",
               [Demo.image6, Demo.image8, Demo.image9],
@@ -51,7 +52,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               Colors.blue[200],
               Colors.blue[800]
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             _bookshelfWidget(
               "Completed Books",
               [Demo.image5, Demo.image10, Demo.image4],
@@ -59,7 +60,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               Colors.green[200],
               Colors.green[800]
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             _bookshelfWidget(
               "Animals",
               [Demo.image2, Demo.image5, Demo.image6],
@@ -67,7 +68,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               Colors.grey[200],
               Colors.grey[800]
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             _bookshelfWidget(
               "Fairytales",
               [Demo.image8, Demo.image9, Demo.image7],
@@ -75,7 +76,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               Colors.grey[200],
               Colors.grey[800]
             ),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
           ],
         ),
       ),
@@ -97,7 +98,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             onPressed: () => {}, 
             icon: const Icon(Icons.add)
           ),
-          const SizedBox(width: 10),
+          addHorizontalSpace(10),
           const Text(
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             "Create New Bookshelf"
