@@ -1,5 +1,4 @@
-import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/screens/home/home_screen.dart';
+import 'package:bookworms_app/screens/setup/login_screen.dart';
 import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +37,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     onPressed: () => {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const Navigation()),
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
                       )
                     }, 
                     style: TextButton.styleFrom(
