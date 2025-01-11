@@ -3,7 +3,7 @@ import 'package:bookworms_app/screens/bookshelves_screen.dart';
 import 'package:bookworms_app/screens/home/home_screen.dart';
 import 'package:bookworms_app/screens/profile_screen.dart';
 import 'package:bookworms_app/screens/progress_screen.dart';
-import 'package:bookworms_app/screens/welcome_screen.dart';
+import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +24,10 @@ class BookWorms extends StatelessWidget {
       create: (context) => AppState(),
       child: MaterialApp(
         title: 'BookWorms',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-          useMaterial3: true,
+        theme: ThemeData(primaryColor: colorBlack, 
+          textTheme: textThemeDefault, 
+          fontFamily: "Montserrat", 
+          useMaterial3: true
         ),
         home: const SplashScreen()
       ),
@@ -34,28 +35,46 @@ class BookWorms extends StatelessWidget {
   }
 }
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _tokenNavigate();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 2), () async {
-      final token = await getToken();
-      if (token != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Navigation()),
-        );
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Future<void> _tokenNavigate() async {
+    final splashDelay = Future.delayed(const Duration(seconds: 2));
+    var token = getToken();
+
+    final results = await Future.wait([splashDelay, token]);
+
+    if (mounted) {
+      if (results[1] != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Navigation()),
+      );
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const WelcomeScreen()),
         );
       }
-    });
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    }
   }
 }
 
@@ -107,7 +126,7 @@ class _Navigation extends State<Navigation> {
   /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs.
   Widget navigationBar() {
     return NavigationBar(
-      backgroundColor: COLOR_GREEN,
+      backgroundColor: colorGreen,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
       selectedIndex: selectedIndex,
       onDestinationSelected: (int index) {
@@ -118,27 +137,27 @@ class _Navigation extends State<Navigation> {
       destinations: const <NavigationDestination>[
         NavigationDestination(
           selectedIcon: Icon(Icons.home), 
-          icon: Icon(Icons.home_outlined, color: COLOR_WHITE), 
+          icon: Icon(Icons.home_outlined, color: colorWhite), 
           label: "Home"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-          icon: Icon(Icons.collections_bookmark_outlined, color: COLOR_WHITE), 
+          icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
           label: "Bookshelf"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.search_rounded), 
-          icon: Icon(Icons.search_outlined, color: COLOR_WHITE), 
+          icon: Icon(Icons.search_outlined, color: colorWhite), 
           label: "Search"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.show_chart), 
-          icon: Icon(Icons.show_chart, color: COLOR_WHITE), 
+          icon: Icon(Icons.show_chart, color: colorWhite), 
           label: "Progress"
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.account_circle_rounded), 
-          icon: Icon(Icons.account_circle_outlined, color: COLOR_WHITE), 
+          icon: Icon(Icons.account_circle_outlined, color: colorWhite), 
           label: "Profile"
         ),
       ],

@@ -48,10 +48,10 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     return Scaffold(
       // Book details app bar
       appBar: AppBar(
-        title: Text(bookSummary.title, style: const TextStyle(color: COLOR_WHITE, overflow: TextOverflow.ellipsis)),
-        backgroundColor: COLOR_GREEN,
+        title: Text(bookSummary.title, style: const TextStyle(color: colorWhite, overflow: TextOverflow.ellipsis)),
+        backgroundColor: colorGreen,
         leading: IconButton(
-          color: COLOR_WHITE,
+          color: colorWhite,
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pop();
@@ -161,7 +161,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             maxLines: isExpanded ? null : 5,
             overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             text: TextSpan(
-              style: const TextStyle(color: COLOR_BLACK, fontSize: 16.0),
+              style: const TextStyle(color: colorBlack, fontSize: 16.0),
               children: <TextSpan>[
                 if (bookDetails.description.isNotEmpty) ...[
                   const TextSpan(

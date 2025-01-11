@@ -32,9 +32,9 @@ class _RecentsScreenState extends State<RecentsScreen> {
                 Tab(text: "Recents"),
                 Tab(text: "Advanced Search"),
               ],
-              labelColor: COLOR_GREEN,
-              unselectedLabelColor: COLOR_GREY,
-              indicatorColor: COLOR_GREEN,
+              labelColor: colorGreen,
+              unselectedLabelColor: colorGrey,
+              indicatorColor: colorGreen,
             ),
             Expanded(
               child: TabBarView(
@@ -69,7 +69,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
               ),
             ),
             const Divider(
-              color: COLOR_GREY,
+              color: colorGrey,
             )
           ],
         );
@@ -100,7 +100,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
                 searchResult.title
               ),
               Text(
-                style: const TextStyle(color: COLOR_BLACK, fontSize: 14),
+                style: const TextStyle(color: colorBlack, fontSize: 14),
                 overflow: TextOverflow.ellipsis,
                 searchResult.authors.isNotEmpty 
                 ? searchResult.authors.map((author) => author).join(', ')
