@@ -168,7 +168,7 @@ class _SearchScreenState extends State<SearchScreen> {
         Icon(
           Icons.search_off,
           size: 50.0,
-          color: COLOR_GREY,
+          color: colorGrey,
         ),
         SizedBox(height: 8),
         Text(
@@ -176,7 +176,7 @@ class _SearchScreenState extends State<SearchScreen> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: COLOR_GREY,
+            color: colorGrey,
           ),
         ),
       ],
@@ -186,8 +186,8 @@ class _SearchScreenState extends State<SearchScreen> {
   
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Search", style: TextStyle(color: COLOR_WHITE)),
-        backgroundColor: COLOR_GREEN,
+        title: const Text("Search", style: TextStyle(color: colorWhite)),
+        backgroundColor: colorGreen,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -229,7 +229,7 @@ class _SearchScreenState extends State<SearchScreen> {
               TextButton(
                 onPressed: _onCancelPressed,
                 style: TextButton.styleFrom(
-                  foregroundColor: COLOR_BLACK,
+                  foregroundColor: colorBlack,
                 ),
                 child: const Text("Cancel"),
               ),
@@ -275,7 +275,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               const Divider(
-                color: COLOR_GREY,
+                color: colorGrey,
               )
             ],
           );
@@ -286,7 +286,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: TextButton(
                     onPressed: _onShowMorePressed, 
                     style: TextButton.styleFrom(
-                      foregroundColor: COLOR_GREY_D,
+                      foregroundColor: colorGreyDark,
                     ),
                     child: const Text("Show More"),
                   ),

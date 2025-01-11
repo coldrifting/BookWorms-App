@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:bookworms_app/models/account.dart';
+import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/services/services_shared.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,7 +8,7 @@ class RegisterService {
 
   RegisterService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<Account> register(String username, String password, String name, String email) async {
+  Future<void> register(String username, String password, String firstName, String lastName) async {
     final response = await client.post(
       Uri.parse('http://${ServicesShared.serverAddress}/user/register'),
       headers: {
@@ -18,13 +18,13 @@ class RegisterService {
       body: json.encode({
         "username": username,
         "password": password,
-        "name": name,
-        "email": email
+        "firstName": firstName,
+        "lastName": lastName
       })
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      return Account.fromJson(data);
+      saveToken(data["token"]);
     } else {
       throw Exception('An error occurred when registering the user.');
     }

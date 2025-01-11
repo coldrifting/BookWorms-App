@@ -22,8 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       // Home app bar
       appBar: AppBar(
-        title: const Text("Johnny's Home", style: TextStyle(color: COLOR_WHITE)),
-        backgroundColor: COLOR_GREEN,
+        title: const Text("Johnny's Home", style: TextStyle(color: colorWhite)),
+        backgroundColor: colorGreen,
       ),
       // Bookshelves list
       body: ListView(
@@ -48,10 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: COLOR_WHITE,
+        color: colorWhite,
         boxShadow: [
           BoxShadow(
-            color: COLOR_BLACK.withOpacity(0.2),
+            color: colorBlack.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),

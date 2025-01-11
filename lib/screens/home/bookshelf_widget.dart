@@ -24,10 +24,10 @@ class BookshelfWidget extends StatelessWidget {
       height: 335,
       // Bookshelf shadow
       decoration: BoxDecoration(
-        color: COLOR_WHITE,
+        color: colorWhite,
         boxShadow: [
           BoxShadow(
-            color: COLOR_BLACK.withOpacity(0.2),
+            color: colorBlack.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),

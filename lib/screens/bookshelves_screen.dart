@@ -18,8 +18,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Johnny's Bookshelves", style: TextStyle(color: COLOR_WHITE)),
-        backgroundColor: COLOR_GREEN,
+        title: const Text("Johnny's Bookshelves", style: TextStyle(color: colorWhite)),
+        backgroundColor: colorGreen,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -86,8 +86,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   Widget _createBookshelfWidget() {
     return Container(
       decoration: BoxDecoration(
-        color: COLOR_GREY_L,
-        border: Border.all(color: COLOR_GREY_D ?? COLOR_BLACK),
+        color: colorGreyLight,
+        border: Border.all(color: colorGreyDark ?? colorBlack),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -112,7 +112,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     return Container(
       decoration: BoxDecoration(
         color: mainColor,
-        border: Border.all(color: accentColor ?? COLOR_BLACK),
+        border: Border.all(color: accentColor ?? colorBlack),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

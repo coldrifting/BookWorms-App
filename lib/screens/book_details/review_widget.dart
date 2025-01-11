@@ -18,11 +18,11 @@ class ReviewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: COLOR_WHITE,
+        color: colorWhite,
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
-            color: COLOR_GREY.withOpacity(0.3),
+            color: colorGrey.withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 5,
           ),
@@ -63,7 +63,7 @@ class ReviewWidget extends StatelessWidget {
   Widget _buildStarRating(double rating) {
     // The star size and color is reused, but the icon differs.
     Widget buildStarIcon(IconData data) {
-      return Icon(data, size: 14, color: COLOR_YELLOW);
+      return Icon(data, size: 14, color: colorYellow);
     }
 
     return Row(children: 
@@ -115,7 +115,7 @@ class ReviewWidget extends StatelessWidget {
   Widget _buildRole() {
     return Container(
       decoration: BoxDecoration(
-        color: COLOR_GREY_L,
+        color: colorGreyLight,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Padding(

@@ -18,8 +18,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget build(BuildContext context) { 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Johnny's Progress", style: TextStyle(color: COLOR_WHITE)),
-        backgroundColor: COLOR_GREEN,
+        title: const Text("Johnny's Progress", style: TextStyle(color: colorWhite)),
+        backgroundColor: colorGreen,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
