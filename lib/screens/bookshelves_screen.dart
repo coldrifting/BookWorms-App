@@ -1,4 +1,4 @@
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/demo_books.dart'; // Books used for the demo

@@ -1,5 +1,6 @@
 import 'package:bookworms_app/screens/setup/login_screen.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 /// The [WelcomeScreen] is what the user sees after the splash screen if they are
@@ -25,12 +26,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             children: [
               Text(
                 "BookWorms",
-                style: themeData.textTheme.headlineMedium,
+                style: themeData.textTheme.headlineLargeWhite,
               ),
               Text(
                 "Discover stories that inspire.\nStart exploring today!",
                 textAlign: TextAlign.center,
-                style: themeData.textTheme.titleSmall,
+                style: themeData.textTheme.bodyLargeWhite,
               ),
               const SizedBox(height: 32),
               Row(

@@ -7,7 +7,7 @@ import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 /// The [SearchScreen] displays a search bar and a scrollable list of 

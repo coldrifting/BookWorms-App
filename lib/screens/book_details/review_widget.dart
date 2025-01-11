@@ -1,6 +1,6 @@
 import 'package:bookworms_app/models/user_review.dart';
-import 'package:bookworms_app/icons/user_icons.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 /// The [ReviewWidget] captures a single user corresponding to a specific

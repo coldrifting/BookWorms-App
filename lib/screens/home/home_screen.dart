@@ -1,6 +1,6 @@
 //import 'package:bookworms_app/models/BookSummary.dart';
 import 'package:bookworms_app/screens/home/bookshelf_widget.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:flutter/material.dart';
 // Books used for the demo
 import 'package:bookworms_app/demo_books.dart';

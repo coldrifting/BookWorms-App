@@ -1,5 +1,5 @@
 import 'package:bookworms_app/services/book_reviews_service.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 

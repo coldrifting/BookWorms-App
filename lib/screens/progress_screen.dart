@@ -1,5 +1,5 @@
-import 'package:bookworms_app/icons/user_icons.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 

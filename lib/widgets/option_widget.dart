@@ -1,4 +1,4 @@
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 /// The [OptionWidget] displays a selectable box with an icon and name.
