@@ -3,6 +3,8 @@ import 'package:bookworms_app/screens/home/home_screen.dart';
 import 'package:bookworms_app/utils/constants.dart';
 import 'package:flutter/material.dart';
 
+import 'register_screen.dart';
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -50,7 +52,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   const SizedBox(width: 32),
                   TextButton(
-                    onPressed: () => {}, 
+                    onPressed: () => {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                      )
+                    }, 
                     style: TextButton.styleFrom(
                       backgroundColor: colorWhite,
                     ),
