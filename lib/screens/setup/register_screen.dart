@@ -1,5 +1,6 @@
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/services/account/register_service.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> register(String username, String password, String firstName, String lastName) async {
     RegisterService registerService = RegisterService();
-    await registerService.register(username, password, firstName, lastName);
+    await registerService.registerUser(username, password, firstName, lastName);
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -48,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              addVerticalSpace(16),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
@@ -60,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              addVerticalSpace(16),
               TextFormField(
                 controller: _firstNameController,
                 decoration: const InputDecoration(labelText: 'First Name'),
@@ -71,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              addVerticalSpace(16),
               TextFormField(
                 controller: _lastNameController,
                 decoration: const InputDecoration(labelText: 'Last Name'),
@@ -82,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 32),
+              addVerticalSpace(32),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {

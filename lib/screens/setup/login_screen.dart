@@ -18,12 +18,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController(); // Username text field
   final TextEditingController _passwordController = TextEditingController(); // Password text field
 
-  late LoginService _loginService;
+  final _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
-    _loginService = LoginService();
+  Future<void> login(String username, String password) async {
+    LoginService loginService = LoginService();
+
+    // Attempt to log in the user with the provided credentials.
+    await loginService.loginUser(username, password);
+    if (mounted) {
+      // Navigate to the home screen.
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const Navigation()),
+      );
+    }
   }
 
   @override
@@ -38,45 +46,55 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Username text field
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter username'
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Username text field
+              TextFormField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter username'
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a username';
+                  }
+                  return null;
+                },
               ),
-            ),
-            addVerticalSpace(16),
-            // Password text field
-            TextField(
-              obscureText: true,
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter password'
+              addVerticalSpace(16),
+              // Password text field
+              TextFormField(
+                obscureText: true,
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter password'
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  return null;
+                },
               ),
-            ),
-            addVerticalSpace(16),
-            // "LOGIN" button
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  // Attempt to log in the user with the provided credentials.
-                  _loginService.loginUser(_usernameController.text, _passwordController.text);
-        
-                  // Navigate to the home screen.
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const Navigation()),
-                  );
-                });
-              },
-              child: const Text('LOGIN'),
-            ),
-          ],
+              addVerticalSpace(16),
+              // "LOGIN" button
+              TextButton(
+                onPressed: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    final username = _usernameController.text;
+                    final password = _passwordController.text;
+                    login(username, password);
+                  }
+                },
+                child: const Text('LOGIN'),
+              ),
+            ],
+          ),
         ),
       ),
     );
