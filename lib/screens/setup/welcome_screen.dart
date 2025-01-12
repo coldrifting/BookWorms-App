@@ -4,6 +4,8 @@ import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
+import 'register_screen.dart';
+
 /// The [WelcomeScreen] is what the user sees after the splash screen if they are
 /// not already logged in. It provides the option to either "login" or "register".
 class WelcomeScreen extends StatefulWidget {
@@ -54,7 +56,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   addHorizontalSpace(32),
                   TextButton(
-                    onPressed: () => {}, 
+                    onPressed: () => {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                      )
+                    }, 
                     style: TextButton.styleFrom(
                       backgroundColor: colorWhite,
                     ),
