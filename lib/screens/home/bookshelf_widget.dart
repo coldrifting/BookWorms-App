@@ -1,5 +1,5 @@
 import 'package:bookworms_app/models/book_summary.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +20,7 @@ class BookshelfWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       height: 335,
       // Bookshelf shadow
@@ -43,7 +44,7 @@ class BookshelfWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 16.0),
               // Bookshelf name
               child: Text(
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: textTheme.titleLarge,
                 name,
               ),
             ),
@@ -52,13 +53,13 @@ class BookshelfWidget extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _bookPreview(image: images[0], book: books[0]),
+                  _bookPreview(image: images[0], book: books[0], textTheme: textTheme),
                   const VerticalDivider(),
-                  _bookPreview(image: images[1], book: books[1]),
+                  _bookPreview(image: images[1], book: books[1], textTheme: textTheme),
                   const VerticalDivider(),
-                  _bookPreview(image: images[2], book: books[2]),
+                  _bookPreview(image: images[2], book: books[2], textTheme: textTheme),
                   const VerticalDivider(),
-                  _bookPreview(image: images[3], book: books[3]),
+                  _bookPreview(image: images[3], book: books[3], textTheme: textTheme),
                 ],
               ),
             ),
@@ -70,7 +71,7 @@ class BookshelfWidget extends StatelessWidget {
 
   /// Displays book summary information with the book cover, title, author, 
   /// rating, and difficulty.
-  Widget _bookPreview({required String image, required BookSummary book}) {
+  Widget _bookPreview({required String image, required BookSummary book, required TextTheme textTheme}) {
     var difficulty = book.difficulty.isEmpty ? "N/A" : book.difficulty;
     var rating = book.rating == 0 ? "Unrated" : "${book.rating}★";
 
@@ -115,7 +116,7 @@ class BookshelfWidget extends StatelessWidget {
                 // Book rating and difficulty
                 Text(
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14), 
+                  style: textTheme.bodyMedium, 
                   "$rating  |  $difficulty"
                 ),
               ],

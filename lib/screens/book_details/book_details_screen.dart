@@ -2,7 +2,8 @@ import 'package:bookworms_app/screens/book_details/create_review_widget.dart';
 import 'package:bookworms_app/screens/book_details/review_widget.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [BookDetailsScreen] contains detailed information regarding a
@@ -45,10 +46,19 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// and reviews.
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       // Book details app bar
       appBar: AppBar(
-        title: Text(bookSummary.title, style: const TextStyle(color: colorWhite, overflow: TextOverflow.ellipsis)),
+        title: Text(
+          bookSummary.title, 
+          style: const TextStyle(
+            fontWeight: FontWeight.normal,
+            color: colorWhite, 
+            overflow: TextOverflow.ellipsis
+          )
+        ),
         backgroundColor: colorGreen,
         leading: IconButton(
           color: colorWhite,
@@ -72,17 +82,17 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               child: bookSummary.image,
             ),
           ),
-          _bookDetails(),
+          _bookDetails(textTheme),
           Container(
             color: const Color.fromARGB(255, 239, 239, 239),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 5),
+                  addVerticalSpace(5),
                   _actionButtons(),
-                  const SizedBox(height: 15),
-                  _reviewList(),
+                  addVerticalSpace(15),
+                  _reviewList(textTheme),
                 ],
               ),
             ),
@@ -94,7 +104,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Sub-section containing book information such as title, author, rating,
   /// difficulty, and description.
-  Widget _bookDetails() {
+  Widget _bookDetails(TextTheme textTheme) {
     var difficulty = bookSummary.difficulty.isEmpty ? "N/A" : bookSummary.difficulty;
     var rating = bookSummary.rating == 0 ? "Unrated" : "${bookSummary.rating}★";
 
@@ -112,7 +122,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         children: [
           // Book title
           Text(
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+            style: textTheme.headlineSmall,
             textAlign: TextAlign.center,
             bookSummary.title,
           ),
@@ -128,12 +138,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Text(
-              style: const TextStyle(fontSize: 16.0),
+              style: textTheme.bodyLarge,
               "Level $difficulty   |   $rating"
             ),
           ),
           // Book description (including extra book details)
-          _description(),
+          _description(textTheme),
           // "Expand" icon
           IconButton(
             icon: Icon(
@@ -150,7 +160,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Contains the written description and additional book details including the ISBN(s)
   /// publisher information, and number of pages.
-  Widget _description() {
+  Widget _description(TextTheme textTheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -161,12 +171,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             maxLines: isExpanded ? null : 5,
             overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             text: TextSpan(
-              style: const TextStyle(color: colorBlack, fontSize: 16.0),
+              style: textTheme.bodyLarge,
               children: <TextSpan>[
                 if (bookDetails.description.isNotEmpty) ...[
-                  const TextSpan(
+                  TextSpan(
                     text: 'Description: ',
-                    style: TextStyle(fontWeight: FontWeight.bold), // Bold text
+                    style: textTheme.titleSmall,
                   ),
                   TextSpan(text: bookDetails.description),
                 ] else 
@@ -174,40 +184,40 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               ],
             ),
           ),
-          if (isExpanded) ..._expandedDetails()
+          if (isExpanded) ..._expandedDetails(textTheme)
         ],
       ),
     );
   }
 
   /// Additional book details displayed upon expanded.
-  List<Widget> _expandedDetails() {
+  List<Widget> _expandedDetails(TextTheme textTheme) {
     return [
-      const SizedBox(height: 16),
+      addVerticalSpace(16),
       const Divider(height: 1),
-      const SizedBox(height: 16),
+      addVerticalSpace(16),
 
     // Empty details are not included.
     if (bookDetails.pageCount > 0)
-      _detailText("Pages", "${bookDetails.pageCount}"),
+      _detailText("Pages", "${bookDetails.pageCount}", textTheme),
     if (bookDetails.isbn10.isNotEmpty)
-      _detailText("ISBN-10", bookDetails.isbn10),
+      _detailText("ISBN-10", bookDetails.isbn10, textTheme),
     if (bookDetails.isbn13.isNotEmpty)
-      _detailText("ISBN-13", bookDetails.isbn13),
+      _detailText("ISBN-13", bookDetails.isbn13, textTheme),
     if (bookDetails.publisher.isNotEmpty)
-      _detailText("Publisher", bookDetails.publisher),
+      _detailText("Publisher", bookDetails.publisher, textTheme),
     if (bookDetails.publishDate.isNotEmpty)
-      _detailText("Published", bookDetails.publishDate),
+      _detailText("Published", bookDetails.publishDate, textTheme),
   ];
 }
 
   /// Creates book detail text given the label and the text value.
-  Widget _detailText(String label, String value) {
+  Widget _detailText(String label, String value, TextTheme textTheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Text(
         "$label: $value",
-        style: const TextStyle(fontSize: 16),
+        style: textTheme.bodyLarge,
       ),
     );
   }
@@ -235,7 +245,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   }
 
   /// The list of review widgets corresponding to the given book.
-  Widget _reviewList() {
+  Widget _reviewList(TextTheme textTheme) {
     // Generate the list of review widgets.
     var reviewCount = bookDetails.reviews.length;
     List<Widget> reviews = List.generate(
@@ -252,7 +262,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: textTheme.titleMedium,
               "Reviews  |  ${bookSummary.rating}★",
             ),
             IconButton(

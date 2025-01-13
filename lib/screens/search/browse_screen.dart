@@ -1,3 +1,4 @@
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [BrowseScreen] contains a few options for browsing by a specific keyword.
@@ -14,25 +15,26 @@ class _BrowseScreenState extends State<BrowseScreen> {
   
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 16.0),
       child: Scaffold(
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              style: textTheme.headlineSmall,
               "Browse By"
             ),
-            _selectOption("Reading Level"),
-            const SizedBox(height: 10),
-            _selectOption("Topic"),
-            const SizedBox(height: 10),
-            _selectOption("Theme"),
-            const SizedBox(height: 10),
-            _selectOption("Most Popular"),
-            const SizedBox(height: 10),
-            _selectOption("Highest Rated"),
+            _selectOption("Reading Level", textTheme),
+            addVerticalSpace(10),
+            _selectOption("Topic", textTheme),
+            addVerticalSpace(10),
+            _selectOption("Theme", textTheme),
+            addVerticalSpace(10),
+            _selectOption("Most Popular", textTheme),
+            addVerticalSpace(10),
+            _selectOption("Highest Rated", textTheme),
           ],
         ),
       ),
@@ -41,7 +43,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   /// A clickable "browse" option that allows a user to browse by a specific
   /// keyword.
-  Widget _selectOption(String optionText) {
+  Widget _selectOption(String optionText, TextTheme textTheme) {
     return TextButton(
       onPressed: () => {},
       child: Column(
@@ -50,7 +52,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: textTheme.titleSmall,
                 optionText
               ),
               const Icon(Icons.arrow_forward_ios_rounded)
