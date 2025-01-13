@@ -89,15 +89,16 @@ class _Navigation extends State<Navigation> {
   // Selected navigation tab (0-4).
   int selectedIndex = 0;
   
-  // Navigation page widgets.
-  final List<Widget> pages = const <Widget>[
-    HomeScreen(),
-    BookshelvesScreen(),
-    SearchScreen(),
-    ProgressScreen(),
-    ProfileScreen(),
+  var isParent = true; // Temporary until roles are a thing.
+  List<Widget> get pages => [
+    const HomeScreen(),
+      if (isParent) const BookshelvesScreen(),
+      const SearchScreen(),
+      if (isParent) const ProgressScreen(),
+      // if (!isParent)
+      //    const ClassroomScreen(),
+      const ProfileScreen(),
   ];
-
 
   /// Main widget containing app bar, page navigator, and bottom bar.
   @override
@@ -122,6 +123,8 @@ class _Navigation extends State<Navigation> {
   /// Bottom global navigation bar.
   /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs.
   Widget navigationBar() {
+    var isParent = true; // Temporary until roles are a thing.
+
     return NavigationBar(
       backgroundColor: colorGreen,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
@@ -131,28 +134,30 @@ class _Navigation extends State<Navigation> {
           selectedIndex = index;
         });
       },
-      destinations: const <NavigationDestination>[
-        NavigationDestination(
+      destinations: <NavigationDestination>[
+        const NavigationDestination(
           selectedIcon: Icon(Icons.home), 
           icon: Icon(Icons.home_outlined, color: colorWhite), 
           label: "Home"
         ),
-        NavigationDestination(
-          selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-          icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
-          label: "Bookshelf"
-        ),
-        NavigationDestination(
+        if (isParent)
+          const NavigationDestination(
+            selectedIcon: Icon(Icons.collections_bookmark_rounded), 
+            icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
+            label: "Bookshelf"
+          ),
+        const NavigationDestination(
           selectedIcon: Icon(Icons.search_rounded), 
           icon: Icon(Icons.search_outlined, color: colorWhite), 
           label: "Search"
         ),
-        NavigationDestination(
-          selectedIcon: Icon(Icons.show_chart), 
-          icon: Icon(Icons.show_chart, color: colorWhite), 
-          label: "Progress"
-        ),
-        NavigationDestination(
+        if (isParent)
+          const NavigationDestination(
+            selectedIcon: Icon(Icons.show_chart), 
+            icon: Icon(Icons.show_chart, color: colorWhite), 
+            label: "Progress"
+          ),
+        const NavigationDestination(
           selectedIcon: Icon(Icons.account_circle_rounded), 
           icon: Icon(Icons.account_circle_outlined, color: colorWhite), 
           label: "Profile"
