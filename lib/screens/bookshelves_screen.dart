@@ -17,6 +17,8 @@ class BookshelvesScreen extends StatefulWidget {
 class _BookshelvesScreenState extends State<BookshelvesScreen> { 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text("Johnny's Bookshelves", style: TextStyle(color: colorWhite)),
@@ -27,7 +29,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         child: ListView(
           children: [
             addVerticalSpace(16),
-            _createBookshelfWidget(),
+            _createBookshelfWidget(textTheme),
             addVerticalSpace(16),
             _bookshelfWidget(
               "Recommended Books",
@@ -84,7 +86,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   }
 
   /// The labeled button for creating a bookshelf.
-  Widget _createBookshelfWidget() {
+  Widget _createBookshelfWidget(TextTheme textTheme) {
     return Container(
       decoration: BoxDecoration(
         color: colorGreyLight,
@@ -99,8 +101,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             icon: const Icon(Icons.add)
           ),
           addHorizontalSpace(10),
-          const Text(
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            style: textTheme.titleMedium,
             "Create New Bookshelf"
           ),
         ],

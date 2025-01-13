@@ -152,6 +152,8 @@ class _SearchScreenState extends State<SearchScreen> {
  /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     // The sub-widget is determined by the current search status.
     Widget mainContent;
     if (!_isInActiveSearch) {
@@ -159,7 +161,7 @@ class _SearchScreenState extends State<SearchScreen> {
     } else if (_currentQuery.isEmpty) {
       mainContent = const RecentsScreen();
     } else if (_searchResults.isNotEmpty) {
-      mainContent = _resultsScreen();
+      mainContent = _resultsScreen(textTheme);
     } else {
       mainContent = Center(
         child: Column(
@@ -244,19 +246,21 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Fetches the book's details and navigates to the book's details page.
   void _onBookClicked(int index) async {
     BookDetails results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BookDetailsScreen(
-          summaryData: _searchResults[index],
-          detailsData: results,
+    if(mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookDetailsScreen(
+            summaryData: _searchResults[index],
+            detailsData: results,
+          )
         )
-      )
-    );
+      );
+    }
   }
 
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
-  Widget _resultsScreen() {
+  Widget _resultsScreen(TextTheme textTheme) {
     return ListView.builder(
       controller: _scrollController,
       itemCount: _searchResults.length + 1,
@@ -271,7 +275,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       borderRadius: BorderRadius.zero
                     ),
                   ),
-                  child: searchResult(index),
+                  child: searchResult(index, textTheme),
                   onPressed: () { _onBookClicked(index); },
                 ),
               ),
@@ -301,7 +305,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   /// The results corresponding to a search query are displayed in a search result widget.
-  Widget searchResult(int index) {
+  Widget searchResult(int index, TextTheme textTheme) {
     BookSummary searchResult = _searchResults[index];
     Image bookImage = searchResult.image!;
     return Row(
@@ -312,15 +316,12 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16, 
-                  fontWeight: FontWeight.bold,
-                ),
+              Text(
+                style: textTheme.titleSmall,
                 searchResult.title
               ),
               Text(
-                style: const TextStyle(color: Colors.black54, fontSize: 14),
+                style: textTheme.bodyMedium,
                 overflow: TextOverflow.ellipsis,
                 searchResult.authors.isNotEmpty 
                 ? searchResult.authors.map((author) => author).join(', ')

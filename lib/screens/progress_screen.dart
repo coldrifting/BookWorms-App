@@ -1,5 +1,6 @@
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,8 @@ class ProgressScreen extends StatefulWidget {
 class _ProgressScreenState extends State<ProgressScreen> { 
   @override
   Widget build(BuildContext context) { 
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Johnny's Progress", style: TextStyle(color: colorWhite)),
@@ -30,31 +33,31 @@ class _ProgressScreenState extends State<ProgressScreen> {
               height: 120,
               child: UserIcons.getIcon("")
             ),
-            const Center(
+            Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    style: textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                     "Johnny"
                   ),
-                  Icon(
+                  const Icon(
                     size: 35,
                     Icons.arrow_drop_down_sharp
                   ),
                 ],
               ),
             ),
-            const Text(
-              style: TextStyle(fontSize: 16),
+            Text(
+              style: textTheme.bodyLarge,
               "Reading Level: A"
             ),
             const Divider(),
-            const SizedBox(height: 10),
+            addVerticalSpace(10),
             const OptionWidget(name: "Overall Progress", icon: Icons.auto_stories),
-            const SizedBox(height: 16),
+            addVerticalSpace(16),
             const OptionWidget(name: "Goal Progress", icon: Icons.grass_sharp),
           ],
         ),

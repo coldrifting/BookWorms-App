@@ -23,6 +23,8 @@ class _RecentsScreenState extends State<RecentsScreen> {
   
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -40,7 +42,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  Center(child: _recentsWidget()),
+                  Center(child: _recentsWidget(textTheme)),
                   const Center(child: Text("Advanced Search")),
                 ],
               ),
@@ -52,7 +54,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
   }
 
   /// Recently-viewed books subpage containing a list of books.
-  Widget _recentsWidget() {
+  Widget _recentsWidget(TextTheme textTheme) {
     return ListView.builder(
       itemCount: 4,
       itemBuilder: (context, index) {
@@ -65,7 +67,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
                     borderRadius: BorderRadius.zero
                   ),
                 ),
-                child: searchResult(index),
+                child: searchResult(index, textTheme),
                 onPressed: () => {},
               ),
             ),
@@ -79,7 +81,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
   }
 
   /// Individual book search result, including the book image and overview details.
-  Widget searchResult(int index) {
+  Widget searchResult(int index, TextTheme textTheme) {
     BookSummary searchResult = _books[index];
     CachedNetworkImage bookImage = CachedNetworkImage(
       imageUrl: _images[index], 
@@ -93,15 +95,12 @@ class _RecentsScreenState extends State<RecentsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16, 
-                  fontWeight: FontWeight.bold,
-                ),
+              Text(
+                style: textTheme.titleSmall,
                 searchResult.title
               ),
               Text(
-                style: const TextStyle(color: colorBlack, fontSize: 14),
+                style: textTheme.bodyMedium,
                 overflow: TextOverflow.ellipsis,
                 searchResult.authors.isNotEmpty 
                 ? searchResult.authors.map((author) => author).join(', ')

@@ -1,3 +1,4 @@
+import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -15,7 +16,9 @@ class ProfileScreen extends StatefulWidget {
 /// The state of the [ProfileScreen].
 class _ProfileScreenState extends State<ProfileScreen> { 
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Parent Profile", style: TextStyle(color: colorWhite)),
@@ -50,12 +53,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 120,
                   child: UserIcons.getIcon("")
                 ),
-                const Text(
-                  style: TextStyle(color: colorWhite, fontSize: 20),
+                Text(
+                  style: textTheme.titleLargeWhite,
                   "Audrey Hepburn"
                 ),
-                const Text(
-                  style: TextStyle(color: colorWhite, fontSize: 14),
+                Text(
+                  style: textTheme.bodyLargeWhite,
                   "@AudHep"
                 ),
               ],

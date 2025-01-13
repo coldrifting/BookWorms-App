@@ -29,6 +29,8 @@ extension WhiteTextTheme on TextTheme {
   TextStyle get headlineLargeWhite => headlineLarge!.copyWith(color: colorWhite);
   TextStyle get headlineSmallWhite => headlineSmall!.copyWith(color: colorWhite);
   TextStyle get headerHeadlineMediumWhite => headlineMedium!.copyWith(color: colorWhite);
+  TextStyle get titleLargeWhite => titleLarge!.copyWith(color: colorWhite);
   TextStyle get titleMediumWhite => titleMedium!.copyWith(color: colorWhite);
+  TextStyle get titleSmallWhite => titleSmall!.copyWith(color: colorWhite);
   TextStyle get bodyLargeWhite => bodyLarge!.copyWith(color: colorWhite);
 }

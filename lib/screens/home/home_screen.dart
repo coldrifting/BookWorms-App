@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       // Home app bar
       appBar: AppBar(
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
           addVerticalSpace(16),
           BookshelfWidget(name: "Recommended", images: [Demo.image1, Demo.image2, Demo.image3, Demo.image4], books: [Demo.book1, Demo.book2, Demo.book3, Demo.book4]),
           addVerticalSpace(24),
-          _progressTracker(),
+          _progressTracker(textTheme),
           addVerticalSpace(24),
           BookshelfWidget(name: "Animals", images: [Demo.image2, Demo.image5, Demo.image6, Demo.image7], books: [Demo.book2, Demo.book5, Demo.book6, Demo.book7]),
           addVerticalSpace(24),
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Displays the up-to-date progress of the currently-selected child.
   /// Empty for now.
-  Widget _progressTracker() {
+  Widget _progressTracker(TextTheme textTheme) {
     return Container(
       height: 200,
       decoration: BoxDecoration(
@@ -59,14 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(16.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Align(
               alignment: Alignment.topLeft,
               child: Text(
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: textTheme.titleMedium,
                 "Johnny's Progress"
               ),
             ),
@@ -74,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  style: TextStyle(fontSize: 16),
+                  style: textTheme.bodyLarge,
                   "No progress to display"
                 ),
               ),
