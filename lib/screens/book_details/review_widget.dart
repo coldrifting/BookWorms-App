@@ -93,7 +93,7 @@ class ReviewWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  review.name,
+                  "${review.firstName} ${review.lastName}",
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
