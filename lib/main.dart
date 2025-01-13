@@ -5,7 +5,8 @@ import 'package:bookworms_app/screens/profile_screen.dart';
 import 'package:bookworms_app/screens/progress_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -24,11 +25,7 @@ class BookWorms extends StatelessWidget {
       create: (context) => AppState(),
       child: MaterialApp(
         title: 'BookWorms',
-        theme: ThemeData(primaryColor: colorBlack, 
-          textTheme: textThemeDefault, 
-          fontFamily: "Montserrat", 
-          useMaterial3: true
-        ),
+        theme: appTheme,
         home: const SplashScreen()
       ),
     );

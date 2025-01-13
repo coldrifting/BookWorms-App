@@ -30,7 +30,8 @@ void main() {
           'pageCount': 1,
           'reviews': [
             {
-              "reviewerName": "ReviewerName",
+              "reviewerFirstName": "ReviewerFirstName",
+              "reviewerLastName": "ReviewerLastName",
               "reviewerRole": "ReviewerRole",
               "reviewerIcon": "ReviewerIcon",
               "starRating": 1,
@@ -58,7 +59,8 @@ void main() {
       expect(result.reviews, isA<List<UserReview>>());
       expect(result.reviews.length, 1);
 
-      expect(result.reviews[0].name, "ReviewerName");
+      expect(result.reviews[0].firstName, "ReviewerFirstName");
+      expect(result.reviews[0].firstName, "ReviewerLastName");
       expect(result.reviews[0].role, "ReviewerRole");
       expect(result.reviews[0].icon, "ReviewerIcon");
       expect(result.reviews[0].text, "ReviewText");

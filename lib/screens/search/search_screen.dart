@@ -7,7 +7,8 @@ import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
-import 'package:bookworms_app/utils/constants.dart';
+import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 /// The [SearchScreen] displays a search bar and a scrollable list of 
@@ -151,6 +152,8 @@ class _SearchScreenState extends State<SearchScreen> {
  /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
     // The sub-widget is determined by the current search status.
     Widget mainContent;
     if (!_isInActiveSearch) {
@@ -158,30 +161,30 @@ class _SearchScreenState extends State<SearchScreen> {
     } else if (_currentQuery.isEmpty) {
       mainContent = const RecentsScreen();
     } else if (_searchResults.isNotEmpty) {
-      mainContent = _resultsScreen();
+      mainContent = _resultsScreen(textTheme);
     } else {
-       mainContent = const Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.search_off,
-          size: 50.0,
-          color: colorGrey,
+      mainContent = Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.search_off,
+              size: 50.0,
+              color: colorGrey,
+            ),
+            addVerticalSpace(8),
+            const Text(
+              "No Results",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: colorGrey,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 8),
-        Text(
-          "No Results",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colorGrey,
-          ),
-        ),
-      ],
-    ),
-  );
+      );
     }
   
     return Scaffold(
@@ -193,9 +196,9 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           children: [
-            const SizedBox(height: 8),
+            addVerticalSpace(8),
             searchBar(),
-            const SizedBox(height: 8),
+            addVerticalSpace(8),
             Expanded(
               child: mainContent
             ),
@@ -225,7 +228,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (_isInActiveSearch)
           Row(
             children: [
-              const SizedBox(width: 8.0),
+              addVerticalSpace(8),
               TextButton(
                 onPressed: _onCancelPressed,
                 style: TextButton.styleFrom(
@@ -243,19 +246,21 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Fetches the book's details and navigates to the book's details page.
   void _onBookClicked(int index) async {
     BookDetails results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BookDetailsScreen(
-          summaryData: _searchResults[index],
-          detailsData: results,
+    if(mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookDetailsScreen(
+            summaryData: _searchResults[index],
+            detailsData: results,
+          )
         )
-      )
-    );
+      );
+    }
   }
 
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
-  Widget _resultsScreen() {
+  Widget _resultsScreen(TextTheme textTheme) {
     return ListView.builder(
       controller: _scrollController,
       itemCount: _searchResults.length + 1,
@@ -270,7 +275,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       borderRadius: BorderRadius.zero
                     ),
                   ),
-                  child: searchResult(index),
+                  child: searchResult(index, textTheme),
                   onPressed: () { _onBookClicked(index); },
                 ),
               ),
@@ -300,26 +305,23 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   /// The results corresponding to a search query are displayed in a search result widget.
-  Widget searchResult(int index) {
+  Widget searchResult(int index, TextTheme textTheme) {
     BookSummary searchResult = _searchResults[index];
     Image bookImage = searchResult.image!;
     return Row(
       children: [
         bookImage,
-        const SizedBox(width: 24.0),
+        addHorizontalSpace(24),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16, 
-                  fontWeight: FontWeight.bold,
-                ),
+              Text(
+                style: textTheme.titleSmall,
                 searchResult.title
               ),
               Text(
-                style: const TextStyle(color: Colors.black54, fontSize: 14),
+                style: textTheme.bodyMedium,
                 overflow: TextOverflow.ellipsis,
                 searchResult.authors.isNotEmpty 
                 ? searchResult.authors.map((author) => author).join(', ')
