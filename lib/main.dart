@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(const BookWorms());
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 /// Bookworms is a virtual book search solution for children's books.
 /// It allows for the saving of books to bookshelves, the tracking of
 /// a child's goals, and creating classrooms to assign readings to students.
@@ -24,6 +26,7 @@ class BookWorms extends StatelessWidget {
     return ChangeNotifierProvider<AppState>(
       create: (context) => AppState(),
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         title: 'BookWorms',
         theme: appTheme,
         home: const SplashScreen()
