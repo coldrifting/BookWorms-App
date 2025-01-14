@@ -1,7 +1,7 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/screens/bookshelves_screen.dart';
 import 'package:bookworms_app/screens/home/home_screen.dart';
-import 'package:bookworms_app/screens/profile_screen.dart';
+import 'package:bookworms_app/screens/profile/profile_screen.dart';
 import 'package:bookworms_app/screens/progress_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';

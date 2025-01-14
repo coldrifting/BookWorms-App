@@ -1,4 +1,5 @@
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/theme/theme.dart';
@@ -83,7 +84,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 addVerticalSpace(10),
                 const OptionWidget(name: "Edit Profile", icon: Icons.account_circle),
                 addVerticalSpace(10),
-                const OptionWidget(name: "Manage Children", icon: Icons.groups_rounded),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ManageChildrenScreen()
+                      )
+                    );
+                  },
+                  icon: const Icon(Icons.groups_rounded),
+                  label: const Text('Manage Children'),
+                ),
                 addVerticalSpace(10),
                 const OptionWidget(name: "Settings", icon: Icons.settings),
                 addVerticalSpace(10),
@@ -95,8 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   icon: const Icon(Icons.logout_outlined),
                   label: const Text('Sign Out'),
-              ),
-
+                ),
               ],
             ),
           ),
