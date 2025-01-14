@@ -1,5 +1,5 @@
 //import 'package:bookworms_app/models/BookSummary.dart';
-import 'package:bookworms_app/screens/home/bookshelf_widget.dart';
+import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
