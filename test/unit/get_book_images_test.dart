@@ -70,5 +70,5 @@ Uint8List createMockZipFile(int numImages) {
     archive.addFile(ArchiveFile(fileName, imageData.length, imageData));
   }
   final zipData = ZipEncoder().encode(archive);
-  return Uint8List.fromList(zipData!);
+  return Uint8List.fromList(zipData);
 }

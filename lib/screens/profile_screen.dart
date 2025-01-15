@@ -1,3 +1,6 @@
+import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/screens/setup/welcome_screen.dart';
+import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
@@ -14,7 +17,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 /// The state of the [ProfileScreen].
-class _ProfileScreenState extends State<ProfileScreen> { 
+class _ProfileScreenState extends State<ProfileScreen> {
+
+  Future<void> signOut() async {
+    await deleteToken();
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -77,7 +89,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 addVerticalSpace(10),
                 const Divider(),
                 addVerticalSpace(10),
-                const OptionWidget(name: "Log Out", icon: Icons.logout_outlined),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    signOut();
+                  },
+                  icon: const Icon(Icons.logout_outlined),
+                  label: const Text('Sign Out'),
+              ),
+
               ],
             ),
           ),
