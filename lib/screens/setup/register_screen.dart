@@ -1,4 +1,5 @@
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/screens/setup/select_role.dart';
 import 'package:bookworms_app/services/account/register_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const Navigation()),
+        MaterialPageRoute(builder: (_) => const SelectRoleScreen()),
       );
     }
   }

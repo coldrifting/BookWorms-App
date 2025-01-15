@@ -31,9 +31,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
+    var isParent = false; // Temporary until role is implemented.
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Parent Profile", style: TextStyle(color: colorWhite)),
+        title: Text(
+          "${isParent ? "Parent" : "Teacher"} Profile", 
+          style: const TextStyle(color: colorWhite)
+        ),
         centerTitle: true,
         backgroundColor: colorGreen,
       ),
@@ -83,8 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 addVerticalSpace(10),
                 const OptionWidget(name: "Edit Profile", icon: Icons.account_circle),
                 addVerticalSpace(10),
-                const OptionWidget(name: "Manage Children", icon: Icons.groups_rounded),
-                addVerticalSpace(10),
+                if (isParent) ...[
+                  const OptionWidget(name: "Manage Children", icon: Icons.groups_rounded),
+                  addVerticalSpace(10),
+                ],
                 const OptionWidget(name: "Settings", icon: Icons.settings),
                 addVerticalSpace(10),
                 const Divider(),

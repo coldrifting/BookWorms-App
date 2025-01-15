@@ -1,5 +1,6 @@
 import 'package:bookworms_app/demo_books.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,18 @@ class ClassroomScreen extends StatefulWidget {
 }
 
 class _ClassroomScreenState extends State<ClassroomScreen> {
+  late ScrollController _scrollController;
+
+  // Temporary until we have real child data.
+  List<String> students = ["Annie C.", "Henry B.", "Lucas G.", "Prim R.", "Winnie S."];
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -42,7 +55,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             top: 0,
                             right: 0,
                             child: TextButton(
-                              onPressed: () {}, 
+                              onPressed: () => _deleteClassroom(), 
                               child: const Icon(Icons.more_horiz)
                             ),
                           ),
@@ -56,7 +69,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   style: textTheme.headlineMedium
                 ), 
                 Text(
-                  "0 Students",
+                  "${students.length} Student${students.length == 1 ? "" : "s"}",
                   style: textTheme.bodyLarge
                 ),
                 addVerticalSpace(8),
@@ -102,14 +115,46 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           ],
         ),
         Container(
-          height: 150,
+          height: 160,
           decoration: BoxDecoration(
             color: colorGreyLight,
             border: Border.all(color: colorGreyDark ?? colorBlack),
             borderRadius: BorderRadius.circular(6),
           ),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            controller: _scrollController,
+            itemCount: students.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: SizedBox(
+                          width: 90,
+                          height: 90,
+                          child: UserIcons.getIcon("")
+                        ),
+                      ),
+                      addVerticalSpace(4),
+                      Text(
+                        style: textTheme.titleSmall,
+                        students[index]
+                      ),
+                    ],
+                 ),
+              );
+            }
+          ),
         ),
       ],
     );
+  }
+
+  void _deleteClassroom() {
+    
   }
 }
