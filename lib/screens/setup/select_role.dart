@@ -3,6 +3,7 @@ import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 /// The [SelectRoleScreen] contains...
 class SelectRoleScreen extends StatefulWidget {
@@ -24,6 +25,25 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  child: SvgPicture.asset(
+                    'assets/images/setup_curve_top.svg',
+                  ),
+                ),
+                SizedBox(
+                  height: 200,
+                  child: SvgPicture.asset(
+                    'assets/images/bookworms_logo.svg',
+                    width: 125,
+                    semanticsLabel: "BookWorms Logo",
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
             Text(
               "Select Role", 
               style: textTheme.headlineLarge,
@@ -54,6 +74,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
                 addVerticalSpace(32),
               ];
             }).toList(),
+            const Spacer(),
           ],
         ),
       ),
