@@ -26,9 +26,10 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Stack(
+              alignment: Alignment.topCenter,
               children: [
-                Positioned(
-                  top: 0,
+                FittedBox(
+                  fit: BoxFit.contain,
                   child: SvgPicture.asset(
                     'assets/images/setup_curve_top.svg',
                   ),
@@ -75,10 +76,16 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
               ];
             }).toList(),
             const Spacer(),
+            FittedBox(
+              fit: BoxFit.contain,
+              child: SvgPicture.asset(
+                'assets/images/setup_curve_bottom.svg',
+              ),
+            ),
           ],
         ),
       ),
-     );
+    );
   }
 
   void _setRole(String role) {

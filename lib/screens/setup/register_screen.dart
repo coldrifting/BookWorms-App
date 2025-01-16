@@ -1,5 +1,5 @@
 import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/screens/setup/select_role.dart';
+import 'package:bookworms_app/screens/setup/select_role_screen.dart';
 import 'package:bookworms_app/services/account/register_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
