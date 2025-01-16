@@ -19,6 +19,20 @@ class EditChildScreen extends StatefulWidget {
 }
 
 class _EditChildScreenState extends State<EditChildScreen> {
+  late TextEditingController _childNameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _childNameController = TextEditingController(text: widget.child.name);
+  }
+
+  @override
+  void dispose() {
+    _childNameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,22 +57,49 @@ class _EditChildScreenState extends State<EditChildScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 IconButton(
                   onPressed: () {},
                   icon: CircleAvatar(
-                    maxRadius: 64,
+                    maxRadius: 50,
                     child: Text(
                       widget.child.name[0],
                     ),
                   ),
                 ),
-                const Column(
-                  children: [
-                    Text("Edit Name"),
-                  ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Edit Name",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _childNameController
+                            )
+                          ),
+                          const SizedBox(width: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              Provider.of<AppState>(context, listen: false).editChildName(widget.childID, _childNameController.text);
+                            },
+                            child: const Text("Save")
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -67,7 +108,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 Provider.of<AppState>(context, listen: false).removeChild(widget.childID);
                 Navigator.of(context).pop();
               },
-              child: const Text("Delete Child"))
+              child: const Text("Delete Child")
+            )
           ],
         ),
       ),

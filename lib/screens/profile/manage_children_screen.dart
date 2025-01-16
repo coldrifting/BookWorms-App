@@ -40,7 +40,8 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 64.0),
-          const Text("Click to View Child",
+          const Text(
+            "Click to View Child",
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.bold

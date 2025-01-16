@@ -16,4 +16,9 @@ class AppState extends ChangeNotifier {
     _children.removeAt(childID);
     notifyListeners();
   }
+  
+  void editChildName(int childID, String newName) {
+    _children[childID].name = newName;
+    notifyListeners();
+  }
 }
