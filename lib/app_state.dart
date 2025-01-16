@@ -11,4 +11,9 @@ class AppState extends ChangeNotifier {
     _children.add(child);
     notifyListeners();
   }
+
+  void removeChild(int childID) {
+    _children.removeAt(childID);
+    notifyListeners();
+  }
 }

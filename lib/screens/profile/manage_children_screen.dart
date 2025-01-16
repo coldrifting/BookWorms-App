@@ -81,7 +81,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => EditChildScreen(childId: childID)
+                builder: (context) => EditChildScreen(childID: childID, child: child)
               )
             );
           },
