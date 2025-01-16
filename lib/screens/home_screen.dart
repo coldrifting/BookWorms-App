@@ -1,5 +1,5 @@
 //import 'package:bookworms_app/models/BookSummary.dart';
-import 'package:bookworms_app/screens/home/bookshelf_widget.dart';
+import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
@@ -18,28 +18,35 @@ class HomeScreen extends StatefulWidget {
 
 /// The state of the [HomeScreen].
 class _HomeScreenState extends State<HomeScreen> {
+
+  var isParent = false; // Temporary until roles are implemented.
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      // Home app bar
-      appBar: AppBar(
-        title: const Text("Johnny's Home", style: TextStyle(color: colorWhite)),
-        backgroundColor: colorGreen,
-      ),
-      // Bookshelves list
-      body: ListView(
-        children: [
-          addVerticalSpace(16),
-          BookshelfWidget(name: "Recommended", images: [Demo.image1, Demo.image2, Demo.image3, Demo.image4], books: [Demo.book1, Demo.book2, Demo.book3, Demo.book4]),
-          addVerticalSpace(24),
-          _progressTracker(textTheme),
-          addVerticalSpace(24),
-          BookshelfWidget(name: "Animals", images: [Demo.image2, Demo.image5, Demo.image6, Demo.image7], books: [Demo.book2, Demo.book5, Demo.book6, Demo.book7]),
-          addVerticalSpace(24),
-          BookshelfWidget(name: "Fairytales", images: [Demo.image8, Demo.image9, Demo.image7, Demo.image10], books: [Demo.book8, Demo.book9, Demo.book7, Demo.book10]),
-          addVerticalSpace(16),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        // Home app bar
+        appBar: AppBar(
+          title: Text("${isParent ? "Johnny's" : "My"} Home", style: const TextStyle(color: colorWhite)),
+          backgroundColor: colorGreen,
+        ),
+        // Bookshelves list
+        body: ListView(
+          children: [
+            addVerticalSpace(16),
+            BookshelfWidget(name: "Recommended", images: [Demo.image1, Demo.image2, Demo.image3, Demo.image4], books: [Demo.book1, Demo.book2, Demo.book3, Demo.book4]),
+            addVerticalSpace(24),
+            if (isParent) ... [
+              _progressTracker(textTheme),
+              addVerticalSpace(24),
+            ],
+            BookshelfWidget(name: "Animals", images: [Demo.image2, Demo.image5, Demo.image6, Demo.image7], books: [Demo.book2, Demo.book5, Demo.book6, Demo.book7]),
+            addVerticalSpace(24),
+            BookshelfWidget(name: "Fairytales", images: [Demo.image8, Demo.image9, Demo.image7, Demo.image10], books: [Demo.book8, Demo.book9, Demo.book7, Demo.book10]),
+            addVerticalSpace(16),
+          ],
+        ),
       ),
     );
   }

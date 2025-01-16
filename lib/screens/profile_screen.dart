@@ -31,76 +31,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Parent Profile", style: TextStyle(color: colorWhite)),
-        centerTitle: true,
-        backgroundColor: colorGreen,
-      ),
-      body: Column(
-        children: [
-          Container(
-            height: 180,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: colorGreen,
-              boxShadow: [
-                BoxShadow(
-                  color: colorBlack.withOpacity(0.4),
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: UserIcons.getIcon("")
-                ),
-                Text(
-                  style: textTheme.titleLargeWhite,
-                  "Audrey Hepburn"
-                ),
-                Text(
-                  style: textTheme.bodyLargeWhite,
-                  "@AudHep"
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                addVerticalSpace(10),
-                const OptionWidget(name: "Edit Profile", icon: Icons.account_circle),
-                addVerticalSpace(10),
-                const OptionWidget(name: "Manage Children", icon: Icons.groups_rounded),
-                addVerticalSpace(10),
-                const OptionWidget(name: "Settings", icon: Icons.settings),
-                addVerticalSpace(10),
-                const Divider(),
-                addVerticalSpace(10),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    signOut();
-                  },
-                  icon: const Icon(Icons.logout_outlined),
-                  label: const Text('Sign Out'),
-              ),
+    var isParent = false; // Temporary until role is implemented.
 
-              ],
-            ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "${isParent ? "Parent" : "Teacher"} Profile", 
+            style: const TextStyle(color: colorWhite)
           ),
-        ],
+          centerTitle: true,
+          backgroundColor: colorGreen,
+        ),
+        body: Column(
+          children: [
+            Container(
+              height: 180,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: colorGreen,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorBlack.withOpacity(0.4),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: UserIcons.getIcon("")
+                  ),
+                  Text(
+                    style: textTheme.titleLargeWhite,
+                    "Audrey Hepburn"
+                  ),
+                  Text(
+                    style: textTheme.bodyLargeWhite,
+                    "@AudHep"
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  addVerticalSpace(10),
+                  const OptionWidget(name: "Edit Profile", icon: Icons.account_circle),
+                  addVerticalSpace(10),
+                  if (isParent) ...[
+                    const OptionWidget(name: "Manage Children", icon: Icons.groups_rounded),
+                    addVerticalSpace(10),
+                  ],
+                  const OptionWidget(name: "Settings", icon: Icons.settings),
+                  addVerticalSpace(10),
+                  const Divider(),
+                  addVerticalSpace(10),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      signOut();
+                    },
+                    icon: const Icon(Icons.logout_outlined),
+                    label: const Text('Sign Out'),
+                ),
+      
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
