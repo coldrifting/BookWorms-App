@@ -20,16 +20,16 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      body: Center(
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Stack(
               alignment: Alignment.topCenter,
               children: [
-                FittedBox(
-                  fit: BoxFit.contain,
+                SizedBox(
+                  height: 155,
                   child: SvgPicture.asset(
                     'assets/images/setup_curve_top.svg',
                   ),
@@ -76,8 +76,8 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
               ];
             }).toList(),
             const Spacer(),
-            FittedBox(
-              fit: BoxFit.contain,
+            SizedBox(
+              height: 155,
               child: SvgPicture.asset(
                 'assets/images/setup_curve_bottom.svg',
               ),

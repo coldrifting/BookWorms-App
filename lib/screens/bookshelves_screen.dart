@@ -19,67 +19,69 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Johnny's Bookshelves", style: TextStyle(color: colorWhite)),
-        backgroundColor: colorGreen,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ListView(
-          children: [
-            addVerticalSpace(16),
-            _createBookshelfWidget(textTheme),
-            addVerticalSpace(16),
-            _bookshelfWidget(
-              "Recommended Books",
-              [Demo.image1, Demo.image2, Demo.image3],
-              [Demo.authors1, Demo.authors2, Demo.authors3],
-              Colors.yellow[200],
-              Colors.yellow[800]
-            ),
-            addVerticalSpace(16),
-            _bookshelfWidget(
-              "Ms. Wilson's Class Reading List",
-              [Demo.image4, Demo.image5, Demo.image6],
-              [Demo.authors4, Demo.authors5, Demo.authors6],
-              Colors.red[200],
-              Colors.red[800]
-            ),
-            addVerticalSpace(16),
-            _bookshelfWidget(
-              "Currently Reading",
-              [Demo.image6, Demo.image8, Demo.image9],
-              [Demo.authors6, Demo.authors8, Demo.authors9],
-              Colors.blue[200],
-              Colors.blue[800]
-            ),
-            addVerticalSpace(16),
-            _bookshelfWidget(
-              "Completed Books",
-              [Demo.image5, Demo.image10, Demo.image4],
-              [Demo.authors5, Demo.authors10, Demo.authors4],
-              Colors.green[200],
-              Colors.green[800]
-            ),
-            addVerticalSpace(16),
-            _bookshelfWidget(
-              "Animals",
-              [Demo.image2, Demo.image5, Demo.image6],
-              [Demo.authors2, Demo.authors5, Demo.authors6],
-              Colors.grey[200],
-              Colors.grey[800]
-            ),
-            addVerticalSpace(16),
-            _bookshelfWidget(
-              "Fairytales",
-              [Demo.image8, Demo.image9, Demo.image7],
-              [Demo.authors8, Demo.authors9, Demo.authors7],
-              Colors.grey[200],
-              Colors.grey[800]
-            ),
-            addVerticalSpace(16),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Johnny's Bookshelves", style: TextStyle(color: colorWhite)),
+          backgroundColor: colorGreen,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ListView(
+            children: [
+              addVerticalSpace(16),
+              _createBookshelfWidget(textTheme),
+              addVerticalSpace(16),
+              _bookshelfWidget(
+                "Recommended Books",
+                [Demo.image1, Demo.image2, Demo.image3],
+                [Demo.authors1, Demo.authors2, Demo.authors3],
+                Colors.yellow[200],
+                Colors.yellow[800]
+              ),
+              addVerticalSpace(16),
+              _bookshelfWidget(
+                "Ms. Wilson's Class Reading List",
+                [Demo.image4, Demo.image5, Demo.image6],
+                [Demo.authors4, Demo.authors5, Demo.authors6],
+                Colors.red[200],
+                Colors.red[800]
+              ),
+              addVerticalSpace(16),
+              _bookshelfWidget(
+                "Currently Reading",
+                [Demo.image6, Demo.image8, Demo.image9],
+                [Demo.authors6, Demo.authors8, Demo.authors9],
+                Colors.blue[200],
+                Colors.blue[800]
+              ),
+              addVerticalSpace(16),
+              _bookshelfWidget(
+                "Completed Books",
+                [Demo.image5, Demo.image10, Demo.image4],
+                [Demo.authors5, Demo.authors10, Demo.authors4],
+                Colors.green[200],
+                Colors.green[800]
+              ),
+              addVerticalSpace(16),
+              _bookshelfWidget(
+                "Animals",
+                [Demo.image2, Demo.image5, Demo.image6],
+                [Demo.authors2, Demo.authors5, Demo.authors6],
+                Colors.grey[200],
+                Colors.grey[800]
+              ),
+              addVerticalSpace(16),
+              _bookshelfWidget(
+                "Fairytales",
+                [Demo.image8, Demo.image9, Demo.image7],
+                [Demo.authors8, Demo.authors9, Demo.authors7],
+                Colors.grey[200],
+                Colors.grey[800]
+              ),
+              addVerticalSpace(16),
+            ],
+          ),
         ),
       ),
     );

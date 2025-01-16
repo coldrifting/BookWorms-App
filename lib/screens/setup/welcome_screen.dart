@@ -20,61 +20,63 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      body: Container(
-        decoration: _gradient(),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                "BookWorms",
-                style: textTheme.displaySmallWhite,
-              ),
-              Text(
-                "Discover stories that inspire.\nStart exploring today!",
-                textAlign: TextAlign.center,
-                style: textTheme.bodyLargeWhite,
-              ),
-              addVerticalSpace(32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () => {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      )
-                    }, 
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorWhite,
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          decoration: _gradient(),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "BookWorms",
+                  style: textTheme.displaySmallWhite,
+                ),
+                Text(
+                  "Discover stories that inspire.\nStart exploring today!",
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodyLargeWhite,
+                ),
+                addVerticalSpace(32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () => {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        )
+                      }, 
+                      style: TextButton.styleFrom(
+                        foregroundColor: colorWhite,
+                      ),
+                      child: const Text(
+                        "LOGIN",
+                        )
                     ),
-                    child: const Text(
-                      "LOGIN",
-                      )
-                  ),
-                  addHorizontalSpace(32),
-                  TextButton(
-                    onPressed: () => {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                      )
-                    }, 
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorWhite,
+                    addHorizontalSpace(32),
+                    TextButton(
+                      onPressed: () => {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                        )
+                      }, 
+                      style: TextButton.styleFrom(
+                        backgroundColor: colorWhite,
+                      ),
+                      child: const Text(
+                        "SIGNUP",
+                      ),
                     ),
-                    child: const Text(
-                      "SIGNUP",
-                    ),
-                  ),
-                ],
-              ),
-              addVerticalSpace(64),
-          ],),
-        ),
-      )
+                  ],
+                ),
+                addVerticalSpace(64),
+            ],),
+          ),
+        )
+      ),
     );
   }
 
