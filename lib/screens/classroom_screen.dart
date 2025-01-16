@@ -16,9 +16,25 @@ class ClassroomScreen extends StatefulWidget {
 
 class _ClassroomScreenState extends State<ClassroomScreen> {
   late ScrollController _scrollController;
+  var selectedIconIndex = 10; // Corresponding to color black.
 
   // Temporary until we have real child data.
   List<String> students = ["Annie C.", "Henry B.", "Lucas G.", "Prim R.", "Winnie S."];
+
+  // Defined for the choice of class icon.
+  final List<Color> _colors = [
+      Colors.pink,
+      Colors.red,
+      Colors.orange,
+      Colors.amber,
+      Colors.lightGreen,
+      Colors.green,
+      Colors.lightBlue,
+      Colors.blue,
+      Colors.purple,
+      Colors.brown,
+      Colors.black
+    ];
 
   @override
   void initState() {
@@ -32,7 +48,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Johnny's Bookshelves", style: TextStyle(color: colorWhite)),
+        title: const Text("My Classroom", style: TextStyle(color: colorWhite)),
         backgroundColor: colorGreen,
       ),
       body: ListView(
@@ -47,9 +63,10 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             size: 100,
-                            Icons.school
+                            Icons.school,
+                            color: _colors[selectedIconIndex],
                           ),
                           Positioned(
                             top: 0,
@@ -57,6 +74,21 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             child: TextButton(
                               onPressed: () => _deleteClassroom(), 
                               child: const Icon(Icons.more_horiz)
+                            ),
+                          ),
+                          Positioned(
+                            top: 55,
+                            right: 130,
+                            child: RawMaterialButton(
+                              onPressed: () => _changeClassIconDialog(textTheme),
+                              fillColor: colorWhite,
+                              constraints: const BoxConstraints(minWidth: 0.0),
+                              padding: const EdgeInsets.all(5.0),
+                              shape: const CircleBorder(),
+                              child: const Icon(
+                                Icons.mode_edit_outline_sharp,
+                                size: 15,
+                              ),
                             ),
                           ),
                         ],
@@ -73,14 +105,20 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   style: textTheme.bodyLarge
                 ),
                 addVerticalSpace(8),
-                const Divider(thickness: 2,),
-                TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                    backgroundColor: colorGreen,
-                    foregroundColor: colorWhite,
+                const Divider(thickness: 2),
+                FractionallySizedBox(
+                  widthFactor: 0.4,
+                  child: TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      backgroundColor: colorGreenDark,
+                      foregroundColor: colorWhite,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Text("Invite Students")
                   ),
-                  child: const Text("Invite Students")
                 ),
                 _studentList(textTheme),
               ],
@@ -156,5 +194,67 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   void _deleteClassroom() {
     
+  }
+
+  Future<dynamic> _changeClassIconDialog(TextTheme textTheme) {
+    return showDialog(
+      context: context, 
+      builder: (BuildContext context) => AlertDialog(
+          title: const Text('Change Class Icon'),
+          content: _getIconList(),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: Text(
+                'Cancel',
+                style: textTheme.titleSmall
+              ),
+            ),
+          ],
+        ),
+    );
+  }
+
+  Widget _getIconList() {
+    return SizedBox(
+        width: double.maxFinite,
+        height: 400,
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: _colors.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                // Change selected color and exit popup.
+                setState(() {
+                  selectedIconIndex = index;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Material(
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: selectedIconIndex == index ? Colors.grey[400]! : Colors.grey[300]!,
+                  ),
+                ),
+                shadowColor: selectedIconIndex == index ? Colors.black : Colors.transparent,
+                elevation: selectedIconIndex == index ? 4 : 2,
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey[100],
+                  child: Icon(
+                    Icons.school,
+                    size: 50,
+                    color: _colors[index],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+    );
   }
 }

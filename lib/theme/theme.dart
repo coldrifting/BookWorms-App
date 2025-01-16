@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 final ThemeData appTheme = ThemeData(
   useMaterial3: true,
-  //primaryColor: colorBlack,
   fontFamily: "Montserrat",
   textTheme: const TextTheme(
     displayLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 57),
