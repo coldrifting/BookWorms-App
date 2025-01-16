@@ -43,57 +43,59 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Username text field
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter username'
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Username text field
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter username'
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a username';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a username';
-                  }
-                  return null;
-                },
-              ),
-              addVerticalSpace(16),
-              // Password text field
-              TextFormField(
-                obscureText: true,
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter password'
+                addVerticalSpace(16),
+                // Password text field
+                TextFormField(
+                  obscureText: true,
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter password'
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a password';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  return null;
-                },
-              ),
-              addVerticalSpace(16),
-              // "LOGIN" button
-              TextButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    final username = _usernameController.text;
-                    final password = _passwordController.text;
-                    login(username, password);
-                  }
-                },
-                child: const Text('LOGIN'),
-              ),
-            ],
+                addVerticalSpace(16),
+                // "LOGIN" button
+                TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      final username = _usernameController.text;
+                      final password = _passwordController.text;
+                      login(username, password);
+                    }
+                  },
+                  child: const Text('LOGIN'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

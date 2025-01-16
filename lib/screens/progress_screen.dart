@@ -19,47 +19,49 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget build(BuildContext context) { 
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Johnny's Progress", style: TextStyle(color: colorWhite)),
-        backgroundColor: colorGreen,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(
-              width: 120,
-              height: 120,
-              child: UserIcons.getIcon("")
-            ),
-            Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    style: textTheme.headlineMedium,
-                    textAlign: TextAlign.center,
-                    "Johnny"
-                  ),
-                  const Icon(
-                    size: 35,
-                    Icons.arrow_drop_down_sharp
-                  ),
-                ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Johnny's Progress", style: TextStyle(color: colorWhite)),
+          backgroundColor: colorGreen,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              SizedBox(
+                width: 120,
+                height: 120,
+                child: UserIcons.getIcon("")
               ),
-            ),
-            Text(
-              style: textTheme.bodyLarge,
-              "Reading Level: A"
-            ),
-            const Divider(),
-            addVerticalSpace(10),
-            const OptionWidget(name: "Overall Progress", icon: Icons.auto_stories),
-            addVerticalSpace(16),
-            const OptionWidget(name: "Goal Progress", icon: Icons.grass_sharp),
-          ],
+              Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      style: textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
+                      "Johnny"
+                    ),
+                    const Icon(
+                      size: 35,
+                      Icons.arrow_drop_down_sharp
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                style: textTheme.bodyLarge,
+                "Reading Level: A"
+              ),
+              const Divider(),
+              addVerticalSpace(10),
+              const OptionWidget(name: "Overall Progress", icon: Icons.auto_stories),
+              addVerticalSpace(16),
+              const OptionWidget(name: "Goal Progress", icon: Icons.grass_sharp),
+            ],
+          ),
         ),
       ),
     );

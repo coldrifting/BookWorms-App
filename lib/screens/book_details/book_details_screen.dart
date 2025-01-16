@@ -48,56 +48,58 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      // Book details app bar
-      appBar: AppBar(
-        title: Text(
-          bookSummary.title, 
-          style: const TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      // Book details content
-      body: ListView(
-        controller: _scrollController,
-        children: [
-          // Temporary hardcode for demo.
-          bookSummary.title == "The Giving Tree" 
-          ? Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg") 
-          : SizedBox(
-            width: double.infinity,
-            child: FittedBox(
-              fit: BoxFit.cover, 
-              child: bookSummary.image,
-            ),
+    return SafeArea(
+      child: Scaffold(
+        // Book details app bar
+        appBar: AppBar(
+          title: Text(
+            bookSummary.title, 
+            style: const TextStyle(
+              fontWeight: FontWeight.normal,
+              color: colorWhite, 
+              overflow: TextOverflow.ellipsis
+            )
           ),
-          _bookDetails(textTheme),
-          Container(
-            color: const Color.fromARGB(255, 239, 239, 239),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  addVerticalSpace(5),
-                  _actionButtons(),
-                  addVerticalSpace(15),
-                  _reviewList(textTheme),
-                ],
+          backgroundColor: colorGreen,
+          leading: IconButton(
+            color: colorWhite,
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        // Book details content
+        body: ListView(
+          controller: _scrollController,
+          children: [
+            // Temporary hardcode for demo.
+            bookSummary.title == "The Giving Tree" 
+            ? Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg") 
+            : SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.cover, 
+                child: bookSummary.image,
               ),
             ),
-          ),
-        ]
+            _bookDetails(textTheme),
+            Container(
+              color: const Color.fromARGB(255, 239, 239, 239),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    addVerticalSpace(5),
+                    _actionButtons(),
+                    addVerticalSpace(15),
+                    _reviewList(textTheme),
+                  ],
+                ),
+              ),
+            ),
+          ]
+        ),
       ),
     );
   }

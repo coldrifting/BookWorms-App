@@ -187,22 +187,24 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
   
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Search", style: TextStyle(color: colorWhite)),
-        backgroundColor: colorGreen,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
-          children: [
-            addVerticalSpace(8),
-            searchBar(),
-            addVerticalSpace(8),
-            Expanded(
-              child: mainContent
-            ),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Search", style: TextStyle(color: colorWhite)),
+          backgroundColor: colorGreen,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            children: [
+              addVerticalSpace(8),
+              searchBar(),
+              addVerticalSpace(8),
+              Expanded(
+                child: mainContent
+              ),
+            ],
+          ),
         ),
       ),
     );
