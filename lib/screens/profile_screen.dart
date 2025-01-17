@@ -5,6 +5,7 @@ import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -45,42 +46,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         body: Column(
           children: [
-            Container(
-              height: 180,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: colorGreen,
-                boxShadow: [
-                  BoxShadow(
-                    color: colorBlack.withOpacity(0.4),
-                    spreadRadius: 1,
-                    blurRadius: 4,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: UserIcons.getIcon("")
-                  ),
-                  Text(
-                    style: textTheme.titleLargeWhite,
-                    "Audrey Hepburn"
-                  ),
-                  Text(
-                    style: textTheme.bodyLargeWhite,
-                    "@AudHep"
-                  ),
-                ],
-              ),
+            ExtendedAppBar(
+              name: "Audrey Hepburn", 
+              username: "AudHep",
+              icon: UserIcons.getIcon(""),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

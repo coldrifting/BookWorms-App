@@ -1,11 +1,12 @@
 import 'package:bookworms_app/demo_books.dart';
+import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/bookshelf_widget.dart';
+import '../../widgets/bookshelf_widget.dart';
 
 class ClassroomScreen extends StatefulWidget {
   const ClassroomScreen({super.key});
@@ -172,7 +173,16 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          if (mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const StudentViewScreen(),
+                              ),
+                            );
+                          }
+                        },
                         child: SizedBox(
                           width: 90,
                           height: 90,

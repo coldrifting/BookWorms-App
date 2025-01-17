@@ -248,7 +248,7 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Fetches the book's details and navigates to the book's details page.
   void _onBookClicked(int index) async {
     BookDetails results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
-    if(mounted) {
+    if (mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
