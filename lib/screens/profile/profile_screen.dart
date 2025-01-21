@@ -2,7 +2,6 @@ import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
-import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -33,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    var isParent = false; // Temporary until role is implemented.
+    var isParent = true; // Temporary until role is implemented.
 
     return SafeArea(
       child: Scaffold(

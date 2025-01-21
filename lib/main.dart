@@ -100,7 +100,7 @@ class _Navigation extends State<Navigation> {
       const SearchScreen(),
       if (isParent) const ProgressScreen(),
       if (!isParent)
-        const ClassroomScreen(),
+        const ClassroomScreen(classroomName: "Ms. Wilson's Classroom"), // TO DO: Set on setup.
       const ProfileScreen(),
   ];
 
