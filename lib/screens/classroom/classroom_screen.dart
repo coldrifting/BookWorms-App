@@ -314,7 +314,11 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-          title: const Center(child: Text('Class Code')),
+          title: const Center(
+            child: Text(
+              'Class Code'
+            )
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

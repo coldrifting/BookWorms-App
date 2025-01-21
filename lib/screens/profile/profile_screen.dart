@@ -1,3 +1,4 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
@@ -8,6 +9,7 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /// The [ProfileScreen] displays relevant settings options for the user account.
 class ProfileScreen extends StatefulWidget {
@@ -31,8 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-
-    var isParent = true; // Temporary until role is implemented.
+    var isParent = Provider.of<AppState>(context, listen: false).isParent;
 
     return SafeArea(
       child: Scaffold(

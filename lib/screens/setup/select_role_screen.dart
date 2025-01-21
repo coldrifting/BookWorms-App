@@ -1,9 +1,11 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 /// The [SelectRoleScreen] contains...
 class SelectRoleScreen extends StatefulWidget {
@@ -90,6 +92,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
 
   void _setRole(String role) {
     // TO DO: Set the account role
+    Provider.of<AppState>(context, listen: false).setRole(role);
 
     // Once role is set, navigate to the home screen.
     if (mounted) {
