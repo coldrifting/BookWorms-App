@@ -1,8 +1,12 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/change_child_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /// The [ProgressScreen] contains information about the selected child's
 /// progress toward their set custom goals.
@@ -18,12 +22,18 @@ class _ProgressScreenState extends State<ProgressScreen> {
   @override
   Widget build(BuildContext context) { 
     final TextTheme textTheme = Theme.of(context).textTheme;
+    int selectedChildID = Provider.of<AppState>(context).selectedChild;
+    Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Johnny's Progress", style: TextStyle(color: colorWhite)),
+          title: Text(
+            "${selectedChild.name}'s Progress",
+            style: const TextStyle(color: colorWhite)
+          ),
           backgroundColor: colorGreen,
+          actions: const [ChangeChildWidget()],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

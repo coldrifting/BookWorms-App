@@ -1,8 +1,12 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/change_child_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
+import 'package:bookworms_app/demo_books.dart';
+import 'package:provider/provider.dart'; // Books used for the demo
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
 /// user is able to add a new bookshelf here, or access their current bookshelves.
@@ -18,12 +22,20 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    
+    int selectedChildID = Provider.of<AppState>(context).selectedChild;
+    Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Johnny's Bookshelves", style: TextStyle(color: colorWhite)),
+          title: Text(
+            "${selectedChild.name}'s Bookshelves",
+            style: const TextStyle(
+              color: colorWhite
+            )
+          ),
           backgroundColor: colorGreen,
+          actions: const [ChangeChildWidget()],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

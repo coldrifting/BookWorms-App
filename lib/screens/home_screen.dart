@@ -1,5 +1,6 @@
 //import 'package:bookworms_app/models/BookSummary.dart';
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -26,12 +27,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     var isParent = Provider.of<AppState>(context, listen: false).isParent;
-
     return SafeArea(
       child: Scaffold(
         // Home app bar
         appBar: AppBar(
-          title: Text("${isParent ? "Johnny's" : "My"} Home", style: const TextStyle(color: colorWhite)),
+          title: Text(
+            "${isParent ? "${Provider.of<AppState>(context).children[Provider.of<AppState>(context).selectedChild].name}'s" : "My"} Home",
+            style: const TextStyle(
+              color: colorWhite
+            )
+          ),
           backgroundColor: colorGreen,
           actions: isParent ? const [
             ChangeChildWidget()
