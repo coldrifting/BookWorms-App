@@ -3,6 +3,7 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/change_child_widget.dart';
 import 'package:flutter/material.dart';
 // Books used for the demo
 import 'package:bookworms_app/demo_books.dart';
@@ -32,6 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: Text("${isParent ? "Johnny's" : "My"} Home", style: const TextStyle(color: colorWhite)),
           backgroundColor: colorGreen,
+          actions: isParent ? const [
+            ChangeChildWidget()
+          ] : [],
         ),
         // Bookshelves list
         body: ListView(
