@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/screens/bookshelves_screen.dart';
-import 'package:bookworms_app/screens/classroom_screen.dart';
+import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
 import 'package:bookworms_app/screens/home_screen.dart';
 import 'package:bookworms_app/screens/profile/profile_screen.dart';
 import 'package:bookworms_app/screens/progress_screen.dart';
@@ -92,21 +92,22 @@ class Navigation extends StatefulWidget {
 class _Navigation extends State<Navigation> {
   // Selected navigation tab (0-4).
   int selectedIndex = 0;
-  
-  var isParent = false; // Temporary until roles are a thing.
-  List<Widget> get pages => [
-    const HomeScreen(),
-      if (isParent) const BookshelvesScreen(),
-      const SearchScreen(),
-      if (isParent) const ProgressScreen(),
-      if (!isParent)
-        const ClassroomScreen(),
-      const ProfileScreen(),
-  ];
 
   /// Main widget containing app bar, page navigator, and bottom bar.
   @override
   Widget build(BuildContext context) {
+    var isParent = Provider.of<AppState>(context, listen: false).isParent;
+  
+    List<Widget> pages = [
+      const HomeScreen(),
+      if (isParent) const BookshelvesScreen(),
+      const SearchScreen(),
+      if (isParent) const ProgressScreen(),
+      if (!isParent)
+        const ClassroomScreen(classroomName: "Ms. Wilson's Classroom"), // TO DO: Set on setup.
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
       body: IndexedStack(
         index: selectedIndex,
@@ -120,15 +121,13 @@ class _Navigation extends State<Navigation> {
           );
         }),
       ),
-      bottomNavigationBar: navigationBar()
+      bottomNavigationBar: navigationBar(isParent)
     );
   }
 
   /// Bottom global navigation bar.
   /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs.
-  Widget navigationBar() {
-    var isParent = false; // Temporary until roles are a thing.
-
+  Widget navigationBar(bool isParent) {
     return NavigationBar(
       backgroundColor: colorGreen,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,

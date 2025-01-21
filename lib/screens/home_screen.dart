@@ -1,10 +1,12 @@
 //import 'package:bookworms_app/models/BookSummary.dart';
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 // Books used for the demo
 import 'package:bookworms_app/demo_books.dart';
+import 'package:provider/provider.dart';
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the
@@ -19,11 +21,11 @@ class HomeScreen extends StatefulWidget {
 /// The state of the [HomeScreen].
 class _HomeScreenState extends State<HomeScreen> {
 
-  var isParent = false; // Temporary until roles are implemented.
-
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    var isParent = Provider.of<AppState>(context, listen: false).isParent;
+
     return SafeArea(
       child: Scaffold(
         // Home app bar

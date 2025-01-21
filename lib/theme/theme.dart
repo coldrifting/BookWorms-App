@@ -26,6 +26,7 @@ final ThemeData appTheme = ThemeData(
 extension WhiteTextTheme on TextTheme {
   TextStyle get displaySmallWhite => displaySmall!.copyWith(color: colorWhite);
   TextStyle get headlineLargeWhite => headlineLarge!.copyWith(color: colorWhite);
+  TextStyle get headlineMediumGreenDark => headlineMedium!.copyWith(color: colorGreenDark);
   TextStyle get headlineSmallWhite => headlineSmall!.copyWith(color: colorWhite);
   TextStyle get headerHeadlineMediumWhite => headlineMedium!.copyWith(color: colorWhite);
   TextStyle get titleLargeWhite => titleLarge!.copyWith(color: colorWhite);
