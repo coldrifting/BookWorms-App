@@ -189,10 +189,6 @@ class _SearchScreenState extends State<SearchScreen> {
   
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Search", style: TextStyle(color: colorWhite)),
-          backgroundColor: colorGreen,
-        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
