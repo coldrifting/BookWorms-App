@@ -43,7 +43,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               SizedBox(
                 width: 120,
                 height: 120,
-                child: UserIcons.getIcon("")
+                child: UserIcons.getIcon(0)
               ),
               Center(
                 child: Row(

@@ -2,6 +2,7 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/screens/profile/edit_child_screen.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -88,8 +89,10 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
           },
           icon: CircleAvatar(
             maxRadius: 64,
-            child: Text(
-              child.name[0],
+            child: SizedBox.expand(
+              child: FittedBox(
+                child: UserIcons.getIcon(Provider.of<AppState>(context).children[childID].iconIndex)
+              ),
             ),
           ),
         ),
@@ -100,6 +103,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
             fontSize: 16,
             fontWeight: FontWeight.bold
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -149,7 +153,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
               String childName = childNameController.text.isNotEmpty
                 ? childNameController.text
                 : "New Child";
-              Child newChild = Child(name: childName);
+              Child newChild = Child(name: childName, iconIndex: 0);
               Provider.of<AppState>(context, listen: false).addChild(newChild);
               Navigator.of(context).pop();
             },

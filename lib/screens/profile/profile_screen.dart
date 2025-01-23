@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ExtendedAppBar(
               name: "Audrey Hepburn", 
               username: "AudHep",
-              icon: UserIcons.getIcon(""),
+              icon: UserIcons.getIcon(0),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

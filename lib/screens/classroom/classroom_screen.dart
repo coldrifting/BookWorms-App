@@ -1,5 +1,4 @@
 import 'package:bookworms_app/demo_books.dart';
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/theme/colors.dart';
@@ -7,6 +6,7 @@ import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
+import 'package:bookworms_app/widgets/edit_button_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -95,17 +95,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             Positioned(
                               top: 55,
                               right: 130,
-                              child: RawMaterialButton(
-                                onPressed: () => _changeClassIconDialog(textTheme),
-                                fillColor: colorWhite,
-                                constraints: const BoxConstraints(minWidth: 0.0),
-                                padding: const EdgeInsets.all(5.0),
-                                shape: const CircleBorder(),
-                                child: const Icon(
-                                  Icons.mode_edit_outline_sharp,
-                                  size: 15,
-                                ),
-                              ),
+                              child: editButtonWidget(_changeClassIconDialog(textTheme)),
                             ),
                           ],
                         ),
@@ -282,7 +272,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         child: SizedBox(
                           width: 90,
                           height: 90,
-                          child: UserIcons.getIcon("")
+                          child: UserIcons.getIcon(0)
                         ),
                       ),
                       addVerticalSpace(4),

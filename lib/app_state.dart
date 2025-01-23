@@ -3,14 +3,21 @@ import 'package:flutter/material.dart';
 
 
 class AppState extends ChangeNotifier {
-  final List<Child> _children = [Child(name: 'Johnny'), Child(name: 'Lily'), Child(name: 'Noah')];
-  int _selectedChildID = 0;
   bool _isParent = true;
-
-  List<Child> get children => _children;
-  int get selectedChild => _selectedChildID;
   bool get isParent => _isParent;
 
+  final List<Child> _children = [Child(name: 'Johnny', iconIndex: 0), Child(name: 'Lily', iconIndex: 1), Child(name: 'Noah', iconIndex: 2)];
+  int _selectedChildID = 0;
+  List<Child> get children => _children;
+  int get selectedChild => _selectedChildID;
+
+  // Parent-specific
+  void setRole(String role) {
+    _isParent = role == "Parent";
+    notifyListeners();
+  }
+
+  // Child-specific
   void addChild(Child child) {
     _children.add(child);
     notifyListeners();
@@ -31,8 +38,9 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRole(String role) {
-    _isParent = role == "Parent";
+  void setChildIconIndex(int childId, int index) {
+    _children[childId].iconIndex = index;
     notifyListeners();
   }
+
 }
