@@ -6,7 +6,6 @@ import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
-import 'package:bookworms_app/widgets/edit_button_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -95,7 +94,18 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             Positioned(
                               top: 55,
                               right: 130,
-                              child: editButtonWidget(_changeClassIconDialog(textTheme)),
+                              child: RawMaterialButton(
+                                onPressed: () => _changeClassIconDialog(textTheme),
+                                fillColor: colorWhite,
+                                constraints: const BoxConstraints(minWidth: 0.0),
+                                padding: const EdgeInsets.all(5.0),
+                                shape: const CircleBorder(),
+                                child: const Icon(
+                                  Icons.mode_edit_outline_sharp,
+                                  size: 15,
+                                ),
+                              ),
+
                             ),
                           ],
                         ),
