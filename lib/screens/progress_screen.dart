@@ -22,8 +22,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
   @override
   Widget build(BuildContext context) { 
     final TextTheme textTheme = Theme.of(context).textTheme;
-    int selectedChildID = Provider.of<AppState>(context).selectedChild;
-    Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
+
+    AppState appState = Provider.of<AppState>(context);
+    Child selectedChild = appState.children[appState.selectedChild];
 
     return SafeArea(
       child: Scaffold(
@@ -52,7 +53,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     Text(
                       style: textTheme.headlineMedium,
                       textAlign: TextAlign.center,
-                      "Johnny"
+                      selectedChild.name
                     ),
                     const Icon(
                       size: 35,
