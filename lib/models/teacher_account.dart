@@ -1,22 +1,21 @@
 import 'package:bookworms_app/models/account.dart';
-import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/models/classroom.dart';
+import 'package:hive/hive.dart';
+import 'package:bookworms_app/models/book_summary.dart';
 
+part 'teacher_account.g.dart';
+
+@HiveType(typeId: 2)
 class Teacher extends Account {
+  @HiveField(5)
   final Classroom classroom;
 
   Teacher({
-    required String username,
-    required String firstName,
-    required String lastName,
-    required int profilePictureIndex,
-    required List<BookSummary> recentlySearchedBooks,
+    required super.username,
+    required super.firstName,
+    required super.lastName,
+    required super.profilePictureIndex,
+    required super.recentlySearchedBooks,
     required this.classroom,
-  }) : super(
-          username: username,
-          firstName: firstName,
-          lastName: lastName,
-          profilePictureIndex: profilePictureIndex,
-          recentlySearchedBooks: recentlySearchedBooks,
-        );
+  });
 }

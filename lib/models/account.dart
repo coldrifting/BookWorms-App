@@ -1,11 +1,20 @@
 import 'package:bookworms_app/models/book_summary.dart';
+import 'package:hive/hive.dart';
 
+part 'account.g.dart';
+
+@HiveType(typeId: 0)
 class Account {
+  @HiveField(0)
   final String username;
+  @HiveField(1)
   final String firstName;
+  @HiveField(2)
   final String lastName;
+  @HiveField(3)
   int profilePictureIndex;
-  final List<BookSummary> recentlySearchedBooks;
+  @HiveField(4)
+  final List<String> recentlySearchedBooks;
 
   Account({
     required this.username,

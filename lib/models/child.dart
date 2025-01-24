@@ -1,5 +1,11 @@
+import 'package:hive/hive.dart';
+
+part 'child.g.dart';
+
+@HiveType(typeId: 4)
 class Child {
   //final String id;
+  @HiveField(0)
   String name;
   //final String readingLevel;
   //int profilePictureIndex;
