@@ -68,9 +68,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
               const Divider(),
               addVerticalSpace(10),
-              const OptionWidget(name: "Overall Progress", icon: Icons.auto_stories),
+              OptionWidget(
+                name: "Overall Progress", 
+                icon: Icons.auto_stories, 
+                onTap: () { }
+              ),
               addVerticalSpace(16),
-              const OptionWidget(name: "Goal Progress", icon: Icons.grass_sharp),
+              OptionWidget(
+                name: "Goal Progress", 
+                icon: Icons.grass_sharp, 
+                onTap: () { },
+              ),
             ],
           ),
         ),

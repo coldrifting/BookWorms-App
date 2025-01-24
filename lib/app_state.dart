@@ -1,7 +1,11 @@
+import 'package:bookworms_app/models/account.dart';
 import 'package:bookworms_app/models/child.dart';
 import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
+  final Account _account = Account(username: "audHep", firstName: "Audrey", lastName: "Hepburn");
+  Account get account => _account;
+
   bool _isParent = true;
   bool get isParent => _isParent;
 
@@ -10,9 +14,24 @@ class AppState extends ChangeNotifier {
   List<Child> get children => _children;
   int get selectedChild => _selectedChildID;
 
-  // Parent-specific
+  // Account-specific
   void setRole(String role) {
     _isParent = role == "Parent";
+    notifyListeners();
+  }
+
+  void editFirstName(String firstName) {
+    _account.firstName = firstName;
+    notifyListeners();
+  }
+
+  void editLastName(String lastName) {
+    _account.lastName = lastName;
+    notifyListeners();
+  }
+
+  void editUsername(String username) {
+    _account.username = username;
     notifyListeners();
   }
 
