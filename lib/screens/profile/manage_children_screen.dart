@@ -117,7 +117,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
         IconButton(
           onPressed: () {
             _addChildDialog(context);
-            },
+          },
           icon: const CircleAvatar(
             maxRadius: 64,
             child: Icon(Icons.add),

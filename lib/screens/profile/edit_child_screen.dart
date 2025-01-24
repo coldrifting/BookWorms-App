@@ -172,7 +172,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
           ),
-          itemCount: 4,
+          itemCount: 9,
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {

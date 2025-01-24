@@ -61,17 +61,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   addVerticalSpace(10),
                   if (isParent) ...[
                     ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ManageChildrenScreen()
-                      )
-                    );
-                  },
-                  icon: const Icon(Icons.groups_rounded),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ManageChildrenScreen()
+                          )
+                        );
+                      },
+                      icon: const Icon(Icons.groups_rounded),
                       label: const Text('Manage Children'),
-                ),
+                  ),
                 addVerticalSpace(10),
                   ],
                   const OptionWidget(name: "Settings", icon: Icons.settings),

@@ -105,7 +105,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   size: 15,
                                 ),
                               ),
-
                             ),
                           ],
                         ),

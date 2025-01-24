@@ -1,7 +1,6 @@
 import 'package:bookworms_app/models/child.dart';
 import 'package:flutter/material.dart';
 
-
 class AppState extends ChangeNotifier {
   bool _isParent = true;
   bool get isParent => _isParent;
