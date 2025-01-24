@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,18 +22,20 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          _showChildSelection();
+          _showChildSelection(selectedChild);
         },
         child: CircleAvatar(
-          child: Text(
-            selectedChild.name[0],
+          child: SizedBox.expand(
+            child: FittedBox(
+              child: UserIcons.getIcon(selectedChild.iconIndex)
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _showChildSelection() {
+  void _showChildSelection(Child selectedChild) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -55,9 +58,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
                     Child child = Provider.of<AppState>(context).children[index];
                     return ListTile(
                       leading: CircleAvatar(
-                        child: Text(
-                          child.name[0],
-                        ),
+                        child: UserIcons.getIcon(child.iconIndex)
                       ),
                       title: Text(child.name),
                       onTap: () {

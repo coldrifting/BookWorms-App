@@ -1,7 +1,7 @@
 import 'package:bookworms_app/demo_books.dart';
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
+import 'package:bookworms_app/screens/profile/edit_profile_screen.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
@@ -148,9 +148,13 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             BookshelfWidget(name: "Assigned Reading", images: const [Demo.image8, Demo.image9, Demo.image7, Demo.image10], books: [Demo.book8, Demo.book9, Demo.book7, Demo.book10]),
             addVerticalSpace(8),
             // Class goals container --> Mock data.
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: OptionWidget(name: "Class Goals", icon: Icons.data_usage),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: OptionWidget(
+                name: "Class Goals", 
+                icon: Icons.data_usage, 
+                onTap: () {},
+              ),
             )
           ],
         ),
@@ -282,7 +286,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         child: SizedBox(
                           width: 90,
                           height: 90,
-                          child: UserIcons.getIcon("")
+                          child: UserIcons.getIcon(0)
                         ),
                       ),
                       addVerticalSpace(4),

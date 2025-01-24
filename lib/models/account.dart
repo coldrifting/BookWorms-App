@@ -1,9 +1,9 @@
 class Account {
-  final String username;
-  final String firstName;
-  final String lastName;
+  String username;
+  String firstName;
+  String lastName;
 
-  const Account({
+  Account({
     required this.username,
     required this.firstName,
     required this.lastName,

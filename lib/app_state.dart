@@ -1,16 +1,41 @@
+import 'package:bookworms_app/models/account.dart';
 import 'package:bookworms_app/models/child.dart';
 import 'package:flutter/material.dart';
 
-
 class AppState extends ChangeNotifier {
-  final List<Child> _children = [Child(name: 'Johnny'), Child(name: 'Lily'), Child(name: 'Noah')];
-  int _selectedChildID = 0;
-  bool _isParent = true;
+  final Account _account = Account(username: "audHep", firstName: "Audrey", lastName: "Hepburn");
+  Account get account => _account;
 
-  List<Child> get children => _children;
-  int get selectedChild => _selectedChildID;
+  bool _isParent = true;
   bool get isParent => _isParent;
 
+  final List<Child> _children = [Child(name: 'Johnny', iconIndex: 0), Child(name: 'Lily', iconIndex: 1), Child(name: 'Noah', iconIndex: 2)];
+  int _selectedChildID = 0;
+  List<Child> get children => _children;
+  int get selectedChild => _selectedChildID;
+
+  // Account-specific
+  void setRole(String role) {
+    _isParent = role == "Parent";
+    notifyListeners();
+  }
+
+  void editFirstName(String firstName) {
+    _account.firstName = firstName;
+    notifyListeners();
+  }
+
+  void editLastName(String lastName) {
+    _account.lastName = lastName;
+    notifyListeners();
+  }
+
+  void editUsername(String username) {
+    _account.username = username;
+    notifyListeners();
+  }
+
+  // Child-specific
   void addChild(Child child) {
     _children.add(child);
     notifyListeners();
@@ -31,8 +56,9 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRole(String role) {
-    _isParent = role == "Parent";
+  void setChildIconIndex(int childId, int index) {
+    _children[childId].iconIndex = index;
     notifyListeners();
   }
+
 }
