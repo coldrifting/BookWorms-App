@@ -5,10 +5,10 @@ class Child {
   //final String id;
   @HiveField(0)
   String name;
-  int iconIndex;
+  int profilePictureIndex;
 
   Child({
     required this.name, 
-    required this.iconIndex
+    required this.profilePictureIndex
   });
 }

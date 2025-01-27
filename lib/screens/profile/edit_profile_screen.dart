@@ -7,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final Account account;
 
   const EditProfileScreen({
     super.key,
-    required this.account,
   });
 
   @override
@@ -30,9 +28,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _firstNameController = TextEditingController(text: widget.account.firstName);
-    _lastNameController = TextEditingController(text: widget.account.lastName);
-    _usernameController = TextEditingController(text: widget.account.username);
+    AppState appState =  Provider.of<AppState>(context);
+    _firstNameController = TextEditingController(text: appState.firstName);
+    _lastNameController = TextEditingController(text: appState.lastName);
+    _usernameController = TextEditingController(text: appState.username);
     _selectedIconIndex = 0;
   }
 
@@ -80,7 +79,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 textTheme, 
                 _firstNameController, 
                 "Edit First Name", 
-                widget.account.firstName, 
+                appState.firstName, 
                 appState.editFirstName
               ),
               addVerticalSpace(32),
@@ -88,7 +87,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 textTheme, 
                 _lastNameController, 
                 "Edit Last Name", 
-                widget.account.lastName,
+                appState.lastName,
                 appState.editLastName
               ),
               addVerticalSpace(32),
@@ -96,7 +95,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   textTheme, 
                 _usernameController, 
                 "Change username", 
-                widget.account.username,
+                appState.username,
                 appState.editUsername
               ),
             ],

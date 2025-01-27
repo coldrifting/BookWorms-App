@@ -3,22 +3,21 @@ import 'package:hive/hive.dart';
 @HiveType(typeId: 0)
 class Account {
   @HiveField(0)
-  final String username;
+  String username;
   @HiveField(1)
-  final String firstName;
+  String firstName;
   @HiveField(2)
-  final String lastName;
+  String lastName;
   @HiveField(3)
-  String profilePicture;
+  int profilePictureIndex;
   @HiveField(4)
   final List<String> recentlySearchedBooks;
 
   Account({
-  Account({
     required this.username,
     required this.firstName,
     required this.lastName,
-    required this.profilePicture,
+    required this.profilePictureIndex,
     required this.recentlySearchedBooks,
   });
 }

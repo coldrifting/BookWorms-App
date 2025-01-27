@@ -91,7 +91,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
             maxRadius: 64,
             child: SizedBox.expand(
               child: FittedBox(
-                child: UserIcons.getIcon(Provider.of<AppState>(context).children[childID].iconIndex)
+                child: UserIcons.getIcon(Provider.of<AppState>(context).children[childID].profilePictureIndex)
               ),
             ),
           ),
@@ -153,7 +153,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
               String childName = childNameController.text.isNotEmpty
                 ? childNameController.text
                 : "New Child";
-              Child newChild = Child(name: childName, iconIndex: 0);
+              Child newChild = Child(name: childName, profilePictureIndex: 0);
               Provider.of<AppState>(context, listen: false).addChild(newChild);
               Navigator.of(context).pop();
             },

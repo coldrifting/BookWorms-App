@@ -3,14 +3,14 @@ class AccountDetails {
   final String firstName;
   final String lastName;
   final String role;
-  final String icon;
+  final int profilePictureIndex;
 
   AccountDetails({
     required this.username,
     required this.firstName,
     required this.lastName,
     required this.role,
-    required this.icon,
+    required this.profilePictureIndex,
   });
 
   factory AccountDetails.fromJson(Map<String, dynamic> json) {
@@ -19,7 +19,7 @@ class AccountDetails {
       firstName: json['firstName'],
       lastName: json['lastName'],
       role: json['role'],
-      icon: json['icon'],
+      profilePictureIndex: json['icon'],
     );
   }
 }

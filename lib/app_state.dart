@@ -19,9 +19,9 @@ class AppState extends ChangeNotifier {
       username: "audHep",
       firstName: "Audrey",
       lastName: "Hepburn",
-      profilePicture: "Icon1",
+      profilePictureIndex: 0,
       recentlySearchedBooks: [],
-      children: [Child(name: 'Johnny'), Child(name: 'Lily'), Child(name: 'Noah')],
+      children: [Child(name: 'Johnny', profilePictureIndex: 0), Child(name: 'Lily', profilePictureIndex: 1), Child(name: 'Noah', profilePictureIndex: 2)],
       selectedChildID: 0
     );
     _isParent = _account is Parent;
@@ -35,9 +35,9 @@ class AppState extends ChangeNotifier {
         username: accountDetails.username,
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
-        profilePicture: accountDetails.icon,
+        profilePictureIndex: accountDetails.profilePictureIndex,
         recentlySearchedBooks: [],
-        children: [Child(name: 'Johnny'), Child(name: 'Lily'), Child(name: 'Noah')],
+        children: [Child(name: 'Johnny', profilePictureIndex: 0), Child(name: 'Lily', profilePictureIndex: 1), Child(name: 'Noah', profilePictureIndex: 2)],
         selectedChildID: 0
       );
     } else {
@@ -45,18 +45,15 @@ class AppState extends ChangeNotifier {
         username: accountDetails.username,
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
-        profilePicture: accountDetails.icon,
+        profilePictureIndex: accountDetails.profilePictureIndex,
         recentlySearchedBooks: []
       );
     }
   }
 
 
-
   List<Child> get children => (_account as Parent).children;
   int get selectedChildID => (_account as Parent).selectedChildID;
-  bool get isParent => _isParent;
-
 
   void addChild(Child child) {
     (_account as Parent).children.add(child);
@@ -78,10 +75,32 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-
-  void setRole(String role) {
-    _isParent = role == "Parent";
+    void setChildIconIndex(int childId, int index) {
+    (_account as Parent).children[childId].profilePictureIndex = index;
     notifyListeners();
   }
+
+
+  bool get isParent => _isParent;
+
+  String get firstName => _account.firstName;
+  String get lastName => _account.lastName;
+  String get username => _account.username;
+
+  void editFirstName(String firstName) {
+    _account.firstName = firstName;
+    notifyListeners();
+  }
+
+  void editLastName(String lastName) {
+    _account.lastName = lastName;
+    notifyListeners();
+  }
+
+  void editUsername(String username) {
+    _account.username = username;
+    notifyListeners();
+  }
+
 
 }
