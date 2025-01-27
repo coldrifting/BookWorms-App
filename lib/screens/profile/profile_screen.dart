@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/screens/profile/edit_profile_screen.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
@@ -32,7 +33,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var isParent = Provider.of<AppState>(context, listen: false).isParent;
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    AppState appState =  Provider.of<AppState>(context);
+    var isParent = appState.isParent;
 
     return SafeArea(
       child: Scaffold(
@@ -47,44 +51,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Column(
           children: [
             ExtendedAppBar(
-              name: "Audrey Hepburn", 
-              username: "AudHep",
-              icon: UserIcons.getIcon(""),
+              name: "${appState.firstName} ${appState.lastName}", 
+              username: appState.username,
+              icon: UserIcons.getIcon(0),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   addVerticalSpace(10),
-                  const OptionWidget(name: "Edit Profile", icon: Icons.account_circle),
+                  OptionWidget(
+                    name: "Edit Profile", 
+                    icon: Icons.account_circle, 
+                    onTap: () {
+                      pushScreen(context, EditProfileScreen());
+                    }
+                  ),
                   addVerticalSpace(10),
                   if (isParent) ...[
-                    ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ManageChildrenScreen()
-                      )
-                    );
-                  },
-                  icon: const Icon(Icons.groups_rounded),
-                      label: const Text('Manage Children'),
-                ),
-                addVerticalSpace(10),
+                    OptionWidget(
+                      name: "Manage Children", 
+                      icon: Icons.groups_rounded, 
+                      onTap: () {
+                        pushScreen(context, const ManageChildrenScreen());
+                      }
+                    ),
+                    addVerticalSpace(10),
                   ],
-                  const OptionWidget(name: "Settings", icon: Icons.settings),
+                  OptionWidget(
+                    name: "Settings", 
+                    icon: Icons.settings, 
+                    onTap: () {},
+                  ),
                   addVerticalSpace(10),
                   const Divider(),
                   addVerticalSpace(10),
-                  ElevatedButton.icon(
-                    onPressed: () {
+                  OptionWidget(
+                    name: "Sign Out", 
+                    icon: Icons.logout_outlined, 
+                    onTap: () {
                       signOut();
                     },
-                    icon: const Icon(Icons.logout_outlined),
-                    label: const Text('Sign Out'),
                   ),
-                      ],
+                ],
               ),
             ),
           ],

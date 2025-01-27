@@ -22,8 +22,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
   @override
   Widget build(BuildContext context) { 
     final TextTheme textTheme = Theme.of(context).textTheme;
-    int selectedChildID = Provider.of<AppState>(context).selectedChildID;
-    Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
+
+    AppState appState = Provider.of<AppState>(context);
+    Child selectedChild = appState.children[appState.selectedChildID];
 
     return SafeArea(
       child: Scaffold(
@@ -42,7 +43,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               SizedBox(
                 width: 120,
                 height: 120,
-                child: UserIcons.getIcon("")
+                child: UserIcons.getIcon(0)
               ),
               Center(
                 child: Row(
@@ -52,7 +53,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     Text(
                       style: textTheme.headlineMedium,
                       textAlign: TextAlign.center,
-                      "Johnny"
+                      selectedChild.name
                     ),
                     const Icon(
                       size: 35,
@@ -67,9 +68,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
               const Divider(),
               addVerticalSpace(10),
-              const OptionWidget(name: "Overall Progress", icon: Icons.auto_stories),
+              OptionWidget(
+                name: "Overall Progress", 
+                icon: Icons.auto_stories, 
+                onTap: () { }
+              ),
               addVerticalSpace(16),
-              const OptionWidget(name: "Goal Progress", icon: Icons.grass_sharp),
+              OptionWidget(
+                name: "Goal Progress", 
+                icon: Icons.grass_sharp, 
+                onTap: () { },
+              ),
             ],
           ),
         ),

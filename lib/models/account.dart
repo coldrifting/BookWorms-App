@@ -14,6 +14,7 @@ class Account {
   final List<String> recentlySearchedBooks;
 
   Account({
+  Account({
     required this.username,
     required this.firstName,
     required this.lastName,

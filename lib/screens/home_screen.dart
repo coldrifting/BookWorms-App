@@ -25,13 +25,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    var isParent = Provider.of<AppState>(context, listen: false).isParent;
+
+    AppState appState = Provider.of<AppState>(context);
+    var isParent = appState.isParent;
+    var selectedChild = appState.children[appState.selectedChildID].name;
+
     return SafeArea(
       child: Scaffold(
         // Home app bar
         appBar: AppBar(
           title: Text(
-            "${isParent ? "${Provider.of<AppState>(context).children[Provider.of<AppState>(context).selectedChildID].name}'s" : "My"} Home",
+            "${isParent ? "$selectedChild's" : "My"} Home",
             style: const TextStyle(
               color: colorWhite
             )
@@ -48,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
             BookshelfWidget(name: "Recommended", images: [Demo.image1, Demo.image2, Demo.image3, Demo.image4], books: [Demo.book1, Demo.book2, Demo.book3, Demo.book4]),
             addVerticalSpace(24),
             if (isParent) ... [
-              _progressTracker(textTheme),
+              _progressTracker(textTheme, selectedChild),
               addVerticalSpace(24),
             ],
             BookshelfWidget(name: "Animals", images: [Demo.image2, Demo.image5, Demo.image6, Demo.image7], books: [Demo.book2, Demo.book5, Demo.book6, Demo.book7]),
@@ -63,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Displays the up-to-date progress of the currently-selected child.
   /// Empty for now.
-  Widget _progressTracker(TextTheme textTheme) {
+  Widget _progressTracker(TextTheme textTheme, String selectedChild) {
     return Container(
       height: 200,
       decoration: BoxDecoration(
@@ -85,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               alignment: Alignment.topLeft,
               child: Text(
                 style: textTheme.titleMedium,
-                "Johnny's Progress"
+                "$selectedChild's Progress"
               ),
             ),
             Expanded(

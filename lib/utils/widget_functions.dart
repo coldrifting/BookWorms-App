@@ -9,3 +9,12 @@ Widget addVerticalSpace(double height) {
 Widget addHorizontalSpace(double width) {
   return SizedBox(width: width);
 }
+
+void pushScreen(context, screen) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => screen
+    )
+  );
+}

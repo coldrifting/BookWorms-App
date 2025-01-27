@@ -6,7 +6,6 @@ import 'package:bookworms_app/models/teacher_account.dart';
 import 'package:bookworms_app/services/account/account_details_service.dart';
 import 'package:flutter/material.dart';
 
-
 class AppState extends ChangeNotifier {
   late Account _account;
   late bool _isParent;
@@ -84,4 +83,5 @@ class AppState extends ChangeNotifier {
     _isParent = role == "Parent";
     notifyListeners();
   }
+
 }
