@@ -1,8 +1,5 @@
-import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/models/student.dart';
 import 'package:hive/hive.dart';
-
-part 'classroom.g.dart';
 
 @HiveType(typeId: 5)
 class Classroom {

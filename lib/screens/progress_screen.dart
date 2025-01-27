@@ -22,7 +22,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   @override
   Widget build(BuildContext context) { 
     final TextTheme textTheme = Theme.of(context).textTheme;
-    int selectedChildID = Provider.of<AppState>(context).selectedChild;
+    int selectedChildID = Provider.of<AppState>(context).selectedChildID;
     Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
 
     return SafeArea(

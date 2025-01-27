@@ -10,7 +10,7 @@ class RegisterService {
 
   RegisterService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<void> registerUser(String username, String password, String firstName, String lastName) async {
+  Future<void> registerUser(String username, String password, String firstName, String lastName, bool isParent) async {
     final response = await client.post(
       Uri.parse('http://${ServicesShared.serverAddress}/user/register'),
       headers: {
@@ -21,7 +21,8 @@ class RegisterService {
         "username": username,
         "password": password,
         "firstName": firstName,
-        "lastName": lastName
+        "lastName": lastName,
+        "isParent": isParent
       })
     );
     if (response.statusCode == 200 || response.statusCode == 201) {

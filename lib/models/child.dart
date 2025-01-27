@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
 
-part 'child.g.dart';
-
 @HiveType(typeId: 4)
 class Child {
   //final String id;

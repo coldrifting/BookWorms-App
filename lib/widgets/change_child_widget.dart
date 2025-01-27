@@ -14,7 +14,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
   @override
   Widget build(BuildContext context) {
 
-    int selectedChildID = Provider.of<AppState>(context).selectedChild;
+    int selectedChildID = Provider.of<AppState>(context).selectedChildID;
     Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
     
     return Padding(
@@ -64,7 +64,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
                         Provider.of<AppState>(context, listen: false).setSelectedChild(index);
                         Navigator.pop(context);
                       },
-                      selected: index == Provider.of<AppState>(context).selectedChild,
+                      selected: index == Provider.of<AppState>(context).selectedChildID,
                     );
                   },
                 ),

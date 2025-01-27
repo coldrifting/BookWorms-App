@@ -32,7 +32,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
     var isParent = Provider.of<AppState>(context, listen: false).isParent;
 
     return SafeArea(

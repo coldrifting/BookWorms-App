@@ -1,5 +1,4 @@
 import 'package:bookworms_app/demo_books.dart';
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/theme/colors.dart';

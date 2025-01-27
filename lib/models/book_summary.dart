@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-part 'book_summary.g.dart';
-
 /// Simple book summary information and book image.
 @HiveType(typeId: 3)
 class BookSummary {
@@ -18,7 +16,7 @@ class BookSummary {
   final double rating;
   Image? image;
   @HiveField(5)
-  String? imagePath; 
+  String? imagePath;
 
   BookSummary({
     required this.id,
