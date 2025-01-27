@@ -49,6 +49,7 @@ class AppState extends ChangeNotifier {
         recentlySearchedBooks: []
       );
     }
+    _isParent = _account is Parent;
   }
 
 
