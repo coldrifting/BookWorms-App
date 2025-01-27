@@ -14,8 +14,10 @@ class BookDetails {
   const BookDetails({
     required this.description,
     required this.subjects,
+    // NOTE : At least one of the isbns will be non-empty, but it is not guaranteed both will be non-empty.
     required this.isbn10,
     required this.isbn13,
+    // NOTE : The publisher field will be removed.
     required this.publisher,
     required this.publishDate,
     required this.pageCount,

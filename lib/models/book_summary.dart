@@ -8,6 +8,7 @@ class BookSummary {
   final String difficulty;
   final double rating;
   Image? image;
+  String? imagePath;
 
   BookSummary({
     required this.id,

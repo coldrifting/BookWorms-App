@@ -15,7 +15,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
   @override
   Widget build(BuildContext context) {
 
-    int selectedChildID = Provider.of<AppState>(context).selectedChild;
+    int selectedChildID = Provider.of<AppState>(context).selectedChildID;
     Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
     
     return Padding(
@@ -27,7 +27,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
         child: CircleAvatar(
           child: SizedBox.expand(
             child: FittedBox(
-              child: UserIcons.getIcon(selectedChild.iconIndex)
+              child: UserIcons.getIcon(selectedChild.profilePictureIndex)
             ),
           ),
         ),
@@ -58,14 +58,14 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
                     Child child = Provider.of<AppState>(context).children[index];
                     return ListTile(
                       leading: CircleAvatar(
-                        child: UserIcons.getIcon(child.iconIndex)
+                        child: UserIcons.getIcon(child.profilePictureIndex)
                       ),
                       title: Text(child.name),
                       onTap: () {
                         Provider.of<AppState>(context, listen: false).setSelectedChild(index);
                         Navigator.pop(context);
                       },
-                      selected: index == Provider.of<AppState>(context).selectedChild,
+                      selected: index == Provider.of<AppState>(context).selectedChildID,
                     );
                   },
                 ),

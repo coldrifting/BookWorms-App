@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
+
   final Account account;
 
   const EditProfileScreen({
@@ -80,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 textTheme, 
                 _firstNameController, 
                 "Edit First Name", 
-                widget.account.firstName, 
+                appState.firstName, 
                 appState.editFirstName
               ),
               addVerticalSpace(32),
@@ -88,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 textTheme, 
                 _lastNameController, 
                 "Edit Last Name", 
-                widget.account.lastName,
+                appState.lastName,
                 appState.editLastName
               ),
               addVerticalSpace(32),
@@ -96,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   textTheme, 
                 _usernameController, 
                 "Change username", 
-                widget.account.username,
+                appState.username,
                 appState.editUsername
               ),
             ],

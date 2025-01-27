@@ -27,7 +27,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
   void initState() {
     super.initState();
     _childNameController = TextEditingController(text: widget.child.name);
-    _selectedIconIndex = widget.child.iconIndex;
+    _selectedIconIndex = widget.child.profilePictureIndex;
   }
 
   @override
@@ -74,7 +74,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         maxRadius: 50,
                         child: SizedBox.expand(
                           child: FittedBox(
-                            child: UserIcons.getIcon(widget.child.iconIndex),
+                            child: UserIcons.getIcon(widget.child.profilePictureIndex),
                           ),
                         ),
                       ),

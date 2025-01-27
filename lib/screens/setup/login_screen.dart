@@ -1,7 +1,9 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/services/account/login_service.dart';
+import 'package:provider/provider.dart';
 
 /// The [LoginScreen] is where a user inputs their existing credentials to log into the app.
 /// There is an alternative option to navigate to the [RegisterScreen].
@@ -26,11 +28,15 @@ class _LoginScreenState extends State<LoginScreen> {
     // Attempt to log in the user with the provided credentials.
     await loginService.loginUser(username, password);
     if (mounted) {
-      // Navigate to the home screen.
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Navigation()),
-      );
+      AppState appState = Provider.of<AppState>(context, listen: false);
+      await appState.loadAccount();
+      if (mounted) {
+        // Navigate to the home screen.
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Navigation()),
+        );
+      }
     }
   }
 

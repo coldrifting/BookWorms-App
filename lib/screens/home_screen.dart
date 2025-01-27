@@ -28,14 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
-    var selectedChild = appState.children[appState.selectedChild].name;
+    //var selectedChild = appState.children[appState.selectedChildID].name;
 
     return SafeArea(
       child: Scaffold(
         // Home app bar
         appBar: AppBar(
           title: Text(
-            "${isParent ? "$selectedChild's" : "My"} Home",
+            "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Home",
             style: const TextStyle(
               color: colorWhite
             )
@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
             BookshelfWidget(name: "Recommended", images: [Demo.image1, Demo.image2, Demo.image3, Demo.image4], books: [Demo.book1, Demo.book2, Demo.book3, Demo.book4]),
             addVerticalSpace(24),
             if (isParent) ... [
-              _progressTracker(textTheme, selectedChild),
+              _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
               addVerticalSpace(24),
             ],
             BookshelfWidget(name: "Animals", images: [Demo.image2, Demo.image5, Demo.image6, Demo.image7], books: [Demo.book2, Demo.book5, Demo.book6, Demo.book7]),

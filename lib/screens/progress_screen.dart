@@ -24,7 +24,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     AppState appState = Provider.of<AppState>(context);
-    Child selectedChild = appState.children[appState.selectedChild];
+    Child selectedChild = appState.children[appState.selectedChildID];
 
     return SafeArea(
       child: Scaffold(

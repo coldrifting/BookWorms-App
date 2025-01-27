@@ -37,7 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     AppState appState =  Provider.of<AppState>(context);
     var isParent = appState.isParent;
-    var account = appState.account;
 
     return SafeArea(
       child: Scaffold(
@@ -52,8 +51,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Column(
           children: [
             ExtendedAppBar(
-              name: "${appState.account.firstName} ${appState.account.lastName}", 
-              username: appState.account.username,
+              name: "${appState.firstName} ${appState.lastName}", 
+              username: appState.username,
               icon: UserIcons.getIcon(0),
             ),
             Padding(
@@ -65,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     name: "Edit Profile", 
                     icon: Icons.account_circle, 
                     onTap: () {
-                      pushScreen(context, EditProfileScreen(account: account));
+                      pushScreen(context, EditProfileScreen(account: appState.account));
                     }
                   ),
                   addVerticalSpace(10),

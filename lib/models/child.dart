@@ -1,9 +1,13 @@
+import 'package:hive/hive.dart';
+
+@HiveType(typeId: 4)
 class Child {
+  //final String id;
   String name;
-  int iconIndex;
+  int profilePictureIndex;
 
   Child({
     required this.name, 
-    required this.iconIndex
+    required this.profilePictureIndex
   });
 }
