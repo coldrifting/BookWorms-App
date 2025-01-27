@@ -11,7 +11,7 @@ class Teacher extends Account {
     required super.username,
     required super.firstName,
     required super.lastName,
-    required super.profilePicture,
+    required super.profilePictureIndex,
     required super.recentlySearchedBooks,
     // required this.classroom,
   });

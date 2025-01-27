@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     name: "Edit Profile", 
                     icon: Icons.account_circle, 
                     onTap: () {
-                      pushScreen(context, EditProfileScreen());
+                      pushScreen(context, EditProfileScreen(account: appState.account));
                     }
                   ),
                   addVerticalSpace(10),

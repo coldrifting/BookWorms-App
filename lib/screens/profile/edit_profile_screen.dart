@@ -8,8 +8,11 @@ import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
 
+  final Account account;
+
   const EditProfileScreen({
     super.key,
+    required this.account,
   });
 
   @override
@@ -28,10 +31,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    AppState appState =  Provider.of<AppState>(context);
-    _firstNameController = TextEditingController(text: appState.firstName);
-    _lastNameController = TextEditingController(text: appState.lastName);
-    _usernameController = TextEditingController(text: appState.username);
+    _firstNameController = TextEditingController(text: widget.account.firstName);
+    _lastNameController = TextEditingController(text: widget.account.lastName);
+    _usernameController = TextEditingController(text: widget.account.username);
     _selectedIconIndex = 0;
   }
 

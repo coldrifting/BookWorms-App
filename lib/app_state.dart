@@ -81,8 +81,8 @@ class AppState extends ChangeNotifier {
   }
 
 
+  Account get account => _account;
   bool get isParent => _isParent;
-
   String get firstName => _account.firstName;
   String get lastName => _account.lastName;
   String get username => _account.username;

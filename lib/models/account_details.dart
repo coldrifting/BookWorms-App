@@ -19,7 +19,9 @@ class AccountDetails {
       firstName: json['firstName'],
       lastName: json['lastName'],
       role: json['role'],
-      profilePictureIndex: json['icon'],
+      // TEMPORARY UNTIL SERVER SENDS INTS. 
+      // profilePictureIndex: json['icon'],
+      profilePictureIndex: 0,
     );
   }
 }
