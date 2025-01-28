@@ -118,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               maxRadius: 50,
               child: SizedBox.expand(
                 child: FittedBox(
-                  child: UserIcons.getIcon(0),
+                  child: UserIcons.getRandomIcon(),
                 ),
               ),
             ),
