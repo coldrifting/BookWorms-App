@@ -89,34 +89,19 @@ class AppState extends ChangeNotifier {
   String get lastName => _account.lastName;
   String get username => _account.username;
 
-  void editFirstName(String firstName) async {
-    bool success = await _updateAccountInfo();
-    if (success) {
-      _account.firstName = firstName;
-      notifyListeners();
-    }
-  }
-
-  void editLastName(String lastName) async {
-    bool success = await _updateAccountInfo();
-    if (success) {
-      _account.lastName = lastName;
-      notifyListeners();
-    }
-  }
-
-  void setAccountIconIndex(int index) async {
-    bool success = await _updateAccountInfo();
-    if (success) {
-      _account.profilePictureIndex = index;
-      notifyListeners();
-    }
-  }
-
   // Updates account information on server and locally.
-  Future<bool> _updateAccountInfo() async {
+  void editAccountInfo({String? firstName, String? lastName, int? profilePictureIndex}) async {
+    // If not included as parameters, set to currently-saved value.
+    firstName ??= _account.firstName;
+    lastName ??= _account.lastName;
+    profilePictureIndex ??= _account.profilePictureIndex;
+
     EditAccountInfoService accountService = EditAccountInfoService();
-    bool status = await accountService.setAccountDetails(_account.firstName, _account.lastName, _account.profilePictureIndex);
-    return status;
+    AccountDetails accountDetails = await accountService.setAccountDetails(firstName, lastName, profilePictureIndex);
+
+    _account.firstName = accountDetails.firstName;
+    _account.lastName = accountDetails.lastName;
+    _account.profilePictureIndex = accountDetails.profilePictureIndex;
+    notifyListeners();
   }
 }

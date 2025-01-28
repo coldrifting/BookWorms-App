@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  Widget build(BuildContexcontext) {
+  Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     AppState appState =  Provider.of<AppState>(context);
