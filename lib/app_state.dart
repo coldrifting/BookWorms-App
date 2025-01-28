@@ -4,6 +4,7 @@ import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/models/parent_account.dart';
 import 'package:bookworms_app/models/teacher_account.dart';
 import 'package:bookworms_app/services/account/account_details_service.dart';
+import 'package:bookworms_app/services/account/edit_account_info_service.dart';
 import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
@@ -88,20 +89,19 @@ class AppState extends ChangeNotifier {
   String get lastName => _account.lastName;
   String get username => _account.username;
 
-  void editFirstName(String firstName) {
-    _account.firstName = firstName;
+  // Updates account information on server and locally.
+  void editAccountInfo({String? firstName, String? lastName, int? profilePictureIndex}) async {
+    // If not included as parameters, set to currently-saved value.
+    firstName ??= _account.firstName;
+    lastName ??= _account.lastName;
+    profilePictureIndex ??= _account.profilePictureIndex;
+
+    EditAccountInfoService accountService = EditAccountInfoService();
+    AccountDetails accountDetails = await accountService.setAccountDetails(firstName, lastName, profilePictureIndex);
+
+    _account.firstName = accountDetails.firstName;
+    _account.lastName = accountDetails.lastName;
+    _account.profilePictureIndex = accountDetails.profilePictureIndex;
     notifyListeners();
   }
-
-  void editLastName(String lastName) {
-    _account.lastName = lastName;
-    notifyListeners();
-  }
-
-  void editUsername(String username) {
-    _account.username = username;
-    notifyListeners();
-  }
-
-
 }

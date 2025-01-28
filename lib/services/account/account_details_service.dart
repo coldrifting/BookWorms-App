@@ -21,7 +21,7 @@ class AccountDetailsService {
       final data = jsonDecode(response.body);
       return AccountDetails.fromJson(data);
     } else {
-      throw Exception('An error occurred when fetching the book details.');
+      throw Exception('An error occurred when fetching the user details.');
     }
   }
 }

@@ -90,7 +90,7 @@ class ReviewWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            UserIcons.getIcon(0),
+            UserIcons.getRandomIcon(),
             addHorizontalSpace(5),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

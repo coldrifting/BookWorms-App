@@ -1,5 +1,6 @@
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
 class ExtendedAppBar extends StatelessWidget {
@@ -44,6 +45,7 @@ class ExtendedAppBar extends StatelessWidget {
             height: 120,
             child: icon,
           ),
+          addVerticalSpace(4),
           Text(
             style: textTheme.titleLargeWhite,
             name,
@@ -52,6 +54,7 @@ class ExtendedAppBar extends StatelessWidget {
             style: textTheme.bodyLargeWhite,
             "@$username"
           ),
+          addVerticalSpace(4),
         ],
       ),
     );

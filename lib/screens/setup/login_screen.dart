@@ -1,6 +1,9 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/screens/setup/register_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/login_register_widget.dart';
+import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/services/account/login_service.dart';
 import 'package:provider/provider.dart';
@@ -49,10 +52,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return SafeArea(
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        body: SetupBackdropWidget(childWidget: _loginWidget(textTheme)),
+      ),
+    );
+  }
+
+  Widget _loginWidget(TextTheme textTheme) {
+    return Column(
+      children: [
+        Text(
+          "Sign In",
+          style: textTheme.headlineLarge,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -61,10 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Username text field
                 TextFormField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter username'
-                  ),
+                  decoration: const InputDecoration(labelText: 'Username'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
@@ -72,15 +85,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(16),
                 // Password text field
                 TextFormField(
                   obscureText: true,
                   controller: _passwordController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter password'
-                  ),
+                  decoration: const InputDecoration(labelText: 'Password'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
@@ -88,23 +97,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(16),
-                // "LOGIN" button
-                TextButton(
-                  onPressed: () {
+                addVerticalSpace(32),
+                LoginRegisterWidget(
+                  onSignIn: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       final username = _usernameController.text;
                       final password = _passwordController.text;
                       login(username, password);
                     }
                   },
-                  child: const Text('LOGIN'),
+                  onSignUp: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    );
+                  }, 
+                  signIn: true
                 ),
               ],
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
