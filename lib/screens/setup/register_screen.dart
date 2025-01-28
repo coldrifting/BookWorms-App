@@ -156,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ],
                 ),
-                addVerticalSpace(16),
+                addVerticalSpace(32),
                 LoginRegisterWidget(
                   onSignUp: () {
                     if (_formKey.currentState?.validate() ?? false) {
@@ -175,6 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }, 
                   signIn: false
                 ),
+                addVerticalSpace(32),
               ],
             ),
           ),

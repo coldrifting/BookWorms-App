@@ -85,7 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(16),
                 // Password text field
                 TextFormField(
                   obscureText: true,
@@ -98,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(16),
+                addVerticalSpace(32),
                 LoginRegisterWidget(
                   onSignIn: () {
                     if (_formKey.currentState?.validate() ?? false) {
