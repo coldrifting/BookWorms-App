@@ -4,6 +4,7 @@ import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
 import 'package:bookworms_app/screens/home_screen.dart';
 import 'package:bookworms_app/screens/profile/profile_screen.dart';
 import 'package:bookworms_app/screens/progress_screen.dart';
+import 'package:bookworms_app/screens/setup/add_first_child.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/theme/colors.dart';
@@ -65,10 +66,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (mounted) {
       if (results[1] != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Navigation()),
-      );
+        AppState appState = Provider.of<AppState>(context, listen: false);
+        await appState.loadAccount();
+        if (mounted) {
+          // If a user with a parent account opens the app while a JWT has been saved but no child profiles exist.
+          // This will occur if the user exits the app immediately after registration.
+          if (appState.isParent && appState.children.isEmpty) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const AddFirstChild()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const Navigation()),
+            );
+          }
+        }
       } else {
         Navigator.pushReplacement(
           context,
