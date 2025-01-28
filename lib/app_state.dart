@@ -4,6 +4,7 @@ import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/models/parent_account.dart';
 import 'package:bookworms_app/models/teacher_account.dart';
 import 'package:bookworms_app/services/account/account_details_service.dart';
+import 'package:bookworms_app/services/account/edit_account_info.dart';
 import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
@@ -90,23 +91,25 @@ class AppState extends ChangeNotifier {
 
   void editFirstName(String firstName) {
     _account.firstName = firstName;
+    _updateAccountInfo();
     notifyListeners();
   }
 
   void editLastName(String lastName) {
     _account.lastName = lastName;
-    notifyListeners();
-  }
-
-  void editUsername(String username) {
-    _account.username = username;
+    _updateAccountInfo();
     notifyListeners();
   }
 
   void setAccountIconIndex(int index) {
     _account.profilePictureIndex = index;
+    _updateAccountInfo();
     notifyListeners();
   }
 
-
+  // Updates account information on server and locally.
+  void _updateAccountInfo() async {
+    EditAccountInfoService accountService = EditAccountInfoService();
+    await accountService.setAccountDetails(_account.firstName, _account.lastName, _account.profilePictureIndex);
+  }
 }

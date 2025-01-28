@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/account.dart';
+import 'package:bookworms_app/services/account/edit_account_info.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -34,7 +35,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _firstNameController = TextEditingController(text: widget.account.firstName);
     _lastNameController = TextEditingController(text: widget.account.lastName);
     _usernameController = TextEditingController(text: widget.account.username);
-    _selectedIconIndex = 0;
+    _selectedIconIndex = widget.account.profilePictureIndex;
   }
 
   @override
@@ -91,14 +92,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 "Edit Last Name", 
                 appState.lastName,
                 appState.editLastName
-              ),
-              addVerticalSpace(32),
-              _textFieldWidget(
-                  textTheme, 
-                _usernameController, 
-                "Change username", 
-                appState.username,
-                appState.editUsername
               ),
             ],
           ),

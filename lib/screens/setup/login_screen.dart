@@ -76,10 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Username text field
                 TextFormField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter username'
-                  ),
+                  decoration: const InputDecoration(labelText: 'Username'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
@@ -92,10 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   obscureText: true,
                   controller: _passwordController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter password'
-                  ),
+                  decoration: const InputDecoration(labelText: 'Password'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
@@ -103,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(16),
+                addVerticalSpace(24),
                 // "LOGIN" button
                 ElevatedButton(
                   onPressed: () {
@@ -119,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: const Text('SIGN IN'),
                 ),
+                addVerticalSpace(32),
               ],
             ),
           ),
