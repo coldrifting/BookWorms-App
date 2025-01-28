@@ -1,7 +1,8 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/screens/setup/register_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/login_register_widget.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/services/account/login_service.dart';
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
           style: textTheme.headlineLarge,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -97,23 +98,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(24),
-                // "LOGIN" button
-                ElevatedButton(
-                  onPressed: () {
+                addVerticalSpace(16),
+                LoginRegisterWidget(
+                  onSignIn: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       final username = _usernameController.text;
                       final password = _passwordController.text;
                       login(username, password);
                     }
                   },
-                  style: TextButton.styleFrom(
-                    backgroundColor: colorGreen,
-                    foregroundColor: colorWhite,
-                  ),
-                  child: const Text('SIGN IN'),
+                  onSignUp: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    );
+                  }, 
+                  signIn: true
                 ),
-                addVerticalSpace(32),
               ],
             ),
           ),

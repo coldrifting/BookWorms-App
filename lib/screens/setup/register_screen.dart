@@ -1,8 +1,10 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/screens/setup/login_screen.dart';
 import 'package:bookworms_app/services/account/register_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/login_register_widget.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -75,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           style: textTheme.headlineLarge,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Form(
             key: _formKey,
             child: Column(
@@ -122,15 +124,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(32),
-                Text(
-                  "Select Account Type",
-                  style: textTheme.titleMedium
-                ),
-                addVerticalSpace(4),
+                addVerticalSpace(16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Text(
+                      "Account Type",
+                      style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                    ),
+                    Spacer(),
                     ChoiceChip(
                       label: const Text('Parent'),
                       selected: _isParent,
@@ -155,22 +157,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
                 addVerticalSpace(16),
-                ElevatedButton(
-                  onPressed: () {
+                LoginRegisterWidget(
+                  onSignUp: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       final username = _usernameController.text;
                       final password = _passwordController.text;
                       final firstName = _firstNameController.text;
                       final lastName = _lastNameController.text;
-                      register(
-                          username, password, firstName, lastName, _isParent);
+                      register(username, password, firstName, lastName, _isParent);
                     }
                   },
-                  style: TextButton.styleFrom(
-                    backgroundColor: colorGreen,
-                    foregroundColor: colorWhite,
-                  ),
-                  child: const Text('Sign Up'),
+                  onSignIn: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                  }, 
+                  signIn: false
                 ),
               ],
             ),
