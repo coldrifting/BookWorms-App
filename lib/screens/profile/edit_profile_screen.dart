@@ -75,7 +75,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           key: _formKey,
           child: Column(
             children: [
-              _profileIcon(textTheme),
+              _profileIcon(textTheme, appState),
               addHorizontalSpace(16),
               _textFieldWidget(
                 textTheme, 
@@ -108,17 +108,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   // The account profile icon along with modification functionality.
-  Widget _profileIcon(TextTheme textTheme) {
+  Widget _profileIcon(TextTheme textTheme, AppState appState) {
     return Center(
       child: Stack(
         children: [
           IconButton(
-            onPressed: () =>changeIconDialog(textTheme),
+            onPressed: () => changeIconDialog(textTheme, appState),
             icon: CircleAvatar(
               maxRadius: 50,
               child: SizedBox.expand(
                 child: FittedBox(
-                  child: UserIcons.getRandomIcon(),
+                  child: UserIcons.getIcon(appState.account.profilePictureIndex),
                 ),
               ),
             ),
@@ -127,7 +127,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             top: 70,
             left: 70,
             child: RawMaterialButton(
-              onPressed: () => changeIconDialog(textTheme),
+              onPressed: () => changeIconDialog(textTheme, appState),
               fillColor: colorWhite,
               constraints: const BoxConstraints(minWidth: 0.0),
               padding: const EdgeInsets.all(5.0),
@@ -188,12 +188,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
    /// Dialog to change the class icon to a specific color.
-  Future<dynamic> changeIconDialog(TextTheme textTheme) {
+  Future<dynamic> changeIconDialog(TextTheme textTheme, AppState appState) {
     return showDialog(
       context: context, 
       builder: (BuildContext context) => AlertDialog(
           title: const Center(child: Text('Change Profile Icon')),
-          content: _getIconList(),
+          content: _getIconList(appState),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -208,7 +208,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   /// Displays the icon list for the account.
-  Widget _getIconList() {
+  Widget _getIconList(AppState appState) {
     return SizedBox(
         width: double.maxFinite,
         height: 400,
@@ -225,6 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 // Change selected color and exit popup.
                 setState(() {
                   _selectedIconIndex = index;
+                  appState.setAccountIconIndex(index);
                 });
                 Navigator.of(context).pop();
               },

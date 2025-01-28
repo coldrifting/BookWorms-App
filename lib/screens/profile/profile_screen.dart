@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ExtendedAppBar(
               name: "${appState.firstName} ${appState.lastName}", 
               username: appState.username,
-              icon: UserIcons.getRandomIcon(),
+              icon: UserIcons.getIcon(appState.account.profilePictureIndex),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

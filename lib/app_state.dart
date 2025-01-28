@@ -103,5 +103,10 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setAccountIconIndex(int index) {
+    _account.profilePictureIndex = index;
+    notifyListeners();
+  }
+
 
 }
