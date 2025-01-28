@@ -36,7 +36,7 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
         body: Center(
           child: Column(
             children: [
-              ExtendedAppBar(name: "Student", username: "student", icon: UserIcons.getIcon(0)),
+              ExtendedAppBar(name: "Student", username: "student", icon: UserIcons.getRandomIcon()),
             ],
           ),
         ),

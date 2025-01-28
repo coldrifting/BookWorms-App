@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/account.dart';
+import 'package:bookworms_app/services/account/edit_account_info_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -34,7 +35,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _firstNameController = TextEditingController(text: widget.account.firstName);
     _lastNameController = TextEditingController(text: widget.account.lastName);
     _usernameController = TextEditingController(text: widget.account.username);
-    _selectedIconIndex = 0;
+    _selectedIconIndex = widget.account.profilePictureIndex;
   }
 
   @override
@@ -82,7 +83,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _firstNameController, 
                 "Edit First Name", 
                 appState.firstName, 
-                appState.editFirstName
+                () => appState.editAccountInfo(firstName: _firstNameController.text)
+                
               ),
               addVerticalSpace(32),
               _textFieldWidget(
@@ -90,15 +92,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _lastNameController, 
                 "Edit Last Name", 
                 appState.lastName,
-                appState.editLastName
-              ),
-              addVerticalSpace(32),
-              _textFieldWidget(
-                  textTheme, 
-                _usernameController, 
-                "Change username", 
-                appState.username,
-                appState.editUsername
+                () => appState.editAccountInfo(lastName: _lastNameController.text)
               ),
             ],
           ),
@@ -109,16 +103,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // The account profile icon along with modification functionality.
   Widget _profileIcon(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
     return Center(
       child: Stack(
         children: [
           IconButton(
-            onPressed: () =>changeIconDialog(textTheme),
+            onPressed: () => changeIconDialog(textTheme),
             icon: CircleAvatar(
               maxRadius: 50,
               child: SizedBox.expand(
                 child: FittedBox(
-                  child: UserIcons.getIcon(0),
+                  child: UserIcons.getIcon(appState.account.profilePictureIndex),
                 ),
               ),
             ),
@@ -176,7 +171,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState?.validate() ?? false) {
-                  onSave(controller.text);
+                  onSave();
                 }
               },
               child: const Text("Save")
@@ -187,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-   /// Dialog to change the class icon to a specific color.
+   /// Dialog to change the profile icon to a specific color.
   Future<dynamic> changeIconDialog(TextTheme textTheme) {
     return showDialog(
       context: context, 
@@ -209,6 +204,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   /// Displays the icon list for the account.
   Widget _getIconList() {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+
     return SizedBox(
         width: double.maxFinite,
         height: 400,
@@ -225,6 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 // Change selected color and exit popup.
                 setState(() {
                   _selectedIconIndex = index;
+                  appState.editAccountInfo(profilePictureIndex: index);
                 });
                 Navigator.of(context).pop();
               },

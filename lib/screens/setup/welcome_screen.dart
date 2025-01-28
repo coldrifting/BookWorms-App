@@ -52,7 +52,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         foregroundColor: colorWhite,
                       ),
                       child: const Text(
-                        "LOGIN",
+                        "SIGN IN",
                         )
                     ),
                     addHorizontalSpace(32),
@@ -67,7 +67,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         backgroundColor: colorWhite,
                       ),
                       child: const Text(
-                        "SIGNUP",
+                        "SIGN UP",
                       ),
                     ),
                   ],

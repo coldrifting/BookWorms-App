@@ -286,7 +286,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         child: SizedBox(
                           width: 90,
                           height: 90,
-                          child: UserIcons.getIcon(0)
+                          child: UserIcons.getRandomIcon()
                         ),
                       ),
                       addVerticalSpace(4),
