@@ -9,7 +9,7 @@ class EditAccountInfoService {
   EditAccountInfoService({http.Client? client}) : client = client ?? http.Client();
 
   // Modifies the first name, last name, or icon index of the account.
-  Future<void> setAccountDetails(String firstName, String lastName, int iconIndex) async {
+  Future<bool> setAccountDetails(String firstName, String lastName, int iconIndex) async {
     final response = await client.post(
       Uri.parse('http://${ServicesShared.serverAddress}/user/edit'),
       headers: {
@@ -23,8 +23,6 @@ class EditAccountInfoService {
         //"icon": iconIndex,
       })
     );
-    if (response.statusCode != 200) {
-      throw Exception('An error occurred when trying to update the account details.');
-    }
+    return response.statusCode == 200;
   }
 }

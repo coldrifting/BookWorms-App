@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/account.dart';
-import 'package:bookworms_app/services/account/edit_account_info.dart';
+import 'package:bookworms_app/services/account/edit_account_info_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
