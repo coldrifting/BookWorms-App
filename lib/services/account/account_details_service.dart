@@ -13,7 +13,7 @@ class AccountDetailsService {
     final response = await client.get(
       Uri.parse('http://${ServicesShared.serverAddress}/user/details'),
       headers: {
-        'accept': 'application/json',
+        'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
       },
     );
@@ -21,7 +21,7 @@ class AccountDetailsService {
       final data = jsonDecode(response.body);
       return AccountDetails.fromJson(data);
     } else {
-      throw Exception('An error occurred when fetching the user details.');
+      throw Exception('An error occurred when fetching the user details: ${response.reasonPhrase}.');
     }
   }
 }
