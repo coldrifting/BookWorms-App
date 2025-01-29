@@ -10,3 +10,4 @@ const colorYellow = Colors.amber;
 final colorGreen = Colors.green[800];
 const colorGreenLight = Color(0xffc1e8c1);
 final colorGreenDark = Colors.green[900];
+final colorRed = Colors.red[700];

@@ -1,7 +1,9 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/account.dart';
-import 'package:bookworms_app/services/account/edit_account_info_service.dart';
+import 'package:bookworms_app/screens/setup/welcome_screen.dart';
+import 'package:bookworms_app/services/account/delete_account_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _usernameController;
-
   final _formKey = GlobalKey<FormState>();
 
   late int _selectedIconIndex;
@@ -84,7 +85,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 "Edit First Name", 
                 appState.firstName, 
                 () => appState.editAccountInfo(firstName: _firstNameController.text)
-                
               ),
               addVerticalSpace(32),
               _textFieldWidget(
@@ -94,11 +94,77 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 appState.lastName,
                 () => appState.editAccountInfo(lastName: _lastNameController.text)
               ),
+              addVerticalSpace(32),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorRed,
+                  foregroundColor: colorWhite,
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                onPressed: () => _showDeleteConfirmationDialog(textTheme),
+                child: Text(
+                  'Delete Account',
+                  style: textTheme.titleSmallWhite,
+                ),
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  // UI for showing deletion confirmation. If user clicks "Delete", then try
+  // to delete the account.
+  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text('Delete Account')),
+          content: const Text('Deleting your account cannot be undone. Are you sure you want to continue?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteAccount();
+              },
+              child: Text(
+                'Delete',
+                style: TextStyle(color: colorRed),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Deletes the user's account and navigates to homescreen.
+  Future<void> _deleteAccount() async {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+
+    DeleteAccountService deleteAccountService = DeleteAccountService();
+    var status = await deleteAccountService.deleteAccount(appState.username);
+
+    if (status) {
+      // Clear navigation stack and navigate to the welcome screen.
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+          (route) => false,
+        );
+      }
+    }
   }
 
   // The account profile icon along with modification functionality.
@@ -182,7 +248,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-   /// Dialog to change the profile icon to a specific color.
+  // Dialog to change the profile icon to a specific color.
   Future<dynamic> changeIconDialog(TextTheme textTheme) {
     return showDialog(
       context: context, 
@@ -202,7 +268,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  /// Displays the icon list for the account.
+  // Displays the icon list for the account.
   Widget _getIconList() {
     AppState appState = Provider.of<AppState>(context, listen: false);
 
