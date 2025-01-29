@@ -67,7 +67,8 @@ class _SplashScreenState extends State<SplashScreen> {
     if (mounted) {
       if (results[1] != null) {
         AppState appState = Provider.of<AppState>(context, listen: false);
-        await appState.loadAccount();
+        await appState.loadAccountDetails();
+        await appState.loadAccountSpecifics();
         if (mounted) {
           // If a user with a parent account opens the app while a JWT has been saved but no child profiles exist.
           // This will occur if the user exits the app immediately after registration.

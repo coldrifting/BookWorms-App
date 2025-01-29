@@ -32,7 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
     await loginService.loginUser(username, password);
     if (mounted) {
       AppState appState = Provider.of<AppState>(context, listen: false);
-      await appState.loadAccount();
+      await appState.loadAccountDetails();
+      await appState.loadAccountSpecifics();
       if (mounted) {
         // Navigate to the home screen.
         Navigator.pushReplacement(

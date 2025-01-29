@@ -50,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         username, password, firstName, lastName, isParent);
     if (mounted) {
       AppState appState = Provider.of<AppState>(context, listen: false);
-      await appState.loadAccount();
+      await appState.loadAccountDetails();
       if (mounted) {
         if (isParent)
         {
