@@ -4,31 +4,16 @@ import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/models/parent_account.dart';
 import 'package:bookworms_app/models/teacher_account.dart';
 import 'package:bookworms_app/services/account/account_details_service.dart';
+import 'package:bookworms_app/services/account/add_child_service.dart';
 import 'package:bookworms_app/services/account/edit_account_info_service.dart';
+import 'package:bookworms_app/services/account/get_children_service.dart';
 import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
   late Account _account;
   late bool _isParent;
 
-  AppState() {
-    tempLoadAccount();
-  }
-
-  void tempLoadAccount() {
-    _account = Parent(
-      username: "audHep",
-      firstName: "Audrey",
-      lastName: "Hepburn",
-      profilePictureIndex: 0,
-      recentlySearchedBooks: [],
-      children: [Child(name: 'Johnny', profilePictureIndex: 0), Child(name: 'Lily', profilePictureIndex: 1), Child(name: 'Noah', profilePictureIndex: 2)],
-      selectedChildID: 0
-    );
-    _isParent = _account is Parent;
-  }
-
-  Future<void> loadAccount() async {
+  Future<void> loadAccountDetails() async {
     AccountDetailsService accountDetailsService = AccountDetailsService();
     AccountDetails accountDetails = await accountDetailsService.getAccountDetails();
     if (accountDetails.role == "Parent") {
@@ -38,7 +23,7 @@ class AppState extends ChangeNotifier {
         lastName: accountDetails.lastName,
         profilePictureIndex: accountDetails.profilePictureIndex,
         recentlySearchedBooks: [],
-        children: [Child(name: 'Johnny', profilePictureIndex: 0), Child(name: 'Lily', profilePictureIndex: 1), Child(name: 'Noah', profilePictureIndex: 2)],
+        children: [],
         selectedChildID: 0
       );
     } else {
@@ -53,11 +38,21 @@ class AppState extends ChangeNotifier {
     _isParent = _account is Parent;
   }
 
+  Future<void> loadAccountSpecifics() async {
+    if (_isParent) {
+      GetChildrenService getChildrenService = GetChildrenService();
+      List<Child> children = await getChildrenService.getChildren();
+      (_account as Parent).children = children;
+    }
+  }
+
 
   List<Child> get children => (_account as Parent).children;
   int get selectedChildID => (_account as Parent).selectedChildID;
 
-  void addChild(Child child) {
+  Future<void> addChild(String childName) async {
+    AddChildService addChildService = AddChildService();
+    Child child = await addChildService.addChild(childName);
     (_account as Parent).children.add(child);
     notifyListeners();
   }

@@ -153,8 +153,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
               String childName = childNameController.text.isNotEmpty
                 ? childNameController.text
                 : "New Child";
-              Child newChild = Child(name: childName, profilePictureIndex: 0);
-              Provider.of<AppState>(context, listen: false).addChild(newChild);
+              Provider.of<AppState>(context, listen: false).addChild(childName);
               Navigator.of(context).pop();
             },
             child: const Text("Add")

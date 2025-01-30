@@ -2,7 +2,7 @@ import 'package:bookworms_app/models/account.dart';
 import 'package:bookworms_app/models/child.dart';
 
 class Parent extends Account {
-  final List<Child> children;
+  List<Child> children;
   int selectedChildID;
 
   Parent({

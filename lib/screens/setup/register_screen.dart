@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/screens/setup/add_first_child.dart';
 import 'package:bookworms_app/screens/setup/login_screen.dart';
 import 'package:bookworms_app/services/account/register_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
@@ -49,12 +50,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
         username, password, firstName, lastName, isParent);
     if (mounted) {
       AppState appState = Provider.of<AppState>(context, listen: false);
-      await appState.loadAccount();
+      await appState.loadAccountDetails();
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Navigation()),
-        );
+        if (isParent)
+        {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const AddFirstChild()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const Navigation()),
+          );
+        }
       }
     }
   }
