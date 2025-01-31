@@ -3,7 +3,7 @@ class UserReview {
   final String firstName;
   final String lastName;
   final String role;
-  final String icon;
+  final int icon;
   final String text;
   final double starRating;
 

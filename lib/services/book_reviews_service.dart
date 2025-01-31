@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bookworms_app/models/user_review.dart';
+import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/services/services_shared.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +15,8 @@ class BookReviewsService {
       Uri.parse('http://${ServicesShared.serverAddress}/books/$bookId/review?username=parent0'),
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${await getToken()}',
       },
       body: json.encode({
         "starRating": starRating,

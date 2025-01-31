@@ -24,13 +24,13 @@ class BookImagesService {
     if (response.statusCode == 200) {
       final List<int> bytes = response.bodyBytes;
       final archive = ZipDecoder().decodeBytes(Uint8List.fromList(bytes));
-      List<Image> images = [];
+      Map<String, Image> bookImages = {};
       for (var file in archive) {
+        final fileName = file.name.substring(0, file.name.length - 10);
         final imageData = file.content as List<int>;
-        final image = Image.memory(Uint8List.fromList(imageData));
-        images.add(image);
+        bookImages[fileName] = Image.memory(Uint8List.fromList(imageData));
       }
-      return images;
+      return bookIds.map((id) => bookImages[id] ?? Image.asset("assets/images/book_cover_unavailable.jpg")).toList();
     } else {
       throw Exception('An error occurred when fetching the book image.');
     }
