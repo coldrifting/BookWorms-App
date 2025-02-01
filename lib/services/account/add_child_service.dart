@@ -13,7 +13,7 @@ class AddChildService {
     final response = await client.post(
       Uri.parse('http://${ServicesShared.serverAddress}/children/add?childName=$childName'),
       headers: {
-        'accept': 'application/json',
+        'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
       },
     );

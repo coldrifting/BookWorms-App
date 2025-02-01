@@ -25,8 +25,7 @@ void main() {
           'subjects': ['Subject'],
           'isbn10': 'Isbn10',
           'isbn13': 'Isbn13',
-          'publisher': 'Publisher',
-          'publishDate': 'PublishDate',
+          'publishYear': 'PublishYear',
           'pageCount': 1,
           'reviews': [
             {
@@ -52,8 +51,7 @@ void main() {
       expect(result.subjects, ['Subject']);
       expect(result.isbn10, 'Isbn10');
       expect(result.isbn13, 'Isbn13');
-      expect(result.publisher, 'Publisher');
-      expect(result.publishDate, 'PublishDate');
+      expect(result.publishYear, 'PublishYear');
       expect(result.pageCount, 1);
 
       expect(result.reviews, isA<List<UserReview>>());

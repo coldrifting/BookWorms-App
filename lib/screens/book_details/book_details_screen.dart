@@ -73,10 +73,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         body: ListView(
           controller: _scrollController,
           children: [
-            // Temporary hardcode for demo.
-            bookSummary.title == "The Giving Tree" 
-            ? Image.network("https://m.media-amazon.com/images/I/71wiGMKadmL._AC_UF1000,1000_QL80_.jpg") 
-            : SizedBox(
+            SizedBox(
               width: double.infinity,
               child: FittedBox(
                 fit: BoxFit.cover, 
@@ -200,16 +197,13 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       addVerticalSpace(16),
 
     // Empty details are not included.
-    if (bookDetails.pageCount > 0)
+    if (bookDetails.pageCount != null)
       _detailText("Pages", "${bookDetails.pageCount}", textTheme),
     if (bookDetails.isbn10.isNotEmpty)
       _detailText("ISBN-10", bookDetails.isbn10, textTheme),
     if (bookDetails.isbn13.isNotEmpty)
       _detailText("ISBN-13", bookDetails.isbn13, textTheme),
-    if (bookDetails.publisher.isNotEmpty)
-      _detailText("Publisher", bookDetails.publisher, textTheme),
-    if (bookDetails.publishDate.isNotEmpty)
-      _detailText("Published", bookDetails.publishDate, textTheme),
+      _detailText("Published", bookDetails.publishYear.toString(), textTheme),
   ];
 }
 

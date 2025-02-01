@@ -308,7 +308,10 @@ class _SearchScreenState extends State<SearchScreen> {
     Image bookImage = searchResult.image!;
     return Row(
       children: [
-        bookImage,
+        SizedBox(
+          width: 150,
+          child: bookImage,
+        ),
         addHorizontalSpace(24),
         Expanded(
           child: Column(
