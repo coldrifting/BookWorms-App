@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:bookworms_app/models/account_details.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/services/services_shared.dart';
+import 'package:bookworms_app/services/status_code_exceptions.dart';
 import 'package:http/http.dart' as http;
 
 class AccountDetailsService {
@@ -21,7 +22,7 @@ class AccountDetailsService {
       final data = jsonDecode(response.body);
       return AccountDetails.fromJson(data);
     } else {
-      throw Exception('An error occurred when fetching the user details: ${response.reasonPhrase}.');
+       throw getStatusCodeException(response.statusCode, response.body);
     }
   }
 }
