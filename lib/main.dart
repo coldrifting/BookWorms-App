@@ -7,10 +7,12 @@ import 'package:bookworms_app/screens/progress_screen.dart';
 import 'package:bookworms_app/screens/setup/add_first_child.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
+import 'package:bookworms_app/services/status_code_exceptions.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(const BookWorms());
@@ -61,14 +63,24 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _tokenNavigate() async {
     final splashDelay = Future.delayed(const Duration(seconds: 2));
     var token = getToken();
-
     final results = await Future.wait([splashDelay, token]);
-
+    
     if (mounted) {
       if (results[1] != null) {
         AppState appState = Provider.of<AppState>(context, listen: false);
-        await appState.loadAccountDetails();
-        await appState.loadAccountSpecifics();
+        try {
+          await appState.loadAccountDetails();
+          await appState.loadAccountSpecifics();
+        } on UnauthorizedException {
+          deleteToken();
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+            );
+          }
+          return;
+        } 
         if (mounted) {
           // If a user with a parent account opens the app while a JWT has been saved but no child profiles exist.
           // This will occur if the user exits the app immediately after registration.
