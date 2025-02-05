@@ -85,6 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
         _isInActiveSearch = false;
       }
 
+      _currentQuery = "";
       _searchResults.clear();
       _textEditingcontroller.clear();
     });
