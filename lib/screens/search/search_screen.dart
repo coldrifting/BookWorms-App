@@ -246,7 +246,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (index != _searchResults.length) {
           return Column(
             children: [
-              BookPreviewListWidget(books: _searchResults, index: index),
+              BookPreviewListWidget(book: _searchResults[index]),
               const Divider(
                 color: colorGrey,
               )

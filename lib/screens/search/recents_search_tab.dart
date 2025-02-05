@@ -65,8 +65,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
         return Column(
           children: [
             BookPreviewListWidget(
-              books: books, 
-              index: books.length - index - 1
+              book: books[books.length - index - 1], 
             ),
             const Divider(
               color: colorGrey,

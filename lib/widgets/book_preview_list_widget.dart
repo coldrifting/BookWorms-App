@@ -8,13 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BookPreviewListWidget extends StatefulWidget {
-  final List<dynamic> books;
-  final int index;
+  final BookSummary book;
 
   const BookPreviewListWidget({
     super.key,
-    required this.books,
-    required this.index
+    required this.book
   });
 
   @override
@@ -35,7 +33,7 @@ class _BookPreviewListWidgetState extends State<BookPreviewListWidget> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     
-    BookSummary book = widget.books[widget.index];
+    BookSummary book = widget.book;
     Image bookImage = book.image!;
 
     return ListTile(
