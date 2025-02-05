@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/screens/search/browse_screen.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
@@ -10,6 +11,7 @@ import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /// The [SearchScreen] displays a search bar and a scrollable list of 
 /// relevant books related to the query typed in by the user.
@@ -244,7 +246,9 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Fetches the book's details and navigates to the book's details page.
   void _onBookClicked(int index) async {
     BookDetails results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
+
     if (mounted) {
+      // Change the screen to the "book details" screen.
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -259,6 +263,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
   Widget _resultsScreen(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+
     return ListView.builder(
       controller: _scrollController,
       itemCount: _searchResults.length + 1,
@@ -274,7 +280,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   child: searchResult(index, textTheme),
-                  onPressed: () { _onBookClicked(index); },
+                  onPressed: () { 
+                    // Store the book in the "recently searched" list.
+                    appState.addBookToRecents(_searchResults[index]);
+                    _onBookClicked(index); 
+                  },
                 ),
               ),
               const Divider(

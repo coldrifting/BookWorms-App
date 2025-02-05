@@ -1,3 +1,4 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/demo_books.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/theme/colors.dart';
@@ -5,6 +6,7 @@ import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /// The [RecentsScreen] displays a scrollable list of books that have been 
 /// recently searched or interacted with by the user.
@@ -19,8 +21,8 @@ class RecentsScreen extends StatefulWidget {
 class _RecentsScreenState extends State<RecentsScreen> { 
 
   // Temporary for demo.
-  final List<BookSummary> _books = [Demo.book1, Demo.book2, Demo.book3, Demo.book4];
-  final List<String> _images = [Demo.image1, Demo.image2, Demo.image3, Demo.image4];
+  //final List<BookSummary> _books = [Demo.book1, Demo.book2, Demo.book3, Demo.book4];
+  //final List<String> _images = [Demo.image1, Demo.image2, Demo.image3, Demo.image4];
   final List<List<String>> _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
     ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
     ["Popular Themes", "Courage", "Kindness", "Empathy", "Bravery", "Integrity", "Respect"],
@@ -58,8 +60,11 @@ class _RecentsScreenState extends State<RecentsScreen> {
 
   /// Recently-viewed books subpage containing a list of books.
   Widget _recentsWidget(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    var bookCount = appState.recentlySearchedBooks.length;
+
     return ListView.builder(
-      itemCount: 4,
+      itemCount: bookCount,
       itemBuilder: (context, index) {
         return Column(
           children: [
@@ -70,7 +75,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
                     borderRadius: BorderRadius.zero
                   ),
                 ),
-                child: _searchResult(index, textTheme),
+                child: _searchResult(bookCount - index - 1, textTheme),
                 onPressed: () => {},
               ),
             ),
@@ -85,14 +90,14 @@ class _RecentsScreenState extends State<RecentsScreen> {
 
   /// Individual book search result, including the book image and overview details.
   Widget _searchResult(int index, TextTheme textTheme) {
-    BookSummary searchResult = _books[index];
-    CachedNetworkImage bookImage = CachedNetworkImage(
-      imageUrl: _images[index], 
-      width: 150
-    );
+    AppState appState = Provider.of<AppState>(context);
+    BookSummary recentBooks = appState.recentlySearchedBooks.elementAt(index);
     return Row(
       children: [
-        bookImage,
+        SizedBox(
+          width: 150,
+          child: recentBooks.image!,
+        ),
         addHorizontalSpace(24),
         Expanded(
           child: Column(
@@ -100,13 +105,13 @@ class _RecentsScreenState extends State<RecentsScreen> {
             children: [
               Text(
                 style: textTheme.titleSmall,
-                searchResult.title
+                recentBooks.title
               ),
               Text(
                 style: textTheme.bodyMedium,
                 overflow: TextOverflow.ellipsis,
-                searchResult.authors.isNotEmpty 
-                ? searchResult.authors.map((author) => author).join(', ')
+                recentBooks.authors.isNotEmpty 
+                ? recentBooks.authors.map((author) => author).join(', ')
                 : "Unknown Author(s)",
               ),
             ],
