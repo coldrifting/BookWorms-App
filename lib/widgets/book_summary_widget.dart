@@ -7,19 +7,19 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BookPreviewListWidget extends StatefulWidget {
+class BookSummaryWidget extends StatefulWidget {
   final BookSummary book;
 
-  const BookPreviewListWidget({
+  const BookSummaryWidget({
     super.key,
     required this.book
   });
 
   @override
-  State<BookPreviewListWidget> createState() => _BookPreviewListWidgetState();
+  State<BookSummaryWidget> createState() => _BookSummaryWidgetState();
 }
 
-class _BookPreviewListWidgetState extends State<BookPreviewListWidget> {
+class _BookSummaryWidgetState extends State<BookSummaryWidget> {
   late BookDetailsService _bookDetailsService;
 
   @override

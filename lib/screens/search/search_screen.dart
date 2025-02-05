@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:bookworms_app/screens/search/browse_screen.dart';
-import 'package:bookworms_app/screens/search/recents_search_tab.dart';
+import 'package:bookworms_app/screens/search/recents_and_advanced_search.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/book_preview_list_widget.dart';
+import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
 
 /// The [SearchScreen] displays a search bar and a scrollable list of 
@@ -156,7 +156,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (!_isInActiveSearch) {
       mainContent = const BrowseScreen();
     } else if (_currentQuery.isEmpty) {
-      mainContent = const RecentsScreen();
+      mainContent = const RecentsAdvancedSearchScreen();
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen(textTheme);
     } else {
@@ -246,7 +246,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (index != _searchResults.length) {
           return Column(
             children: [
-              BookPreviewListWidget(book: _searchResults[index]),
+              BookSummaryWidget(book: _searchResults[index]),
               const Divider(
                 color: colorGrey,
               )

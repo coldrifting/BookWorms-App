@@ -2,22 +2,22 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/book_preview_list_widget.dart';
+import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 /// The [RecentsSearchTab] displays a scrollable list of books that have been 
 /// recently searched or interacted with by the user. There is also a tab for
 /// querying advanced searches.
-class RecentsScreen extends StatefulWidget {
-  const RecentsScreen({super.key});
+class RecentsAdvancedSearchScreen extends StatefulWidget {
+  const RecentsAdvancedSearchScreen({super.key});
 
   @override
-  State<RecentsScreen> createState() => _RecentsScreenState();
+  State<RecentsAdvancedSearchScreen> createState() => _RecentsAdvancedSearchScreenState();
 }
 
 /// The state of the [RecentsSearchTab].
-class _RecentsScreenState extends State<RecentsScreen> { 
+class _RecentsAdvancedSearchScreenState extends State<RecentsAdvancedSearchScreen> { 
 
   final List<List<String>> _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
     ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
@@ -64,7 +64,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
       itemBuilder: (context, index) {
         return Column(
           children: [
-            BookPreviewListWidget(
+            BookSummaryWidget(
               book: books[books.length - index - 1], 
             ),
             const Divider(
