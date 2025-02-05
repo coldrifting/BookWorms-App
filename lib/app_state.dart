@@ -103,7 +103,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Iterable<BookSummary> get recentlySearchedBooks => _account.recentlySearchedBooks;
+  List<BookSummary> get recentlySearchedBooks => _account.recentlySearchedBooks.toList();
 
   // Adds the given book ID to the list of recently searched books.
   // If the list is larger than 10 books, the last ID is deleted before
