@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/screens/search/browse_screen.dart';
-import 'package:bookworms_app/screens/search/recents_screen.dart';
-import 'package:bookworms_app/services/book_details_service.dart';
-import 'package:bookworms_app/models/book_details.dart';
+import 'package:bookworms_app/screens/search/recents_and_advanced_search.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book_images_service.dart';
 import 'package:bookworms_app/services/book_summaries_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
 
 /// The [SearchScreen] displays a search bar and a scrollable list of 
@@ -31,7 +29,6 @@ class _SearchScreenState extends State<SearchScreen> {
   Timer? _debounceTimer;
 
   late BookSummariesService _bookSummariesService;
-  late BookDetailsService _bookDetailsService;
   late BookImagesService _bookImagesService;
   
   late FocusNode _focusNode;
@@ -42,7 +39,6 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     _bookSummariesService = BookSummariesService();
-    _bookDetailsService = BookDetailsService();
     _bookImagesService = BookImagesService();
     _focusNode = FocusNode();
     _focusNode.addListener(_onSearchBarFocusChanged);
@@ -83,6 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
         _isInActiveSearch = false;
       }
 
+      _currentQuery = "";
       _searchResults.clear();
       _textEditingcontroller.clear();
     });
@@ -159,7 +156,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (!_isInActiveSearch) {
       mainContent = const BrowseScreen();
     } else if (_currentQuery.isEmpty) {
-      mainContent = const RecentsScreen();
+      mainContent = const RecentsAdvancedSearchScreen();
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen(textTheme);
     } else {
@@ -240,23 +237,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  /// Callback for when a search result is selected.
-  /// Fetches the book's details and navigates to the book's details page.
-  void _onBookClicked(int index) async {
-    BookDetails results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
-    if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookDetailsScreen(
-            summaryData: _searchResults[index],
-            detailsData: results,
-          )
-        )
-      );
-    }
-  }
-
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
   Widget _resultsScreen(TextTheme textTheme) {
     return ListView.builder(
@@ -266,17 +246,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (index != _searchResults.length) {
           return Column(
             children: [
-              ListTile(
-                title: TextButton(
-                  style: TextButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero
-                    ),
-                  ),
-                  child: searchResult(index, textTheme),
-                  onPressed: () { _onBookClicked(index); },
-                ),
-              ),
+              BookSummaryWidget(book: _searchResults[index]),
               const Divider(
                 color: colorGrey,
               )
@@ -284,54 +254,21 @@ class _SearchScreenState extends State<SearchScreen> {
           );
         } else if (_searchResults.length == _defaultResultLength) {
           return Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: _onShowMorePressed, 
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorGreyDark,
-                    ),
-                    child: const Text("Show More"),
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: _onShowMorePressed, 
+                  style: TextButton.styleFrom(
+                    foregroundColor: colorGreyDark,
                   ),
+                  child: const Text("Show More"),
                 ),
-              ],
-            );
+              ),
+            ],
+          );
         }
         return null;
       }
-    );
-  }
-
-  /// The results corresponding to a search query are displayed in a search result widget.
-  Widget searchResult(int index, TextTheme textTheme) {
-    BookSummary searchResult = _searchResults[index];
-    Image bookImage = searchResult.image!;
-    return Row(
-      children: [
-        SizedBox(
-          width: 150,
-          child: bookImage,
-        ),
-        addHorizontalSpace(24),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                style: textTheme.titleSmall,
-                searchResult.title
-              ),
-              Text(
-                style: textTheme.bodyMedium,
-                overflow: TextOverflow.ellipsis,
-                searchResult.authors.isNotEmpty 
-                ? searchResult.authors.map((author) => author).join(', ')
-                : "Unknown Author(s)",
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

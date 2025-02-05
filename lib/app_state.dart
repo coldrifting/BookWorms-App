@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:bookworms_app/models/account.dart';
 import 'package:bookworms_app/models/account_details.dart';
+import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/models/parent_account.dart';
 import 'package:bookworms_app/models/teacher_account.dart';
@@ -12,7 +15,7 @@ import 'package:flutter/material.dart';
 class AppState extends ChangeNotifier {
   late Account _account;
   late bool _isParent;
-
+  
   Future<void> loadAccountDetails() async {
     AccountDetailsService accountDetailsService = AccountDetailsService();
     AccountDetails accountDetails = await accountDetailsService.getAccountDetails();
@@ -22,7 +25,7 @@ class AppState extends ChangeNotifier {
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
         profilePictureIndex: accountDetails.profilePictureIndex,
-        recentlySearchedBooks: [],
+        recentlySearchedBooks: ListQueue(10),
         children: [],
         selectedChildID: 0
       );
@@ -32,7 +35,7 @@ class AppState extends ChangeNotifier {
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
         profilePictureIndex: accountDetails.profilePictureIndex,
-        recentlySearchedBooks: []
+        recentlySearchedBooks: ListQueue(10)
       );
     }
     _isParent = _account is Parent;
@@ -97,6 +100,24 @@ class AppState extends ChangeNotifier {
     _account.firstName = accountDetails.firstName;
     _account.lastName = accountDetails.lastName;
     _account.profilePictureIndex = accountDetails.profilePictureIndex;
+    notifyListeners();
+  }
+
+  List<BookSummary> get recentlySearchedBooks => _account.recentlySearchedBooks.toList();
+
+  // Adds the given book ID to the list of recently searched books.
+  // If the list is larger than 10 books, the last ID is deleted before
+  // the new ID is added.
+  void addBookToRecents(BookSummary bookSummary) {
+    bool exists = _account.recentlySearchedBooks.any((book) => book.id == bookSummary.id);
+
+    if (exists) {
+      _account.recentlySearchedBooks.removeWhere((book) => book.id == bookSummary.id);
+    }
+    else if (_account.recentlySearchedBooks.length == 10) {
+      _account.recentlySearchedBooks.removeFirst();
+    }
+    _account.recentlySearchedBooks.addLast(bookSummary);
     notifyListeners();
   }
 }

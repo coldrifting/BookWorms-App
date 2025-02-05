@@ -1,26 +1,24 @@
-import 'package:bookworms_app/demo_books.dart';
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/theme/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-/// The [RecentsScreen] displays a scrollable list of books that have been 
-/// recently searched or interacted with by the user.
-class RecentsScreen extends StatefulWidget {
-  const RecentsScreen({super.key});
+/// The [RecentsSearchTab] displays a scrollable list of books that have been 
+/// recently searched or interacted with by the user. There is also a tab for
+/// querying advanced searches.
+class RecentsAdvancedSearchScreen extends StatefulWidget {
+  const RecentsAdvancedSearchScreen({super.key});
 
   @override
-  State<RecentsScreen> createState() => _RecentsScreenState();
+  State<RecentsAdvancedSearchScreen> createState() => _RecentsAdvancedSearchScreenState();
 }
 
-/// The state of the [RecentsScreen].
-class _RecentsScreenState extends State<RecentsScreen> { 
+/// The state of the [RecentsSearchTab].
+class _RecentsAdvancedSearchScreenState extends State<RecentsAdvancedSearchScreen> { 
 
-  // Temporary for demo.
-  final List<BookSummary> _books = [Demo.book1, Demo.book2, Demo.book3, Demo.book4];
-  final List<String> _images = [Demo.image1, Demo.image2, Demo.image3, Demo.image4];
   final List<List<String>> _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
     ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
     ["Popular Themes", "Courage", "Kindness", "Empathy", "Bravery", "Integrity", "Respect"],
@@ -58,21 +56,16 @@ class _RecentsScreenState extends State<RecentsScreen> {
 
   /// Recently-viewed books subpage containing a list of books.
   Widget _recentsWidget(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    var books = appState.recentlySearchedBooks;
+
     return ListView.builder(
-      itemCount: 4,
+      itemCount: books.length,
       itemBuilder: (context, index) {
         return Column(
           children: [
-            ListTile(
-              title: TextButton(
-                style: TextButton.styleFrom(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero
-                  ),
-                ),
-                child: _searchResult(index, textTheme),
-                onPressed: () => {},
-              ),
+            BookSummaryWidget(
+              book: books[books.length - index - 1], 
             ),
             const Divider(
               color: colorGrey,
@@ -83,39 +76,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
     );
   }
 
-  /// Individual book search result, including the book image and overview details.
-  Widget _searchResult(int index, TextTheme textTheme) {
-    BookSummary searchResult = _books[index];
-    CachedNetworkImage bookImage = CachedNetworkImage(
-      imageUrl: _images[index], 
-      width: 150
-    );
-    return Row(
-      children: [
-        bookImage,
-        addHorizontalSpace(24),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                style: textTheme.titleSmall,
-                searchResult.title
-              ),
-              Text(
-                style: textTheme.bodyMedium,
-                overflow: TextOverflow.ellipsis,
-                searchResult.authors.isNotEmpty 
-                ? searchResult.authors.map((author) => author).join(', ')
-                : "Unknown Author(s)",
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
+  // Contains advanced filters for searching.
   Widget _advancedSearchWidget(TextTheme textTheme) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -132,7 +93,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
               addVerticalSpace(8),
               SizedBox(
                 height: 45,
-                child: _scrollList(textTheme, index, _searchHeaders[index].length - 1),
+                child: _filterScrollList(textTheme, index, _searchHeaders[index].length - 1),
               ),
               addVerticalSpace(16),
             ],
@@ -142,7 +103,8 @@ class _RecentsScreenState extends State<RecentsScreen> {
     );
   }
 
-  Widget _scrollList(TextTheme textTheme, int headerIndex, int itemCount) {
+  // Horizontal list of scrollable filters.
+  Widget _filterScrollList(TextTheme textTheme, int headerIndex, int itemCount) {
     return ListView.builder(
       itemCount: itemCount,
       scrollDirection: Axis.horizontal,
