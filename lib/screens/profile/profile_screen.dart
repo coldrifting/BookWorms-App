@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     AppState appState =  Provider.of<AppState>(context);
     var isParent = appState.isParent;
 
