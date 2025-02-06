@@ -11,6 +11,7 @@ import 'package:bookworms_app/services/account/add_child_service.dart';
 import 'package:bookworms_app/services/account/edit_account_info_service.dart';
 import 'package:bookworms_app/services/account/get_children_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppState extends ChangeNotifier {
   late Account _account;
@@ -108,7 +109,7 @@ class AppState extends ChangeNotifier {
   // Adds the given book ID to the list of recently searched books.
   // If the list is larger than 10 books, the last ID is deleted before
   // the new ID is added.
-  void addBookToRecents(BookSummary bookSummary) {
+  void addBookToRecents(BookSummary bookSummary) async {
     bool exists = _account.recentlySearchedBooks.any((book) => book.id == bookSummary.id);
 
     if (exists) {
@@ -119,5 +120,17 @@ class AppState extends ChangeNotifier {
     }
     _account.recentlySearchedBooks.addLast(bookSummary);
     notifyListeners();
+
+     // Save the book IDs to shared preferences
+    List<String> bookIds = _account.recentlySearchedBooks.map((book) => book.id).toList();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setStringList('recentBookIds', bookIds);
+  }
+
+  Future<List<String>> loadRecentsFromCache() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> recentBookIds = preferences.getStringList('recentBookIds') ?? [];
+    
+    return recentBookIds;
   }
 }
