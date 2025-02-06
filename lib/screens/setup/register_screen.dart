@@ -22,8 +22,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController _passwordController;
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
-  bool _isParent = true;
   final _formKey = GlobalKey<FormState>();
+
+  Map<String, String> fieldErrors = {};
+  bool _isParent = true;
 
   @override
   void initState() {
@@ -43,12 +45,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  Future<void> register(String username, String password, String firstName,
-      String lastName, bool isParent) async {
+  // Set the state of validation errors if received when registering.
+  void _handleValidationErrors(Map<String, String> errors) {
+    setState(() {
+      fieldErrors = errors;
+    });
+  }
+
+  Future<void> register(String username, String password, String firstName, String lastName, bool isParent) async {
     RegisterService registerService = RegisterService();
-    await registerService.registerUser(
-        username, password, firstName, lastName, isParent);
-    if (mounted) {
+
+    bool status = await registerService.registerUser(username, password, firstName, lastName, isParent, _handleValidationErrors);
+    if (status && mounted) {
       AppState appState = Provider.of<AppState>(context, listen: false);
       await appState.loadAccountDetails();
       if (mounted) {
@@ -73,8 +81,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return SafeArea(
       child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: SetupBackdropWidget(childWidget: _createAccountWidget(textTheme))),
+        resizeToAvoidBottomInset: false,
+        body: SetupBackdropWidget(childWidget: _createAccountWidget(textTheme))
+      ),
     );
   }
 
@@ -94,7 +103,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 TextFormField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'Username'),
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    errorText: fieldErrors["Username"],
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
@@ -105,7 +117,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    errorText: fieldErrors["Password"],
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
@@ -115,7 +130,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 TextFormField(
                   controller: _firstNameController,
-                  decoration: const InputDecoration(labelText: 'First Name'),
+                  decoration: InputDecoration(
+                    labelText: 'First Name',
+                    errorText: fieldErrors["FirstName"],
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your first name';
@@ -125,7 +143,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 TextFormField(
                   controller: _lastNameController,
-                  decoration: const InputDecoration(labelText: 'Last Name'),
+                  decoration: InputDecoration(
+                    labelText: 'Last Name',
+                    errorText: fieldErrors["LastName"],
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your last name';

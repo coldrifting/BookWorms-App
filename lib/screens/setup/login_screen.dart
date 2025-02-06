@@ -24,30 +24,31 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController(); // Password text field
   final _formKey = GlobalKey<FormState>();
 
-  String? _errorMessage;
+  String loginError = "";
+
+  // Set the state of validation errors if received when registering.
+  void _handleValidationErrors(String error) {
+    setState(() {
+      loginError = error;
+    });
+  }
 
   Future<void> login(String username, String password) async {
     LoginService loginService = LoginService();
 
     // Attempt to log in the user with the provided credentials.
-    try {
-      await loginService.loginUser(username, password);
+    bool status = await loginService.loginUser(username, password, _handleValidationErrors);
+    if (status && mounted) {
+      AppState appState = Provider.of<AppState>(context, listen: false);
+      await appState.loadAccountDetails();
+      await appState.loadAccountSpecifics();
       if (mounted) {
-        AppState appState = Provider.of<AppState>(context, listen: false);
-        await appState.loadAccountDetails();
-        await appState.loadAccountSpecifics();
-        if (mounted) {
-          // Navigate to the home screen.
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const Navigation()),
-          );
-        }
+        // Navigate to the home screen.
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Navigation()),
+        );
       }
-    } catch (e) {
-      setState(() {
-        _errorMessage = "Login failed. Please check username and password.";
-      });
     }
   }
 
@@ -105,15 +106,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                if (_errorMessage != null)
+                if (loginError.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
-                      _errorMessage!,
+                      loginError,
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
-                addVerticalSpace(_errorMessage == null ? 32 : 16),
+                addVerticalSpace(loginError.isEmpty ? 32 : 16),
                 LoginRegisterWidget(
                   onSignIn: () {
                     if (_formKey.currentState?.validate() ?? false) {

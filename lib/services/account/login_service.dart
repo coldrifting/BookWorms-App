@@ -10,7 +10,7 @@ class LoginService {
 
   LoginService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<void> loginUser(String username, String password) async {
+  Future<bool> loginUser(String username, String password, Function(String) onValidationError) async {
     final response = await client.post(
       Uri.parse('http://${ServicesShared.serverAddress}/user/login'),
       headers: {
@@ -22,11 +22,17 @@ class LoginService {
         "password": password
       })
     );
-    if (response.statusCode == 200 || response.statusCode == 201) {
+
+    String fieldError = "";
+
+    if (response.statusCode == 200 || response.statusCode == 201) { // Success
       final data = jsonDecode(response.body);
       saveToken(data["token"]);
-    } else {
-      throw Exception('An error occurred when logging in the user.');
+      return true;
+    } else if (response.statusCode == 400) { // Bad Request (Invalid username/password)
+      fieldError = "Incorrect username and/or password.";
     }
+    onValidationError(fieldError);
+    return false;
   }
 }
