@@ -22,25 +22,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _usernameController = TextEditingController(); // Username text field
   final TextEditingController _passwordController = TextEditingController(); // Password text field
-
   final _formKey = GlobalKey<FormState>();
+
+  String? _errorMessage;
 
   Future<void> login(String username, String password) async {
     LoginService loginService = LoginService();
 
     // Attempt to log in the user with the provided credentials.
-    await loginService.loginUser(username, password);
-    if (mounted) {
-      AppState appState = Provider.of<AppState>(context, listen: false);
-      await appState.loadAccountDetails();
-      await appState.loadAccountSpecifics();
+    try {
+      await loginService.loginUser(username, password);
       if (mounted) {
-        // Navigate to the home screen.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Navigation()),
-        );
+        AppState appState = Provider.of<AppState>(context, listen: false);
+        await appState.loadAccountDetails();
+        await appState.loadAccountSpecifics();
+        if (mounted) {
+          // Navigate to the home screen.
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const Navigation()),
+          );
+        }
       }
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Login failed. Please check username and password.";
+      });
     }
   }
 
@@ -98,7 +105,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(32),
+                if (_errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                addVerticalSpace(_errorMessage == null ? 32 : 16),
                 LoginRegisterWidget(
                   onSignIn: () {
                     if (_formKey.currentState?.validate() ?? false) {

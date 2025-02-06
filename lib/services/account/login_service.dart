@@ -24,7 +24,6 @@ class LoginService {
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      // Save the token to the secure storage. 
       saveToken(data["token"]);
     } else {
       throw Exception('An error occurred when logging in the user.');
