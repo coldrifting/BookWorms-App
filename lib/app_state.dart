@@ -53,11 +53,6 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void logOut() {
-    
-  }
-
-
   List<Child> get children => (_account as Parent).children;
   int get selectedChildID => (_account as Parent).selectedChildID;
 
