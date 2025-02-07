@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/account.dart';
+import 'package:bookworms_app/screens/profile/profile_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/account/delete_account_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
@@ -196,8 +197,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                _deleteAccount();
+                // Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                if (mounted) {
+                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                    (route) => false,
+                  );
+                }
               },
               child: Text(
                 'Discard Changes',
