@@ -105,7 +105,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// difficulty, and description.
   Widget _bookDetails(TextTheme textTheme) {
     var difficulty = bookSummary.difficulty.isEmpty ? "N/A" : bookSummary.difficulty;
-    var rating = bookSummary.rating == 0 ? "Unrated" : "${bookSummary.rating}★";
+    var rating = bookSummary.rating  == null ? "Unrated" : "${bookSummary.rating}★";
 
     // Toggles the expansion of the description/book information.
     void toggleExpansion() {
@@ -199,10 +199,10 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     // Empty details are not included.
     if (bookDetails.pageCount != null)
       _detailText("Pages", "${bookDetails.pageCount}", textTheme),
-    if (bookDetails.isbn10.isNotEmpty)
-      _detailText("ISBN-10", bookDetails.isbn10, textTheme),
-    if (bookDetails.isbn13.isNotEmpty)
-      _detailText("ISBN-13", bookDetails.isbn13, textTheme),
+    if (bookDetails.isbn10 != null)
+      _detailText("ISBN-10", bookDetails.isbn10!, textTheme),
+    if (bookDetails.isbn13 != null)
+      _detailText("ISBN-13", bookDetails.isbn13!, textTheme),
       _detailText("Published", bookDetails.publishYear.toString(), textTheme),
   ];
 }
@@ -242,6 +242,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// The list of review widgets corresponding to the given book.
   Widget _reviewList(TextTheme textTheme) {
+    var rating = bookSummary.rating  == null ? "Unrated" : "${bookSummary.rating}★";
     // Generate the list of review widgets.
     var reviewCount = bookDetails.reviews.length;
     List<Widget> reviews = List.generate(
@@ -259,7 +260,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           children: [
             Text(
               style: textTheme.titleMedium,
-              "Reviews  |  ${bookSummary.rating}★",
+              "Reviews  |  $rating",
             ),
             IconButton(
               onPressed: (addReview), 

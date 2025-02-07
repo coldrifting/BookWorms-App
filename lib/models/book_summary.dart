@@ -6,9 +6,8 @@ class BookSummary {
   final String title;
   final List<String> authors;
   final String difficulty;
-  final double rating;
+  final double? rating;
   Image? image;
-  String? imagePath;
 
   BookSummary({
     required this.id,
@@ -26,7 +25,7 @@ class BookSummary {
       authors: List<String>.from(json['authors']),
       // difficulty: json['difficulty'],
       difficulty: 'N/A',
-      rating: (json['rating'] as num).toDouble()
+      rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null
     );
   }
 
