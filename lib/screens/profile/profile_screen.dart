@@ -11,6 +11,7 @@ import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The [ProfileScreen] displays relevant settings options for the user account.
 class ProfileScreen extends StatefulWidget {
@@ -23,8 +24,10 @@ class ProfileScreen extends StatefulWidget {
 /// The state of the [ProfileScreen].
 class _ProfileScreenState extends State<ProfileScreen> {
 
-  Future<void> signOut() async {
-    await deleteToken();
+  void signOut() async {
+    deleteToken();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove('recentBookIds');
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       (route) => false,

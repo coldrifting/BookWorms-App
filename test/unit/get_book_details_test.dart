@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/user_review.dart';
-import 'package:bookworms_app/services/book_details_service.dart';
+import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/services/services_shared.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;

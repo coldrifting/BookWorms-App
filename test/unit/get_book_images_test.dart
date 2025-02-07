@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
-import 'package:bookworms_app/services/book_images_service.dart';
+import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/services_shared.dart';
 import 'mocks/http_client_test.mocks.dart';
 

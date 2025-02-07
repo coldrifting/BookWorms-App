@@ -10,6 +10,8 @@ import 'package:bookworms_app/services/account/account_details_service.dart';
 import 'package:bookworms_app/services/account/add_child_service.dart';
 import 'package:bookworms_app/services/account/edit_account_info_service.dart';
 import 'package:bookworms_app/services/account/get_children_service.dart';
+import 'package:bookworms_app/services/book/book_images_service.dart';
+import 'package:bookworms_app/services/book/book_summary_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,13 +22,14 @@ class AppState extends ChangeNotifier {
   Future<void> loadAccountDetails() async {
     AccountDetailsService accountDetailsService = AccountDetailsService();
     AccountDetails accountDetails = await accountDetailsService.getAccountDetails();
+    ListQueue<BookSummary> recentBooks = await loadRecentsFromCache();
     if (accountDetails.role == "Parent") {
       _account = Parent(
         username: accountDetails.username,
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
         profilePictureIndex: accountDetails.profilePictureIndex,
-        recentlySearchedBooks: ListQueue(10),
+        recentlySearchedBooks: recentBooks,
         children: [],
         selectedChildID: 0
       );
@@ -36,7 +39,7 @@ class AppState extends ChangeNotifier {
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
         profilePictureIndex: accountDetails.profilePictureIndex,
-        recentlySearchedBooks: ListQueue(10)
+        recentlySearchedBooks: recentBooks
       );
     }
     _isParent = _account is Parent;
@@ -48,6 +51,10 @@ class AppState extends ChangeNotifier {
       List<Child> children = await getChildrenService.getChildren();
       (_account as Parent).children = children;
     }
+  }
+
+  void logOut() {
+    
   }
 
 
@@ -127,10 +134,22 @@ class AppState extends ChangeNotifier {
     await preferences.setStringList('recentBookIds', bookIds);
   }
 
-  Future<List<String>> loadRecentsFromCache() async {
+  Future<ListQueue<BookSummary>> loadRecentsFromCache() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String> recentBookIds = preferences.getStringList('recentBookIds') ?? [];
-    
-    return recentBookIds;
+    if (recentBookIds.isEmpty) {
+      return ListQueue<BookSummary>(10);
+    }
+    BookSummaryService bookSummaryService = BookSummaryService();
+    List<BookSummary> recentBooks = [];
+    for (String bookId in recentBookIds) {
+      recentBooks.add(await bookSummaryService.getBookSummary(bookId));
+    }
+    BookImagesService bookImagesService = BookImagesService();
+    List<Image> recentBookImages = await bookImagesService.getBookImages(recentBookIds);
+    for (int i = 0; i < recentBookIds.length; i++) {
+      recentBooks[i].setImage(recentBookImages[i]);
+    }
+    return ListQueue<BookSummary>.from(recentBooks);
   }
 }
