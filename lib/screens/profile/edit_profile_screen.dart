@@ -197,8 +197,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             TextButton(
               onPressed: () {
-                // Navigator.of(context).pop();
-                // Navigator.of(context).pop();
                 if (mounted) {
                   Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const ProfileScreen()),
