@@ -13,6 +13,7 @@ import 'package:bookworms_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(const BookWorms());
 
@@ -72,6 +73,8 @@ class _SplashScreenState extends State<SplashScreen> {
           await appState.loadAccountSpecifics();
         } on UnauthorizedException {
           deleteToken();
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          await preferences.remove('recentBookIds');
           if (mounted) {
             Navigator.pushReplacement(
               context,

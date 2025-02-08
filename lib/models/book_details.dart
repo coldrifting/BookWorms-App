@@ -4,8 +4,8 @@ import 'package:bookworms_app/models/user_review.dart';
 class BookDetails {
   final String description;
   final List<String> subjects;
-  final String isbn10;
-  final String isbn13;
+  final String? isbn10;
+  final String? isbn13;
   final int publishYear;
   final int? pageCount;
   final List<UserReview> reviews;
