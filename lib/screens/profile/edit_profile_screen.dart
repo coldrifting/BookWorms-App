@@ -1,7 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/account.dart';
-import 'package:bookworms_app/screens/profile/profile_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/account/delete_account_service.dart';
 import 'package:bookworms_app/theme/colors.dart';
