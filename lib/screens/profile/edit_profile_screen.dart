@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/account.dart';
 import 'package:bookworms_app/screens/profile/profile_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
@@ -182,6 +183,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<dynamic> _notifyUnsavedChanges(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    bool isParent = appState.isParent;
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -199,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onPressed: () {
                 if (mounted) {
                   Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                    MaterialPageRoute(builder: (context) => Navigation(initialIndex: isParent ? 4 : 3)),
                     (route) => false,
                   );
                 }

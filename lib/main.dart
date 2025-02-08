@@ -108,7 +108,8 @@ class _SplashScreenState extends State<SplashScreen> {
 /// The [Navigation] deals with the main bottom bar navigation between the
 /// "Home", "Bookshelves", "Search", "Progress", and "Profile" screens.
 class Navigation extends StatefulWidget {
-  const Navigation({super.key});
+  final int initialIndex;
+  const Navigation({super.key, this.initialIndex = 0});
 
   @override
   State<Navigation> createState() => _Navigation();
@@ -116,8 +117,13 @@ class Navigation extends StatefulWidget {
 
 /// The state of the [Navigation].
 class _Navigation extends State<Navigation> {
-  // Selected navigation tab (0-4).
-  int selectedIndex = 0;
+  late int selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = widget.initialIndex;
+  }
 
   /// Main widget containing app bar, page navigator, and bottom bar.
   @override
