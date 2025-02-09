@@ -7,7 +7,7 @@ class UserIcons {
 
   /// Returns a user icon based on the [icon] identifier.
   static Widget getIcon(int index) {
-    return CircleAvatar(backgroundImage: AssetImage("assets/images/user_icon$index.jpg"));
+    return CircleAvatar(backgroundImage: AssetImage("assets/images/worm-icon$index.png"));
   }
 
   /// Returns a random icon index.

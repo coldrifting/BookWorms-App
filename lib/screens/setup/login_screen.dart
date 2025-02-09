@@ -22,15 +22,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _usernameController = TextEditingController(); // Username text field
   final TextEditingController _passwordController = TextEditingController(); // Password text field
-
   final _formKey = GlobalKey<FormState>();
+
+  String loginError = "";
+
+  // Set the state of validation errors if received when registering.
+  void _handleValidationErrors(String error) {
+    setState(() {
+      loginError = error;
+    });
+  }
 
   Future<void> login(String username, String password) async {
     LoginService loginService = LoginService();
 
     // Attempt to log in the user with the provided credentials.
-    await loginService.loginUser(username, password);
-    if (mounted) {
+    bool status = await loginService.loginUser(username, password, _handleValidationErrors);
+    if (status && mounted) {
       AppState appState = Provider.of<AppState>(context, listen: false);
       await appState.loadAccountDetails();
       await appState.loadAccountSpecifics();
@@ -98,7 +106,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(32),
+                if (loginError.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      loginError,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                addVerticalSpace(loginError.isEmpty ? 32 : 16),
                 LoginRegisterWidget(
                   onSignIn: () {
                     if (_formKey.currentState?.validate() ?? false) {
