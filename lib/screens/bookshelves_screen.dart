@@ -4,9 +4,7 @@ import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/demo_books.dart';
 import 'package:provider/provider.dart'; // Books used for the demo
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The

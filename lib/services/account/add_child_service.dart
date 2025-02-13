@@ -9,7 +9,7 @@ class AddChildService {
 
   AddChildService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<Child> addChild(String childName) async {
+  Future<List<Child>> addChild(String childName) async {
     final response = await client.post(
       Uri.parse('http://${ServicesShared.serverAddress}/children/add?childName=$childName'),
       headers: {
@@ -18,8 +18,9 @@ class AddChildService {
       },
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      return Child.fromJson(data);
+      final data = jsonDecode(response.body) as List;
+      final children = data.map((entry) => Child.fromJson(entry)).toList();
+      return children;
     } else {
       throw Exception('An error occurred when adding a child.');
     }

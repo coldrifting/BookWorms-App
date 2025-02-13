@@ -13,7 +13,7 @@ import 'package:bookworms_app/services/account/edit_account_info_service.dart';
 import 'package:bookworms_app/services/account/get_children_service.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
-import 'package:bookworms_app/services/bookshelves/bookshelf_service.dart';
+import 'package:bookworms_app/services/account/bookshelf_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,8 +60,8 @@ class AppState extends ChangeNotifier {
 
   Future<void> addChild(String childName) async {
     AddChildService addChildService = AddChildService();
-    Child child = await addChildService.addChild(childName);
-    (_account as Parent).children.add(child);
+    List<Child> children = await addChildService.addChild(childName);
+    (_account as Parent).children = children;
     notifyListeners();
   }
 
