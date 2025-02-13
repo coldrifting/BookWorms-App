@@ -1,4 +1,4 @@
-package com.example.bookworms_app
+package com.bookworms_team.bookworms_app
 
 import io.flutter.embedding.android.FlutterActivity
 
