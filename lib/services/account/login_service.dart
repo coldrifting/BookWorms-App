@@ -1,5 +1,6 @@
+import 'package:http/http.dart' as http;
+
 import 'package:bookworms_app/models/user_login.dart';
-import 'package:bookworms_app/utils/http_client_ext.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
@@ -7,9 +8,9 @@ import 'package:bookworms_app/utils/http_helpers.dart';
 /// The [LoginService] handles the login of a user by passing their credentials to the
 /// server and obtaining a token if the credentials are valid.
 class LoginService {
-  final HttpClientExt client;
+  final http.Client client;
 
-  LoginService({HttpClientExt? client}) : client = client ?? HttpClientExt();
+  LoginService({http.Client? client}) : client = client ?? http.Client();
 
   Future<bool> loginUser(String username, String password, Function(String) onValidationError) async {
     final response = await client.sendRequest(
@@ -19,7 +20,7 @@ class LoginService {
           "username": username,
           "password": password});
 
-    final UserLogin userLogin = UserLogin.fromJson(await readResponse(response));
+    final UserLogin userLogin = UserLogin.fromJson(readResponse(response));
 
     String fieldError = "";
 

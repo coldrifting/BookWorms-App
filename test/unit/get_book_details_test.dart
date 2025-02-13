@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:universal_io/io.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/user_review.dart';
@@ -13,10 +14,15 @@ import 'mocks/http_client_test.mocks.dart';
 void main() {
   group('BookSummariesService', () {
     late BookDetailsService bookDetailsService;
-    late MockHttpClient mockClient;
+    late MockClient mockClient;
+
+    setUpAll(() {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      FlutterSecureStorage.setMockInitialValues({});
+    });
 
     setUp(() {
-      mockClient = MockHttpClient();
+      mockClient = MockClient();
       bookDetailsService = BookDetailsService(client: mockClient);
     });
 
@@ -27,23 +33,23 @@ void main() {
           'subjects': ['Subject'],
           'isbn10': 'Isbn10',
           'isbn13': 'Isbn13',
-          'publishYear': 'PublishYear',
+          'publishYear': 2014,
           'pageCount': 1,
           'reviews': [
             {
               "reviewerFirstName": "ReviewerFirstName",
               "reviewerLastName": "ReviewerLastName",
               "reviewerRole": "ReviewerRole",
-              "reviewerIcon": "ReviewerIcon",
+              "reviewerIcon": 2,
               "starRating": 1,
               "reviewText": "ReviewText"
             },
           ]
         },
       );
-      
-      when(mockClient.getUrl(bookDetailsUri("id")))
-          .thenAnswer((_) async => HttpRep(mockResponse, 200));
+
+      when(mockClient.get(bookDetailsAllUri("id"), headers: {"Accept": "application/json"}))
+          .thenAnswer((_) async => http.Response(mockResponse, 200));
 
       final result = await bookDetailsService.getBookDetails('id');
 
@@ -53,7 +59,7 @@ void main() {
       expect(result.subjects, ['Subject']);
       expect(result.isbn10, 'Isbn10');
       expect(result.isbn13, 'Isbn13');
-      expect(result.publishYear, 'PublishYear');
+      expect(result.publishYear, 2014);
       expect(result.pageCount, 1);
 
       expect(result.reviews, isA<List<UserReview>>());
@@ -62,13 +68,13 @@ void main() {
       expect(result.reviews[0].firstName, "ReviewerFirstName");
       expect(result.reviews[0].lastName, "ReviewerLastName");
       expect(result.reviews[0].role, "ReviewerRole");
-      expect(result.reviews[0].icon, "ReviewerIcon");
+      expect(result.reviews[0].icon, 2);
       expect(result.reviews[0].text, "ReviewText");
       expect(result.reviews[0].starRating, 1);
     });
 
     test('throws an exception if the http call fails', () async {
-      when(mockClient.getUrl(bookDetailsUri("id")))
+      when(mockClient.get(bookDetailsAllUri("id"), headers: {"Accept": "application/json"}))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(() async => await bookDetailsService.getBookDetails('id'), throwsException);

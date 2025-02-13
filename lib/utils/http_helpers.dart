@@ -1,48 +1,71 @@
 import 'dart:convert';
-import 'package:universal_io/io.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/models/child.dart';
 
-extension StatusOk on HttpClientResponse {
+import '../services/auth_storage.dart';
+
+extension StatusOk on http.Response {
   bool get ok => statusCode ~/ 100 == 2;
 }
 
-// TODO - Replace with generics?
-Future<List<Child>> fromResponseListChild(HttpClientResponse response) async {
-  final String responseString = await readResponseString(response);
+extension SendRequest on http.Client {
+  Future<http.Response> sendRequest(
+      {required Uri uri, String method = "GET", Object? payload}) async {
 
-  final List list = json.decode(responseString.toString());
-  List<Child> listObjects = list.map((val) => Child.fromJson(val)).toList();
+    Map<String, String> headers = {"Accept": "application/json"};
 
-  return listObjects;
-}
+    var token = await getToken();
+    if (token != null) {
+      headers["Authorization"] = "bearer ${await getToken()}";
+    }
 
-Future<List<BookSummary>> fromResponseListBookSummary(HttpClientResponse response) async {
-  final String responseString = await readResponseString(response);
+    if (payload != null) {
+      headers["Content-Type"] = "application/json";
+    }
 
-  final List list = json.decode(responseString.toString());
-  List<BookSummary> listObjects = list.map((val) => BookSummary.fromJson(val)).toList();
-
-  return listObjects;
-}
-
-Future<List<Map<String, dynamic>>> readResponseList(HttpClientResponse response) async {
-  final contents = StringBuffer();
-  await for (var data in response.transform(utf8.decoder)) {
-    contents.write(data);
+    switch (method) {
+      case "POST":
+        if (payload != null) {
+          return await post(
+              uri, headers: headers, body: jsonEncode(payload));
+        }
+        return await post(uri, headers: headers);
+      case "PUT":
+        if (payload != null) {
+          return await put(
+              uri, headers: headers, body: jsonEncode(payload));
+        }
+        return await put(uri, headers: headers);
+      case "DELETE":
+        return await delete(uri, headers: headers);
+      case "GET":
+      default:
+        return await get(uri, headers: headers);
+    }
   }
-  return await jsonDecode(contents.toString());
 }
 
-Future<String> readResponseString(HttpClientResponse response) async {
-  return await response.transform(utf8.decoder).join();
+extension StatusBadRequest on http.Response {
+  bool get badRequest => statusCode == 400;
 }
 
-Future<Map<String, dynamic>> readResponse(HttpClientResponse response) async {
-  return jsonDecode(await readResponseString(response));
+String getChildId(http.Response response) {
+  return response.headers["Location"]?.toString().replaceFirst("/children/","") ?? "";
 }
 
-String getChildId(HttpClientResponse response) {
-  return response.headers["Location"]?.first.toString().replaceFirst("/children/","") ?? "";
+Map<String, dynamic> readResponse(http.Response response) {
+  return jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+}
+
+// Unfortunately we are unable to replace these two methods with a generic one
+Future<List<Child>> fromResponseListChild(http.Response response) async {
+  List<dynamic> parsedListJson = jsonDecode(utf8.decode(response.bodyBytes));
+  return List<Child>.from(parsedListJson.map<Child>((dynamic i) => Child.fromJson(i)));
+}
+
+Future<List<BookSummary>> fromResponseListBookSummary(http.Response response) async {
+  List<dynamic> parsedListJson = jsonDecode(utf8.decode(response.bodyBytes));
+  return List<BookSummary>.from(parsedListJson.map<BookSummary>((dynamic i) => BookSummary.fromJson(i)));
 }

@@ -21,8 +21,7 @@ class BookSummary {
       id: json['bookId'],
       title: json['title'],
       authors: List<String>.from(json['authors']),
-      // difficulty: json['difficulty'],
-      difficulty: 'N/A',
+      difficulty: json['difficulty'] ?? "N/A",
       rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null
     );
   }

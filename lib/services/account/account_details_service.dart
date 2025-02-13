@@ -1,4 +1,5 @@
-import 'package:bookworms_app/utils/http_client_ext.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:bookworms_app/models/account_details.dart';
 import 'package:bookworms_app/models/error_basic.dart';
 import 'package:bookworms_app/services/status_code_exceptions.dart';
@@ -6,18 +7,18 @@ import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 
 class AccountDetailsService {
-  final HttpClientExt client;
+  final http.Client client;
 
-  AccountDetailsService({HttpClientExt? client}) : client = client ?? HttpClientExt();
+  AccountDetailsService({http.Client? client}) : client = client ?? http.Client();
 
   Future<AccountDetails> getAccountDetails() async {
     final response =
         await client.sendRequest(uri: userDetailsUri, method: "GET");
 
     if (response.ok) {
-      return AccountDetails.fromJson(await readResponse(response));
+      return AccountDetails.fromJson(readResponse(response));
     } else {
-      ErrorBasic error = ErrorBasic.fromJson(await readResponse(response));
+      ErrorBasic error = ErrorBasic.fromJson(readResponse(response));
       throw getStatusCodeException(response.statusCode, error.toString());
     }
   }

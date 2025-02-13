@@ -1,12 +1,13 @@
-import 'package:bookworms_app/utils/http_client_ext.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 
 class AddChildService {
-  final HttpClientExt client;
+  final http.Client client;
 
-  AddChildService({HttpClientExt? client}) : client = client ?? HttpClientExt();
+  AddChildService({http.Client? client}) : client = client ?? http.Client();
 
   Future<Child> addChild(String childName) async {
     final response = await client.sendRequest(

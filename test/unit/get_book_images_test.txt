@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
@@ -12,17 +13,17 @@ import 'mocks/http_client_test.mocks.dart';
 void main() {
   group('BookImagesService', () {
     late BookImagesService bookImagesService;
-    late MockHttpClient mockClient;
+    late MockClient mockClient;
 
     setUp(() {
-      mockClient = MockHttpClient();
+      mockClient = MockClient();
       bookImagesService = BookImagesService(client: mockClient);
     });
 
     test('returns a list of 1 image if the http call completes successfully', () async {
       final mockZipResponse = createMockZipFile(1);
 
-      when(mockClient.postUrl(
+      when(mockClient.post(
         bookCoversBatchUri,
         headers: anyNamed('headers'),
         body: anyNamed('body'),
@@ -38,7 +39,7 @@ void main() {
     test('returns a list of 5 images if the http call completes successfully', () async {
       final mockZipResponse = createMockZipFile(5);
 
-      when(mockClient.postUrl(
+      when(mockClient.post(
         bookCoversBatchUri,
         headers: anyNamed('headers'),
         body: anyNamed('body'),
@@ -52,7 +53,7 @@ void main() {
     });
 
     test('throws an exception if the http call fails', () async {
-      when(mockClient.postUrl(
+      when(mockClient.post(
         bookCoversBatchUri,
         headers: anyNamed('headers'),
         body: anyNamed('body'),
@@ -73,3 +74,4 @@ Uint8List createMockZipFile(int numImages) {
   final zipData = ZipEncoder().encode(archive);
   return Uint8List.fromList(zipData);
 }
+*

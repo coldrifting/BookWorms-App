@@ -1,13 +1,14 @@
-import 'package:bookworms_app/utils/http_client_ext.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 import 'package:bookworms_app/models/user_review.dart';
 
 /// The [BookReviewsService] handles the retrieval of book reviews from the server.
 class BookReviewsService {
-  final HttpClientExt client;
+  final http.Client client;
 
-  BookReviewsService({HttpClientExt? client}) : client = client ?? HttpClientExt();
+  BookReviewsService({http.Client? client}) : client = client ?? http.Client();
 
   // Send the user review data to the server.
   Future<UserReview> sendReview(String bookId, String text, double starRating) async {
@@ -19,7 +20,7 @@ class BookReviewsService {
           "reviewText": text});
 
     if (response.ok) {
-      return UserReview.fromJson(await readResponse(response));
+      return UserReview.fromJson(readResponse(response));
     }
     else {
       throw Exception('An error occurred when sending the review.');
