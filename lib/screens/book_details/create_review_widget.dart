@@ -1,8 +1,9 @@
-import 'package:bookworms_app/services/book/book_reviews_service.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
+import 'package:bookworms_app/services/book/book_reviews_service.dart';
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class CreateReviewWidget extends StatefulWidget {
   final String bookId;
@@ -34,11 +35,10 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          TextButton(
-            onPressed: _saveReview,
-            child: const Text("Save"))
-        ],
+        title: Text("Leave a Review"),
+        systemOverlayStyle: defaultOverlay(),
+        foregroundColor: colorWhite,
+        backgroundColor: colorGreen,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -50,6 +50,8 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
               _reviewStarRating(),
               addVerticalSpace(16),
               _reviewContent(),
+              addVerticalSpace(16),
+              FilledButton(onPressed: _saveReview, child: const Text("Save Review"))
             ],
           ),
         ),

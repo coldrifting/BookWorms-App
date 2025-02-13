@@ -2,27 +2,28 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:mockito/mockito.dart';
+
+import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
-import 'package:bookworms_app/services/services_shared.dart';
+
+import 'package:mockito/mockito.dart';
 import 'mocks/http_client_test.mocks.dart';
 
 void main() {
   group('BookImagesService', () {
     late BookImagesService bookImagesService;
-    late MockClient mockClient;
+    late MockHttpClient mockClient;
 
     setUp(() {
-      mockClient = MockClient();
+      mockClient = MockHttpClient();
       bookImagesService = BookImagesService(client: mockClient);
     });
 
     test('returns a list of 1 image if the http call completes successfully', () async {
       final mockZipResponse = createMockZipFile(1);
 
-      when(mockClient.post(
-        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
+      when(mockClient.postUrl(
+        bookCoversBatchUri,
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response.bytes(mockZipResponse, 200));
@@ -37,8 +38,8 @@ void main() {
     test('returns a list of 5 images if the http call completes successfully', () async {
       final mockZipResponse = createMockZipFile(5);
 
-      when(mockClient.post(
-        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
+      when(mockClient.postUrl(
+        bookCoversBatchUri,
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response.bytes(mockZipResponse, 200));
@@ -51,8 +52,8 @@ void main() {
     });
 
     test('throws an exception if the http call fails', () async {
-      when(mockClient.post(
-        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
+      when(mockClient.postUrl(
+        bookCoversBatchUri,
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response('Not Found', 404));

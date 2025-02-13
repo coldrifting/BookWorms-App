@@ -1,7 +1,8 @@
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/theme/theme.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class ExtendedAppBar extends StatelessWidget {
   final String name;
@@ -26,7 +27,7 @@ class ExtendedAppBar extends StatelessWidget {
         color: colorGreen,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withOpacity(0.4),
+            color: colorBlack.withValues(alpha: 0.4),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 3),

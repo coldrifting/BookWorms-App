@@ -1,8 +1,9 @@
-import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
+import 'package:bookworms_app/utils/widget_functions.dart';
+
 /// The [BrowseScreen] contains a few options for browsing by a specific keyword.
-/// For example, a user is able to browse by "reading level", "topic", "theme", etc.
+/// For bookworms_team, a user is able to browse by "reading level", "topic", "theme", etc.
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
 

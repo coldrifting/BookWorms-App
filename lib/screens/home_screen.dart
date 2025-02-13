@@ -1,13 +1,12 @@
-//import 'package:bookworms_app/models/BookSummary.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
-import 'package:flutter/material.dart';
-// Books used for the demo
-import 'package:bookworms_app/demo_books.dart';
-import 'package:provider/provider.dart';
+import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the
@@ -30,10 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
     var isParent = appState.isParent;
     //var selectedChild = appState.children[appState.selectedChildID].name;
 
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         // Home app bar
         appBar: AppBar(
+          systemOverlayStyle: defaultOverlay(),
           title: Text(
             "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Home",
             style: const TextStyle(
@@ -61,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
             addVerticalSpace(16),
           ],
         ),
-      ),
     );
   }
 
@@ -74,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: colorWhite,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withOpacity(0.2),
+            color: colorBlack.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),

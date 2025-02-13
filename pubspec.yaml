@@ -16,10 +16,11 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_secure_storage: ^9.2.3
   flutter_svg: ^2.0.17
-  http: ^1.2.2
   path_provider: ^2.1.5
   provider: ^6.1.2
   shared_preferences: ^2.0.8
+  image_network: ^2.6.0
+  universal_io: ^2.2.2
 
 dev_dependencies:
   flutter_test:

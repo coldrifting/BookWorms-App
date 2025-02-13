@@ -1,11 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class BookSummaryWidget extends StatefulWidget {
   final BookSummary book;
@@ -34,7 +36,7 @@ class _BookSummaryWidgetState extends State<BookSummaryWidget> {
     AppState appState = Provider.of<AppState>(context);
     
     BookSummary book = widget.book;
-    Image bookImage = book.image!;
+    String bookImage = book.imageUrl!;
 
     return ListTile(
       title: TextButton(
@@ -47,7 +49,11 @@ class _BookSummaryWidgetState extends State<BookSummaryWidget> {
           children: [
             SizedBox(
               width: 150,
-              child: bookImage,
+              child: CachedNetworkImage(
+                imageUrl: bookImage,
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+              ),
             ),
             addHorizontalSpace(24),
             Expanded(

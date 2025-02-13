@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:bookworms_app/demo_books.dart';
-import 'package:provider/provider.dart'; // Books used for the demo
+import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
 /// user is able to add a new bookshelf here, or access their current bookshelves.
@@ -18,82 +19,72 @@ class BookshelvesScreen extends StatefulWidget {
 }
 
 /// The state of [BookshelvesScreen].
-class _BookshelvesScreenState extends State<BookshelvesScreen> { 
+class _BookshelvesScreenState extends State<BookshelvesScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     int selectedChildID = Provider.of<AppState>(context).selectedChildID;
-    Child selectedChild = Provider.of<AppState>(context).children[selectedChildID];
+    Child selectedChild =
+        Provider.of<AppState>(context).children[selectedChildID];
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "${selectedChild.name}'s Bookshelves",
-            style: const TextStyle(
-              color: colorWhite
-            )
-          ),
-          backgroundColor: colorGreen,
-          actions: const [ChangeChildWidget()],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ListView(
-            children: [
-              addVerticalSpace(16),
-              _createBookshelfWidget(textTheme),
-              addVerticalSpace(16),
-              _bookshelfWidget(
+    return Scaffold(
+      appBar: AppBar(
+        systemOverlayStyle: defaultOverlay(),
+        title: Text("${selectedChild.name}'s Bookshelves",
+            style: const TextStyle(color: colorWhite)),
+        backgroundColor: colorGreen,
+        actions: const [ChangeChildWidget()],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView(
+          children: [
+            addVerticalSpace(16),
+            _createBookshelfWidget(textTheme),
+            addVerticalSpace(16),
+            _bookshelfWidget(
                 "Recommended Books",
                 [Demo.image1, Demo.image2, Demo.image3],
                 [Demo.authors1, Demo.authors2, Demo.authors3],
                 Colors.yellow[200],
-                Colors.yellow[800]
-              ),
-              addVerticalSpace(16),
-              _bookshelfWidget(
+                Colors.yellow[800]),
+            addVerticalSpace(16),
+            _bookshelfWidget(
                 "Ms. Wilson's Class Reading List",
                 [Demo.image4, Demo.image5, Demo.image6],
                 [Demo.authors4, Demo.authors5, Demo.authors6],
                 Colors.red[200],
-                Colors.red[800]
-              ),
-              addVerticalSpace(16),
-              _bookshelfWidget(
+                Colors.red[800]),
+            addVerticalSpace(16),
+            _bookshelfWidget(
                 "Currently Reading",
                 [Demo.image6, Demo.image8, Demo.image9],
                 [Demo.authors6, Demo.authors8, Demo.authors9],
                 Colors.blue[200],
-                Colors.blue[800]
-              ),
-              addVerticalSpace(16),
-              _bookshelfWidget(
+                Colors.blue[800]),
+            addVerticalSpace(16),
+            _bookshelfWidget(
                 "Completed Books",
                 [Demo.image5, Demo.image10, Demo.image4],
                 [Demo.authors5, Demo.authors10, Demo.authors4],
                 Colors.green[200],
-                Colors.green[800]
-              ),
-              addVerticalSpace(16),
-              _bookshelfWidget(
+                Colors.green[800]),
+            addVerticalSpace(16),
+            _bookshelfWidget(
                 "Animals",
                 [Demo.image2, Demo.image5, Demo.image6],
                 [Demo.authors2, Demo.authors5, Demo.authors6],
                 Colors.grey[200],
-                Colors.grey[800]
-              ),
-              addVerticalSpace(16),
-              _bookshelfWidget(
+                Colors.grey[800]),
+            addVerticalSpace(16),
+            _bookshelfWidget(
                 "Fairytales",
                 [Demo.image8, Demo.image9, Demo.image7],
                 [Demo.authors8, Demo.authors9, Demo.authors7],
                 Colors.grey[200],
-                Colors.grey[800]
-              ),
-              addVerticalSpace(16),
-            ],
-          ),
+                Colors.grey[800]),
+            addVerticalSpace(16),
+          ],
         ),
       ),
     );
@@ -110,22 +101,17 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          IconButton(
-            onPressed: () => {}, 
-            icon: const Icon(Icons.add)
-          ),
+          IconButton(onPressed: () => {}, icon: const Icon(Icons.add)),
           addHorizontalSpace(10),
-          Text(
-            style: textTheme.titleMedium,
-            "Create New Bookshelf"
-          ),
+          Text(style: textTheme.titleMedium, "Create New Bookshelf"),
         ],
       ),
     );
   }
 
   /// A bookshelf includes the title, book cover(s), and author(s).
-  Widget _bookshelfWidget(String name, List<String> images, List<List<String>> authors, Color? mainColor, Color? accentColor) {
+  Widget _bookshelfWidget(String name, List<String> images,
+      List<List<String>> authors, Color? mainColor, Color? accentColor) {
     return Container(
       decoration: BoxDecoration(
         color: mainColor,
@@ -145,11 +131,12 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    name
-                  ),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      name),
                   Text(
-                    style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),
+                    style: const TextStyle(
+                        fontSize: 14, overflow: TextOverflow.ellipsis),
                     _printFirstAuthors(authors, 2),
                   ),
                 ],
@@ -161,22 +148,27 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  /// Displays some of the book cover(s) in the bookshelf. Each image is 
+  /// Displays some of the book cover(s) in the bookshelf. Each image is
   /// laid out diagonally across the container.
   Widget _imageLayoutWidget(List<String> images) {
     return SizedBox(
-      width: 100, 
+      width: 100,
       height: 100,
       child: LayoutBuilder(
-        builder:(context, constraints) {
+        builder: (context, constraints) {
           return Stack(
             children: [
-              Positioned( // Top cover image
+              Positioned(
+                // Top cover image
                 top: 5,
                 left: 5,
                 child: CachedNetworkImage(
                   height: constraints.maxHeight * 0.5,
                   imageUrl: images[0],
+                  placeholder: (context, url) =>
+                      Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) =>
+                      Image.asset("assets/images/book_cover_unavailable.jpg"),
                 ),
               ),
               Align(
@@ -184,14 +176,23 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                 child: CachedNetworkImage(
                   height: constraints.maxHeight * 0.5,
                   imageUrl: images[1],
+                  placeholder: (context, url) =>
+                      Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) =>
+                      Image.asset("assets/images/book_cover_unavailable.jpg"),
                 ),
               ),
-              Positioned( // Bottom cover image
+              Positioned(
+                // Bottom cover image
                 bottom: 5,
                 right: 5,
                 child: CachedNetworkImage(
                   height: constraints.maxHeight * 0.5,
                   imageUrl: images[2],
+                  placeholder: (context, url) =>
+                      Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) =>
+                      Image.asset("assets/images/book_cover_unavailable.jpg"),
                 ),
               ),
             ],

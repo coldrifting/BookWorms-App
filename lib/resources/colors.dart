@@ -9,5 +9,7 @@ const colorWhite = Colors.white;
 const colorYellow = Colors.amber;
 final colorGreen = Colors.green[800];
 const colorGreenLight = Color(0xffc1e8c1);
+const colorGreenGradTop = Color(0xFF80BC81);
+const colorGreenGradBottom = Color(0xFF468147);
 final colorGreenDark = Colors.green[900];
 final colorRed = Colors.red[700];

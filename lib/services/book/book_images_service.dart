@@ -1,21 +1,24 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:bookworms_app/services/services_shared.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:archive/archive.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:bookworms_app/resources/network.dart';
 
 /// The [BookImagesService] handles the retrieval of book images from the server.
 class BookImagesService {
-  final http.Client client;
+  //final HttpClientExt client;
+  //BookImagesService({HttpClientExt? client}) : client = client ?? HttpClientExt();
 
-  BookImagesService({http.Client? client}) : client = client ?? http.Client();
+  Future<List<String>> getBookImages(List<String> bookIds) async {
+    List<String> bookImageURLs = bookIds.map((bookId) {
+      return bookCoverUri(bookId).toString();
+    }).toList();
 
+    return bookImageURLs;
+  }
+
+  // TODO - Replace this? or use platform specific code?
+
+  /*
   Future<String> _getFilePath(String bookId) async {
-    final directory = await getApplicationDocumentsDirectory();
-    return '${directory.path}/$bookId.jpg';
+    final directory = await getApplicationCacheDirectory();
+    return '${directory}/$bookId.jpg';
   }
 
   Future<bool> _isImageCached(String bookId) async {
@@ -34,40 +37,18 @@ class BookImagesService {
     await file.writeAsBytes(imageData);
   }
 
-  Future<List<Image>> getBookImages(List<String> bookIds) async {
-    Map<String, Image> cachedImages = {};
-    List<String> uncachedBookIds = [];
-
-    for (var bookId in bookIds) {
-      if (await _isImageCached(bookId)) {
-        cachedImages[bookId] = await _getImageFromCache(bookId);
-      } else {
-        uncachedBookIds.add(bookId);
-      }
-    }
-
-    if (uncachedBookIds.isNotEmpty) {
-      Map<String, Image> fetchedImages = await _fetchAndCacheBookImages(uncachedBookIds);
-      cachedImages.addAll(fetchedImages);
-    }
-
-    return bookIds.map((id) => cachedImages[id] ?? Image.asset("assets/images/book_cover_unavailable.jpg")).toList();
-  }
-
    Future<Map<String, Image>> _fetchAndCacheBookImages(List<String> bookIds) async {
-    final response = await client.post(
-      Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: json.encode(bookIds),
-    );
+    final request = await client.postUrl(bookCoversAllUri);
+    request.headers.contentType = ContentType('application', 'json', charset: 'utf-8');
+    request.write(jsonEncode(bookIds));
+    final response = await request.close();
 
     Map<String, Image> bookImages = {};
 
-    if (response.statusCode == 200) {
-      final archive = ZipDecoder().decodeBytes(response.bodyBytes);
+    final data = await response.first;
+
+    if (response.ok) {
+      final archive = ZipDecoder().decodeBytes(data);
       for (var file in archive) {
         final fileName = file.name.substring(0, file.name.length - 10);
         final imageData = file.content as List<int>;
@@ -78,4 +59,5 @@ class BookImagesService {
     }
     return bookImages;
   }
+  */
 }

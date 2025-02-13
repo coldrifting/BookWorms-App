@@ -1,14 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/account.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/account/delete_account_service.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/theme/theme.dart';
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
 
@@ -76,6 +77,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: defaultOverlay(),
         title: const Text(
           "Edit Profile", 
           style: TextStyle(

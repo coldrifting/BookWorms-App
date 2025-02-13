@@ -1,23 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:bookworms_app/screens/book_details/create_review_widget.dart';
 import 'package:bookworms_app/screens/book_details/review_widget.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:flutter/material.dart';
 
 /// The [BookDetailsScreen] contains detailed information regarding a
 /// specific book. It also displays relevant user reviews and actions to
 /// "save", "locate", and "rate" the book.
 class BookDetailsScreen extends StatefulWidget {
-  final BookSummary summaryData;  // Overview book data
-  final BookDetails detailsData;  // More specific book data
+  final BookSummary summaryData; // Overview book data
+  final BookDetails detailsData; // More specific book data
 
-  const BookDetailsScreen({
-    super.key,
-    required this.summaryData,
-    required this.detailsData
-  });
+  const BookDetailsScreen(
+      {super.key, required this.summaryData, required this.detailsData});
 
   @override
   State<BookDetailsScreen> createState() => _BookDetailsScreenState();
@@ -29,7 +28,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late BookSummary bookSummary;
   late BookDetails bookDetails;
 
-  var isExpanded = false; // Denotes if the description/book information is expanded.
+  var isExpanded =
+      false; // Denotes if the description/book information is expanded.
   var maxLength = 500; // Max length of the shortened description.
 
   @override
@@ -48,64 +48,65 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return SafeArea(
-      child: Scaffold(
-        // Book details app bar
-        appBar: AppBar(
-          title: Text(
-            bookSummary.title, 
+    return Scaffold(
+      // Book details app bar
+      appBar: AppBar(
+        systemOverlayStyle: defaultOverlay(),
+        title: Text(bookSummary.title,
             style: const TextStyle(
-              fontWeight: FontWeight.normal,
-              color: colorWhite, 
-              overflow: TextOverflow.ellipsis
-            )
-          ),
-          backgroundColor: colorGreen,
-          leading: IconButton(
-            color: colorWhite,
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        // Book details content
-        body: ListView(
-          controller: _scrollController,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: FittedBox(
-                fit: BoxFit.cover, 
-                child: bookSummary.image,
-              ),
-            ),
-            _bookDetails(textTheme),
-            Container(
-              color: const Color.fromARGB(255, 239, 239, 239),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    addVerticalSpace(5),
-                    _actionButtons(),
-                    addVerticalSpace(15),
-                    _reviewList(textTheme),
-                  ],
-                ),
-              ),
-            ),
-          ]
+                fontWeight: FontWeight.normal,
+                color: colorWhite,
+                overflow: TextOverflow.ellipsis)),
+        backgroundColor: colorGreen,
+        leading: IconButton(
+          color: colorWhite,
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ),
+      // Book details content
+      body: ListView(controller: _scrollController, children: [
+        SizedBox(
+          width: double.infinity,
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: CachedNetworkImage(
+              imageUrl: bookSummary.imageUrl!,
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) =>
+                  Image.asset("assets/images/book_cover_unavailable.jpg"),
+            ),
+          ),
+        ),
+        _bookDetails(textTheme),
+        Container(
+          color: const Color.fromARGB(255, 239, 239, 239),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                addVerticalSpace(5),
+                _actionButtons(),
+                addVerticalSpace(15),
+                _reviewList(textTheme),
+              ],
+            ),
+          ),
+        ),
+      ]),
     );
   }
 
   /// Sub-section containing book information such as title, author, rating,
   /// difficulty, and description.
   Widget _bookDetails(TextTheme textTheme) {
-    var difficulty = bookSummary.difficulty.isEmpty ? "N/A" : bookSummary.difficulty;
-    var rating = bookSummary.rating  == null ? "Unrated" : "${bookSummary.rating}★";
+    var difficulty =
+        bookSummary.difficulty.isEmpty ? "N/A" : bookSummary.difficulty;
+    var rating =
+        bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
 
     // Toggles the expansion of the description/book information.
     void toggleExpansion() {
@@ -127,29 +128,28 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           ),
           // Book author(s)
           Text(
-            style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, fontSize: 18), 
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic,
+                fontSize: 18),
             textAlign: TextAlign.center,
-            bookSummary.authors.isNotEmpty 
-            ? bookSummary.authors.map((author) => author).join('\n')
-            : "Unknown Author(s)",
+            bookSummary.authors.isNotEmpty
+                ? bookSummary.authors.map((author) => author).join('\n')
+                : "Unknown Author(s)",
           ),
           // Book difficulty and rating
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Text(
-              style: textTheme.bodyLarge,
-              "Level $difficulty   |   $rating"
-            ),
+                style: textTheme.bodyLarge, "Level $difficulty   |   $rating"),
           ),
           // Book description (including extra book details)
           _description(textTheme),
           // "Expand" icon
           IconButton(
-            icon: Icon(
-              isExpanded 
-              ? Icons.keyboard_arrow_up_sharp 
-              : Icons.keyboard_arrow_down_sharp
-            ),
+            icon: Icon(isExpanded
+                ? Icons.keyboard_arrow_up_sharp
+                : Icons.keyboard_arrow_down_sharp),
             onPressed: toggleExpansion,
           ),
         ],
@@ -178,7 +178,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                     style: textTheme.titleSmall,
                   ),
                   TextSpan(text: bookDetails.description),
-                ] else 
+                ] else
                   const TextSpan(text: 'No description available.'),
               ],
             ),
@@ -196,16 +196,16 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       const Divider(height: 1),
       addVerticalSpace(16),
 
-    // Empty details are not included.
-    if (bookDetails.pageCount != null)
-      _detailText("Pages", "${bookDetails.pageCount}", textTheme),
-    if (bookDetails.isbn10 != null)
-      _detailText("ISBN-10", bookDetails.isbn10!, textTheme),
-    if (bookDetails.isbn13 != null)
-      _detailText("ISBN-13", bookDetails.isbn13!, textTheme),
+      // Empty details are not included.
+      if (bookDetails.pageCount != null)
+        _detailText("Pages", "${bookDetails.pageCount}", textTheme),
+      if (bookDetails.isbn10 != null)
+        _detailText("ISBN-10", bookDetails.isbn10!, textTheme),
+      if (bookDetails.isbn13 != null)
+        _detailText("ISBN-13", bookDetails.isbn13!, textTheme),
       _detailText("Published", bookDetails.publishYear.toString(), textTheme),
-  ];
-}
+    ];
+  }
 
   /// Creates book detail text given the label and the text value.
   Widget _detailText(String label, String value, TextTheme textTheme) {
@@ -225,35 +225,36 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         ElevatedButton.icon(
-          icon: const Icon(Icons.bookmark),
-          onPressed: (() => {}),
-          label: const Text("Save")),
+            icon: const Icon(Icons.bookmark),
+            onPressed: (() => {}),
+            label: const Text("Save")),
         ElevatedButton.icon(
-          icon: const Icon(Icons.account_balance),
-          onPressed: (() => {}),
-          label: const Text("Locate")),
+            icon: const Icon(Icons.account_balance),
+            onPressed: (() => {}),
+            label: const Text("Locate")),
         ElevatedButton.icon(
-          icon: const Icon(Icons.fitness_center),
-          onPressed: (() => {}),
-          label: const Text("Rate")),
+            icon: const Icon(Icons.fitness_center),
+            onPressed: (() => {}),
+            label: const Text("Rate")),
       ],
     );
   }
 
   /// The list of review widgets corresponding to the given book.
   Widget _reviewList(TextTheme textTheme) {
-    var rating = bookSummary.rating  == null ? "Unrated" : "${bookSummary.rating}★";
+    var rating =
+        bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
     // Generate the list of review widgets.
     var reviewCount = bookDetails.reviews.length;
     List<Widget> reviews = List.generate(
-      reviewCount,
-      (index) => Padding(
-        padding: const EdgeInsets.only(bottom: 18.0),
-        child: ReviewWidget(review: bookDetails.reviews[index]),
-      )
-    );
+        reviewCount,
+        (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 18.0),
+              child: ReviewWidget(review: bookDetails.reviews[index]),
+            ));
 
-    return Column( // Replace with lazy loading.
+    return Column(
+      // Replace with lazy loading.
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -263,7 +264,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               "Reviews  |  $rating",
             ),
             IconButton(
-              onPressed: (addReview), 
+              onPressed: (addReview),
               icon: const Icon(Icons.add),
             ),
           ],
@@ -275,10 +276,10 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   void addReview() {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CreateReviewWidget(bookId: bookSummary.id)
-      )
-    );
+        context,
+        MaterialPageRoute(
+            builder: (context) => CreateReviewWidget(bookId: bookSummary.id)));
+        // TODO - Refresh reviews here
+        //.whenComplete();
   }
 }

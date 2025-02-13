@@ -1,9 +1,11 @@
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/child.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child.dart';
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class EditChildScreen extends StatefulWidget {
   final int childID;
@@ -42,6 +44,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: defaultOverlay(),
         title: const Text(
           "Edit Child", 
           style: TextStyle(

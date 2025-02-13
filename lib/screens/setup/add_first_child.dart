@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AddFirstChild extends StatefulWidget {
   const AddFirstChild({super.key});
@@ -42,10 +44,14 @@ class _AddFirstChildState extends State<AddFirstChild> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: SetupBackdropWidget(childWidget: _addChildWidget(textTheme))),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: SetupBackdropWidget(
+          childWidget: SafeArea(child: _addChildWidget(textTheme)),
+        ),
+      ),
     );
   }
 

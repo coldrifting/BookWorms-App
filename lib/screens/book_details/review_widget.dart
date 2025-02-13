@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
+
 import 'package:bookworms_app/models/user_review.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:flutter/material.dart';
 
 /// The [ReviewWidget] captures a single user corresponding to a specific
 /// book. A user review contains the user's icon, name, role, star rating,
@@ -25,7 +26,7 @@ class ReviewWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
-            color: colorGrey.withOpacity(0.3),
+            color: colorGrey.withValues(alpha: 0.3),
             spreadRadius: 1,
             blurRadius: 5,
           ),

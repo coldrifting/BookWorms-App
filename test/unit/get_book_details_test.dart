@@ -1,20 +1,22 @@
 import 'dart:convert';
+import 'package:universal_io/io.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/user_review.dart';
+import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
-import 'package:bookworms_app/services/services_shared.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:mockito/mockito.dart';
 import 'mocks/http_client_test.mocks.dart';
 
 void main() {
   group('BookSummariesService', () {
     late BookDetailsService bookDetailsService;
-    late MockClient mockClient;
+    late MockHttpClient mockClient;
 
     setUp(() {
-      mockClient = MockClient();
+      mockClient = MockHttpClient();
       bookDetailsService = BookDetailsService(client: mockClient);
     });
 
@@ -40,8 +42,8 @@ void main() {
         },
       );
       
-      when(mockClient.get(Uri.parse('http://${ServicesShared.serverAddress}/books/id/details')))
-          .thenAnswer((_) async => http.Response(mockResponse, 200));
+      when(mockClient.getUrl(bookDetailsUri("id")))
+          .thenAnswer((_) async => HttpRep(mockResponse, 200));
 
       final result = await bookDetailsService.getBookDetails('id');
 
@@ -66,7 +68,7 @@ void main() {
     });
 
     test('throws an exception if the http call fails', () async {
-      when(mockClient.get(Uri.parse('http://${ServicesShared.serverAddress}/books/id/details')))
+      when(mockClient.getUrl(bookDetailsUri("id")))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(() async => await bookDetailsService.getBookDetails('id'), throwsException);

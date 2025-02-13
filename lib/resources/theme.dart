@@ -1,5 +1,6 @@
-import 'package:bookworms_app/theme/colors.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bookworms_app/resources/colors.dart';
 
 final ThemeData appTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: colorGreen!),

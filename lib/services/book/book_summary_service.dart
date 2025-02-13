@@ -1,20 +1,23 @@
-import 'dart:convert';
+import 'package:bookworms_app/resources/network.dart';
+import 'package:bookworms_app/utils/http_client_ext.dart';
+import 'package:bookworms_app/utils/http_helpers.dart';
 import 'package:bookworms_app/models/book_summary.dart';
-import 'package:bookworms_app/services/services_shared.dart';
-import 'package:http/http.dart' as http;
 
-
+/// The [BookSummaryService] handles the retrieval of book summary (singular) from the server.
 class BookSummaryService {
-  final http.Client client;
+  final HttpClientExt client;
 
-  BookSummaryService({http.Client? client}) : client = client ?? http.Client();
+  BookSummaryService({HttpClientExt? client}) : client = client ?? HttpClientExt();
 
   Future<BookSummary> getBookSummary(String bookId) async {
-    final response = await client.get(Uri.parse('http://${ServicesShared.serverAddress}/books/$bookId/details'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return BookSummary.fromJson(data);
-    } else {
+    final response = await client.sendRequest(
+        uri: bookDetailsUri(bookId),
+        method: "GET");
+
+    if (response.ok) {
+      return BookSummary.fromJson(await readResponse(response));
+    }
+    else {
       throw Exception('An error occurred when fetching the book summary.');
     }
   }

@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ChangeChildWidget extends StatefulWidget {
   const ChangeChildWidget({super.key});
