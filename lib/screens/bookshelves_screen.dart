@@ -26,7 +26,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     Child selectedChild = appState.children[appState.selectedChildID];
 
     if (selectedChild.bookshelves.isEmpty) {
-      appState.getChildBookshelves(appState.selectedChildID);
+      appState.setChildBookshelves(appState.selectedChildID);
     }
     List<Bookshelf> bookshelves = selectedChild.bookshelves;
 

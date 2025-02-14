@@ -89,7 +89,7 @@ class AppState extends ChangeNotifier {
 
   BookshelfService bookshelvesService = BookshelfService();
 
-  void getChildBookshelves(int childId) async {
+  void setChildBookshelves(int childId) async {
     String guid = children[childId].id;
     List<Bookshelf> bookshelves = await bookshelvesService.getBookshelves(guid);
     (_account as Parent).children[childId].bookshelves = bookshelves;
