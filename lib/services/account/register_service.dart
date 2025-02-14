@@ -13,7 +13,7 @@ class RegisterService {
   Future<bool> registerUser(String username, String password, String firstName, String lastName, 
       bool isParent, Function(Map<String,String>) onValidationError) async {
     final response = await client.post(
-      Uri.parse('http://${ServicesShared.serverAddress}/user/register'),
+      Uri.parse('${ServicesShared.serverAddress}/user/register'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'

@@ -13,7 +13,7 @@ import 'package:bookworms_app/services/account/edit_account_info_service.dart';
 import 'package:bookworms_app/services/account/get_children_service.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
-import 'package:bookworms_app/services/account/bookshelf_service.dart';
+import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -87,34 +87,38 @@ class AppState extends ChangeNotifier {
 
   // ***** Bookshelves *****
 
-  List<Bookshelf> get bookshelves => (_account as Parent).children[selectedChildID].bookshelves;
   BookshelfService bookshelvesService = BookshelfService();
 
   void getChildBookshelves(int childId) async {
-    List<Bookshelf> bookshelves = await bookshelvesService.getBookshelves(childId);
+    String guid = children[childId].id;
+    List<Bookshelf> bookshelves = await bookshelvesService.getBookshelves(guid);
     (_account as Parent).children[childId].bookshelves = bookshelves;
     notifyListeners();
   }
 
   Future<Bookshelf> getChildBookshelf(int childId, Bookshelf bookshelf) async {
-    Bookshelf childBookshelf = await bookshelvesService.getBookshelf(childId, bookshelf.name);
+    String guid = children[childId].id;
+    Bookshelf childBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf.name);
     return childBookshelf;
   }
 
   void addChildBookshelf(int childId, Bookshelf bookshelf) async {
-    List<Bookshelf> bookshelves = await bookshelvesService.addBookshelf(childId, bookshelf.name);
+    String guid = children[childId].id;
+    List<Bookshelf> bookshelves = await bookshelvesService.addBookshelf(guid, bookshelf.name);
     (_account as Parent).children[childId].bookshelves = bookshelves;
     notifyListeners();
   }
 
   void renameChildBookshelf(int childId, Bookshelf bookshelf, String newName) async {
-    List<Bookshelf> bookshelves = await bookshelvesService.renameBookshelfService(childId, bookshelf.name, newName);
+    String guid = children[childId].id;
+    List<Bookshelf> bookshelves = await bookshelvesService.renameBookshelfService(guid, bookshelf.name, newName);
     (_account as Parent).children[childId].bookshelves = bookshelves;
     notifyListeners();
   }
 
   void deleteChildBookshelf(int childId, Bookshelf bookshelf) async {
-    List<Bookshelf> bookshelves = await bookshelvesService.deleteBookshelf(childId, bookshelf.name);
+    String guid = children[childId].id;
+    List<Bookshelf> bookshelves = await bookshelvesService.deleteBookshelf(guid, bookshelf.name);
     (_account as Parent).children[childId].bookshelves = bookshelves;
     notifyListeners();
   }

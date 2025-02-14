@@ -9,9 +9,9 @@ class BookshelfService {
 
   BookshelfService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<List<Bookshelf>> addBookshelf(int childId, String bookshelfName) async {
+  Future<List<Bookshelf>> addBookshelf(String guid, String bookshelfName) async {
     final response = await client.post(
-      Uri.parse('http://${ServicesShared.serverAddress}/children/$childId/shelves/$bookshelfName/add}'),
+      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$bookshelfName/add'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
@@ -26,9 +26,9 @@ class BookshelfService {
     }
   }
 
-  Future<List<Bookshelf>> deleteBookshelf(int childId, String bookshelfName) async {
+  Future<List<Bookshelf>> deleteBookshelf(String guid, String bookshelfName) async {
     final response = await client.delete(
-      Uri.parse('http://${ServicesShared.serverAddress}/children/$childId/shelves/$bookshelfName/delete'),
+      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$bookshelfName/delete'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
@@ -43,9 +43,9 @@ class BookshelfService {
     }
   }
 
-  Future<Bookshelf> getBookshelf(int childId, String bookshelfName) async {
+  Future<Bookshelf> getBookshelf(String guid, String bookshelfName) async {
     final response = await client.get(
-      Uri.parse('http://${ServicesShared.serverAddress}/children/$childId/shelves/$bookshelfName/details}'),
+      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$bookshelfName/details'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
@@ -59,9 +59,9 @@ class BookshelfService {
     }
   }
 
-  Future<List<Bookshelf>> getBookshelves(int childId) async {
+  Future<List<Bookshelf>> getBookshelves(String guid) async {
     final response = await client.get(
-      Uri.parse('http://${ServicesShared.serverAddress}/children/$childId/shelves}'),
+      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
@@ -76,9 +76,9 @@ class BookshelfService {
     }
   }
 
-  Future<List<Bookshelf>> renameBookshelfService(int childId, String oldBookshelfName, String newBookshelfName) async {
+  Future<List<Bookshelf>> renameBookshelfService(String guid, String oldBookshelfName, String newBookshelfName) async {
     final response = await client.post(
-      Uri.parse('http://${ServicesShared.serverAddress}/children/$childId/shelves/$oldBookshelfName/rename?newName=$newBookshelfName}'),
+      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$oldBookshelfName/rename?newName=$newBookshelfName'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'

@@ -22,9 +22,12 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
-    int selectedChildID = appState.selectedChildID;
-    Child selectedChild = appState.children[selectedChildID];
-    List<Bookshelf> bookshelves = appState.bookshelves;
+    Child selectedChild = appState.children[appState.selectedChildID];
+
+    if (selectedChild.bookshelves.isEmpty) {
+      appState.getChildBookshelves(appState.selectedChildID);
+    }
+    List<Bookshelf> bookshelves = selectedChild.bookshelves;
 
     return SafeArea(
       child: Scaffold(
@@ -40,82 +43,24 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                _createBookshelfWidget(textTheme),
-                ListView.builder(
+          child: Column(
+            children: [
+              _createBookshelfWidget(textTheme),
+              Expanded(
+                child: ListView.builder(
                   itemCount: bookshelves.length,
                   itemBuilder: (context, index) {
                     return Column(
                       children: [
                         addVerticalSpace(16),
-                        _bookshelfWidget(
-                          bookshelves[index]
-                        ),
+                        _bookshelfWidget(bookshelves[index]),
                       ],
                     );
                   }
                 ),
-              ],
-            ),
-
-
-
-          // child: ListView(
-          //   children: [
-          //     addVerticalSpace(16),
-          //     _createBookshelfWidget(textTheme),
-          //     addVerticalSpace(16),
-          //     _bookshelfWidget(
-          //       Bookshelf(name: "Recommended Books", books: []),
-          //       [Demo.image1, Demo.image2, Demo.image3],
-          //       [Demo.authors1, Demo.authors2, Demo.authors3],
-          //       Colors.yellow[200],
-          //       Colors.yellow[800]
-          //     ),
-          //     addVerticalSpace(16),
-          //     _bookshelfWidget(
-          //       Bookshelf(name: "Ms. Wilson's Class Reading List", books: []),
-          //       [Demo.image4, Demo.image5, Demo.image6],
-          //       [Demo.authors4, Demo.authors5, Demo.authors6],
-          //       Colors.red[200],
-          //       Colors.red[800]
-          //     ),
-          //     addVerticalSpace(16),
-          //     _bookshelfWidget(
-          //       Bookshelf(name: "Currently Reading", books: []),
-          //       [Demo.image6, Demo.image8, Demo.image9],
-          //       [Demo.authors6, Demo.authors8, Demo.authors9],
-          //       Colors.blue[200],
-          //       Colors.blue[800]
-          //     ),
-          //     addVerticalSpace(16),
-          //     _bookshelfWidget(
-          //       Bookshelf(name: "Completed Books", books: []),
-          //       [Demo.image5, Demo.image10, Demo.image4],
-          //       [Demo.authors5, Demo.authors10, Demo.authors4],
-          //       Colors.green[200],
-          //       Colors.green[800]
-          //     ),
-          //     addVerticalSpace(16),
-          //     _bookshelfWidget(
-          //       Bookshelf(name: "Animals", books: []),
-          //       [Demo.image2, Demo.image5, Demo.image6],
-          //       [Demo.authors2, Demo.authors5, Demo.authors6],
-          //       Colors.grey[200],
-          //       Colors.grey[800]
-          //     ),
-          //     addVerticalSpace(16),
-          //     _bookshelfWidget(
-          //       Bookshelf(name: "Fairytales", books: []),
-          //       [Demo.image8, Demo.image9, Demo.image7],
-          //       [Demo.authors8, Demo.authors9, Demo.authors7],
-          //       Colors.grey[200],
-          //       Colors.grey[800]
-          //     ),
-          //     addVerticalSpace(16),
-          //   ],
-          // ),
+              ),
+            ],
+          ),
         ),
       ),
     );

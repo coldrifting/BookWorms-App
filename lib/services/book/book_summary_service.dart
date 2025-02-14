@@ -10,7 +10,7 @@ class BookSummaryService {
   BookSummaryService({http.Client? client}) : client = client ?? http.Client();
 
   Future<BookSummary> getBookSummary(String bookId) async {
-    final response = await client.get(Uri.parse('http://${ServicesShared.serverAddress}/books/$bookId/details'));
+    final response = await client.get(Uri.parse('${ServicesShared.serverAddress}/books/$bookId/details'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return BookSummary.fromJson(data);

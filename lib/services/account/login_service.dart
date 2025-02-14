@@ -12,7 +12,7 @@ class LoginService {
 
   Future<bool> loginUser(String username, String password, Function(String) onValidationError) async {
     final response = await client.post(
-      Uri.parse('http://${ServicesShared.serverAddress}/user/login'),
+      Uri.parse('${ServicesShared.serverAddress}/user/login'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'

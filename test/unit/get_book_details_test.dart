@@ -40,7 +40,7 @@ void main() {
         },
       );
       
-      when(mockClient.get(Uri.parse('http://${ServicesShared.serverAddress}/books/id/details')))
+      when(mockClient.get(Uri.parse('${ServicesShared.serverAddress}/books/id/details')))
           .thenAnswer((_) async => http.Response(mockResponse, 200));
 
       final result = await bookDetailsService.getBookDetails('id');
@@ -66,7 +66,7 @@ void main() {
     });
 
     test('throws an exception if the http call fails', () async {
-      when(mockClient.get(Uri.parse('http://${ServicesShared.serverAddress}/books/id/details')))
+      when(mockClient.get(Uri.parse('${ServicesShared.serverAddress}/books/id/details')))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
       expect(() async => await bookDetailsService.getBookDetails('id'), throwsException);

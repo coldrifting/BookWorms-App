@@ -11,7 +11,7 @@ class AddChildService {
 
   Future<List<Child>> addChild(String childName) async {
     final response = await client.post(
-      Uri.parse('http://${ServicesShared.serverAddress}/children/add?childName=$childName'),
+      Uri.parse('${ServicesShared.serverAddress}/children/add?childName=$childName'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
