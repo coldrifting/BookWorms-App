@@ -12,7 +12,7 @@ class BookReviewsService {
   // Send the user review data to the server.
   Future<UserReview> sendReview(String bookId, String text, double starRating) async {
     final response = await client.put(
-      Uri.parse('http://${ServicesShared.serverAddress}/books/$bookId/review?username=parent0'),
+      Uri.parse('${ServicesShared.serverAddress}/books/$bookId/review?username=parent0'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

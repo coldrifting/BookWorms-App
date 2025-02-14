@@ -12,7 +12,7 @@ class AccountDetailsService {
 
   Future<AccountDetails> getAccountDetails() async {
     final response = await client.get(
-      Uri.parse('http://${ServicesShared.serverAddress}/user/details'),
+      Uri.parse('${ServicesShared.serverAddress}/user/details'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'

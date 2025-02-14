@@ -1,7 +1,10 @@
+import 'package:bookworms_app/models/bookshelf.dart';
+
 class Child {
   final String id;
   String name;
   int profilePictureIndex;
+  List<Bookshelf> bookshelves = [];
 
   Child({
     required this.id,

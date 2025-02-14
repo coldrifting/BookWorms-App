@@ -11,7 +11,7 @@ class BookDetailsService {
 
   // Retrieve and decode the extended book data of the book id from the server.
   Future<BookDetails> getBookDetails(String bookId) async {
-    final response = await client.get(Uri.parse('http://${ServicesShared.serverAddress}/books/$bookId/details/all'));
+    final response = await client.get(Uri.parse('${ServicesShared.serverAddress}/books/$bookId/details/all'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return BookDetails.fromJson(data);

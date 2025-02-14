@@ -22,7 +22,7 @@ void main() {
       final mockZipResponse = createMockZipFile(1);
 
       when(mockClient.post(
-        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
+        Uri.parse('${ServicesShared.serverAddress}/books/covers'),
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response.bytes(mockZipResponse, 200));
@@ -38,7 +38,7 @@ void main() {
       final mockZipResponse = createMockZipFile(5);
 
       when(mockClient.post(
-        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
+        Uri.parse('${ServicesShared.serverAddress}/books/covers'),
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response.bytes(mockZipResponse, 200));
@@ -52,7 +52,7 @@ void main() {
 
     test('throws an exception if the http call fails', () async {
       when(mockClient.post(
-        Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
+        Uri.parse('${ServicesShared.serverAddress}/books/covers'),
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response('Not Found', 404));

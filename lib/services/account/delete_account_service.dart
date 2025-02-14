@@ -12,7 +12,7 @@ class DeleteAccountService {
 
   Future<bool> deleteAccount(String username) async {
     final response = await client.delete(
-      Uri.parse('http://${ServicesShared.serverAddress}/user/delete'),
+      Uri.parse('${ServicesShared.serverAddress}/user/delete'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

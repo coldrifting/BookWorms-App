@@ -56,7 +56,7 @@ class BookImagesService {
 
    Future<Map<String, Image>> _fetchAndCacheBookImages(List<String> bookIds) async {
     final response = await client.post(
-      Uri.parse('http://${ServicesShared.serverAddress}/books/covers'),
+      Uri.parse('${ServicesShared.serverAddress}/books/covers'),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'

@@ -11,7 +11,7 @@ class GetChildrenService {
 
   Future<List<Child>> getChildren() async {
     final response = await client.get(
-      Uri.parse('http://${ServicesShared.serverAddress}/children/all'),
+      Uri.parse('${ServicesShared.serverAddress}/children/all'),
       headers: {
         'accept': 'application/json',
         'Authorization': 'Bearer ${await getToken()}'
