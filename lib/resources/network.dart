@@ -34,4 +34,4 @@ Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
 
-const String serverBaseUri = "https://62f3-2601-681-4000-1430-31b4-12e6-25bd-1ed8.ngrok-free.app:443";
+const String serverBaseUri = "https://bookworms.app:443";

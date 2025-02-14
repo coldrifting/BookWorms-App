@@ -52,7 +52,7 @@ extension StatusBadRequest on http.Response {
 }
 
 String getChildId(http.Response response) {
-  return response.headers["Location"]?.toString().replaceFirst("/children/","") ?? "";
+  return response.headers["location"]?.toString().replaceFirst("/children/","") ?? "";
 }
 
 Map<String, dynamic> readResponse(http.Response response) {
