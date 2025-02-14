@@ -5,6 +5,7 @@ import 'package:bookworms_app/theme/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart'; // Books used for the demo
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
@@ -42,7 +43,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
           actions: const [ChangeChildWidget()],
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               _createBookshelfWidget(textTheme),
@@ -155,35 +156,44 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       height: 100,
       child: LayoutBuilder(
         builder:(context, constraints) {
-          return Stack(
-            children: [
-              Positioned( // Top cover image
-                top: 5,
-                left: 5,
-                child: SizedBox(
-                  height: constraints.maxHeight * 0.5,
-                  child: bookCovers[0],
-                ),
+          if (bookCovers.isEmpty) {
+            return Align(
+              child: SizedBox(
+                height: constraints.maxHeight * 0.7,
+                child: SvgPicture.asset('assets/images/bookworms_logo.svg'),
               ),
-              if (bookCovers.length > 1)
+            );
+          } else {
+            return Stack(
+              children: [
                 Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    height: constraints.maxHeight * 0.5,
-                    child: bookCovers[1],
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      height: constraints.maxHeight * 0.5,
+                      child: bookCovers[0],
+                    ),
                   ),
-                ),
-              if (bookCovers.length > 2)
-                Positioned( // Bottom cover image
-                  bottom: 5,
-                  right: 5,
-                  child: SizedBox(
-                    height: constraints.maxHeight * 0.5,
-                    child: bookCovers[2],
+                if (bookCovers.length > 1)
+                  Positioned( // Top cover image
+                    top: 5,
+                    left: 5,
+                    child: SizedBox(
+                      height: constraints.maxHeight * 0.5,
+                      child: bookCovers[1],
+                    ),
                   ),
-                ),
-            ],
-          );
+                if (bookCovers.length > 2)
+                  Positioned( // Bottom cover image
+                    bottom: 5,
+                    right: 5,
+                    child: SizedBox(
+                      height: constraints.maxHeight * 0.5,
+                      child: bookCovers[2],
+                    ),
+                  ),
+              ],
+            );
+          }
         },
       ),
     );
