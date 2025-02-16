@@ -1,6 +1,7 @@
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/bookshelf.dart';
@@ -32,37 +33,39 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     }
     List<Bookshelf> bookshelves = selectedChild.bookshelves;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "${selectedChild.name}'s Bookshelves",
-            style: const TextStyle(
-              color: colorWhite
-            )
-          ),
-          backgroundColor: colorGreen,
-          actions: const [ChangeChildWidget()],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "${selectedChild.name}'s Bookshelves",
+          style: const TextStyle(
+            color: colorWhite
+          )
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _createBookshelfWidget(textTheme),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: bookshelves.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        addVerticalSpace(16),
-                        _bookshelfWidget(bookshelves[index]),
-                      ],
-                    );
-                  }
-                ),
-              ),
-            ],
+        backgroundColor: colorGreen,
+        actions: const [ChangeChildWidget()],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Expanded(
+          child: ListView.builder(
+            itemCount: bookshelves.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Column(
+                  children: [
+                    addVerticalSpace(16),
+                    _createBookshelfWidget(textTheme),
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    addVerticalSpace(16),
+                    _bookshelfWidget(bookshelves[index - 1]),
+                  ],
+                );
+              }
+            }
           ),
         ),
       ),
@@ -153,23 +156,30 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
+  void doNothing(BuildContext context) {}
+
   /// A bookshelf includes the title, book cover(s), and author(s).
   Widget _bookshelfWidget(Bookshelf bookshelf) {
     AppState appState = Provider.of<AppState>(context);
     Color mainColor = Colors.grey[200]!; // Temporary
     Color accentColor = Colors.grey[800]!; // Temporary
 
-    return Dismissible(
-      key: ValueKey(bookshelf.name), // Bookshelf names are unique.
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) async {
-        appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
-        return true;
-      },
-      background: TextButton(
-        style: TextButton.styleFrom(backgroundColor: Colors.red),
-        onPressed: () {}, 
-        child: Text("Delete me!"),
+    return Slidable(
+      key: ValueKey(bookshelf.name),
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        dismissible: DismissiblePane(
+          onDismissed: () { appState.deleteChildBookshelf(appState.selectedChildID, bookshelf); },
+        ),
+        children: [
+          SlidableAction(
+            onPressed: doNothing,
+            backgroundColor: colorRed!,
+            foregroundColor: colorWhite,
+            icon: Icons.delete,
+            label: 'Delete',
+          ),
+        ],
       ),
       child: Container(
         decoration: BoxDecoration(
