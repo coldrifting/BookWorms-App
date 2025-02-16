@@ -12,7 +12,7 @@ class BookshelfService {
   Future<List<Bookshelf>> addBookshelf(String guid, String bookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesAddUri(guid, bookshelfName),
-        method: "GET");
+        method: "POST");
 
     if (response.ok) {
       final data = jsonDecode(response.body) as List;
@@ -26,7 +26,7 @@ class BookshelfService {
   Future<List<Bookshelf>> deleteBookshelf(String guid, String bookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesDeleteUri(guid, bookshelfName),
-        method: "GET");
+        method: "DELETE");
 
     if (response.ok) {
       final data = jsonDecode(response.body) as List;
@@ -67,7 +67,7 @@ class BookshelfService {
   Future<List<Bookshelf>> renameBookshelfService(String guid, String oldBookshelfName, String newBookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesRenameUri(guid, oldBookshelfName, newBookshelfName),
-        method: "GET");
+        method: "POST");
 
     if (response.ok) {
       final data = jsonDecode(response.body) as List;

@@ -1,3 +1,4 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -70,20 +71,85 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
 
   /// The labeled button for creating a bookshelf.
   Widget _createBookshelfWidget(TextTheme textTheme) {
-    return Container(
-      decoration: BoxDecoration(
-        color: colorGreyLight,
-        border: Border.all(color: colorGreyDark ?? colorBlack),
-        borderRadius: BorderRadius.circular(4),
+    return Material(
+      color: colorGreyLight,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: () {
+          _createBookshelf(textTheme);
+        },
+        splashColor: colorGreyDark?.withValues(alpha: 0.1) ?? Colors.black.withValues(alpha: 0.1),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: colorGreyDark ?? Colors.black, width: 1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.add, size: 20),
+              addHorizontalSpace(8),
+              Text(
+                "Create New Bookshelf",
+                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          IconButton(onPressed: () => {}, icon: const Icon(Icons.add)),
-          addHorizontalSpace(10),
-          Text(style: textTheme.titleMedium, "Create New Bookshelf"),
-        ],
-      ),
+    );
+  }
+
+
+  void _createBookshelf(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    int selectedChildId = appState.selectedChildID;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        TextEditingController controller = TextEditingController();
+        return AlertDialog(
+          title: Text('Create New Bookshelf'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Bookshelf Name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                foregroundColor: colorGreyDark,
+              ),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String name = controller.text.trim();
+                if (name.isNotEmpty) {
+                  Navigator.pop(context, name);
+                  appState.addChildBookshelf(selectedChildId, Bookshelf(name: name, books: []));
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorGreen,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'Create', 
+                style: textTheme.titleSmallWhite
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
