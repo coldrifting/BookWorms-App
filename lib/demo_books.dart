@@ -2,16 +2,19 @@ import 'package:bookworms_app/models/book_summary.dart';
 
 /// Temporary constant values for demo purposes.
 class Demo {
-  static const image1 = "http://books.google.com/books/content?id=dJNoDQAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image2 = "http://books.google.com/books/content?id=zH2WQ5FHsHcC&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image3 = "http://books.google.com/books/content?id=f_QUAgAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image4 = "http://books.google.com/books/content?id=l39QAwAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image5 = "http://books.google.com/books/content?id=iRIcS_gvRMcC&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image6 = "http://books.google.com/books/content?id=rYy8CwAAQBAJ&printsec=frontcover&img=1&zoom=4&source=gbs_api";
-  static const image7 = "http://books.google.com/books/content?id=td0nDwAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image8 = "http://books.google.com/books/content?id=H5zQDAAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image9 = "http://books.google.com/books/content?id=B344DwAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
-  static const image10 = "http://books.google.com/books/content?id=yKLbDwAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&source=gbs_api";
+  static const imagePrefix = "https://covers.openlibrary.org/b/id/";
+  static const imageSuffix = "-L.jpg";
+
+  static const image1  = "${imagePrefix}35556$imageSuffix";
+  static const image2  = "${imagePrefix}279572$imageSuffix";
+  static const image3  = "${imagePrefix}0008348270$imageSuffix";
+  static const image4  = "${imagePrefix}115508$imageSuffix";
+  static const image5  = "${imagePrefix}7728594$imageSuffix";
+  static const image6  = "${imagePrefix}10114211$imageSuffix";
+  static const image7  = "${imagePrefix}9013596$imageSuffix";
+  static const image8  = "${imagePrefix}446199$imageSuffix";
+  static const image9  = "${imagePrefix}6490919$imageSuffix";
+  static const image10 = "${imagePrefix}0008843523$imageSuffix";
 
   static var book1 = BookSummary(id: "", title: "Goodnight Moon", authors: ["Margarel Wise Brown"], difficulty: "Level A", rating: 4.6);
   static var book2 = BookSummary(id: "", title: "Clifford the Big Red Dog", authors: ["Norman Bridwell"], difficulty: "Level B", rating: 4.8);

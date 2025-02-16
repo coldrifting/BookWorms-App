@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:bookworms_app/models/bookshelf.dart';
-import 'package:bookworms_app/services/auth_storage.dart';
-import 'package:bookworms_app/services/services_shared.dart';
+import 'package:bookworms_app/resources/network.dart';
+import 'package:bookworms_app/utils/http_helpers.dart';
 import 'package:http/http.dart' as http;
 
 class BookshelfService {
@@ -10,14 +10,11 @@ class BookshelfService {
   BookshelfService({http.Client? client}) : client = client ?? http.Client();
 
   Future<List<Bookshelf>> addBookshelf(String guid, String bookshelfName) async {
-    final response = await client.post(
-      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$bookshelfName/add'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}'
-      },
-    );
-    if (response.statusCode == 200) {
+    final response = await client.sendRequest(
+        uri: bookshelvesAddUri(guid, bookshelfName),
+        method: "GET");
+
+    if (response.ok) {
       final data = jsonDecode(response.body) as List;
       final bookshelves = data.map((entry) => Bookshelf.fromJson(entry)).toList();
       return bookshelves;
@@ -27,14 +24,11 @@ class BookshelfService {
   }
 
   Future<List<Bookshelf>> deleteBookshelf(String guid, String bookshelfName) async {
-    final response = await client.delete(
-      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$bookshelfName/delete'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}'
-      },
-    );
-    if (response.statusCode == 200) {
+    final response = await client.sendRequest(
+        uri: bookshelvesDeleteUri(guid, bookshelfName),
+        method: "GET");
+
+    if (response.ok) {
       final data = jsonDecode(response.body) as List;
       final bookshelves = data.map((entry) => Bookshelf.fromJson(entry)).toList();
       return bookshelves;
@@ -44,14 +38,11 @@ class BookshelfService {
   }
 
   Future<Bookshelf> getBookshelf(String guid, String bookshelfName) async {
-    final response = await client.get(
-      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$bookshelfName/details'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}'
-      },
-    );
-    if (response.statusCode == 200) {
+    final response = await client.sendRequest(
+        uri: bookshelvesDetailsUri(guid, bookshelfName),
+        method: "GET");
+
+    if (response.ok) {
       final data = jsonDecode(response.body);
       return Bookshelf.fromJson(data);
     } else {
@@ -60,14 +51,11 @@ class BookshelfService {
   }
 
   Future<List<Bookshelf>> getBookshelves(String guid) async {
-    final response = await client.get(
-      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}'
-      },
-    );
-    if (response.statusCode == 200) {
+    final response = await client.sendRequest(
+        uri: bookshelvesUri(guid),
+        method: "GET");
+
+    if (response.ok) {
       final data = jsonDecode(response.body) as List;
       final bookshelves = data.map((entry) => Bookshelf.fromJson(entry)).toList();
       return bookshelves;
@@ -77,14 +65,11 @@ class BookshelfService {
   }
 
   Future<List<Bookshelf>> renameBookshelfService(String guid, String oldBookshelfName, String newBookshelfName) async {
-    final response = await client.post(
-      Uri.parse('${ServicesShared.serverAddress}/children/$guid/shelves/$oldBookshelfName/rename?newName=$newBookshelfName'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}'
-      },
-    );
-    if (response.statusCode == 200) {
+    final response = await client.sendRequest(
+        uri: bookshelvesRenameUri(guid, oldBookshelfName, newBookshelfName),
+        method: "GET");
+
+    if (response.ok) {
       final data = jsonDecode(response.body) as List;
       final bookshelves = data.map((entry) => Bookshelf.fromJson(entry)).toList();
       return bookshelves;

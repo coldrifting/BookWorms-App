@@ -1,12 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/bookshelf.dart';
 import 'package:bookworms_app/models/child.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart'; // Books used for the demo
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
 /// user is able to add a new bookshelf here, or access their current bookshelves.
@@ -18,7 +19,7 @@ class BookshelvesScreen extends StatefulWidget {
 }
 
 /// The state of [BookshelvesScreen].
-class _BookshelvesScreenState extends State<BookshelvesScreen> { 
+class _BookshelvesScreenState extends State<BookshelvesScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -78,15 +79,9 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          IconButton(
-            onPressed: () => {}, 
-            icon: const Icon(Icons.add)
-          ),
+          IconButton(onPressed: () => {}, icon: const Icon(Icons.add)),
           addHorizontalSpace(10),
-          Text(
-            style: textTheme.titleMedium,
-            "Create New Bookshelf"
-          ),
+          Text(style: textTheme.titleMedium, "Create New Bookshelf"),
         ],
       ),
     );
@@ -146,13 +141,13 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  /// Displays some of the book cover(s) in the bookshelf. Each image is 
+  /// Displays some of the book cover(s) in the bookshelf. Each image is
   /// laid out diagonally across the container.
   Widget _imageLayoutWidget(Bookshelf bookshelf) {
-    var bookCovers = bookshelf.books.take(3).map((book) => book.image).where((image) => image != null).toList();
+    var bookCovers = bookshelf.books.take(3).map((book) => book.imageUrl).where((imageUrl) => imageUrl != null).toList();
 
     return SizedBox(
-      width: 100, 
+      width: 100,
       height: 100,
       child: LayoutBuilder(
         builder:(context, constraints) {
@@ -170,7 +165,11 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                     alignment: Alignment.center,
                     child: SizedBox(
                       height: constraints.maxHeight * 0.5,
-                      child: bookCovers[0],
+                      child: CachedNetworkImage(
+                        imageUrl: bookCovers[0]!,
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+                      ),
                     ),
                   ),
                 if (bookCovers.length > 1)
@@ -179,7 +178,11 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                     left: 5,
                     child: SizedBox(
                       height: constraints.maxHeight * 0.5,
-                      child: bookCovers[1],
+                      child: CachedNetworkImage(
+                        imageUrl: bookCovers[1]!,
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+                      ),
                     ),
                   ),
                 if (bookCovers.length > 2)
@@ -188,7 +191,11 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                     right: 5,
                     child: SizedBox(
                       height: constraints.maxHeight * 0.5,
-                      child: bookCovers[2],
+                      child: CachedNetworkImage(
+                        imageUrl: bookCovers[2]!,
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+                      ),
                     ),
                   ),
               ],

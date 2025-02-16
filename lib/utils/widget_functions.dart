@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:bookworms_app/resources/colors.dart';
 
 // Creates a SizedBox widget with specified height.
 Widget addVerticalSpace(double height) {
@@ -16,5 +19,19 @@ void pushScreen(context, screen) {
     MaterialPageRoute(
       builder: (context) => screen
     )
+  );
+}
+
+SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
+  return SystemUiOverlayStyle(
+    // Status bar color
+    statusBarColor: color ?? colorGreen,
+
+    // Status bar icon brightness
+    // For Android
+    statusBarIconBrightness: light == true ? Brightness.light : Brightness.dark,
+
+    // For iOS
+    statusBarBrightness:  light == true ? Brightness.light : Brightness.dark,
   );
 }

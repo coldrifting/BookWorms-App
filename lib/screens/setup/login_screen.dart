@@ -1,12 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/setup/register_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/login_register_widget.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:bookworms_app/services/account/login_service.dart';
-import 'package:provider/provider.dart';
 
 /// The [LoginScreen] is where a user inputs their existing credentials to log into the app.
 /// There is an alternative option to navigate to the [RegisterScreen].
@@ -19,9 +21,10 @@ class LoginScreen extends StatefulWidget {
 
 /// The state of the [LoginScreen].
 class _LoginScreenState extends State<LoginScreen> {
-
-  final TextEditingController _usernameController = TextEditingController(); // Username text field
-  final TextEditingController _passwordController = TextEditingController(); // Password text field
+  final TextEditingController _usernameController =
+      TextEditingController(); // Username text field
+  final TextEditingController _passwordController =
+      TextEditingController(); // Password text field
   final _formKey = GlobalKey<FormState>();
 
   String loginError = "";
@@ -37,7 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
     LoginService loginService = LoginService();
 
     // Attempt to log in the user with the provided credentials.
-    bool status = await loginService.loginUser(username, password, _handleValidationErrors);
+    final bool status = await loginService.loginUser(
+        username, password, _handleValidationErrors);
     if (status && mounted) {
       AppState appState = Provider.of<AppState>(context, listen: false);
       await appState.loadAccountDetails();
@@ -62,9 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
-        body: SetupBackdropWidget(childWidget: _loginWidget(textTheme)),
+    return Scaffold(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: SetupBackdropWidget(
+          childWidget: SafeArea(child: _loginWidget(textTheme)),
+        ),
       ),
     );
   }
@@ -116,21 +123,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 addVerticalSpace(loginError.isEmpty ? 32 : 16),
                 LoginRegisterWidget(
-                  onSignIn: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      final username = _usernameController.text;
-                      final password = _passwordController.text;
-                      login(username, password);
-                    }
-                  },
-                  onSignUp: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                    );
-                  }, 
-                  signIn: true
-                ),
+                    onSignIn: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        final username = _usernameController.text;
+                        final password = _passwordController.text;
+                        login(username, password);
+                      }
+                    },
+                    onSignUp: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const RegisterScreen()),
+                      );
+                    },
+                    signIn: true),
               ],
             ),
           ),

@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/screens/profile/edit_child_screen.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class ManageChildrenScreen extends StatefulWidget {
   const ManageChildrenScreen({super.key});
@@ -20,6 +22,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
     
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: defaultOverlay(),
         title: const Text(
           "Manage Children", 
           style: TextStyle(

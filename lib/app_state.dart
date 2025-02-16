@@ -1,4 +1,7 @@
 import 'dart:collection';
+import 'package:bookworms_app/services/book/bookshelf_service.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:bookworms_app/models/account.dart';
 import 'package:bookworms_app/models/account_details.dart';
@@ -9,13 +12,10 @@ import 'package:bookworms_app/models/parent_account.dart';
 import 'package:bookworms_app/models/teacher_account.dart';
 import 'package:bookworms_app/services/account/account_details_service.dart';
 import 'package:bookworms_app/services/account/add_child_service.dart';
-import 'package:bookworms_app/services/account/edit_account_info_service.dart';
+import 'package:bookworms_app/services/account/account_details_edit_service.dart';
 import 'package:bookworms_app/services/account/get_children_service.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
-import 'package:bookworms_app/services/book/bookshelf_service.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AppState extends ChangeNotifier {
   late Account _account;
@@ -60,8 +60,8 @@ class AppState extends ChangeNotifier {
 
   Future<void> addChild(String childName) async {
     AddChildService addChildService = AddChildService();
-    List<Child> children = await addChildService.addChild(childName);
-    (_account as Parent).children = children;
+    Child newChild = await addChildService.addChild(childName);
+    (_account as Parent).children.add(newChild);
     notifyListeners();
   }
 
@@ -139,7 +139,7 @@ class AppState extends ChangeNotifier {
     lastName ??= _account.lastName;
     profilePictureIndex ??= _account.profilePictureIndex;
 
-    EditAccountInfoService accountService = EditAccountInfoService();
+    AccountDetailsEditService accountService = AccountDetailsEditService();
     AccountDetails accountDetails = await accountService.setAccountDetails(firstName, lastName, profilePictureIndex);
 
     _account.firstName = accountDetails.firstName;
@@ -183,7 +183,7 @@ class AppState extends ChangeNotifier {
       recentBooks.add(await bookSummaryService.getBookSummary(bookId));
     }
     BookImagesService bookImagesService = BookImagesService();
-    List<Image> recentBookImages = await bookImagesService.getBookImages(recentBookIds);
+    List<String> recentBookImages = await bookImagesService.getBookImages(recentBookIds);
     for (int i = 0; i < recentBookIds.length; i++) {
       recentBooks[i].setImage(recentBookImages[i]);
     }

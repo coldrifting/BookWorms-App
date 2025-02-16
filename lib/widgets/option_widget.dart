@@ -1,6 +1,7 @@
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 /// The [OptionWidget] displays a selectable box with an icon and name.
 class OptionWidget extends StatelessWidget {

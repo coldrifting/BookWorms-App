@@ -1,27 +1,26 @@
-import 'dart:convert';
-import 'package:bookworms_app/models/child.dart';
-import 'package:bookworms_app/services/auth_storage.dart';
-import 'package:bookworms_app/services/services_shared.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:bookworms_app/models/child.dart';
+import 'package:bookworms_app/resources/network.dart';
+import 'package:bookworms_app/utils/http_helpers.dart';
 
 class AddChildService {
   final http.Client client;
 
   AddChildService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<List<Child>> addChild(String childName) async {
-    final response = await client.post(
-      Uri.parse('${ServicesShared.serverAddress}/children/add?childName=$childName'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}'
-      },
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body) as List;
-      final children = data.map((entry) => Child.fromJson(entry)).toList();
-      return children;
-    } else {
+  Future<Child> addChild(String childName) async {
+    final response = await client.sendRequest(
+        uri: childAddUri(childName),
+        method: "POST");
+
+    if (response.ok) {
+      final List<Child> children = await fromResponseListChild(response);
+
+      final String childId = getChildId(response);
+      return children.singleWhere((val) => val.id == childId);
+    }
+    else {
       throw Exception('An error occurred when adding a child.');
     }
   }

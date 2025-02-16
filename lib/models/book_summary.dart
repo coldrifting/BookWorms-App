@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Simple book summary information and book image.
 class BookSummary {
   final String id;
@@ -7,7 +5,7 @@ class BookSummary {
   final List<String> authors;
   final String difficulty;
   final double? rating;
-  Image? image;
+  String? imageUrl;
 
   BookSummary({
     required this.id,
@@ -23,13 +21,12 @@ class BookSummary {
       id: json['bookId'],
       title: json['title'],
       authors: List<String>.from(json['authors']),
-      // difficulty: json['difficulty'],
-      difficulty: 'N/A',
+      difficulty: json['difficulty'] ?? "N/A",
       rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null
     );
   }
 
-  void setImage(Image newImage) {
-    image = newImage;
+  void setImage(String newImageUrl) {
+    imageUrl = newImageUrl;
   }
 }

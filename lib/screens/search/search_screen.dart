@@ -1,15 +1,16 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+
 import 'package:bookworms_app/screens/search/browse_screen.dart';
 import 'package:bookworms_app/screens/search/recents_and_advanced_search.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_search_service.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
-import 'package:flutter/material.dart';
 
-/// The [SearchScreen] displays a search bar and a scrollable list of 
+/// The [SearchScreen] displays a search bar and a scrollable list of
 /// relevant books related to the query typed in by the user.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -30,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   late BookSummariesService _bookSummariesService;
   late BookImagesService _bookImagesService;
-  
+
   late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
@@ -65,7 +66,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_isInActiveSearch) {
       _focusNode.removeListener(_onSearchBarFocusChanged);
     }
-  } 
+  }
 
   /// Callback for when the 'Cancel' button is pressed.
   /// Unfocuses and clears the search bar; clears the search results.
@@ -90,9 +91,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Fetches the search results and the corresponding images.
   Future<List<BookSummary>> getResults(String query, int resultLength) async {
-    List<BookSummary> results = await _bookSummariesService.getBookSummaries(query, _defaultResultLength);
-    List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
-    List<Image> bookImages = await _bookImagesService.getBookImages(bookIds);
+    List<BookSummary> results = await _bookSummariesService.getBookSummaries(
+        query, _defaultResultLength);
+    List<String> bookIds =
+        results.map((bookSummary) => bookSummary.id).toList();
+    List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < results.length; i++) {
       results[i].setImage(bookImages[i]);
     }
@@ -112,7 +115,8 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await getResults(query, _defaultResultLength);
+        List<BookSummary> results =
+            await getResults(query, _defaultResultLength);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
@@ -122,11 +126,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
           // Scroll to the top of the list.
           if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              0.0, 
-              duration: const Duration(milliseconds: 300), 
-              curve: Curves.easeInOut
-            );
+            _scrollController.animateTo(0.0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut);
           }
         }
       } else {
@@ -140,13 +142,14 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Callback for when the 'Show More' button is pressed.
   /// Fetches and appends the expanded results to the default results.
   void _onShowMorePressed() async {
-    List<BookSummary> results = await getResults(_currentQuery, _expandedResultLength);
+    List<BookSummary> results =
+        await getResults(_currentQuery, _expandedResultLength);
     setState(() {
       _searchResults.addAll(results);
     });
   }
 
- /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
+  /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -183,21 +186,22 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       );
     }
-  
-    return SafeArea(
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            children: [
-              addVerticalSpace(8),
-              searchBar(),
-              addVerticalSpace(8),
-              Expanded(
-                child: mainContent
-              ),
-            ],
-          ),
+
+    return Scaffold(
+      appBar: AppBar(
+        systemOverlayStyle: defaultOverlay(),
+        title: Text("Search", style: const TextStyle(color: colorWhite)),
+        backgroundColor: colorGreen,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          children: [
+            addVerticalSpace(8),
+            searchBar(),
+            addVerticalSpace(8),
+            Expanded(child: mainContent),
+          ],
         ),
       ),
     );
@@ -208,18 +212,18 @@ class _SearchScreenState extends State<SearchScreen> {
     return Row(
       children: [
         Expanded(
-            child: SearchBar(
-              leading: const Icon(Icons.search),
-              hintText: "Find a book",
-              focusNode: _focusNode,
-              controller: _textEditingcontroller,
-              onChanged: _onSearchQueryChanged,
-              shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              )),
-              shadowColor: const WidgetStatePropertyAll(Colors.transparent),
-            ),
+          child: SearchBar(
+            leading: const Icon(Icons.search),
+            hintText: "Find a book",
+            focusNode: _focusNode,
+            controller: _textEditingcontroller,
+            onChanged: _onSearchQueryChanged,
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            )),
+            shadowColor: const WidgetStatePropertyAll(Colors.transparent),
           ),
+        ),
         if (_isInActiveSearch)
           Row(
             children: [
@@ -240,35 +244,34 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
   Widget _resultsScreen(TextTheme textTheme) {
     return ListView.builder(
-      controller: _scrollController,
-      itemCount: _searchResults.length + 1,
-      itemBuilder: (context, index) {
-        if (index != _searchResults.length) {
-          return Column(
-            children: [
-              BookSummaryWidget(book: _searchResults[index]),
-              const Divider(
-                color: colorGrey,
-              )
-            ],
-          );
-        } else if (_searchResults.length == _defaultResultLength) {
-          return Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: _onShowMorePressed, 
-                  style: TextButton.styleFrom(
-                    foregroundColor: colorGreyDark,
+        controller: _scrollController,
+        itemCount: _searchResults.length + 1,
+        itemBuilder: (context, index) {
+          if (index != _searchResults.length) {
+            return Column(
+              children: [
+                BookSummaryWidget(book: _searchResults[index]),
+                const Divider(
+                  color: colorGrey,
+                )
+              ],
+            );
+          } else if (_searchResults.length == _defaultResultLength) {
+            return Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: _onShowMorePressed,
+                    style: TextButton.styleFrom(
+                      foregroundColor: colorGreyDark,
+                    ),
+                    child: const Text("Show More"),
                   ),
-                  child: const Text("Show More"),
                 ),
-              ),
-            ],
-          );
-        }
-        return null;
-      }
-    );
+              ],
+            );
+          }
+          return null;
+        });
   }
 }

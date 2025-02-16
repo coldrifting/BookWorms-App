@@ -1,6 +1,7 @@
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class LoginRegisterWidget extends StatelessWidget {
   final VoidCallback onSignIn;

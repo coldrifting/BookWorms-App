@@ -1,7 +1,8 @@
-import 'package:bookworms_app/models/book_summary.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/resources/colors.dart';
 
 /// The [BookshelfWidget] displays an overview of a user's bookshelf. It
 /// includes a short display of book covers, the bookshelf title, and some
@@ -28,7 +29,7 @@ class BookshelfWidget extends StatelessWidget {
         color: colorWhite,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withOpacity(0.2),
+            color: colorBlack.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),
@@ -86,7 +87,9 @@ class BookshelfWidget extends StatelessWidget {
             child: CachedNetworkImage(
               height: 175,
               imageUrl: image,
-            ),
+              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+            )
           ),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 225),

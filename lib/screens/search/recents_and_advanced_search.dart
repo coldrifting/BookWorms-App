@@ -1,10 +1,11 @@
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/theme/theme.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/book_summary_widget.dart';
 
 /// The [RecentsSearchTab] displays a scrollable list of books that have been 
 /// recently searched or interacted with by the user. There is also a tab for

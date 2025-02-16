@@ -1,9 +1,10 @@
-import 'dart:convert';
-import 'package:bookworms_app/models/user_review.dart';
-import 'package:bookworms_app/services/auth_storage.dart';
-import 'package:bookworms_app/services/services_shared.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:bookworms_app/resources/network.dart';
+import 'package:bookworms_app/utils/http_helpers.dart';
+import 'package:bookworms_app/models/user_review.dart';
+
+/// The [BookReviewsService] handles the retrieval of book reviews from the server.
 class BookReviewsService {
   final http.Client client;
 
@@ -11,22 +12,17 @@ class BookReviewsService {
 
   // Send the user review data to the server.
   Future<UserReview> sendReview(String bookId, String text, double starRating) async {
-    final response = await client.put(
-      Uri.parse('${ServicesShared.serverAddress}/books/$bookId/review?username=parent0'),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}',
-      },
-      body: json.encode({
-        "starRating": starRating,
-        "reviewText": text
-      })
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      return UserReview.fromJson(data);
-    } else {
+    final response = await client.sendRequest(
+        uri: bookReviewUri(bookId),
+        method: "PUT",
+        payload: {
+          "starRating": starRating,
+          "reviewText": text});
+
+    if (response.ok) {
+      return UserReview.fromJson(readResponse(response));
+    }
+    else {
       throw Exception('An error occurred when sending the review.');
     }
   }
