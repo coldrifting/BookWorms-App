@@ -157,6 +157,23 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  void addBookToBookshelf(int childId, Bookshelf bookshelf, BookSummary book) async {
+    String guid = children[childId].id;
+
+    var childBookshelves = (_account as Parent).children[childId].bookshelves;
+    int index = childBookshelves.indexWhere((b) => b.name == bookshelf.name);
+    
+    if (!childBookshelves[index].books.any((b) => b.id == book.id)) {
+      // Add the book server-side.
+      bool success = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
+      
+      if (index != -1 && success) {
+        (_account as Parent).children[childId].bookshelves[index].books.add(book);
+        notifyListeners();
+      }
+    }
+  }
+
 
   // ***** Account *****
 

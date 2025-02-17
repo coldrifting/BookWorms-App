@@ -85,4 +85,16 @@ class BookshelfService {
       throw Exception('An error occurred when trying to remove a book from the bookshelf.');
     }
   }
+
+  Future<bool> addBookToBookshelf(String guid, String bookshelfName, String bookId) async {
+    final response = await client.sendRequest(
+        uri: bookshelvesInsertUri(guid, bookshelfName, bookId),
+        method: "PUT");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when trying to add a book to the bookshelf.');
+    }
+  }
 }

@@ -48,8 +48,8 @@ Uri bookshelvesRenameUri(String childId, String oldBookshelfName, String newBook
   return Uri.parse("$serverBaseUri/children/$childId/shelves/$oldBookshelfName/rename?newName=$newBookshelfName");
 }
 
-Uri bookshelvesInsertUri(String childId, String bookshelfName) {
-  return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/insert");
+Uri bookshelvesInsertUri(String childId, String bookshelfName, String bookId) {
+  return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/insert?bookId=$bookId");
 }
 
 Uri bookshelvesRemoveUri(String childId, String bookshelfName, String bookId) {

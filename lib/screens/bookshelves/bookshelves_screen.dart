@@ -1,5 +1,6 @@
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
+import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -28,7 +29,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     Child selectedChild = appState.children[appState.selectedChildID];
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -215,7 +216,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: _imageLayoutWidget(bookshelf),
+              child: BookshelfImageLayoutWidget(bookshelf: bookshelf),
             ),
             Expanded(
               child: Padding(
@@ -237,70 +238,6 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// Displays at most 3 of the book covers in the bookshelf. Each image is
-  /// laid out diagonally across the container.
-  Widget _imageLayoutWidget(Bookshelf bookshelf) {
-    var bookCovers = bookshelf.books.take(3).map((book) => book.imageUrl).where((imageUrl) => imageUrl != null).toList();
-    return SizedBox(
-      width: 100,
-      height: 100,
-      child: LayoutBuilder(
-        builder:(context, constraints) {
-          if (bookCovers.isEmpty) {
-            return Align(
-              child: SizedBox(
-                height: constraints.maxHeight * 0.7,
-                child: SvgPicture.asset('assets/images/bookworms_logo.svg'),
-              ),
-            );
-          } else {
-            return Stack(
-              children: [
-                if (bookCovers.length > 1)
-                  Positioned( // Top cover image
-                      top: 5,
-                      left: 5,
-                      child: SizedBox(
-                        height: constraints.maxHeight * 0.5,
-                        child: CachedNetworkImage(
-                          imageUrl: bookCovers[1]!,
-                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
-                        ),
-                      ),
-                    ),
-                Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    height: constraints.maxHeight * 0.5,
-                    child: CachedNetworkImage(
-                      imageUrl: bookCovers[0]!,
-                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
-                    ),
-                  ),
-                ),
-                if (bookCovers.length > 2)
-                  Positioned( // Bottom cover image
-                    bottom: 5,
-                    right: 5,
-                    child: SizedBox(
-                      height: constraints.maxHeight * 0.5,
-                      child: CachedNetworkImage(
-                        imageUrl: bookCovers[2]!,
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          }
-        },
       ),
     );
   }
