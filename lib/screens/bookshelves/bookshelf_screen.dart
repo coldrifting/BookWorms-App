@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/models/bookshelf.dart';
@@ -30,12 +31,14 @@ class BookshelfScreen extends StatefulWidget {
 class _BookshelfScreenState extends State<BookshelfScreen> {
   late Bookshelf bookshelf;
   late BookDetailsService _bookDetailsService;
+  late MenuController _menuController;
 
   @override
   void initState() {
     super.initState();
     bookshelf = widget.bookshelf;
     _bookDetailsService = BookDetailsService();
+    _menuController = MenuController();
   }
 
   @override
@@ -78,7 +81,8 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                         alignment: Alignment.centerLeft,
                         child: Text(bookshelf.name, style: textTheme.titleMedium),
                       ),
-                      IconButton(icon: Icon(Icons.more_horiz), onPressed: () {}),
+                      Spacer(),
+                      _dropDownMenu(textTheme),
                     ],
                   ),
                 ],
@@ -98,6 +102,71 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
         ),
       ),
     );
+  }
+
+  Widget _dropDownMenu(TextTheme textTheme) {
+    return MenuAnchor(
+      controller: _menuController,
+      builder: (BuildContext context, MenuController controller, Widget? child) {
+        return IconButton(
+          icon: const Icon(Icons.more_horiz),
+          onPressed: () {
+            if (controller.isOpen) {
+              controller.close();
+            } else {
+              controller.open();
+            }
+          },
+        );
+      },
+      menuChildren: [
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+            // Confirm that the user wants to delete the classroom.
+            _showDeleteConfirmationDialog(textTheme);
+          },
+          child: const Text('Delete Bookshelf'),
+        )
+      ],
+    );
+  }
+
+  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text('Delete Bookshelf')),
+          content: const Text(
+            textAlign: TextAlign.center,
+            'Are you sure you want to permanently delete this bookshelf?'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteBookshelf();
+              },
+              child: Text('Delete', style: TextStyle(color: colorRed)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Deleting a bookshelf navigates to the bookshelf screen and removes the bookshelf.
+  void _deleteBookshelf() {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    Navigator.of(context).pop();
+    appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
   }
 
   // When clicking a book widget, navigates to the [BookDetailsScreen].

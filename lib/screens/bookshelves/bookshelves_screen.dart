@@ -28,13 +28,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     Child selectedChild = appState.children[appState.selectedChildID];
-
-    // Set the child's bookshelves.
-    if (selectedChild.bookshelves.isEmpty) {
-      appState.setChildBookshelves(appState.selectedChildID);
-    }
-    List<Bookshelf> bookshelves = selectedChild.bookshelves;
-
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -47,7 +41,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView.builder(
-          itemCount: bookshelves.length + 1,
+          itemCount: selectedChild.bookshelves.length + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
               return Column(
@@ -171,8 +165,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
                 appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+                Navigator.of(context).pop();
               },
               child: const Text('Delete'),
             ),

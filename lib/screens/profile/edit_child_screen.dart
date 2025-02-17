@@ -182,7 +182,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 // Change selected color and exit popup.
                 setState(() {
                   _selectedIconIndex = index;
-
                   Provider.of<AppState>(context, listen: false).setChildIconIndex(widget.childID, _selectedIconIndex);
                 });
                 Navigator.of(context).pop();

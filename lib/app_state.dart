@@ -52,6 +52,9 @@ class AppState extends ChangeNotifier {
       GetChildrenService getChildrenService = GetChildrenService();
       List<Child> children = await getChildrenService.getChildren();
       (_account as Parent).children = children;
+      for (var i = 0; i < children.length; i++) {
+        setChildBookshelves(i);
+      }
     }
   }
 
@@ -134,7 +137,7 @@ class AppState extends ChangeNotifier {
     String guid = children[childId].id;
     var success = await bookshelvesService.deleteBookshelf(guid, bookshelf.name);
     if (success) {
-      (_account as Parent).children[childId].bookshelves.remove(bookshelf);
+      (_account as Parent).children[childId].bookshelves.removeWhere((b) => b.name == bookshelf.name);
       notifyListeners();
     }
   }
