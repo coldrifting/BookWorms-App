@@ -90,15 +90,26 @@ class AppState extends ChangeNotifier {
   BookshelfService bookshelvesService = BookshelfService();
 
   void setChildBookshelves(int childId) async {
+
     String guid = children[childId].id;
     List<Bookshelf> bookshelves = await bookshelvesService.getBookshelves(guid);
     (_account as Parent).children[childId].bookshelves = bookshelves;
+
+    // Fetch the book images of each bookshelf for display purposes.
+    final bookIds = bookshelves
+      .expand((bookshelf) => bookshelf.books.map((book) => book.id))
+      .toList();
+    _setBookImages(bookIds, bookshelves);
     notifyListeners();
   }
 
   Future<Bookshelf> getChildBookshelf(int childId, Bookshelf bookshelf) async {
     String guid = children[childId].id;
     Bookshelf childBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf.name);
+
+    // Fetch the book images of the bookshelf.
+    final bookIds = childBookshelf.books.map((book) => book.id).toList();
+    _setBookImages(bookIds, [childBookshelf]);
     return childBookshelf;
   }
 
@@ -188,5 +199,25 @@ class AppState extends ChangeNotifier {
       recentBooks[i].setImage(recentBookImages[i]);
     }
     return ListQueue<BookSummary>.from(recentBooks);
+  }
+
+  void _setBookImages(List<String> bookIds, List<Bookshelf> bookshelves) async {
+    BookImagesService bookImagesService = BookImagesService();
+
+    if (bookIds.isNotEmpty) {
+      List<String> bookImages = await bookImagesService.getBookImages(bookIds);
+
+      int count = 0;
+      for (var bookshelf in bookshelves) {
+        for (var book in bookshelf.books) {
+          if (count < bookImages.length) {
+            book.imageUrl = bookImages[count];
+            count++;
+          } else {
+            break;
+          }
+        }
+      }
+    }
   }
 }

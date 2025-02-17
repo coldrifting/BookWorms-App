@@ -81,7 +81,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: const Text(
           "Edit Profile", 
           style: TextStyle(
-            fontWeight: FontWeight.normal,
             color: colorWhite, 
             overflow: TextOverflow.ellipsis
           )

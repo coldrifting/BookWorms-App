@@ -1,4 +1,5 @@
 import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -54,14 +55,17 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                 return Column(
                   children: [
                     addVerticalSpace(16),
-                    _createBookshelfWidget(textTheme),
+                    _createBookshelfWidget(textTheme)
                   ],
                 );
               } else {
                 return Column(
                   children: [
                     addVerticalSpace(16),
-                    _bookshelfWidget(bookshelves[index - 1]),
+                    InkWell(
+                      onTap: () { onBookClicked(bookshelves[index - 1]); },
+                      child: _bookshelfWidget(textTheme, bookshelves[index - 1])
+                    ),
                   ],
                 );
               }
@@ -72,16 +76,25 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
+  void onBookClicked(Bookshelf bookshelf) async {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    Bookshelf fullBookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelf);
+    if(mounted) {
+      pushScreen(
+        context, 
+        BookshelfScreen(bookshelf: fullBookshelf)
+      );
+    }
+  }
+
   /// The labeled button for creating a bookshelf.
   Widget _createBookshelfWidget(TextTheme textTheme) {
     return Material(
       color: colorGreyLight,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
-        onTap: () {
-          _createBookshelf(textTheme);
-        },
-        splashColor: colorGreyDark?.withValues(alpha: 0.1) ?? Colors.black.withValues(alpha: 0.1),
+        onTap: () { _createBookshelf(textTheme); },
+        splashColor: colorGreyDark!.withValues(alpha: 0.1),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: colorGreyDark ?? Colors.black, width: 1),
@@ -95,7 +108,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               addHorizontalSpace(8),
               Text(
                 "Create New Bookshelf",
-                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                style: textTheme.titleMedium!,
               ),
             ],
           ),
@@ -103,7 +116,6 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       ),
     );
   }
-
 
   void _createBookshelf(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context, listen: false);
@@ -156,13 +168,43 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  void doNothing(BuildContext context) {}
+  Future<void> _deleteBookshelf(TextTheme textTheme, Bookshelf bookshelf) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text('Delete Bookshelf')),
+          content: Text(
+              'Are you sure you want to permanently delete the bookshelf titled $bookshelf.name?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   /// A bookshelf includes the title, book cover(s), and author(s).
-  Widget _bookshelfWidget(Bookshelf bookshelf) {
+  Widget _bookshelfWidget(TextTheme textTheme, Bookshelf bookshelf) {
     AppState appState = Provider.of<AppState>(context);
     Color mainColor = Colors.grey[200]!; // Temporary
     Color accentColor = Colors.grey[800]!; // Temporary
+
+    var authors = bookshelf.books.expand((book) => book.authors);
 
     return Slidable(
       key: ValueKey(bookshelf.name),
@@ -173,9 +215,12 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         ),
         children: [
           SlidableAction(
-            onPressed: doNothing,
+            onPressed: (BuildContext context) {
+              _deleteBookshelf(textTheme, bookshelf);
+            },
             backgroundColor: colorRed!,
             foregroundColor: colorWhite,
+            borderRadius: BorderRadius.circular(4),
             icon: Icons.delete,
             label: 'Delete',
           ),
@@ -205,7 +250,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                     ),
                     Text(
                       style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),
-                      _printFirstAuthors(bookshelf, 2),
+                      printFirstAuthors(authors, 2),
                     ),
                   ],
                 ),
@@ -237,30 +282,30 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
           } else {
             return Stack(
               children: [
-                Align(
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      height: constraints.maxHeight * 0.5,
-                      child: CachedNetworkImage(
-                        imageUrl: bookCovers[0]!,
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
-                      ),
-                    ),
-                  ),
                 if (bookCovers.length > 1)
                   Positioned( // Top cover image
-                    top: 5,
-                    left: 5,
-                    child: SizedBox(
-                      height: constraints.maxHeight * 0.5,
-                      child: CachedNetworkImage(
-                        imageUrl: bookCovers[1]!,
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+                      top: 5,
+                      left: 5,
+                      child: SizedBox(
+                        height: constraints.maxHeight * 0.5,
+                        child: CachedNetworkImage(
+                          imageUrl: bookCovers[1]!,
+                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+                        ),
                       ),
                     ),
+                Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: constraints.maxHeight * 0.5,
+                    child: CachedNetworkImage(
+                      imageUrl: bookCovers[0]!,
+                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+                    ),
                   ),
+                ),
                 if (bookCovers.length > 2)
                   Positioned( // Bottom cover image
                     bottom: 5,
@@ -280,13 +325,5 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         },
       ),
     );
-  }
-
-  // Prints the first 'count' of authors.
-  String _printFirstAuthors(Bookshelf bookshelf, int count) {
-    var authors = bookshelf.books.expand((book) => book.authors).take(count);
-    return authors.length < count
-      ? authors.join(", ")
-      : "${authors.join(", ")}, and more";
   }
 }

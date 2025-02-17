@@ -1,3 +1,4 @@
+import 'package:bookworms_app/models/bookshelf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,6 +22,14 @@ void pushScreen(context, screen) {
     )
   );
 }
+
+// Returns the first 'count' of authors stylistically.
+  String printFirstAuthors(var authorList, int count) {
+    var authors = authorList.take(count);
+    return authors.length < count
+      ? authors.join(", ")
+      : "${authors.join(", ")}, and more";
+  }
 
 SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
   return SystemUiOverlayStyle(
