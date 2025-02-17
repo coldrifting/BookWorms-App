@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
+/// The [BookshelfScreen] contains a list of books of the bookshelf.
 class BookshelfScreen extends StatefulWidget {
   final Bookshelf bookshelf;
 
@@ -25,6 +26,7 @@ class BookshelfScreen extends StatefulWidget {
   State<BookshelfScreen> createState() => _BookshelfScreenState();
 }
 
+/// The state of [BookshelfScreen].
 class _BookshelfScreenState extends State<BookshelfScreen> {
   late Bookshelf bookshelf;
   late BookDetailsService _bookDetailsService;
@@ -59,7 +61,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () { Navigator.of(context).pop(); },
         ),
-        actions: const [ChangeChildWidget()],
+        actions: const [ChangeChildWidget()], // TO DO: On changing child, return to bookshelves screen.
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -70,12 +72,14 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
               return Column(
                 children: [
                   addVerticalSpace(16),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      bookshelf.name,
-                      style: textTheme.titleMedium
-                    ),
+                  Row(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(bookshelf.name, style: textTheme.titleMedium),
+                      ),
+                      IconButton(icon: Icon(Icons.more_horiz), onPressed: () {}),
+                    ],
                   ),
                 ],
               );
@@ -96,23 +100,20 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
     );
   }
 
+  // When clicking a book widget, navigates to the [BookDetailsScreen].
   void onBookClicked(BookSummary book) async {
     BookDetails results = await _bookDetailsService.getBookDetails(book.id);
-
     if (mounted) {
-      // Change the screen to the "book details" screen.
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => BookDetailsScreen(
-            summaryData: book,
-            detailsData: results,
-          )
+          builder: (context) => BookDetailsScreen(summaryData: book, detailsData: results)
         )
       );
     }
   }
 
+  // Displays the book summary data and includes a slider functionality to delete books.
   Widget _bookshelfWidget(TextTheme textTheme, BookSummary book) {
     AppState appState = Provider.of<AppState>(context);
     return Slidable(

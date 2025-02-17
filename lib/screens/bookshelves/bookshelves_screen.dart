@@ -29,6 +29,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     AppState appState = Provider.of<AppState>(context);
     Child selectedChild = appState.children[appState.selectedChildID];
 
+    // Set the child's bookshelves.
     if (selectedChild.bookshelves.isEmpty) {
       appState.setChildBookshelves(appState.selectedChildID);
     }
@@ -38,12 +39,10 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       appBar: AppBar(
         title: Text(
           "${selectedChild.name}'s Bookshelves",
-          style: const TextStyle(
-            color: colorWhite
-          )
+          style: const TextStyle(color: colorWhite)
         ),
         backgroundColor: colorGreen,
-        actions: const [ChangeChildWidget()],
+        actions: const [ChangeChildWidget()], // TO DO: Update bookshelves to reflect current child.
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -74,15 +73,12 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
+  // Upon clicking a book, open the [BookshelfScreen].
   void onBookClicked(int bookshelfIndex) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-
     Bookshelf fullBookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelfIndex);
     if(mounted) {
-      pushScreen(
-        context, 
-        BookshelfScreen(bookshelf: fullBookshelf)
-      );
+      pushScreen(context, BookshelfScreen(bookshelf: fullBookshelf));
     }
   }
 
@@ -105,10 +101,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             children: [
               const Icon(Icons.add, size: 20),
               addHorizontalSpace(8),
-              Text(
-                "Create New Bookshelf",
-                style: textTheme.titleMedium!,
-              ),
+              Text("Create New Bookshelf", style: textTheme.titleMedium!),
             ],
           ),
         ),
@@ -116,6 +109,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
+  // Dialog for creating a new bookshelf.
   void _createBookshelf(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context, listen: false);
     int selectedChildId = appState.selectedChildID;
@@ -136,9 +130,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(
-                foregroundColor: colorGreyDark,
-              ),
+              style: TextButton.styleFrom(foregroundColor: colorGreyDark),
               child: Text('Cancel'),
             ),
             ElevatedButton(
@@ -152,14 +144,9 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorGreen,
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: Text(
-                'Create', 
-                style: textTheme.titleSmallWhite
-              ),
+              child: Text('Create', style: textTheme.titleSmallWhite),
             ),
           ],
         );
@@ -167,6 +154,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
+  // Dialog to delete a bookshelf. Appears when sliding the Slider or clicking "Delete".
   Future<void> _deleteBookshelf(TextTheme textTheme, Bookshelf bookshelf) {
     AppState appState = Provider.of<AppState>(context, listen: false);
 
@@ -175,13 +163,10 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Center(child: Text('Delete Bookshelf')),
-          content: Text(
-              'Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"'),
+          content: Text('Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () { Navigator.of(context).pop(); },
               child: const Text('Cancel'),
             ),
             TextButton(
@@ -205,6 +190,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     Color mainColor = Colors.grey[200]!; // Temporary
     Color accentColor = Colors.grey[800]!; // Temporary
 
+    // Up to the first three authors for display purposes.
     var authors = bookshelf.books.expand((book) => book.authors);
 
     return Slidable(
@@ -216,9 +202,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         ),
         children: [
           SlidableAction(
-            onPressed: (BuildContext context) {
-              _deleteBookshelf(textTheme, bookshelf);
-            },
+            onPressed: (BuildContext context) { _deleteBookshelf(textTheme, bookshelf); },
             backgroundColor: colorRed!,
             foregroundColor: colorWhite,
             borderRadius: BorderRadius.circular(4),
@@ -263,11 +247,10 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  /// Displays some of the book cover(s) in the bookshelf. Each image is
+  /// Displays at most 3 of the book covers in the bookshelf. Each image is
   /// laid out diagonally across the container.
   Widget _imageLayoutWidget(Bookshelf bookshelf) {
     var bookCovers = bookshelf.books.take(3).map((book) => book.imageUrl).where((imageUrl) => imageUrl != null).toList();
-
     return SizedBox(
       width: 100,
       height: 100,
