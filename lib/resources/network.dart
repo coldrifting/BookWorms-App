@@ -52,8 +52,8 @@ Uri bookshelvesInsertUri(String childId, String bookshelfName) {
   return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/insert");
 }
 
-Uri bookshelvesRemoveUri(String childId, String bookshelfName) {
-  return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/remove");
+Uri bookshelvesRemoveUri(String childId, String bookshelfName, String bookId) {
+  return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/remove?bookId=$bookId");
 }
 
 Uri bookshelvesClearUri(String childId, String bookshelfName) {

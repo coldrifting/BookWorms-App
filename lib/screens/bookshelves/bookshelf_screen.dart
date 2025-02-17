@@ -39,7 +39,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    AppState appState = Provider.of<AppState>(context, listen: false);
+    AppState appState = Provider.of<AppState>(context);
     Child selectedChild = appState.children[appState.selectedChildID];
     List<BookSummary> books = bookshelf.books;
 
@@ -63,36 +63,34 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Expanded(
-          child: ListView.builder(
-            itemCount: books.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return Column(
-                  children: [
-                    addVerticalSpace(16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        bookshelf.name,
-                        style: textTheme.titleMedium
-                      ),
+        child: ListView.builder(
+          itemCount: books.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Column(
+                children: [
+                  addVerticalSpace(16),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      bookshelf.name,
+                      style: textTheme.titleMedium
                     ),
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    addVerticalSpace(16),
-                    InkWell(
-                      onTap: () { onBookClicked(books[index - 1]); },
-                      child: _bookshelfWidget(textTheme, books[index - 1])
-                    ),
-                  ],
-                );
-              }
+                  ),
+                ],
+              );
+            } else {
+              return Column(
+                children: [
+                  addVerticalSpace(16),
+                  InkWell(
+                    onTap: () { onBookClicked(books[index - 1]); },
+                    child: _bookshelfWidget(textTheme, books[index - 1])
+                  ),
+                ],
+              );
             }
-          ),
+          }
         ),
       ),
     );
@@ -116,16 +114,25 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
   }
 
   Widget _bookshelfWidget(TextTheme textTheme, BookSummary book) {
+    AppState appState = Provider.of<AppState>(context);
     return Slidable(
-      key: ValueKey(book.title),
+      key: UniqueKey(),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
-          onDismissed: () { },
+          onDismissed: () { 
+            appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+            
+            setState(() {
+              bookshelf.books.removeWhere((b) => b.id == book.id);
+            });
+          },
         ),
         children: [
           SlidableAction(
-            onPressed: (BuildContext context) {},
+            onPressed: (BuildContext context) { 
+              appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+            },
             backgroundColor: colorRed!,
             foregroundColor: colorWhite,
             borderRadius: BorderRadius.circular(4),

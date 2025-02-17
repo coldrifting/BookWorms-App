@@ -77,4 +77,16 @@ class BookshelfService {
       throw Exception('An error occurred when creating a new bookshelf.');
     }
   }
+
+  Future<bool> removeBookFromBookshelf(String guid, String bookshelfName, String bookId) async {
+    final response = await client.sendRequest(
+        uri: bookshelvesRemoveUri(guid, bookshelfName, bookId),
+        method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when trying to remove a book from the bookshelf.');
+    }
+  }
 }

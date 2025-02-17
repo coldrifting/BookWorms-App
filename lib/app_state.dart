@@ -134,6 +134,21 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeBookFromBookshelf(int childId, Bookshelf bookshelf, String bookId) async {
+    String guid = children[childId].id;
+
+    var childBookshelves = (_account as Parent).children[childId].bookshelves;
+    int index = childBookshelves.indexWhere((b) => b.name == bookshelf.name);
+    
+    // Remove the book server-side.
+    bool success = await bookshelvesService.removeBookFromBookshelf(guid, bookshelf.name, bookId);
+    
+    if (index != -1 && success) {
+      (_account as Parent).children[childId].bookshelves[index].books.removeWhere((b) => b.id == bookId);
+      notifyListeners();
+    }
+  }
+
 
   // ***** Account *****
 

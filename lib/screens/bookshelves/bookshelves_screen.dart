@@ -47,30 +47,28 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Expanded(
-          child: ListView.builder(
-            itemCount: bookshelves.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return Column(
-                  children: [
-                    addVerticalSpace(16),
-                    _createBookshelfWidget(textTheme)
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    addVerticalSpace(16),
-                    InkWell(
-                      onTap: () { onBookClicked(bookshelves[index - 1]); },
-                      child: _bookshelfWidget(textTheme, bookshelves[index - 1])
-                    ),
-                  ],
-                );
-              }
+        child: ListView.builder(
+          itemCount: bookshelves.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Column(
+                children: [
+                  addVerticalSpace(16),
+                  _createBookshelfWidget(textTheme)
+                ],
+              );
+            } else {
+              return Column(
+                children: [
+                  addVerticalSpace(16),
+                  InkWell(
+                    onTap: () { onBookClicked(bookshelves[index - 1]); },
+                    child: _bookshelfWidget(textTheme, bookshelves[index - 1])
+                  ),
+                ],
+              );
             }
-          ),
+          }
         ),
       ),
     );
@@ -207,7 +205,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     var authors = bookshelf.books.expand((book) => book.authors);
 
     return Slidable(
-      key: ValueKey(bookshelf.name),
+      key: UniqueKey(),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
