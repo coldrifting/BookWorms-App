@@ -122,7 +122,6 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
         dismissible: DismissiblePane(
           onDismissed: () { 
             appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
-            
             setState(() {
               bookshelf.books.removeWhere((b) => b.id == book.id);
             });
@@ -132,6 +131,9 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           SlidableAction(
             onPressed: (BuildContext context) { 
               appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+              setState(() {
+                bookshelf.books.removeWhere((b) => b.id == book.id);
+              });
             },
             backgroundColor: colorRed!,
             foregroundColor: colorWhite,

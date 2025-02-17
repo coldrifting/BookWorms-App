@@ -103,21 +103,24 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Bookshelf> getChildBookshelf(int childId, Bookshelf bookshelf) async {
+  Future<Bookshelf> getChildBookshelf(int childId, int bookshelfIndex) async {
     String guid = children[childId].id;
-    Bookshelf childBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf.name);
+    Bookshelf bookshelf = children[selectedChildID].bookshelves[bookshelfIndex];
+    Bookshelf fullBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf.name);
 
     // Fetch the book images of the bookshelf.
-    final bookIds = childBookshelf.books.map((book) => book.id).toList();
-    _setBookImages(bookIds, [childBookshelf]);
-    return childBookshelf;
+    final bookIds = fullBookshelf.books.map((book) => book.id).toList();
+    _setBookImages(bookIds, [fullBookshelf]);
+    return fullBookshelf;
   }
 
   void addChildBookshelf(int childId, Bookshelf bookshelf) async {
     String guid = children[childId].id;
-    List<Bookshelf> bookshelves = await bookshelvesService.addBookshelf(guid, bookshelf.name);
-    (_account as Parent).children[childId].bookshelves = bookshelves;
-    notifyListeners();
+    var success = await bookshelvesService.addBookshelf(guid, bookshelf.name);
+    if (success) {
+      (_account as Parent).children[childId].bookshelves.add(bookshelf);
+      notifyListeners();
+    }
   }
 
   void renameChildBookshelf(int childId, Bookshelf bookshelf, String newName) async {
@@ -129,9 +132,11 @@ class AppState extends ChangeNotifier {
 
   void deleteChildBookshelf(int childId, Bookshelf bookshelf) async {
     String guid = children[childId].id;
-    List<Bookshelf> bookshelves = await bookshelvesService.deleteBookshelf(guid, bookshelf.name);
-    (_account as Parent).children[childId].bookshelves = bookshelves;
-    notifyListeners();
+    var success = await bookshelvesService.deleteBookshelf(guid, bookshelf.name);
+    if (success) {
+      (_account as Parent).children[childId].bookshelves.remove(bookshelf);
+      notifyListeners();
+    }
   }
 
   void removeBookFromBookshelf(int childId, Bookshelf bookshelf, String bookId) async {

@@ -9,29 +9,25 @@ class BookshelfService {
 
   BookshelfService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<List<Bookshelf>> addBookshelf(String guid, String bookshelfName) async {
+  Future<bool> addBookshelf(String guid, String bookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesAddUri(guid, bookshelfName),
         method: "POST");
 
     if (response.ok) {
-      final data = jsonDecode(response.body) as List;
-      final bookshelves = data.map((entry) => Bookshelf.fromJson(entry)).toList();
-      return bookshelves;
+      return true;
     } else {
       throw Exception('An error occurred when creating a new bookshelf.');
     }
   }
 
-  Future<List<Bookshelf>> deleteBookshelf(String guid, String bookshelfName) async {
+  Future<bool> deleteBookshelf(String guid, String bookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesDeleteUri(guid, bookshelfName),
         method: "DELETE");
 
     if (response.ok) {
-      final data = jsonDecode(response.body) as List;
-      final bookshelves = data.map((entry) => Bookshelf.fromJson(entry)).toList();
-      return bookshelves;
+      return true;
     } else {
       throw Exception('An error occurred when trying to delete the bookshelf.');
     }

@@ -62,8 +62,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                 children: [
                   addVerticalSpace(16),
                   InkWell(
-                    onTap: () { onBookClicked(bookshelves[index - 1]); },
-                    child: _bookshelfWidget(textTheme, bookshelves[index - 1])
+                    onTap: () { onBookClicked(index - 1); },
+                    child: _bookshelfWidget(textTheme, index - 1)
                   ),
                 ],
               );
@@ -74,9 +74,10 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     );
   }
 
-  void onBookClicked(Bookshelf bookshelf) async {
+  void onBookClicked(int bookshelfIndex) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    Bookshelf fullBookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelf);
+
+    Bookshelf fullBookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelfIndex);
     if(mounted) {
       pushScreen(
         context, 
@@ -175,7 +176,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         return AlertDialog(
           title: const Center(child: Text('Delete Bookshelf')),
           content: Text(
-              'Are you sure you want to permanently delete the bookshelf titled $bookshelf.name?'),
+              'Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"'),
           actions: [
             TextButton(
               onPressed: () {
@@ -197,8 +198,10 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   }
 
   /// A bookshelf includes the title, book cover(s), and author(s).
-  Widget _bookshelfWidget(TextTheme textTheme, Bookshelf bookshelf) {
+  Widget _bookshelfWidget(TextTheme textTheme, int bookshelfIndex) {
     AppState appState = Provider.of<AppState>(context);
+    Bookshelf bookshelf = appState.children[appState.selectedChildID].bookshelves[bookshelfIndex];
+
     Color mainColor = Colors.grey[200]!; // Temporary
     Color accentColor = Colors.grey[800]!; // Temporary
 
