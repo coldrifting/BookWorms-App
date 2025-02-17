@@ -24,10 +24,8 @@ class ClassroomScreen extends StatefulWidget {
 }
 
 class _ClassroomScreenState extends State<ClassroomScreen> {
-  late ScrollController
-      _scrollController; // Scroll controller for students list.
-  late MenuController
-      _menuController; // Menu controller for the "delete classroom" drop-down menu.
+  late ScrollController _scrollController; // Scroll controller for students list.
+  late MenuController _menuController; // Menu controller for the "delete classroom" drop-down menu.
   late String classroomName;
   var selectedIconIndex = 10; // Corresponding to color black.
 

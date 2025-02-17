@@ -1,3 +1,6 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/bookshelf.dart';
+import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -7,6 +10,7 @@ import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:provider/provider.dart';
 
 /// The [BookDetailsScreen] contains detailed information regarding a
 /// specific book. It also displays relevant user reviews and actions to
@@ -15,8 +19,11 @@ class BookDetailsScreen extends StatefulWidget {
   final BookSummary summaryData; // Overview book data
   final BookDetails detailsData; // More specific book data
 
-  const BookDetailsScreen(
-      {super.key, required this.summaryData, required this.detailsData});
+  const BookDetailsScreen({
+    super.key, 
+    required this.summaryData, 
+    required this.detailsData
+  });
 
   @override
   State<BookDetailsScreen> createState() => _BookDetailsScreenState();
@@ -89,7 +96,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             child: Column(
               children: [
                 addVerticalSpace(5),
-                _actionButtons(),
+                _actionButtons(textTheme, bookSummary),
                 addVerticalSpace(15),
                 _reviewList(textTheme),
               ],
@@ -220,13 +227,13 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Buttons for saving a book to a bookshelf, locating a near library, and
   /// rating the book difficulty.
-  Widget _actionButtons() {
+  Widget _actionButtons(TextTheme textTheme, BookSummary book) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         ElevatedButton.icon(
             icon: const Icon(Icons.bookmark),
-            onPressed: (() => {}),
+            onPressed: (() => {_saveToBookshelfModal(textTheme, book)}),
             label: const Text("Save")),
         ElevatedButton.icon(
             icon: const Icon(Icons.account_balance),
@@ -240,18 +247,54 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
+  void _saveToBookshelfModal(TextTheme textTheme, BookSummary book) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    int selectedChildId = appState.selectedChildID;
+    List<Bookshelf> bookshelves = appState.children[selectedChildId].bookshelves;
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text("Save to Bookshelf", style: textTheme.headlineSmall),
+              addVerticalSpace(16),
+              Expanded (
+                child: ListView.builder(
+                  itemCount: bookshelves.length,
+                  itemBuilder: (context, index) {
+                    Bookshelf bookshelf = bookshelves[index];
+                    return ListTile(
+                      leading: BookshelfImageLayoutWidget(bookshelf: bookshelf),
+                      title: Text(bookshelf.name),
+                      onTap: () {
+                        appState.addBookToBookshelf(selectedChildId, bookshelf, book); // TO DO: Add user feedback
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   /// The list of review widgets corresponding to the given book.
   Widget _reviewList(TextTheme textTheme) {
-    var rating =
-        bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
+    var rating = bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
     // Generate the list of review widgets.
     var reviewCount = bookDetails.reviews.length;
     List<Widget> reviews = List.generate(
-        reviewCount,
-        (index) => Padding(
-              padding: const EdgeInsets.only(bottom: 18.0),
-              child: ReviewWidget(review: bookDetails.reviews[index]),
-            ));
+      reviewCount,
+      (index) => Padding(
+            padding: const EdgeInsets.only(bottom: 18.0),
+            child: ReviewWidget(review: bookDetails.reviews[index]),
+          ));
 
     return Column(
       // Replace with lazy loading.

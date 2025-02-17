@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
-    //var selectedChild = appState.children[appState.selectedChildID].name;
 
     return Scaffold(
         // Home app bar

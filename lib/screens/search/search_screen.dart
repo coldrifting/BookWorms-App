@@ -127,8 +127,8 @@ class _SearchScreenState extends State<SearchScreen> {
           // Scroll to the top of the list.
           if (_scrollController.hasClients) {
             _scrollController.animateTo(0.0,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut);
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut);
           }
         }
       } else {
@@ -142,8 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Callback for when the 'Show More' button is pressed.
   /// Fetches and appends the expanded results to the default results.
   void _onShowMorePressed() async {
-    List<BookSummary> results =
-        await getResults(_currentQuery, _expandedResultLength);
+    List<BookSummary> results = await getResults(_currentQuery, _expandedResultLength);
     setState(() {
       _searchResults.addAll(results);
     });
