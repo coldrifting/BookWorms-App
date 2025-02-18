@@ -88,10 +88,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Fetches the search results and the corresponding images.
   Future<List<BookSummary>> getResults(String query) async {
-    List<BookSummary> results = await _bookSummariesService.getBookSummaries(
-        query);
-    List<String> bookIds =
-        results.map((bookSummary) => bookSummary.id).toList();
+    List<BookSummary> results = await _bookSummariesService.getBookSummaries(query);
+    List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < results.length; i++) {
       results[i].setImage(bookImages[i]);
@@ -112,8 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results =
-            await getResults(query);
+        List<BookSummary> results = await getResults(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
@@ -123,9 +120,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
           // Scroll to the top of the list.
           if (_scrollController.hasClients) {
-            _scrollController.animateTo(0.0,
+            _scrollController.animateTo(
+              0.0,
               duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut);
+              curve: Curves.easeInOut
+            );
           }
         }
       } else {
@@ -136,20 +135,9 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  /// Callback for when the 'Show More' button is pressed.
-  /// Fetches and appends the expanded results to the default results.
-  void _onShowMorePressed() async {
-    List<BookSummary> results = await getResults(_currentQuery);
-    setState(() {
-      _searchResults.addAll(results);
-    });
-  }
-
   /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
     // The sub-widget is determined by the current search status.
     Widget mainContent;
     if (!_isInActiveSearch) {
@@ -157,36 +145,20 @@ class _SearchScreenState extends State<SearchScreen> {
     } else if (_currentQuery.isEmpty) {
       mainContent = const RecentsAdvancedSearchScreen();
     } else if (_searchResults.isNotEmpty) {
-      mainContent = _resultsScreen(textTheme);
+      mainContent = _resultsScreen();
     } else {
-      mainContent = Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.search_off,
-              size: 50.0,
-              color: colorGrey,
-            ),
-            addVerticalSpace(8),
-            const Text(
-              "No Results",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: colorGrey,
-              ),
-            ),
-          ],
-        ),
-      );
+      mainContent = _noResultsScreen();
     }
 
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
-        title: Text("Search", style: const TextStyle(color: colorWhite)),
+        title: Text(
+          "Search",
+          style: const TextStyle(
+            color: colorWhite
+          )
+        ),
         backgroundColor: colorGreen,
       ),
       body: Padding(
@@ -194,7 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           children: [
             addVerticalSpace(8),
-            searchBar(),
+            _searchBar(),
             addVerticalSpace(8),
             Expanded(child: mainContent),
           ],
@@ -204,7 +176,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   /// Search queries are entered in the search bar widget.
-  Widget searchBar() {
+  Widget _searchBar() {
     return Row(
       children: [
         Expanded(
@@ -214,44 +186,69 @@ class _SearchScreenState extends State<SearchScreen> {
             focusNode: _focusNode,
             controller: _textEditingcontroller,
             onChanged: _onSearchQueryChanged,
-            shape: WidgetStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            )),
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              )
+            ),
             shadowColor: const WidgetStatePropertyAll(Colors.transparent),
           ),
         ),
         if (_isInActiveSearch)
-          Row(
-            children: [
-              addVerticalSpace(8),
-              TextButton(
-                onPressed: _onCancelPressed,
-                style: TextButton.styleFrom(
-                  foregroundColor: colorBlack,
-                ),
-                child: const Text("Cancel"),
-              ),
-            ],
+          TextButton(
+            onPressed: _onCancelPressed,
+            style: TextButton.styleFrom(
+              foregroundColor: colorBlack,
+            ),
+            child: const Text("Cancel"),
           ),
       ],
     );
   }
 
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
-  Widget _resultsScreen(TextTheme textTheme) {
+  Widget _resultsScreen() {
     return ListView.builder(
       controller: _scrollController,
       itemCount: _searchResults.length,
       itemBuilder: (context, index) {
         return Column(
           children: [
-            BookSummaryWidget(book: _searchResults[index]),
+            BookSummaryWidget(
+              book: _searchResults[index]
+            ),
             const Divider(
               color: colorGrey,
             )
           ],
         );
       }
+    );
+  }
+
+  /// Sub-widget displayed when there are no search results.
+  Widget _noResultsScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.search_off,
+            size: 50.0,
+            color: colorGrey,
+          ),
+          addVerticalSpace(8),
+          const Text(
+            "No Results",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: colorGrey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
