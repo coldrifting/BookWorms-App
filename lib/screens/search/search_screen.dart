@@ -21,9 +21,6 @@ class SearchScreen extends StatefulWidget {
 
 /// The state of the [SearchScreen].
 class _SearchScreenState extends State<SearchScreen> {
-  static const _defaultResultLength = 10;
-  static const _expandedResultLength = 50;
-
   var _isInActiveSearch = false;
   var _currentQuery = "";
   var _searchResults = [];
@@ -90,9 +87,9 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   /// Fetches the search results and the corresponding images.
-  Future<List<BookSummary>> getResults(String query, int resultLength) async {
+  Future<List<BookSummary>> getResults(String query) async {
     List<BookSummary> results = await _bookSummariesService.getBookSummaries(
-        query, _defaultResultLength);
+        query);
     List<String> bookIds =
         results.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
@@ -116,7 +113,7 @@ class _SearchScreenState extends State<SearchScreen> {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
         List<BookSummary> results =
-            await getResults(query, _defaultResultLength);
+            await getResults(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
@@ -142,7 +139,7 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Callback for when the 'Show More' button is pressed.
   /// Fetches and appends the expanded results to the default results.
   void _onShowMorePressed() async {
-    List<BookSummary> results = await getResults(_currentQuery, _expandedResultLength);
+    List<BookSummary> results = await getResults(_currentQuery);
     setState(() {
       _searchResults.addAll(results);
     });
@@ -243,34 +240,18 @@ class _SearchScreenState extends State<SearchScreen> {
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
   Widget _resultsScreen(TextTheme textTheme) {
     return ListView.builder(
-        controller: _scrollController,
-        itemCount: _searchResults.length + 1,
-        itemBuilder: (context, index) {
-          if (index != _searchResults.length) {
-            return Column(
-              children: [
-                BookSummaryWidget(book: _searchResults[index]),
-                const Divider(
-                  color: colorGrey,
-                )
-              ],
-            );
-          } else if (_searchResults.length == _defaultResultLength) {
-            return Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: _onShowMorePressed,
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorGreyDark,
-                    ),
-                    child: const Text("Show More"),
-                  ),
-                ),
-              ],
-            );
-          }
-          return null;
-        });
+      controller: _scrollController,
+      itemCount: _searchResults.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            BookSummaryWidget(book: _searchResults[index]),
+            const Divider(
+              color: colorGrey,
+            )
+          ],
+        );
+      }
+    );
   }
 }

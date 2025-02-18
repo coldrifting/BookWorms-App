@@ -11,7 +11,7 @@ class BookSummariesService {
   BookSummariesService({http.Client? client}) : client = client ?? http.Client();
 
   // Retrieve and decode the book summaries of the given query from the server.
-  Future<List<BookSummary>> getBookSummaries(String query, int resultLength) async {
+  Future<List<BookSummary>> getBookSummaries(String query) async {
     final response = await client.sendRequest(
         uri: searchQueryUri(query),
         method: "GET");
