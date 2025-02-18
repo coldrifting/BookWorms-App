@@ -1,5 +1,4 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/book_details.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/models/bookshelf.dart';
@@ -64,7 +63,11 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () { Navigator.of(context).pop(); },
         ),
-        actions: const [ChangeChildWidget()], // TO DO: On changing child, return to bookshelves screen.
+        actions: [
+          ChangeChildWidget(
+            onChildChanged: () { Navigator.of(context).pop(); },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

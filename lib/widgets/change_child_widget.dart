@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 
 class ChangeChildWidget extends StatefulWidget {
-  const ChangeChildWidget({super.key});
+  final Function()? onChildChanged;
+
+  const ChangeChildWidget({super.key, this.onChildChanged});
 
   @override
   State<ChangeChildWidget> createState() => _ChangeChildWidgetState();
@@ -65,6 +66,11 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
                       onTap: () {
                         Provider.of<AppState>(context, listen: false).setSelectedChild(index);
                         Navigator.pop(context);
+
+                        // Function to be called when changing the selected child.
+                        if (widget.onChildChanged != null) {
+                          widget.onChildChanged!();
+                        }
                       },
                       selected: index == Provider.of<AppState>(context).selectedChildID,
                     );
