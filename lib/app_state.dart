@@ -80,6 +80,7 @@ class AppState extends ChangeNotifier {
 
   void setSelectedChild(int childID) {
     (_account as Parent).selectedChildID = childID;
+    setChildBookshelves(childID);
     notifyListeners();
   }
 

@@ -1,7 +1,6 @@
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ import 'package:bookworms_app/models/child.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
-import 'package:flutter_svg/svg.dart';
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
 /// user is able to add a new bookshelf here, or access their current bookshelves.
