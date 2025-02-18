@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/bookshelf.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -269,9 +270,28 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                     return ListTile(
                       leading: BookshelfImageLayoutWidget(bookshelf: bookshelf),
                       title: Text(bookshelf.name),
-                      onTap: () {
-                        appState.addBookToBookshelf(selectedChildId, bookshelf, book); // TO DO: Add user feedback
-                        Navigator.pop(context);
+                      onTap: () async {
+                        bool success = await appState.addBookToBookshelf(selectedChildId, bookshelf, book);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: success ? colorGreenDark : colorGreyDark,
+                              content: Row(
+                                children: [
+                                  Text(
+                                    success ? 'Saved book to ${bookshelf.name}.' : 'Already saved to ${bookshelf.name}.', 
+                                    style: textTheme.titleSmallWhite
+                                  ),
+                                  Spacer(),
+                                  if (success)
+                                    Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                                ],
+                              ),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          Navigator.pop(context);
+                        }
                       },
                     );
                   },

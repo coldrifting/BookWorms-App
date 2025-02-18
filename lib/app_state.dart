@@ -158,7 +158,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void addBookToBookshelf(int childId, Bookshelf bookshelf, BookSummary book) async {
+  Future<bool> addBookToBookshelf(int childId, Bookshelf bookshelf, BookSummary book) async {
     String guid = children[childId].id;
 
     var childBookshelves = (_account as Parent).children[childId].bookshelves;
@@ -171,8 +171,10 @@ class AppState extends ChangeNotifier {
       if (index != -1 && success) {
         (_account as Parent).children[childId].bookshelves[index].books.add(book);
         notifyListeners();
+        return true;
       }
     }
+    return false;
   }
 
 
