@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/search/browse_screen.dart';
-import 'package:bookworms_app/screens/search/recents_and_advanced_search.dart';
+import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_search_service.dart';
@@ -20,7 +21,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 /// The state of the [SearchScreen].
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInActiveSearch = false;
   var _currentQuery = "";
   var _searchResults = [];
@@ -33,6 +34,14 @@ class _SearchScreenState extends State<SearchScreen> {
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
 
+  late TabController _tabController;
+  bool _isAdvancedSearchActive = false; 
+
+  final _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
+    ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
+    ["Popular Themes", "Courage", "Kindness", "Empathy", "Bravery", "Integrity", "Respect"],
+    ["BookWorms Ratings", "9+", "8+", "7+", "6+"]];
+
   @override
   void initState() {
     super.initState();
@@ -42,13 +51,17 @@ class _SearchScreenState extends State<SearchScreen> {
     _focusNode.addListener(_onSearchBarFocusChanged);
     _textEditingcontroller = TextEditingController();
     _scrollController = ScrollController();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
     _textEditingcontroller.dispose();
+    _scrollController.dispose();
     _debounceTimer?.cancel();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -80,10 +93,19 @@ class _SearchScreenState extends State<SearchScreen> {
       _currentQuery = "";
       _searchResults.clear();
       _textEditingcontroller.clear();
+      _isAdvancedSearchActive = false;
     });
 
     // Reregister the search listener.
     _focusNode.addListener(_onSearchBarFocusChanged);
+  }
+
+  /// Callback for when the tab is changed.
+  /// Sets the state of the tabs.
+  void _onTabChanged() {
+    setState(() {
+      _isAdvancedSearchActive = _tabController.index == 1;
+    });
   }
 
   /// Fetches the search results and the corresponding images.
@@ -143,7 +165,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (!_isInActiveSearch) {
       mainContent = const BrowseScreen();
     } else if (_currentQuery.isEmpty) {
-      mainContent = const RecentsAdvancedSearchScreen();
+      mainContent = _recentsAdvancedSearchTabs();
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen();
     } else {
@@ -185,7 +207,7 @@ class _SearchScreenState extends State<SearchScreen> {
             hintText: "Find a book",
             focusNode: _focusNode,
             controller: _textEditingcontroller,
-            onChanged: _onSearchQueryChanged,
+            onChanged: !_isAdvancedSearchActive ? _onSearchQueryChanged : null,
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -249,6 +271,117 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  /// Sub-widget containing the recents and advanced search tabs.
+  Widget _recentsAdvancedSearchTabs() {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        body: Column(
+          children: [
+            TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(text: "Recents"),
+                Tab(text: "Advanced Search"),
+              ],
+              unselectedLabelColor: colorGrey,
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  Center(child: RecentsScreen()),
+                  Center(child: _advancedSearchScreen()),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Sub-widget containing advanced search functionality.
+  Widget _advancedSearchScreen() {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(4, (index) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _searchHeaders[index][0],
+                    style: textTheme.titleMedium,
+                  ),
+                  addVerticalSpace(8),
+                  SizedBox(
+                    height: 45,
+                    child: _filterScrollList(textTheme, index, _searchHeaders[index].length - 1),
+                  ),
+                  addVerticalSpace(16),
+                ],
+              );
+            }),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: colorWhite,
+                    backgroundColor: colorGreen,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    minimumSize: Size(double.infinity, 64), 
+                  ),
+                  child: Text('Search'),
+                ),
+              ),
+            ],
+          ),  
+        ],
+      ),
+    );
+  }
+
+  // Horizontal list of scrollable filters.
+  Widget _filterScrollList(TextTheme textTheme, int headerIndex, int itemCount) {
+    return ListView.builder(
+      itemCount: itemCount,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colorGreen,
+              border: Border.all(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            alignment: Alignment.center,
+            child: TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              child: Text(
+                _searchHeaders[headerIndex][index + 1],
+                style: textTheme.bodyLargeWhite,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
