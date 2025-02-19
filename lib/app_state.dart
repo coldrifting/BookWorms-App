@@ -224,7 +224,7 @@ class AppState extends ChangeNotifier {
     _account.recentlySearchedBooks.addLast(bookSummary);
     notifyListeners();
 
-     // Save the book IDs to shared preferences
+    // Save the book IDs to shared preferences
     List<String> bookIds = _account.recentlySearchedBooks.map((book) => book.id).toList();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setStringList('recentBookIds', bookIds);
