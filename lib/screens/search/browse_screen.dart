@@ -13,12 +13,14 @@ class BrowseScreen extends StatefulWidget {
 
 /// The state of the [BrowseScreen].
 class _BrowseScreenState extends State<BrowseScreen> { 
-  
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+      padding: const EdgeInsets.only(
+        left: 16.0,
+        top: 16.0
+      ),
       child: Scaffold(
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,6 +29,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
               style: textTheme.headlineSmall,
               "Browse By"
             ),
+            addVerticalSpace(10),
             _selectOption("Reading Level", textTheme),
             addVerticalSpace(10),
             _selectOption("Topic", textTheme),
@@ -45,11 +48,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
   /// A clickable "browse" option that allows a user to browse by a specific
   /// keyword.
   Widget _selectOption(String optionText, TextTheme textTheme) {
-    return TextButton(
-      onPressed: () => {},
-      child: Column(
-        children: [
-          Row(
+    return Column(
+      children: [
+        TextButton(
+          onPressed: () => {},
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
@@ -59,9 +62,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
               const Icon(Icons.arrow_forward_ios_rounded)
             ],
           ),
-          const Divider(),
-        ],
-      ),
+        ),
+        const Divider(),
+      ],
     );
   }
 }

@@ -52,7 +52,7 @@ void main() {
       when(mockClient.get(searchQueryUri("test"), headers: {"Accept": "application/json"}))
           .thenAnswer((_) async => http.Response(mockResponse, 200));
 
-      final result = await bookSummariesService.getBookSummaries('test', 3);
+      final result = await bookSummariesService.getBookSummaries('test');
 
       expect(result, isA<List<BookSummary>>());
       expect(result.length, 3);
@@ -80,7 +80,7 @@ void main() {
       when(mockClient.get(searchQueryUri("test"), headers: {"Accept": "application/json"}))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
-      expect(() async => await bookSummariesService.getBookSummaries('test', 2), throwsException);
+      expect(() async => await bookSummariesService.getBookSummaries('test'), throwsException);
     });
   });
 }

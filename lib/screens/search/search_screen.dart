@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/search/browse_screen.dart';
-import 'package:bookworms_app/screens/search/recents_and_advanced_search.dart';
+import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/models/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_search_service.dart';
@@ -20,10 +21,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 /// The state of the [SearchScreen].
-class _SearchScreenState extends State<SearchScreen> {
-  static const _defaultResultLength = 10;
-  static const _expandedResultLength = 50;
-
+class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInActiveSearch = false;
   var _currentQuery = "";
   var _searchResults = [];
@@ -36,6 +34,14 @@ class _SearchScreenState extends State<SearchScreen> {
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
 
+  late TabController _tabController;
+  bool _isAdvancedSearchActive = false; 
+
+  final _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
+    ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
+    ["Popular Themes", "Courage", "Kindness", "Empathy", "Bravery", "Integrity", "Respect"],
+    ["BookWorms Ratings", "9+", "8+", "7+", "6+"]];
+
   @override
   void initState() {
     super.initState();
@@ -45,13 +51,17 @@ class _SearchScreenState extends State<SearchScreen> {
     _focusNode.addListener(_onSearchBarFocusChanged);
     _textEditingcontroller = TextEditingController();
     _scrollController = ScrollController();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
     _textEditingcontroller.dispose();
+    _scrollController.dispose();
     _debounceTimer?.cancel();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -83,18 +93,25 @@ class _SearchScreenState extends State<SearchScreen> {
       _currentQuery = "";
       _searchResults.clear();
       _textEditingcontroller.clear();
+      _isAdvancedSearchActive = false;
     });
 
     // Reregister the search listener.
     _focusNode.addListener(_onSearchBarFocusChanged);
   }
 
+  /// Callback for when the tab is changed.
+  /// Sets the state of the tabs.
+  void _onTabChanged() {
+    setState(() {
+      _isAdvancedSearchActive = _tabController.index == 1;
+    });
+  }
+
   /// Fetches the search results and the corresponding images.
-  Future<List<BookSummary>> getResults(String query, int resultLength) async {
-    List<BookSummary> results = await _bookSummariesService.getBookSummaries(
-        query, _defaultResultLength);
-    List<String> bookIds =
-        results.map((bookSummary) => bookSummary.id).toList();
+  Future<List<BookSummary>> getResults(String query) async {
+    List<BookSummary> results = await _bookSummariesService.getBookSummaries(query);
+    List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < results.length; i++) {
       results[i].setImage(bookImages[i]);
@@ -115,8 +132,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results =
-            await getResults(query, _defaultResultLength);
+        List<BookSummary> results = await getResults(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
@@ -126,9 +142,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
           // Scroll to the top of the list.
           if (_scrollController.hasClients) {
-            _scrollController.animateTo(0.0,
+            _scrollController.animateTo(
+              0.0,
               duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut);
+              curve: Curves.easeInOut
+            );
           }
         }
       } else {
@@ -139,57 +157,30 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  /// Callback for when the 'Show More' button is pressed.
-  /// Fetches and appends the expanded results to the default results.
-  void _onShowMorePressed() async {
-    List<BookSummary> results = await getResults(_currentQuery, _expandedResultLength);
-    setState(() {
-      _searchResults.addAll(results);
-    });
-  }
-
   /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
     // The sub-widget is determined by the current search status.
     Widget mainContent;
     if (!_isInActiveSearch) {
       mainContent = const BrowseScreen();
     } else if (_currentQuery.isEmpty) {
-      mainContent = const RecentsAdvancedSearchScreen();
+      mainContent = _recentsAdvancedSearchTabs();
     } else if (_searchResults.isNotEmpty) {
-      mainContent = _resultsScreen(textTheme);
+      mainContent = _resultsScreen();
     } else {
-      mainContent = Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.search_off,
-              size: 50.0,
-              color: colorGrey,
-            ),
-            addVerticalSpace(8),
-            const Text(
-              "No Results",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: colorGrey,
-              ),
-            ),
-          ],
-        ),
-      );
+      mainContent = _noResultsScreen();
     }
 
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
-        title: Text("Search", style: const TextStyle(color: colorWhite)),
+        title: Text(
+          "Search",
+          style: const TextStyle(
+            color: colorWhite
+          )
+        ),
         backgroundColor: colorGreen,
       ),
       body: Padding(
@@ -197,7 +188,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           children: [
             addVerticalSpace(8),
-            searchBar(),
+            _searchBar(),
             addVerticalSpace(8),
             Expanded(child: mainContent),
           ],
@@ -207,7 +198,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   /// Search queries are entered in the search bar widget.
-  Widget searchBar() {
+  Widget _searchBar() {
     return Row(
       children: [
         Expanded(
@@ -216,61 +207,181 @@ class _SearchScreenState extends State<SearchScreen> {
             hintText: "Find a book",
             focusNode: _focusNode,
             controller: _textEditingcontroller,
-            onChanged: _onSearchQueryChanged,
-            shape: WidgetStateProperty.all(RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            )),
+            onChanged: !_isAdvancedSearchActive ? _onSearchQueryChanged : null,
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              )
+            ),
             shadowColor: const WidgetStatePropertyAll(Colors.transparent),
           ),
         ),
         if (_isInActiveSearch)
-          Row(
-            children: [
-              addVerticalSpace(8),
-              TextButton(
-                onPressed: _onCancelPressed,
-                style: TextButton.styleFrom(
-                  foregroundColor: colorBlack,
-                ),
-                child: const Text("Cancel"),
-              ),
-            ],
+          TextButton(
+            onPressed: _onCancelPressed,
+            style: TextButton.styleFrom(
+              foregroundColor: colorBlack,
+            ),
+            child: const Text("Cancel"),
           ),
       ],
     );
   }
 
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
-  Widget _resultsScreen(TextTheme textTheme) {
+  Widget _resultsScreen() {
     return ListView.builder(
-        controller: _scrollController,
-        itemCount: _searchResults.length + 1,
-        itemBuilder: (context, index) {
-          if (index != _searchResults.length) {
-            return Column(
-              children: [
-                BookSummaryWidget(book: _searchResults[index]),
-                const Divider(
-                  color: colorGrey,
-                )
+      controller: _scrollController,
+      itemCount: _searchResults.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            BookSummaryWidget(
+              book: _searchResults[index]
+            ),
+            const Divider(
+              color: colorGrey,
+            )
+          ],
+        );
+      }
+    );
+  }
+
+  /// Sub-widget displayed when there are no search results.
+  Widget _noResultsScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.search_off,
+            size: 50.0,
+            color: colorGrey,
+          ),
+          addVerticalSpace(8),
+          const Text(
+            "No Results",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: colorGrey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Sub-widget containing the recents and advanced search tabs.
+  Widget _recentsAdvancedSearchTabs() {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        body: Column(
+          children: [
+            TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(text: "Recents"),
+                Tab(text: "Advanced Search"),
               ],
-            );
-          } else if (_searchResults.length == _defaultResultLength) {
-            return Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: _onShowMorePressed,
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorGreyDark,
-                    ),
-                    child: const Text("Show More"),
+              unselectedLabelColor: colorGrey,
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  Center(child: RecentsScreen()),
+                  Center(child: _advancedSearchScreen()),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Sub-widget containing advanced search functionality.
+  Widget _advancedSearchScreen() {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(4, (index) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _searchHeaders[index][0],
+                    style: textTheme.titleMedium,
                   ),
+                  addVerticalSpace(8),
+                  SizedBox(
+                    height: 45,
+                    child: _filterScrollList(textTheme, index, _searchHeaders[index].length - 1),
+                  ),
+                  addVerticalSpace(16),
+                ],
+              );
+            }),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: colorWhite,
+                    backgroundColor: colorGreen,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    minimumSize: Size(double.infinity, 64), 
+                  ),
+                  child: Text('Search'),
                 ),
-              ],
-            );
-          }
-          return null;
-        });
+              ),
+            ],
+          ),  
+        ],
+      ),
+    );
+  }
+
+  // Horizontal list of scrollable filters.
+  Widget _filterScrollList(TextTheme textTheme, int headerIndex, int itemCount) {
+    return ListView.builder(
+      itemCount: itemCount,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colorGreen,
+              border: Border.all(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            alignment: Alignment.center,
+            child: TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              child: Text(
+                _searchHeaders[headerIndex][index + 1],
+                style: textTheme.bodyLargeWhite,
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
