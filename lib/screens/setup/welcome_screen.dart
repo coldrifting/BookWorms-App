@@ -50,34 +50,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                              onPressed: () => {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => const LoginScreen()),
-                                    )
-                                  },
-                              style: TextButton.styleFrom(
-                                foregroundColor: colorWhite,
-                              ),
-                              child: const Text(
-                                "SIGN IN",
-                              )),
+                            onPressed: () => {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen()
+                                ),
+                              )
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: colorWhite,
+                            ),
+                            child: const Text("SIGN IN")
+                          ),
                           addHorizontalSpace(32),
                           TextButton(
                             onPressed: () => {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => const RegisterScreen()),
+                                  builder: (_) => const RegisterScreen()
+                                ),
                               )
                             },
                             style: TextButton.styleFrom(
                               backgroundColor: colorWhite,
                             ),
-                            child: const Text(
-                              "SIGN UP",
-                            ),
+                            child: const Text("SIGN UP"),
                           ),
                         ],
                       ),
