@@ -11,8 +11,7 @@ import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 
-/// The [SearchScreen] displays a search bar and a scrollable list of
-/// relevant books related to the query typed in by the user.
+/// The [SearchScreen] consists of a search bar and a sub-widget (either browse, recents, or results).
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
