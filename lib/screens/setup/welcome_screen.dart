@@ -90,6 +90,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  /// A green linear gradient decoration.
   BoxDecoration _gradient() {
     return const BoxDecoration(
       gradient: LinearGradient(
@@ -103,6 +104,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  /// Sub-widget containing a carousel with app information.
   Widget _carousel(TextTheme textTheme) {
     final carouselImages = [
       'assets/images/welcome_1.jpg',
