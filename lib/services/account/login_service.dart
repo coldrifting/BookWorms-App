@@ -14,24 +14,26 @@ class LoginService {
 
   Future<bool> loginUser(String username, String password, Function(String) onValidationError) async {
     final response = await client.sendRequest(
-        uri: userLoginUri,
-        method: "POST",
-        payload: {
-          "username": username,
-          "password": password});
-
-    final UserLogin userLogin = UserLogin.fromJson(readResponse(response));
+      uri: userLoginUri,
+      method: "POST",
+      payload: {
+        "username": username,
+        "password": password
+      }
+    );
 
     String fieldError = "";
 
     if (response.ok) {
+      // Success
+      final UserLogin userLogin = UserLogin.fromJson(readResponse(response));
       await saveToken(userLogin.token);
       return true;
     }
-    else { // Bad Request (Invalid username/password)
+    else { 
+      // Bad Request (Invalid username/password)
       fieldError = "Incorrect username and/or password.";
     }
-
     onValidationError(fieldError);
     return false;
   }

@@ -14,22 +14,18 @@ class RegisterService {
 
   RegisterService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<bool> registerUser(
-      String username,
-      String password,
-      String firstName,
-      String lastName,
-      bool isParent,
-      Function(Map<String, String>) onValidationError) async {
+  Future<bool> registerUser(String username, String password, String firstName, String lastName, bool isParent, Function(Map<String, String>) onValidationError) async {
     final response = await client.sendRequest(
-        uri: userRegisterUri,
-        method: "POST",
-        payload: {
-          "username": username,
-          "password": password,
-          "firstName": firstName,
-          "lastName": lastName,
-          "isParent": isParent});
+      uri: userRegisterUri,
+      method: "POST",
+      payload: {
+        "username": username,
+        "password": password,
+        "firstName": firstName,
+        "lastName": lastName,
+        "isParent": isParent
+      }
+    );
 
     final Map<String, String> fieldErrors = {};
     final Map<String, dynamic> mappedResponse = readResponse(response);

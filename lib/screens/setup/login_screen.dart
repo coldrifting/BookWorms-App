@@ -21,27 +21,40 @@ class LoginScreen extends StatefulWidget {
 
 /// The state of the [LoginScreen].
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController =
-      TextEditingController(); // Username text field
-  final TextEditingController _passwordController =
-      TextEditingController(); // Password text field
+  late TextEditingController _usernameController;
+  late TextEditingController _passwordController;
   final _formKey = GlobalKey<FormState>();
 
   String loginError = "";
 
-  // Set the state of validation errors if received when registering.
+  @override
+  void initState() {
+    super.initState();
+    _usernameController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Callback for when an error is recieved during sign in.
+  // Sets the state of validation errors.
   void _handleValidationErrors(String error) {
     setState(() {
       loginError = error;
     });
   }
 
+
+  // Attempts to log in the user.
   Future<void> login(String username, String password) async {
     LoginService loginService = LoginService();
 
-    // Attempt to log in the user with the provided credentials.
-    final bool status = await loginService.loginUser(
-        username, password, _handleValidationErrors);
+    final bool status = await loginService.loginUser(username, password, _handleValidationErrors);
     if (status && mounted) {
       AppState appState = Provider.of<AppState>(context, listen: false);
       await appState.loadAccountDetails();
@@ -56,13 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
+// The login screen is where a user inputs their existing credentials to log into the app.
+// There is an alternative option to navigate to the register screen.
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;

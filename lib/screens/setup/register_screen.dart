@@ -13,8 +13,8 @@ import 'package:bookworms_app/widgets/login_register_widget.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 
 
-/// The [RegisterScreen] consists of text forms for providing 
-/// information required to create an account.
+/// The [RegisterScreen] is where a user inputs their credentials to create an account.
+/// There is an alternative option to navigate to the [LoginScreen].
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -87,7 +87,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-/// The register screen consists of text forms for providing information required to create an account.
+// The register screen is where a user inputs their credentials to create an account.
+// There is an alternative option to navigate to the login screen.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,6 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Username text field
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
@@ -130,6 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                // Password text field
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
@@ -144,6 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                // Confirm password text field
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: true,
@@ -160,6 +164,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                // First name text field
                 TextFormField(
                   controller: _firstNameController,
                   decoration: InputDecoration(
@@ -173,6 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                // Last name text field
                 TextFormField(
                   controller: _lastNameController,
                   decoration: InputDecoration(
