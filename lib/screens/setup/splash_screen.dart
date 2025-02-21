@@ -9,6 +9,8 @@ import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/services/status_code_exceptions.dart';
 
+
+/// The [SplashScreen] displays an animation while user data is initialized.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -16,6 +18,7 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+/// The state of the [SplashScreen]
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
@@ -23,6 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
     _tokenNavigate();
   }
 
+  // The splash Screen displays an animation while user data is initialized.
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -30,6 +34,9 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
+  // Attempts to fetch a JWT from secure storage.
+  // If the JWT is valid, the user is allowed into the app.
+  // If the JWT is invalid, the user must log in or register for an account.
   Future<void> _tokenNavigate() async {
     final splashDelay = Future.delayed(const Duration(seconds: 2));
     var token = getToken();

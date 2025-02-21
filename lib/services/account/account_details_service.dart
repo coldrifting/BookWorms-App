@@ -12,8 +12,7 @@ class AccountDetailsService {
   AccountDetailsService({http.Client? client}) : client = client ?? http.Client();
 
   Future<AccountDetails> getAccountDetails() async {
-    final response =
-        await client.sendRequest(uri: userDetailsUri, method: "GET");
+    final response = await client.sendRequest(uri: userDetailsUri, method: "GET");
 
     if (response.ok) {
       return AccountDetails.fromJson(readResponse(response));
