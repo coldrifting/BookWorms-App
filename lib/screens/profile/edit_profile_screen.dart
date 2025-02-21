@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/models/account.dart';
+import 'package:bookworms_app/models/account/account.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/account/delete_account_service.dart';
 import 'package:bookworms_app/resources/colors.dart';

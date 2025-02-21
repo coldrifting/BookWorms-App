@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:bookworms_app/models/user_review.dart';
+import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';

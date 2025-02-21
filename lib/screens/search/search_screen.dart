@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/search/browse_screen.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_search_service.dart';
 import 'package:bookworms_app/resources/colors.dart';

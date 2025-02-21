@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:bookworms_app/models/book_summary.dart';
-import 'package:bookworms_app/models/child.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
+import 'package:bookworms_app/models/child/child.dart';
 
 import '../services/auth_storage.dart';
 

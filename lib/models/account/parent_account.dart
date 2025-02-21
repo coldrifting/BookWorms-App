@@ -1,5 +1,5 @@
-import 'package:bookworms_app/models/account.dart';
-import 'package:bookworms_app/models/child.dart';
+import 'package:bookworms_app/models/account/account.dart';
+import 'package:bookworms_app/models/child/child.dart';
 
 class Parent extends Account {
   List<Child> children;

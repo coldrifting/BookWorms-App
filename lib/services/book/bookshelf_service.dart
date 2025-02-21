@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:bookworms_app/models/bookshelf.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 import 'package:http/http.dart' as http;

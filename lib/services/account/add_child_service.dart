@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 
-import 'package:bookworms_app/models/child.dart';
+import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 
