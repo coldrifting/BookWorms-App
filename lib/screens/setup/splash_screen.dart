@@ -1,21 +1,13 @@
-import 'package:flutter/gestures.dart';
+import 'package:bookworms_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
-import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
-import 'package:bookworms_app/screens/home_screen.dart';
-import 'package:bookworms_app/screens/profile/profile_screen.dart';
-import 'package:bookworms_app/screens/progress_screen.dart';
 import 'package:bookworms_app/screens/setup/add_first_child.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/services/status_code_exceptions.dart';
-import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/screens/search/search_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

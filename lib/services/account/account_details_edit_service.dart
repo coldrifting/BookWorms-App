@@ -13,7 +13,7 @@ class AccountDetailsEditService {
   Future<AccountDetails> setAccountDetails(String firstName, String lastName, int iconIndex) async {
     final response = await client.sendRequest(
         uri: userDetailsUri,
-        method: "POST",
+        method: "PUT",
         payload: {
           "firstName": firstName,
           "lastName": lastName,
