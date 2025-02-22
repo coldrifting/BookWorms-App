@@ -110,7 +110,7 @@ class AppState extends ChangeNotifier {
   Future<Bookshelf> getChildBookshelf(int childId, int bookshelfIndex) async {
     String guid = children[childId].id;
     Bookshelf bookshelf = children[selectedChildID].bookshelves[bookshelfIndex];
-    Bookshelf fullBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf.name);
+    Bookshelf fullBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf);
 
     // Fetch the book images of the bookshelf.
     final bookIds = fullBookshelf.books.map((book) => book.id).toList();

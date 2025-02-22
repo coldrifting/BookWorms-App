@@ -1,3 +1,4 @@
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
@@ -131,7 +132,10 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                 String name = controller.text.trim();
                 if (name.isNotEmpty) {
                   Navigator.pop(context, name);
-                  appState.addChildBookshelf(selectedChildId, Bookshelf(name: name, books: []));
+                  appState.addChildBookshelf(
+                    selectedChildId, 
+                    Bookshelf(type: BookshelfType.completed, name: name, books: [])
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -180,9 +184,6 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     AppState appState = Provider.of<AppState>(context);
     Bookshelf bookshelf = appState.children[appState.selectedChildID].bookshelves[bookshelfIndex];
 
-    Color mainColor = Colors.grey[200]!; // Temporary
-    Color accentColor = Colors.grey[800]!; // Temporary
-
     // Up to the first three authors for display purposes.
     var authors = bookshelf.books.expand((book) => book.authors);
 
@@ -206,8 +207,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: mainColor,
-          border: Border.all(color: accentColor),
+          color: bookshelf.type.color[200],
+          border: Border.all(color: bookshelf.type.color[700]!),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Row(

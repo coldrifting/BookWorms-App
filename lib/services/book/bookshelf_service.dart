@@ -33,9 +33,9 @@ class BookshelfService {
     }
   }
 
-  Future<Bookshelf> getBookshelf(String guid, String bookshelfName) async {
+  Future<Bookshelf> getBookshelf(String guid, Bookshelf bookshelf) async {
     final response = await client.sendRequest(
-        uri: bookshelvesDetailsUri(guid, bookshelfName),
+        uri: bookshelvesDetailsUri(guid, bookshelf.type.name, bookshelf.name),
         method: "GET");
 
     if (response.ok) {

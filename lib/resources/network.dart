@@ -35,8 +35,8 @@ Uri bookshelvesUri(String childId) {
   return Uri.parse("$serverBaseUri/children/$childId/shelves");
 }
 
-Uri bookshelvesDetailsUri(String childId, String bookshelfName) {
-  return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/details");
+Uri bookshelvesDetailsUri(String childId, String type, String bookshelfName) {
+  return Uri.parse("$serverBaseUri/children/$childId/shelves/$type/$bookshelfName/details");
 }
 
 
@@ -74,4 +74,5 @@ Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
 
-const String serverBaseUri = "https://api.bookworms.app";
+//const String serverBaseUri = "https://api.bookworms.app";
+const String serverBaseUri = "https://1ae4-2601-681-5f04-d080-9dae-1c8d-15eb-f180.ngrok-free.app";
