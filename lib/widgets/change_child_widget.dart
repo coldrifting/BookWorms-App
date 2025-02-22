@@ -1,3 +1,4 @@
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bookworms_app/app_state.dart';
@@ -52,7 +53,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
                   fontSize: 24,
                 ),
               ),
-              const SizedBox(height: 16),
+              addVerticalSpace(16),
               Expanded (
                 child: ListView.builder(
                   itemCount: Provider.of<AppState>(context).children.length,

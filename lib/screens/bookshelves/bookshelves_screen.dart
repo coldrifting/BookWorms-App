@@ -215,7 +215,11 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: BookshelfImageLayoutWidget(bookshelf: bookshelf),
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: BookshelfImageLayoutWidget(bookshelf: bookshelf)
+              ),
             ),
             Expanded(
               child: Padding(

@@ -61,10 +61,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
         title: Text(bookSummary.title,
-            style: const TextStyle(
-                fontWeight: FontWeight.normal,
-                color: colorWhite,
-                overflow: TextOverflow.ellipsis)),
+          style: const TextStyle(
+            fontWeight: FontWeight.normal,
+            color: colorWhite,
+            overflow: TextOverflow.ellipsis
+          )
+        ),
         backgroundColor: colorGreen,
         leading: IconButton(
           color: colorWhite,
@@ -257,7 +259,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       context: context,
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
           child: Column(
             children: [
               Text("Save to Bookshelf", style: textTheme.headlineSmall),
@@ -267,32 +269,59 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   itemCount: bookshelves.length,
                   itemBuilder: (context, index) {
                     Bookshelf bookshelf = bookshelves[index];
-                    return ListTile(
-                      leading: BookshelfImageLayoutWidget(bookshelf: bookshelf),
-                      title: Text(bookshelf.name),
-                      onTap: () async {
-                        bool success = await appState.addBookToBookshelf(selectedChildId, bookshelf, book);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: success ? colorGreenDark : colorGreyDark,
-                              content: Row(
-                                children: [
-                                  Text(
-                                    success ? 'Saved book to ${bookshelf.name}.' : 'Already saved to ${bookshelf.name}.', 
-                                    style: textTheme.titleSmallWhite
-                                  ),
-                                  Spacer(),
-                                  if (success)
-                                    Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                                ],
+                    return Column(
+                      children: [
+                        InkWell(
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: bookshelf.type.color[200],
+                                border: Border.all(color: bookshelf.type.color[700]!),
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                              duration: Duration(seconds: 2),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  child: SizedBox(
+                                    height: 75,
+                                    width: 75,
+                                    child: BookshelfImageLayoutWidget(bookshelf: bookshelf)
+                                  ),
+                                ),
+                                addHorizontalSpace(16),
+                                Text(bookshelf.name, style: textTheme.titleSmall, overflow: TextOverflow.ellipsis),
+                              ],
                             ),
-                          );
-                          Navigator.pop(context);
-                        }
-                      },
+                          ),
+                          onTap: () async {
+                            bool success = await appState.addBookToBookshelf(selectedChildId, bookshelf, book);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: success ? colorGreenDark : colorGreyDark,
+                                  content: Row(
+                                    children: [
+                                      Text(
+                                        success ? 'Saved book to ${bookshelf.name}.' : 'Already saved to ${bookshelf.name}.', 
+                                        style: textTheme.titleSmallWhite
+                                      ),
+                                      Spacer(),
+                                      if (success)
+                                        Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                                    ],
+                                  ),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                        if (index != bookshelves.length - 1) ... [
+                          addVerticalSpace(4),
+                          Divider(),
+                          addVerticalSpace(4)
+                        ]
+                      ],
                     );
                   },
                 ),
