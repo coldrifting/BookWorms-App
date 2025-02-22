@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/book_details.dart';
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_details.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';

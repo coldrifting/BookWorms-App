@@ -12,6 +12,9 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/login_register_widget.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 
+
+/// The [RegisterScreen] is where a user inputs their credentials to create an account.
+/// There is an alternative option to navigate to the [LoginScreen].
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -19,9 +22,11 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
+/// The state of the [RegisterScreen].
 class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController _usernameController;
   late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   final _formKey = GlobalKey<FormState>();
@@ -34,6 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.initState();
     _usernameController = TextEditingController();
     _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
     _firstNameController = TextEditingController();
     _lastNameController = TextEditingController();
   }
@@ -42,18 +48,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     super.dispose();
   }
 
-  // Set the state of validation errors if received when registering.
+  // Callback for when an error is recieved during registration.
+  // Sets the state of the validation errors.
   void _handleValidationErrors(Map<String, String> errors) {
     setState(() {
       fieldErrors = errors;
     });
   }
 
+  // Attempts to register the user.
   Future<void> register(String username, String password, String firstName, String lastName, bool isParent) async {
     RegisterService registerService = RegisterService();
 
@@ -78,21 +87,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+// The register screen is where a user inputs their credentials to create an account.
+// There is an alternative option to navigate to the login screen.
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: SetupBackdropWidget(
-          childWidget: SafeArea(child: _createAccountWidget(textTheme)),
+          childWidget: SafeArea(child: _createAccountWidget()),
         ),
       ),
     );
   }
 
-  Widget _createAccountWidget(TextTheme textTheme) {
+  // Sub-widget containing text forms for providing account information.
+  Widget _createAccountWidget() {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
         Text(
@@ -106,6 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Username text field
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
@@ -119,6 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                // Password text field
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
@@ -133,6 +147,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                // Confirm password text field
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
+                ),
+                // First name text field
                 TextFormField(
                   controller: _firstNameController,
                   decoration: InputDecoration(
@@ -146,6 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
+                // Last name text field
                 TextFormField(
                   controller: _lastNameController,
                   decoration: InputDecoration(
@@ -165,7 +198,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Text(
                       "Account Type",
-                      style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 16
+                      ),
                     ),
                     Spacer(),
                     ChoiceChip(
@@ -210,7 +246,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }, 
                   signIn: false
                 ),
-                addVerticalSpace(32),
               ],
             ),
           ),

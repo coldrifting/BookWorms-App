@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 
-import 'package:bookworms_app/models/account_details.dart';
+import 'package:bookworms_app/models/account/account_details.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 
@@ -13,7 +13,7 @@ class AccountDetailsEditService {
   Future<AccountDetails> setAccountDetails(String firstName, String lastName, int iconIndex) async {
     final response = await client.sendRequest(
         uri: userDetailsUri,
-        method: "POST",
+        method: "PUT",
         payload: {
           "firstName": firstName,
           "lastName": lastName,

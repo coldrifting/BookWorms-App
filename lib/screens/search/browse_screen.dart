@@ -16,6 +16,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Padding(
       padding: const EdgeInsets.only(
         left: 16.0,
@@ -30,15 +31,15 @@ class _BrowseScreenState extends State<BrowseScreen> {
               "Browse By"
             ),
             addVerticalSpace(10),
-            _selectOption("Reading Level", textTheme),
+            _selectableOption("Reading Level", textTheme),
             addVerticalSpace(10),
-            _selectOption("Topic", textTheme),
+            _selectableOption("Topic", textTheme),
             addVerticalSpace(10),
-            _selectOption("Theme", textTheme),
+            _selectableOption("Theme", textTheme),
             addVerticalSpace(10),
-            _selectOption("Most Popular", textTheme),
+            _selectableOption("Most Popular", textTheme),
             addVerticalSpace(10),
-            _selectOption("Highest Rated", textTheme),
+            _selectableOption("Highest Rated", textTheme),
           ],
         ),
       ),
@@ -47,7 +48,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   /// A clickable "browse" option that allows a user to browse by a specific
   /// keyword.
-  Widget _selectOption(String optionText, TextTheme textTheme) {
+  Widget _selectableOption(String optionText, TextTheme textTheme) {
     return Column(
       children: [
         TextButton(

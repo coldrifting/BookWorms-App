@@ -18,15 +18,15 @@ class _RecentsScreenState extends State<RecentsScreen> {
   @override
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
-    var books = appState.recentlySearchedBooks;
+    var recentlySearchedBooks = appState.recentlySearchedBooks;
 
     return ListView.builder(
-      itemCount: books.length,
+      itemCount: recentlySearchedBooks.length,
       itemBuilder: (context, index) {
         return Column(
           children: [
             BookSummaryWidget(
-              book: books[books.length - index - 1], 
+              book: recentlySearchedBooks[recentlySearchedBooks.length - index - 1], 
             ),
             const Divider(
               color: colorGrey,

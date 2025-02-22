@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 
 class Account {
   String username;

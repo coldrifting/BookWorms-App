@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -33,6 +34,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      _carousel(textTheme),
+                      addVerticalSpace(128),
                       Text(
                         "BookWorms",
                         style: textTheme.displaySmallWhite,
@@ -47,34 +50,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                              onPressed: () => {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => const LoginScreen()),
-                                    )
-                                  },
-                              style: TextButton.styleFrom(
-                                foregroundColor: colorWhite,
-                              ),
-                              child: const Text(
-                                "SIGN IN",
-                              )),
+                            onPressed: () => {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen()
+                                ),
+                              )
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: colorWhite,
+                            ),
+                            child: const Text("SIGN IN")
+                          ),
                           addHorizontalSpace(32),
                           TextButton(
                             onPressed: () => {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => const RegisterScreen()),
+                                  builder: (_) => const RegisterScreen()
+                                ),
                               )
                             },
                             style: TextButton.styleFrom(
                               backgroundColor: colorWhite,
                             ),
-                            child: const Text(
-                              "SIGN UP",
-                            ),
+                            child: const Text("SIGN UP"),
                           ),
                         ],
                       ),
@@ -88,6 +90,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
+  /// A green linear gradient decoration.
   BoxDecoration _gradient() {
     return const BoxDecoration(
       gradient: LinearGradient(
@@ -97,6 +100,47 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           colorGreenGradTop,
           colorGreenGradBottom,
         ],
+      ),
+    );
+  }
+
+  /// Sub-widget containing a carousel with app information.
+  Widget _carousel(TextTheme textTheme) {
+    final carouselImages = [
+      'assets/images/welcome_1.jpg',
+      'assets/images/welcome_2.jpg',
+      'assets/images/welcome_3.jpg',
+      'assets/images/welcome_4.jpg',
+    ];
+    final carouselText = [
+      "Find the perfect books for your child",
+      "Create and fill custom bookshelves",
+      "Assign and track reading goals",
+      "Join and manage virtual classrooms",
+    ];
+
+    return CarouselSlider.builder(
+      itemCount: carouselImages.length,
+      itemBuilder: (context, index, realIndex) {
+        return Column(
+          children: [
+            Expanded(
+              child: Image.asset(
+                carouselImages[index],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              carouselText[index],
+              style: textTheme.bodyLargeWhite,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        );
+      },
+      options: CarouselOptions(
+        autoPlay: true,
+        enlargeCenterPage: true,
       ),
     );
   }

@@ -3,8 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:bookworms_app/models/book_details.dart';
-import 'package:bookworms_app/models/user_review.dart';
+import 'package:bookworms_app/models/book/book_details.dart';
+import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 

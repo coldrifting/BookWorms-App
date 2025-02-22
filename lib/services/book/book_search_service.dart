@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 
 /// The [BookSummariesService] handles the retrieval of book summaries from the server.
 class BookSummariesService {

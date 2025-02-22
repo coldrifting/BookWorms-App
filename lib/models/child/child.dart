@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/bookshelf.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
 
 class Child {
   final String id;

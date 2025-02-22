@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/search/browse_screen.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_search_service.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 
-/// The [SearchScreen] displays a search bar and a scrollable list of
-/// relevant books related to the query typed in by the user.
+/// The [SearchScreen] consists of a search bar and a sub-widget (either browse, recents, or results).
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -23,6 +22,7 @@ class SearchScreen extends StatefulWidget {
 /// The state of the [SearchScreen].
 class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInActiveSearch = false;
+  var _isInAdvancedSearch = false; 
   var _currentQuery = "";
   var _searchResults = [];
   Timer? _debounceTimer;
@@ -33,9 +33,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
-
   late TabController _tabController;
-  bool _isAdvancedSearchActive = false; 
+
 
   final _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
     ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
@@ -57,10 +56,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _focusNode.dispose();
     _textEditingcontroller.dispose();
     _scrollController.dispose();
-    _debounceTimer?.cancel();
     _tabController.dispose();
     super.dispose();
   }
@@ -90,10 +89,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         _isInActiveSearch = false;
       }
 
+      _isInAdvancedSearch = false;
       _currentQuery = "";
       _searchResults.clear();
       _textEditingcontroller.clear();
-      _isAdvancedSearchActive = false;
     });
 
     // Reregister the search listener.
@@ -104,19 +103,19 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   /// Sets the state of the tabs.
   void _onTabChanged() {
     setState(() {
-      _isAdvancedSearchActive = _tabController.index == 1;
+      _isInAdvancedSearch = _tabController.index == 1;
     });
   }
 
   /// Fetches the search results and the corresponding images.
-  Future<List<BookSummary>> getResults(String query) async {
-    List<BookSummary> results = await _bookSummariesService.getBookSummaries(query);
-    List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
+  Future<List<BookSummary>> search(String query) async {
+    List<BookSummary> bookSummaries = await _bookSummariesService.getBookSummaries(query);
+    List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
-    for (int i = 0; i < results.length; i++) {
-      results[i].setImage(bookImages[i]);
+    for (int i = 0; i < bookSummaries.length; i++) {
+      bookSummaries[i].setImage(bookImages[i]);
     }
-    return results;
+    return bookSummaries;
   }
 
   /// Callback for when the search query is changed.
@@ -132,10 +131,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await getResults(query);
+        List<BookSummary> results = await search(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
-        if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
+        if (_focusNode.hasFocus) {
           setState(() {
             _searchResults = results;
           });
@@ -207,7 +206,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             hintText: "Find a book",
             focusNode: _focusNode,
             controller: _textEditingcontroller,
-            onChanged: !_isAdvancedSearchActive ? _onSearchQueryChanged : null,
+            onChanged: !_isInAdvancedSearch ? _onSearchQueryChanged : null,
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -278,28 +277,26 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   Widget _recentsAdvancedSearchTabs() {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        body: Column(
-          children: [
-            TabBar(
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: "Recents"),
+              Tab(text: "Advanced Search"),
+            ],
+            unselectedLabelColor: colorGrey,
+          ),
+          Expanded(
+            child: TabBarView(
               controller: _tabController,
-              tabs: const [
-                Tab(text: "Recents"),
-                Tab(text: "Advanced Search"),
+              children: [
+                Center(child: RecentsScreen()),
+                Center(child: _advancedSearchScreen()),
               ],
-              unselectedLabelColor: colorGrey,
             ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  Center(child: RecentsScreen()),
-                  Center(child: _advancedSearchScreen()),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -307,13 +304,13 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   /// Sub-widget containing advanced search functionality.
   Widget _advancedSearchScreen() {
     final TextTheme textTheme = Theme.of(context).textTheme;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: List.generate(4, (index) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,7 +322,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                   addVerticalSpace(8),
                   SizedBox(
                     height: 45,
-                    child: _filterScrollList(textTheme, index, _searchHeaders[index].length - 1),
+                    child: _filterScrollList(textTheme, index),
                   ),
                   addVerticalSpace(16),
                 ],
@@ -356,9 +353,9 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
 
   // Horizontal list of scrollable filters.
-  Widget _filterScrollList(TextTheme textTheme, int headerIndex, int itemCount) {
+  Widget _filterScrollList(TextTheme textTheme, int headerIndex) {
     return ListView.builder(
-      itemCount: itemCount,
+      itemCount: _searchHeaders[headerIndex].length - 1,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
         return Padding(

@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/student.dart';
+import 'package:bookworms_app/models/classroom/student.dart';
 
 class Classroom {
   final String classroomName;
