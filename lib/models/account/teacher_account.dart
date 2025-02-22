@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/account.dart';
+import 'package:bookworms_app/models/account/account.dart';
 // import 'package:bookworms_app/models/classroom.dart';
 
 class Teacher extends Account {

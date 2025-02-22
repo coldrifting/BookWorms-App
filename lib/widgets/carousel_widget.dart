@@ -44,7 +44,6 @@ class _CarouselWidgetState extends State<CarouselWidget> {
                     carouselImages[index],
                   ),
                 ),
-                addVerticalSpace(16),
                 Text(
                   carouselText[index],
                   style: textTheme.titleSmallWhite,
@@ -54,7 +53,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
             );
           },
           options: CarouselOptions(
-            height: 400,
+            height: 370,
             autoPlay: true,
             enlargeCenterPage: true,
             onPageChanged: (index, reason) {

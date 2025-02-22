@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 
 class Bookshelf {
   String name;

@@ -1,5 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/bookshelf.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +7,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:bookworms_app/screens/book_details/create_review_widget.dart';
 import 'package:bookworms_app/screens/book_details/review_widget.dart';
-import 'package:bookworms_app/models/book_details.dart';
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_details.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:provider/provider.dart';

@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
-import 'package:bookworms_app/models/user_review.dart';
+import 'package:bookworms_app/models/book/user_review.dart';
 
 /// The [BookReviewsService] handles the retrieval of book reviews from the server.
 class BookReviewsService {

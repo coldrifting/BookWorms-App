@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/bookshelf.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

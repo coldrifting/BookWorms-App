@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:bookworms_app/models/book_summary.dart';
+import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
 
 /// The [BookshelfWidget] displays an overview of a user's bookshelf. It

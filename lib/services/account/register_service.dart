@@ -1,9 +1,9 @@
 import 'package:http/http.dart' as http;
 
-import 'package:bookworms_app/models/user_login.dart';
-import 'package:bookworms_app/models/error_validation.dart';
+import 'package:bookworms_app/models/account/user_login.dart';
+import 'package:bookworms_app/models/error/error_validation.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
-import 'package:bookworms_app/models/error_basic.dart';
+import 'package:bookworms_app/models/error/error_basic.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 
@@ -14,25 +14,21 @@ class RegisterService {
 
   RegisterService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<bool> registerUser(
-      String username,
-      String password,
-      String firstName,
-      String lastName,
-      bool isParent,
-      Function(Map<String, String>) onValidationError) async {
+  Future<bool> registerUser(String username, String password, String firstName, String lastName, bool isParent, Function(Map<String, String>) onValidationError) async {
     final response = await client.sendRequest(
-        uri: userRegisterUri,
-        method: "POST",
-        payload: {
-          "username": username,
-          "password": password,
-          "firstName": firstName,
-          "lastName": lastName,
-          "isParent": isParent});
+      uri: userRegisterUri,
+      method: "POST",
+      payload: {
+        "username": username,
+        "password": password,
+        "firstName": firstName,
+        "lastName": lastName,
+        "isParent": isParent
+      }
+    );
 
     final Map<String, String> fieldErrors = {};
-    final Map<String, dynamic>mappedResponse = readResponse(response);
+    final Map<String, dynamic> mappedResponse = readResponse(response);
 
     if (response.ok) {
       // Success
