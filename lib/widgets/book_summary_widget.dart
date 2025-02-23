@@ -71,6 +71,20 @@ class _BookSummaryWidgetState extends State<BookSummaryWidget> {
                     ? book.authors.map((author) => author).join(', ')
                     : "Unknown Author(s)",
                   ),
+                  if (book.rating != null && book.level != null) ...[
+                    Text(
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium, 
+                      "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
+                    ),
+                  ]
+                  else if (book.rating != null || book.level != null) ...[
+                    Text(
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium, 
+                      book.rating == null ? "${book.level}" : "${book.rating}★"
+                    ),
+                  ]
                 ],
               ),
             ),

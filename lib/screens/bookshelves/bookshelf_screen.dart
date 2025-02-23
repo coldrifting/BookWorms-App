@@ -249,6 +249,20 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                       style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),
                       printFirstAuthors(book.authors, 2),
                     ),
+                    if (book.rating != null && book.level != null) ...[
+                      Text(
+                        textAlign: TextAlign.center,
+                        style: textTheme.bodyMedium, 
+                        "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
+                      ),
+                    ]
+                    else if (book.rating != null || book.level != null) ...[
+                      Text(
+                        textAlign: TextAlign.center,
+                        style: textTheme.bodyMedium, 
+                        book.rating == null ? "${book.level}" : "${book.rating}★"
+                      ),
+                    ]
                   ],
                 ),
               ),

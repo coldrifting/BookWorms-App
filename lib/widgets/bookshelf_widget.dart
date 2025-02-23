@@ -105,9 +105,6 @@ class _BookshelfWidget extends State<BookshelfWidget> {
   /// Displays book summary information with the book cover, title, author, 
   /// rating, and difficulty.
   Widget _bookPreview({required BookSummary book, required TextTheme textTheme}) {
-    var difficulty = book.level ?? "N/A";
-    var rating = book.rating == 0 ? "Unrated" : "${book.rating}★";
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -149,11 +146,20 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                   : "Unknown Author(s)",
                 ),
                 // Book rating and difficulty
-                Text(
-                  textAlign: TextAlign.center,
-                  style: textTheme.bodyMedium, 
-                  "$rating  |  $difficulty"
-                ),
+                if (book.rating != null && book.level != null) ...[
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyMedium, 
+                    "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
+                  ),
+                ]
+                else if (book.rating != null || book.level != null) ...[
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyMedium, 
+                    book.rating == null ? "${book.level}" : "${book.rating}★"
+                  ),
+                ]
               ],
             ),
           ),
