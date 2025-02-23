@@ -104,12 +104,7 @@ class AppState extends ChangeNotifier {
     String guid = children[childId].id;
     List<Bookshelf> bookshelves = await bookshelvesService.getBookshelves(guid);
     (_account as Parent).children[childId].bookshelves = bookshelves;
-
-    // Fetch the book images of each bookshelf for display purposes.
-    final bookIds = bookshelves
-      .expand((bookshelf) => bookshelf.books.map((book) => book.id))
-      .toList();
-    _setBookImages(bookIds, bookshelves);
+    _setBookImages(bookshelves);
     notifyListeners();
   }
 
@@ -117,10 +112,7 @@ class AppState extends ChangeNotifier {
     String guid = children[childId].id;
     Bookshelf bookshelf = children[selectedChildID].bookshelves[bookshelfIndex];
     Bookshelf fullBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf);
-
-    // Fetch the book images of the bookshelf.
-    final bookIds = fullBookshelf.books.map((book) => book.id).toList();
-    _setBookImages(bookIds, [fullBookshelf]);
+    _setBookImages([fullBookshelf]);
     return fullBookshelf;
   }
 
@@ -129,15 +121,24 @@ class AppState extends ChangeNotifier {
     var success = await bookshelvesService.addBookshelf(guid, bookshelf.name);
     if (success) {
       (_account as Parent).children[childId].bookshelves.add(bookshelf);
+      _setBookImages([bookshelf]);
       notifyListeners();
     }
   }
 
   void renameChildBookshelf(int childId, Bookshelf bookshelf, String newName) async {
     String guid = children[childId].id;
-    List<Bookshelf> bookshelves = await bookshelvesService.renameBookshelfService(guid, bookshelf.name, newName);
-    (_account as Parent).children[childId].bookshelves = bookshelves;
-    notifyListeners();
+    var success = await bookshelvesService.renameBookshelfService(guid, bookshelf.name, newName);
+    
+    if (success) {
+      for (var shelf in (_account as Parent).children[childId].bookshelves) {
+        if (shelf.name == bookshelf.name) {
+          bookshelf.name = newName;
+          break;
+        }
+      }
+      notifyListeners();
+    }
   }
 
   void deleteChildBookshelf(int childId, Bookshelf bookshelf) async {
@@ -154,29 +155,29 @@ class AppState extends ChangeNotifier {
     int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
     
     // Remove the book server-side.
-    bool success = await bookshelvesService.removeBookFromBookshelf(guid, bookshelf.name, bookId);
+    var success = await bookshelvesService.removeBookFromBookshelf(guid, bookshelf.name, bookId);
     
     if (index != -1 && success) {
       (_account as Parent).children[childId].bookshelves[index].books.removeWhere((b) => b.id == bookId);
-
-      // Re-fetch the book images of the bookshelf.
-      final bookIds = bookshelf.books.map((book) => book.id).toList();
-      _setBookImages(bookIds, [bookshelf]);
-      
+      _setBookImages([bookshelf]);
       notifyListeners();
     }
   }
 
   Future<bool> addBookToBookshelf(int childId, Bookshelf bookshelf, BookSummary book) async {
+    BookImagesService bookImagesService = BookImagesService();
+
     String guid = children[childId].id;
     int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
     
     if (!bookshelves[index].books.any((b) => b.id == book.id)) {
       // Add the book server-side.
-      bool success = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
+      var success = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
       
       if (index != -1 && success) {
         (_account as Parent).children[childId].bookshelves[index].books.add(book);
+        var bookIds = await bookImagesService.getBookImages([book.id]);
+        book.imageUrl = bookIds[0];
         notifyListeners();
         return true;
       }
@@ -270,8 +271,12 @@ class AppState extends ChangeNotifier {
     return ListQueue<BookSummary>.from(recentBooks);
   }
 
-  void _setBookImages(List<String> bookIds, List<Bookshelf> bookshelves) async {
+  void _setBookImages(List<Bookshelf> bookshelves) async {
     BookImagesService bookImagesService = BookImagesService();
+
+    final bookIds = bookshelves
+      .expand((bookshelf) => bookshelf.books.map((book) => book.id))
+      .toList();
 
     if (bookIds.isNotEmpty) {
       List<String> bookImages = await bookImagesService.getBookImages(bookIds);

@@ -71,7 +71,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   void onBookClicked(int bookshelfIndex) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
     Bookshelf fullBookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelfIndex);
-    if(mounted) {
+    if (mounted) {
       pushScreen(context, BookshelfScreen(bookshelf: fullBookshelf));
     }
   }
@@ -134,7 +134,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                   Navigator.pop(context, name);
                   appState.addChildBookshelf(
                     selectedChildId, 
-                    Bookshelf(type: BookshelfType.completed, name: name, books: [])
+                    Bookshelf(type: BookshelfType.custom, name: name, books: [])
                   );
                 }
               },

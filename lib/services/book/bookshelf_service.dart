@@ -60,15 +60,13 @@ class BookshelfService {
     }
   }
 
-  Future<List<Bookshelf>> renameBookshelfService(String guid, String oldBookshelfName, String newBookshelfName) async {
+  Future<bool> renameBookshelfService(String guid, String oldBookshelfName, String newBookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesRenameUri(guid, oldBookshelfName, newBookshelfName),
         method: "POST");
 
     if (response.ok) {
-      final data = jsonDecode(response.body) as List;
-      final bookshelves = data.map((entry) => Bookshelf.fromJson(entry)).toList();
-      return bookshelves;
+      return true;
     } else {
       throw Exception('An error occurred when creating a new bookshelf.');
     }
