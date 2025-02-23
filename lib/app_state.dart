@@ -1,5 +1,8 @@
 import 'dart:collection';
+import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
+import 'package:bookworms_app/services/classroom_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,6 +27,10 @@ class AppState extends ChangeNotifier {
   Future<void> loadAccountDetails() async {
     AccountDetailsService accountDetailsService = AccountDetailsService();
     AccountDetails accountDetails = await accountDetailsService.getAccountDetails();
+
+    ClassroomService classroomService = ClassroomService();
+    Classroom classroomDetails = await classroomService.getClassroomDetails();
+
     ListQueue<BookSummary> recentBooks = await loadRecentsFromCache();
     if (accountDetails.role == "Parent") {
       _account = Parent(
@@ -41,7 +48,8 @@ class AppState extends ChangeNotifier {
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
         profilePictureIndex: accountDetails.profilePictureIndex,
-        recentlySearchedBooks: recentBooks
+        recentlySearchedBooks: recentBooks,
+        classroom: classroomDetails
       );
     }
     _isParent = _account is Parent;
@@ -92,7 +100,9 @@ class AppState extends ChangeNotifier {
   // ***** Bookshelves *****
 
   BookshelfService bookshelvesService = BookshelfService();
-  List<Bookshelf> get bookshelves => (_account as Parent).children[selectedChildID].bookshelves;
+  List<Bookshelf> get bookshelves => isParent 
+    ? (_account as Parent).children[selectedChildID].bookshelves 
+    : (_account as Teacher).classroom.bookshelves;
 
   void setChildBookshelves(int childId) async {
     String guid = children[childId].id;
@@ -177,6 +187,9 @@ class AppState extends ChangeNotifier {
     }
     return false;
   }
+
+  // ***** Classroom *****
+
 
 
   // ***** Account *****

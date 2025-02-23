@@ -39,7 +39,6 @@ Uri bookshelvesDetailsUri(String childId, String type, String bookshelfName) {
   return Uri.parse("$serverBaseUri/children/$childId/shelves/$type/$bookshelfName/details");
 }
 
-
 Uri bookshelvesAddUri(String childId, String bookshelfName) {
   return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/add");
 }
@@ -69,6 +68,46 @@ Uri bookshelvesDeleteUri(String childId, String bookshelfName) {
 Uri searchQueryUri(String query) {
   return Uri.parse("$serverBaseUri/search?query=$query");
 }
+
+// ***** Classrooms - Teachers *****
+
+Uri classroomDetailsUri() {
+  return Uri.parse("$serverBaseUri/homeroom/details");
+}
+
+Uri createClassroomUri(String className) {
+  return Uri.parse("$serverBaseUri/homeroom/create?className=$className");
+}
+
+Uri renameClassroomUri(String className) {
+  return Uri.parse("$serverBaseUri/homeroom/rename?newClassName=$className");
+}
+
+Uri deleteClassroomUri() {
+  return Uri.parse("$serverBaseUri/homeroom/delete");
+}
+
+Uri createClassroomBookshelfUri(String bookshelfName) {
+  return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/create");
+}
+
+Uri renameClassroomBookshelfUri(String bookshelfName, String newBookshelfName) {
+  return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/rename?newBookshelfName=$newBookshelfName");
+}
+
+Uri insertIntoClassroomBookshelfUri(String bookshelfName, String bookId) {
+  return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/insert?bookId=$bookId");
+}
+
+Uri removeBookFromClassroomBookshelfUri(String bookshelfName, String bookId) {
+  return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/remove?bookId=$bookId");
+}
+
+Uri deleteClassroomBookshelfUri(String bookshelfName) {
+  return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/delete");
+}
+
+// ***** Other *****
 
 Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");

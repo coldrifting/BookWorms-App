@@ -1,16 +1,31 @@
+import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
 
 class Classroom {
+  final String classCode;
   final String classroomName;
-  final String teacherName;
   final List<Student> students;
-  final List<String> bookshelf;
+  final List<Bookshelf> bookshelves;
   // TO DO : Create and store a list of ClassroomGoal objects.
 
   Classroom({
+    required this.classCode,
     required this.classroomName,
-    required this.teacherName,
     required this.students,
-    required this.bookshelf,
+    required this.bookshelves,
   });
+
+  // Decodes the JSON to create a Classroom object.
+  factory Classroom.fromJson(Map<String, dynamic> json) {
+    return Classroom(
+      classCode: json['classCode'],
+      classroomName: json['classroomName'],
+      students: (json['children'] as List)
+        .map((childJson) => Student.fromJson(childJson))
+        .toList(),
+      bookshelves: (json['bookshelves'] as List)
+        .map((bookshelfJson) => Bookshelf.fromJson(bookshelfJson))
+        .toList(),
+    );
+  }
 }
