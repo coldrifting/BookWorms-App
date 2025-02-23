@@ -1,22 +1,22 @@
+import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-//import 'package:bookworms_app/demo_books.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-//import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 
 class ClassroomScreen extends StatefulWidget {
-  final String classroomName; // Inputted classroom name.
+  final Classroom classroom;
 
   const ClassroomScreen({
     super.key,
-    required this.classroomName,
+    required this.classroom,
   });
 
   @override
@@ -26,7 +26,6 @@ class ClassroomScreen extends StatefulWidget {
 class _ClassroomScreenState extends State<ClassroomScreen> {
   late ScrollController _scrollController; // Scroll controller for students list.
   late MenuController _menuController; // Menu controller for the "delete classroom" drop-down menu.
-  late String classroomName;
   var selectedIconIndex = 10; // Corresponding to color black.
 
   // Temporary until we have real child data.
@@ -58,7 +57,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     super.initState();
     _scrollController = ScrollController();
     _menuController = MenuController();
-    classroomName = widget.classroomName;
   }
 
   @override
@@ -120,44 +118,38 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   ],
                 ),
                 // Classroom name.
-                Text(classroomName, style: textTheme.headlineMedium),
+                Text(widget.classroom.classroomName, style: textTheme.headlineMedium),
                 // Number of students text.
                 Text(
-                    "${students.length} Student${students.length == 1 ? "" : "s"}",
-                    style: textTheme.bodyLarge),
+                  "${students.length} Student${students.length == 1 ? "" : "s"}",
+                  style: textTheme.bodyLarge),
                 addVerticalSpace(8),
                 const Divider(thickness: 2),
                 // "Invite Students" button.
                 FractionallySizedBox(
                   widthFactor: 0.4,
                   child: TextButton(
-                      onPressed: () => _showClassroomCode(textTheme),
-                      style: TextButton.styleFrom(
-                        backgroundColor: colorGreenDark,
-                        foregroundColor: colorWhite,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
+                    onPressed: () => _showClassroomCode(textTheme),
+                    style: TextButton.styleFrom(
+                      backgroundColor: colorGreenDark,
+                      foregroundColor: colorWhite,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      child: const Text("Invite Students")),
+                    ),
+                    child: const Text("Invite Students")
+                  ),
                 ),
                 _studentList(textTheme),
               ],
             ),
           ),
           addVerticalSpace(8),
-          // "Assigned Reading" bookshelf --> Mock data.
-          // BookshelfWidget(name: "Assigned Reading", images: const [
-          //   Demo.image8,
-          //   Demo.image9,
-          //   Demo.image7,
-          //   Demo.image10
-          // ], books: [
-          //   Demo.book8,
-          //   Demo.book9,
-          //   Demo.book7,
-          //   Demo.book10
-          // ]),
+          // Classroom bookshelves.
+          for (Bookshelf bookshelf in widget.classroom.bookshelves) ...[
+            BookshelfWidget(bookshelf: bookshelf),
+            addVerticalSpace(8),
+          ],
           addVerticalSpace(8),
           // Class goals container --> Mock data.
           Padding(

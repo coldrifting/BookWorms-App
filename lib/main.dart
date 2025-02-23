@@ -1,8 +1,9 @@
+import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/screens/setup/splash_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
 import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
@@ -66,7 +67,8 @@ class _Navigation extends State<Navigation> {
   /// Main widget containing app bar, page navigator, and bottom bar.
   @override
   Widget build(BuildContext context) {
-    var isParent = Provider.of<AppState>(context, listen: false).isParent;
+    var appState = Provider.of<AppState>(context, listen: false);
+    var isParent = appState.isParent;
   
     List<Widget> pages = [
       const HomeScreen(),
@@ -74,7 +76,19 @@ class _Navigation extends State<Navigation> {
       const SearchScreen(),
       if (isParent) const ProgressScreen(),
       if (!isParent)
-        const ClassroomScreen(classroomName: "Ms. Wilson's Classroom"), // TO DO: Set on setup.
+        if (appState.classroom != null) ...[
+          ClassroomScreen(
+            classroom: Classroom( // TO DO: Set on setup.
+              classCode: "XXX XXX", 
+              classroomName: "Mrs. Wilson's Classroom",
+              students: [],
+              bookshelves: []
+            )
+          ),
+        ]
+        else ...[
+          CreateClassroomScreen(),
+        ],
       const ProfileScreen(),
     ];
 

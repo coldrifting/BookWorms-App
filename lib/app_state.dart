@@ -1,11 +1,9 @@
 import 'dart:collection';
 import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:bookworms_app/models/account/account.dart';
 import 'package:bookworms_app/models/account/account_details.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
@@ -28,9 +26,6 @@ class AppState extends ChangeNotifier {
     AccountDetailsService accountDetailsService = AccountDetailsService();
     AccountDetails accountDetails = await accountDetailsService.getAccountDetails();
 
-    ClassroomService classroomService = ClassroomService();
-    Classroom classroomDetails = await classroomService.getClassroomDetails();
-
     ListQueue<BookSummary> recentBooks = await loadRecentsFromCache();
     if (accountDetails.role == "Parent") {
       _account = Parent(
@@ -48,8 +43,7 @@ class AppState extends ChangeNotifier {
         firstName: accountDetails.firstName,
         lastName: accountDetails.lastName,
         profilePictureIndex: accountDetails.profilePictureIndex,
-        recentlySearchedBooks: recentBooks,
-        classroom: classroomDetails
+        recentlySearchedBooks: recentBooks
       );
     }
     _isParent = _account is Parent;
@@ -102,7 +96,9 @@ class AppState extends ChangeNotifier {
   BookshelfService bookshelvesService = BookshelfService();
   List<Bookshelf> get bookshelves => isParent 
     ? (_account as Parent).children[selectedChildID].bookshelves 
-    : (_account as Teacher).classroom.bookshelves;
+    : (_account as Teacher).classroom != null 
+      ? (_account as Teacher).classroom!.bookshelves 
+      : [];
 
   void setChildBookshelves(int childId) async {
     String guid = children[childId].id;
@@ -188,8 +184,24 @@ class AppState extends ChangeNotifier {
     return false;
   }
 
+
   // ***** Classroom *****
 
+  ClassroomService classroomService = ClassroomService();
+  Classroom? get classroom => (_account as Teacher).classroom;
+
+  void getClassroomDetails() async {
+    Classroom classroom = await classroomService.getClassroomDetails();
+    (_account as Teacher).classroom = classroom;
+    notifyListeners();
+  }
+
+  Future<Classroom> createNewClassroom(String newClassroomName) async {
+    Classroom classroom = await classroomService.createClassroomDetails(newClassroomName);
+    (_account as Teacher).classroom = classroom;
+    notifyListeners();
+    return classroom;
+  }
 
 
   // ***** Account *****

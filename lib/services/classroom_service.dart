@@ -21,4 +21,17 @@ class ClassroomService {
       throw Exception('An error occurred when getting the classroom details.');
     }
   }
+
+  Future<Classroom> createClassroomDetails(String newClassroomName) async {
+    final response = await client.sendRequest(
+      uri: createClassroomUri(newClassroomName),
+      method: "POST");
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Classroom.fromJson(data);
+    } else {
+      throw Exception('An error occurred when creating the classroom.');
+    }
+  }
 }

@@ -1,8 +1,11 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:provider/provider.dart';
 
 class CreateClassroomScreen extends StatefulWidget {
   const CreateClassroomScreen({super.key});
@@ -24,6 +27,7 @@ class _CreateClassroomScreenState extends State<CreateClassroomScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,16 +65,15 @@ class _CreateClassroomScreenState extends State<CreateClassroomScreen> {
               ),
               addVerticalSpace(16),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
                     final classroomName = _textEditingController.text;
-                    if (mounted) {
+                    Classroom classroom = await appState.createNewClassroom(classroomName);
+
+                    if (context.mounted) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ClassroomScreen(classroomName: classroomName),
-                        ),
+                        MaterialPageRoute(builder: (context) => ClassroomScreen(classroom: classroom)),
                       );
                     }
                   }
