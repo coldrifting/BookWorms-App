@@ -7,7 +7,6 @@ import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
-import 'package:bookworms_app/demo_books.dart'; // Books used for the demo
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the

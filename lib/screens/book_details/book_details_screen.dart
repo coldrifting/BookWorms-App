@@ -33,8 +33,13 @@ class BookDetailsScreen extends StatefulWidget {
 /// The state of the [BookDetailsScreen].
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late ScrollController _scrollController; // Sets initial screen offset.
+
+  final GlobalKey _parentKey = GlobalKey();
+  final GlobalKey _imageKey = GlobalKey();
+
   late BookSummary bookSummary;
   late BookDetails bookDetails;
+  late CachedNetworkImage image;
 
   var isExpanded = false; // Denotes if the description/book information is expanded.
   var maxLength = 500; // Max length of the shortened description.
@@ -42,12 +47,40 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    // The initial offset allows for a partial section of the book to be shown
-    // on the book details view.
-    _scrollController = ScrollController(initialScrollOffset: 250);
     bookSummary = widget.summaryData;
     bookDetails = widget.detailsData;
+
+    image = CachedNetworkImage(
+      imageUrl: bookSummary.imageUrl!,
+      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+      errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+    );
+    
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setScrollOffset();
+    });
   }
+
+  // Set the offset of the scroll controller.
+  void _setScrollOffset() {
+    final RenderBox? imageRenderBox = _imageKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? parentRenderBox = _parentKey.currentContext?.findRenderObject() as RenderBox?;
+
+    if (imageRenderBox != null && parentRenderBox != null && imageRenderBox.hasSize && parentRenderBox.hasSize) {
+      double imageWidth = imageRenderBox.size.width;
+      double imageHeight = imageRenderBox.size.height;
+
+      double aspectRatio = imageWidth / imageHeight;
+      double newImageWidth = parentRenderBox.size.width; 
+      double newImageHeight = newImageWidth / aspectRatio;
+
+      // Calculate the new scroll offset
+      double offset = newImageHeight - 200;
+      _scrollController.jumpTo(offset > 0 ? offset : newImageHeight);
+  }
+}
+
 
   /// The entire book details page, containing book image, details, action buttons,
   /// and reviews.
@@ -56,6 +89,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      key: _parentKey,
       // Book details app bar
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
@@ -76,34 +110,38 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         ),
       ),
       // Book details content
-      body: ListView(controller: _scrollController, children: [
-        SizedBox(
-          width: double.infinity,
-          child: FittedBox(
-            fit: BoxFit.cover,
-            child: CachedNetworkImage(
-              imageUrl: bookSummary.imageUrl!,
-              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+      body: ListView(
+        controller: _scrollController, 
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: CachedNetworkImage(
+                key: _imageKey,
+                imageUrl: bookSummary.imageUrl!,
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+              ),
             ),
           ),
-        ),
-        _bookDetails(textTheme),
-        Container(
-          color: const Color.fromARGB(255, 239, 239, 239),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                addVerticalSpace(5),
-                _actionButtons(textTheme, bookSummary),
-                addVerticalSpace(15),
-                _reviewList(textTheme),
-              ],
+          _bookDetails(textTheme),
+          Container(
+            color: const Color.fromARGB(255, 239, 239, 239),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  addVerticalSpace(5),
+                  _actionButtons(textTheme, bookSummary),
+                  addVerticalSpace(15),
+                  _reviewList(textTheme),
+                ],
+              ),
             ),
           ),
-        ),
-      ]),
+        ]
+      ),
     );
   }
 
@@ -139,8 +177,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 fontSize: 18),
             textAlign: TextAlign.center,
             bookSummary.authors.isNotEmpty
-                ? bookSummary.authors.map((author) => author).join('\n')
-                : "Unknown Author(s)",
+              ? bookSummary.authors.map((author) => author).join('\n')
+              : "Unknown Author(s)",
           ),
           // Book difficulty and rating
           Padding(

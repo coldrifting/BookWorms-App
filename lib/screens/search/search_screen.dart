@@ -235,12 +235,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       itemBuilder: (context, index) {
         return Column(
           children: [
-            BookSummaryWidget(
-              book: _searchResults[index]
-            ),
-            const Divider(
-              color: colorGrey,
-            )
+            BookSummaryWidget(book: _searchResults[index]),
+            const Divider(color: colorGrey)
           ],
         );
       }
@@ -315,10 +311,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    _searchHeaders[index][0],
-                    style: textTheme.titleMedium,
-                  ),
+                  Text(_searchHeaders[index][0], style: textTheme.titleMedium),
                   addVerticalSpace(8),
                   SizedBox(
                     height: 45,
