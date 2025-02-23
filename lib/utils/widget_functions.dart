@@ -23,12 +23,12 @@ void pushScreen(context, screen) {
 }
 
 // Returns the first 'count' of authors stylistically.
-  String printFirstAuthors(var authorList, int count) {
-    var authors = authorList.take(count);
-    return authors.length < count
-      ? authors.join(", ")
-      : "${authors.join(", ")}, and more";
-  }
+String printFirstAuthors(var authorList, int count) {
+  var authors = authorList.take(count);
+  return authors.length < count
+    ? authors.join(", ")
+    : "${authors.join(", ")}, and more";
+}
 
 SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
   return SystemUiOverlayStyle(

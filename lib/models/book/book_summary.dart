@@ -3,7 +3,7 @@ class BookSummary {
   final String id;
   final String title;
   final List<String> authors;
-  final String difficulty;
+  final int? level;
   final double? rating;
   String? imageUrl;
 
@@ -11,7 +11,7 @@ class BookSummary {
     required this.id,
     required this.title,
     required this.authors,
-    required this.difficulty,
+    required this.level,
     required this.rating
   });
 
@@ -21,8 +21,10 @@ class BookSummary {
       id: json['bookId'],
       title: json['title'],
       authors: List<String>.from(json['authors']),
-      difficulty: json['difficulty'] ?? "N/A",
-      rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null
+      level: json['level'],
+      rating: json['rating'] != null 
+        ? ((json['rating'] as num).toDouble() * 10).roundToDouble() / 10 // Round to 1 decimal place
+        : null
     );
   }
 

@@ -92,9 +92,9 @@ class AppState extends ChangeNotifier {
   // ***** Bookshelves *****
 
   BookshelfService bookshelvesService = BookshelfService();
+  List<Bookshelf> get bookshelves => (_account as Parent).children[selectedChildID].bookshelves;
 
   void setChildBookshelves(int childId) async {
-
     String guid = children[childId].id;
     List<Bookshelf> bookshelves = await bookshelvesService.getBookshelves(guid);
     (_account as Parent).children[childId].bookshelves = bookshelves;
@@ -145,9 +145,7 @@ class AppState extends ChangeNotifier {
 
   void removeBookFromBookshelf(int childId, Bookshelf bookshelf, String bookId) async {
     String guid = children[childId].id;
-
-    var childBookshelves = (_account as Parent).children[childId].bookshelves;
-    int index = childBookshelves.indexWhere((b) => b.name == bookshelf.name);
+    int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
     
     // Remove the book server-side.
     bool success = await bookshelvesService.removeBookFromBookshelf(guid, bookshelf.name, bookId);
@@ -165,11 +163,9 @@ class AppState extends ChangeNotifier {
 
   Future<bool> addBookToBookshelf(int childId, Bookshelf bookshelf, BookSummary book) async {
     String guid = children[childId].id;
-
-    var childBookshelves = (_account as Parent).children[childId].bookshelves;
-    int index = childBookshelves.indexWhere((b) => b.name == bookshelf.name);
+    int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
     
-    if (!childBookshelves[index].books.any((b) => b.id == book.id)) {
+    if (!bookshelves[index].books.any((b) => b.id == book.id)) {
       // Add the book server-side.
       bool success = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
       

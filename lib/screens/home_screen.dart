@@ -1,3 +1,4 @@
+import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,38 +28,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
+    List<Bookshelf> bookshelves = appState.bookshelves.where((bookshelf) => bookshelf.books.length >= 3 
+      && (bookshelf.type.name == "Custom" || bookshelf.type.name == "Classroom")).toList();
 
     return Scaffold(
-        // Home app bar
-        appBar: AppBar(
-          systemOverlayStyle: defaultOverlay(),
-          title: Text(
-            "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Home",
-            style: const TextStyle(
-              color: colorWhite
-            )
-          ),
-          backgroundColor: colorGreen,
-          actions: isParent ? const [
-            ChangeChildWidget()
-          ] : [],
+      // Home app bar
+      appBar: AppBar(
+        systemOverlayStyle: defaultOverlay(),
+        title: Text(
+          "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Home",
+          style: const TextStyle(
+            color: colorWhite
+          )
         ),
-        // Bookshelves list
-        body: ListView(
-          children: [
-            addVerticalSpace(16),
-            BookshelfWidget(name: "Recommended", images: [Demo.image1, Demo.image2, Demo.image3, Demo.image4], books: [Demo.book1, Demo.book2, Demo.book3, Demo.book4]),
+        backgroundColor: colorGreen,
+        actions: isParent ? const [
+          ChangeChildWidget()
+        ] : [],
+      ),
+      // Bookshelves list
+      body: ListView(
+        children: [
+          addVerticalSpace(16),
+          if (bookshelves.isNotEmpty) ...[
+            BookshelfWidget(bookshelf: bookshelves[0]),
             addVerticalSpace(24),
-            if (isParent) ... [
-              _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
-              addVerticalSpace(24),
-            ],
-            BookshelfWidget(name: "Animals", images: [Demo.image2, Demo.image5, Demo.image6, Demo.image7], books: [Demo.book2, Demo.book5, Demo.book6, Demo.book7]),
-            addVerticalSpace(24),
-            BookshelfWidget(name: "Fairytales", images: [Demo.image8, Demo.image9, Demo.image7, Demo.image10], books: [Demo.book8, Demo.book9, Demo.book7, Demo.book10]),
-            addVerticalSpace(16),
           ],
-        ),
+          if (isParent) ... [
+            _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
+            addVerticalSpace(24),
+          ],
+          ...bookshelves.skip(1).map((bookshelf) {
+            return Column(
+              children: [
+                BookshelfWidget(bookshelf: bookshelf),
+                addVerticalSpace(24),
+              ],
+            );
+          }),
+        ],
+      ),
     );
   }
 

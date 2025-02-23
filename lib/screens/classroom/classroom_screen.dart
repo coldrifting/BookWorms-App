@@ -147,17 +147,17 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           ),
           addVerticalSpace(8),
           // "Assigned Reading" bookshelf --> Mock data.
-          BookshelfWidget(name: "Assigned Reading", images: const [
-            Demo.image8,
-            Demo.image9,
-            Demo.image7,
-            Demo.image10
-          ], books: [
-            Demo.book8,
-            Demo.book9,
-            Demo.book7,
-            Demo.book10
-          ]),
+          // BookshelfWidget(name: "Assigned Reading", images: const [
+          //   Demo.image8,
+          //   Demo.image9,
+          //   Demo.image7,
+          //   Demo.image10
+          // ], books: [
+          //   Demo.book8,
+          //   Demo.book9,
+          //   Demo.book7,
+          //   Demo.book10
+          // ]),
           addVerticalSpace(8),
           // Class goals container --> Mock data.
           Padding(

@@ -16,16 +16,16 @@ class Demo {
   static const image9  = "${imagePrefix}6490919$imageSuffix";
   static const image10 = "${imagePrefix}0008843523$imageSuffix";
 
-  static var book1 = BookSummary(id: "", title: "Goodnight Moon", authors: ["Margarel Wise Brown"], difficulty: "Level A", rating: 4.6);
-  static var book2 = BookSummary(id: "", title: "Clifford the Big Red Dog", authors: ["Norman Bridwell"], difficulty: "Level B", rating: 4.8);
-  static var book3 = BookSummary(id: "", title: "Curious George: A House for Honeybees", authors: ["H. A. Rey"], difficulty: "Level C", rating: 4.5);
-  static var book4 = BookSummary(id: "", title: "The Little Prince", authors: ["Antoine de Saint-Exupery"], difficulty: "Level E", rating: 4.3);
-  static var book5 = BookSummary(id: "", title: "Brown Bear, Brown Bear, What Do You See?", authors: ["Bill Martin, Jr."], difficulty: "Level C", rating: 3.9);
-  static var book6 = BookSummary(id: "", title: "The Koala Who Could", authors: ["Rachel Bright"], difficulty: "Level D", rating: 3.0);
-  static var book7 = BookSummary(id: "", title: "The Rainbow Fish", authors: ["Marcus Pfister"], difficulty: "Level B", rating: 4.2);
-  static var book8 = BookSummary(id: "", title: "Goldilocks and the Three Bears", authors: ["Jan Brett"], difficulty: "Level D", rating: 4.8);
-  static var book9 = BookSummary(id: "", title: "Beauty and the Beast", authors: ["Teddy Slater"], difficulty: "Level E", rating: 5.0);
-  static var book10 = BookSummary(id: "", title: "Hansel and Gretel", authors: ["Brothers Grimm"], difficulty: "Level E", rating: 4.6);
+  static var book1 = BookSummary(id: "", title: "Goodnight Moon", authors: ["Margarel Wise Brown"], level: 10, rating: 4.6);
+  static var book2 = BookSummary(id: "", title: "Clifford the Big Red Dog", authors: ["Norman Bridwell"], level: 10, rating: 4.8);
+  static var book3 = BookSummary(id: "", title: "Curious George: A House for Honeybees", authors: ["H. A. Rey"], level: 10, rating: 4.5);
+  static var book4 = BookSummary(id: "", title: "The Little Prince", authors: ["Antoine de Saint-Exupery"], level: 10, rating: 4.3);
+  static var book5 = BookSummary(id: "", title: "Brown Bear, Brown Bear, What Do You See?", authors: ["Bill Martin, Jr."], level: 10, rating: 3.9);
+  static var book6 = BookSummary(id: "", title: "The Koala Who Could", authors: ["Rachel Bright"], level: 10, rating: 3.0);
+  static var book7 = BookSummary(id: "", title: "The Rainbow Fish", authors: ["Marcus Pfister"], level: 10, rating: 4.2);
+  static var book8 = BookSummary(id: "", title: "Goldilocks and the Three Bears", authors: ["Jan Brett"], level: 10, rating: 4.8);
+  static var book9 = BookSummary(id: "", title: "Beauty and the Beast", authors: ["Teddy Slater"], level: 10, rating: 5.0);
+  static var book10 = BookSummary(id: "", title: "Hansel and Gretel", authors: ["Brothers Grimm"], level: 10, rating: 4.6);
 
   static var authors1 = ["Margaret Wise Brown"];
   static var authors2 = ["Norman Bridwell"];

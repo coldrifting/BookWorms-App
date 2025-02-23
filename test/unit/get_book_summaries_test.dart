@@ -60,19 +60,19 @@ void main() {
       expect(result[0].id, 'Id 1');
       expect(result[0].title, 'Title 1');
       expect(result[0].authors, ['Author 1']);
-      expect(result[0].difficulty, 'Difficulty 1');
+      expect(result[0].level, 'Difficulty 1');
       expect(result[0].rating, 1.0);
 
       expect(result[1].id, 'Id 2');
       expect(result[1].title, 'Title 2');
       expect(result[1].authors, ['Author 2']);
-      expect(result[1].difficulty, 'N/A');
+      expect(result[1].level, 'N/A');
       expect(result[1].rating, 2.0);
 
       expect(result[2].id, 'Id 3');
       expect(result[2].title, 'Title 3');
       expect(result[2].authors, ['Author 3']);
-      expect(result[2].difficulty, 'N/A');
+      expect(result[2].level, 'N/A');
       expect(result[2].rating, 2.5);
     });
 

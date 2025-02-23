@@ -36,8 +36,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late BookSummary bookSummary;
   late BookDetails bookDetails;
 
-  var isExpanded =
-      false; // Denotes if the description/book information is expanded.
+  var isExpanded = false; // Denotes if the description/book information is expanded.
   var maxLength = 500; // Max length of the shortened description.
 
   @override
@@ -84,10 +83,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             fit: BoxFit.cover,
             child: CachedNetworkImage(
               imageUrl: bookSummary.imageUrl!,
-              placeholder: (context, url) =>
-                  Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) =>
-                  Image.asset("assets/images/book_cover_unavailable.jpg"),
+              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
             ),
           ),
         ),
@@ -113,10 +110,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// Sub-section containing book information such as title, author, rating,
   /// difficulty, and description.
   Widget _bookDetails(TextTheme textTheme) {
-    var difficulty =
-        bookSummary.difficulty.isEmpty ? "N/A" : bookSummary.difficulty;
-    var rating =
-        bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
+    var difficulty = bookSummary.level ?? "N/A";
+    var rating = bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
 
     // Toggles the expansion of the description/book information.
     void toggleExpansion() {

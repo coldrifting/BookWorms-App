@@ -1,3 +1,7 @@
+import 'package:bookworms_app/models/book/book_details.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
+import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -7,17 +11,26 @@ import 'package:bookworms_app/resources/colors.dart';
 /// The [BookshelfWidget] displays an overview of a user's bookshelf. It
 /// includes a short display of book covers, the bookshelf title, and some
 /// authors present in the bookshelf.
-class BookshelfWidget extends StatelessWidget {
-  final String name;
-  final List<String> images;
-  final List<BookSummary> books;
+class BookshelfWidget extends StatefulWidget {
+  final Bookshelf bookshelf;
 
   const BookshelfWidget({
     super.key, 
-    required this.name,
-    required this.images,
-    required this.books,
+    required this.bookshelf
   });
+
+  @override
+  State<BookshelfWidget> createState() => _BookshelfWidget();
+}
+
+class _BookshelfWidget extends State<BookshelfWidget> {
+  late BookDetailsService _bookDetailsService;
+
+  @override
+  void initState() {
+    super.initState();
+    _bookDetailsService = BookDetailsService();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,23 +57,25 @@ class BookshelfWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               // Bookshelf name
-              child: Text(
-                style: textTheme.titleLarge,
-                name,
-              ),
+              child: Text(widget.bookshelf.name, style: textTheme.titleLarge),
             ),
             // List of bookshelf books
             Expanded(
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _bookPreview(image: images[0], book: books[0], textTheme: textTheme),
-                  const VerticalDivider(),
-                  _bookPreview(image: images[1], book: books[1], textTheme: textTheme),
-                  const VerticalDivider(),
-                  _bookPreview(image: images[2], book: books[2], textTheme: textTheme),
-                  const VerticalDivider(),
-                  _bookPreview(image: images[3], book: books[3], textTheme: textTheme),
+                  for (int i = 0; i < widget.bookshelf.books.length; i++) ...[
+                    InkWell(
+                      child: _bookPreview(book: widget.bookshelf.books[i], textTheme: textTheme),
+                      onTap: () async {
+                        onBookClicked(widget.bookshelf.books[i]);
+                      }
+                    ),
+                    // Add the divider on every book but the last.
+                    if (i < widget.bookshelf.books.length - 1) ...[
+                      const VerticalDivider()
+                    ]
+                  ]
                 ],
               ),
             ),
@@ -70,10 +85,27 @@ class BookshelfWidget extends StatelessWidget {
     );
   }
 
+  void onBookClicked(BookSummary book) async {
+    BookDetails results = await _bookDetailsService.getBookDetails(book.id);
+
+    if (mounted) {
+      // Change the screen to the "book details" screen.
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookDetailsScreen(
+            summaryData: book,
+            detailsData: results,
+          )
+        )
+      );
+    }
+  }
+
   /// Displays book summary information with the book cover, title, author, 
   /// rating, and difficulty.
-  Widget _bookPreview({required String image, required BookSummary book, required TextTheme textTheme}) {
-    var difficulty = book.difficulty.isEmpty ? "N/A" : book.difficulty;
+  Widget _bookPreview({required BookSummary book, required TextTheme textTheme}) {
+    var difficulty = book.level ?? "N/A";
     var rating = book.rating == 0 ? "Unrated" : "${book.rating}★";
 
     return Padding(
@@ -86,7 +118,7 @@ class BookshelfWidget extends StatelessWidget {
             // Cover image
             child: CachedNetworkImage(
               height: 175,
-              imageUrl: image,
+              imageUrl: book.imageUrl!,
               placeholder: (context, url) => Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
             )
