@@ -103,9 +103,16 @@ class _Navigation extends State<Navigation> {
       labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
       selectedIndex: selectedIndex,
       onDestinationSelected: (int index) {
+        if (selectedIndex == index) {
+          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => Navigation(initialIndex: index)),
+            (route) => false,
+          );
+      } else {
         setState(() {
           selectedIndex = index;
         });
+      }
       },
       destinations: <NavigationDestination>[
         const NavigationDestination(
