@@ -184,10 +184,8 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     AppState appState = Provider.of<AppState>(context);
     Bookshelf bookshelf = appState.children[appState.selectedChildID].bookshelves[bookshelfIndex];
 
-    // Up to the first three authors for display purposes.
-    var authors = bookshelf.books.expand((book) => book.authors);
-
-    return Slidable(
+    return bookshelf.type == BookshelfType.custom
+    ? Slidable(
       key: UniqueKey(),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
@@ -205,13 +203,31 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
           ),
         ],
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: bookshelf.type.color[200],
-          border: Border.all(color: bookshelf.type.color[700]!),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Row(
+      child: _bookshelfContent(textTheme, bookshelf)
+    )
+    : _bookshelfContent(textTheme, bookshelf, isLocked: true);
+  }
+}
+
+/// The content of the bookshelf (images, title, authors, rating, level).
+Widget _bookshelfContent(TextTheme textTheme, Bookshelf bookshelf, {bool isLocked = false}) {
+  var authors = bookshelf.books.expand((book) => book.authors);
+
+  return Container(
+    decoration: BoxDecoration(
+      color: bookshelf.type.color[200],
+      border: Border.all(color: bookshelf.type.color[700]!),
+      borderRadius: BorderRadius.circular(4),
+    ),
+    child: Stack(
+      children: [
+        if (isLocked)
+          Positioned(
+            top: 10,
+            right: 10,
+            child: Icon(Icons.lock, size: 18, color: Colors.grey[900]),
+          ),
+        Row(
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -225,15 +241,13 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 16.0),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(bookshelf.name, style: textTheme.titleSmall),
                     Text(
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      bookshelf.name
-                    ),
-                    Text(
-                      style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),
                       printFirstAuthors(authors, 2),
+                      style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis)
                     ),
                   ],
                 ),
@@ -241,7 +255,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
+      ]
+    ),
+  );
 }
