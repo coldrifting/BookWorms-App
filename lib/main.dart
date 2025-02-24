@@ -1,4 +1,5 @@
 import 'package:bookworms_app/screens/setup/splash_screen.dart';
+import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ class BookWorms extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    deleteToken();
     return ChangeNotifierProvider<AppState>(
       create: (context) => AppState(),
       child: MaterialApp(

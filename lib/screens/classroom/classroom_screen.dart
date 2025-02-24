@@ -63,7 +63,12 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
-        title: const Text("My Classroom", style: TextStyle(color: colorWhite)),
+        title: Text(
+          appState.classroom != null
+            ? "My Classroom"
+            : "Create Classroom", 
+          style: TextStyle(color: colorWhite)
+        ),
         backgroundColor: colorGreen,
         automaticallyImplyLeading: false,
       ),
@@ -200,6 +205,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// Confirmation dialog to confirm the deletion of the classroom.
   Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -214,9 +220,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                _deleteClassroom();
+                await appState.deleteClassroom();
               },
               child: const Text('Delete'),
             ),
@@ -227,19 +233,19 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   }
 
   /// Resets the state of the old classroom.
-  void _deleteClassroom() async {
-    var success = await Provider.of<AppState>(context, listen: false).deleteClassroom();
-
-    // Navigate to the "Create Classroom Screen".
-    if (success && mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CreateClassroomScreen(),
-        ),
-      );
-    }
-  }
+  // void _deleteClassroom() async {
+  //   AppState appState = Provider.of<AppState>(context, listen: false);
+  //   var success = await appState.deleteClassroom();
+  //   // Navigate to the "Create Classroom Screen".
+  //   // if (success && mounted) {
+  //   //   Navigator.push(
+  //   //     context,
+  //   //     MaterialPageRoute(
+  //   //       builder: (context) => const CreateClassroomScreen(),
+  //   //     ),
+  //   //   );
+  //   // }
+  // }
 
   /// The student list widget containing student icons and shortened names.
   Widget _studentList(TextTheme textTheme) {

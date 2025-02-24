@@ -1,7 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 
@@ -28,13 +27,6 @@ class _CreateClassroomScreenState extends State<CreateClassroomScreen> {
     AppState appState = Provider.of<AppState>(context, listen: true);
 
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: const Text("Create a Classroom",
-            style: TextStyle(color: colorWhite)),
-        backgroundColor: colorGreen,
-        automaticallyImplyLeading: false,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
