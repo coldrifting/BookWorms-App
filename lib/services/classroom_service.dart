@@ -9,7 +9,7 @@ class ClassroomService {
 
   ClassroomService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<Classroom> getClassroomDetails() async {
+  Future<Classroom?> getClassroomDetails() async {
     final response = await client.sendRequest(
       uri: classroomDetailsUri(),
       method: "GET");
@@ -17,6 +17,8 @@ class ClassroomService {
     if (response.ok) {
       final data = jsonDecode(response.body);
       return Classroom.fromJson(data);
+    } else if (response.statusCode == 404) {
+      return null;
     } else {
       throw Exception('An error occurred when getting the classroom details.');
     }
@@ -32,6 +34,18 @@ class ClassroomService {
       return Classroom.fromJson(data);
     } else {
       throw Exception('An error occurred when creating the classroom.');
+    }
+  }
+
+  Future<bool> deleteClassroom() async {
+    final response = await client.sendRequest(
+      uri: deleteClassroomUri(),
+      method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when deleting the classroom.');
     }
   }
 }

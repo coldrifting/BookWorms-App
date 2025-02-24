@@ -1,5 +1,5 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,14 +10,10 @@ import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
+import 'package:provider/provider.dart';
 
 class ClassroomScreen extends StatefulWidget {
-  final Classroom classroom;
-
-  const ClassroomScreen({
-    super.key,
-    required this.classroom,
-  });
+  const ClassroomScreen({super.key});
 
   @override
   State<ClassroomScreen> createState() => _ClassroomScreenState();
@@ -61,6 +57,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AppState appState = Provider.of<AppState>(context);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -70,98 +67,104 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         backgroundColor: colorGreen,
         automaticallyImplyLeading: false,
       ),
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Classroom information (icon, name, number of students).
-                Row(
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Customizable Classroom icon.
-                          Icon(
-                            size: 100,
-                            Icons.school,
-                            color: _colors[selectedIconIndex],
-                          ),
-                          // Drop down for deleting a classroom.
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: _dropDownMenu(textTheme),
-                          ),
-                          // Pencil edit button.
-                          Positioned(
-                            top: 55,
-                            right: 130,
-                            child: RawMaterialButton(
-                              onPressed: () =>
-                                  _changeClassIconDialog(textTheme),
-                              fillColor: colorWhite,
-                              constraints: const BoxConstraints(minWidth: 0.0),
-                              padding: const EdgeInsets.all(5.0),
-                              shape: const CircleBorder(),
-                              child: const Icon(
-                                Icons.mode_edit_outline_sharp,
-                                size: 15,
-                              ),
+      body: appState.classroom != null 
+        ? _classroomView(textTheme) 
+        : CreateClassroomScreen()
+    );
+  }
+
+  Widget _classroomView(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Classroom information (icon, name, number of students).
+              Row(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Customizable Classroom icon.
+                        Icon(
+                          size: 100,
+                          Icons.school,
+                          color: _colors[selectedIconIndex],
+                        ),
+                        // Drop down for deleting a classroom.
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: _dropDownMenu(textTheme),
+                        ),
+                        // Pencil edit button.
+                        Positioned(
+                          top: 55,
+                          right: 130,
+                          child: RawMaterialButton(
+                            onPressed: () => _changeClassIconDialog(textTheme),
+                            fillColor: colorWhite,
+                            constraints: const BoxConstraints(minWidth: 0.0),
+                            padding: const EdgeInsets.all(5.0),
+                            shape: const CircleBorder(),
+                            child: const Icon(
+                              Icons.mode_edit_outline_sharp,
+                              size: 15,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                // Classroom name.
-                Text(widget.classroom.classroomName, style: textTheme.headlineMedium),
-                // Number of students text.
-                Text(
-                  "${students.length} Student${students.length == 1 ? "" : "s"}",
-                  style: textTheme.bodyLarge),
-                addVerticalSpace(8),
-                const Divider(thickness: 2),
-                // "Invite Students" button.
-                FractionallySizedBox(
-                  widthFactor: 0.4,
-                  child: TextButton(
-                    onPressed: () => _showClassroomCode(textTheme),
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorGreenDark,
-                      foregroundColor: colorWhite,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    child: const Text("Invite Students")
                   ),
+                ],
+              ),
+              // Classroom name.
+              Text(appState.classroom!.classroomName, style: textTheme.headlineMedium),
+              // Number of students text.
+              Text(
+                "${students.length} Student${students.length == 1 ? "" : "s"}",
+                style: textTheme.bodyLarge),
+              addVerticalSpace(8),
+              const Divider(thickness: 2),
+              // "Invite Students" button.
+              FractionallySizedBox(
+                widthFactor: 0.4,
+                child: TextButton(
+                  onPressed: () => _showClassroomCode(textTheme),
+                  style: TextButton.styleFrom(
+                    backgroundColor: colorGreenDark,
+                    foregroundColor: colorWhite,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: const Text("Invite Students")
                 ),
-                _studentList(textTheme),
-              ],
-            ),
+              ),
+              _studentList(textTheme),
+            ],
           ),
+        ),
+        addVerticalSpace(8),
+        // Classroom bookshelves.
+        for (Bookshelf bookshelf in appState.classroom!.bookshelves) ...[
+          BookshelfWidget(bookshelf: bookshelf),
           addVerticalSpace(8),
-          // Classroom bookshelves.
-          for (Bookshelf bookshelf in widget.classroom.bookshelves) ...[
-            BookshelfWidget(bookshelf: bookshelf),
-            addVerticalSpace(8),
-          ],
-          addVerticalSpace(8),
-          // Class goals container --> Mock data.
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: OptionWidget(
-              name: "Class Goals",
-              icon: Icons.data_usage,
-              onTap: () {},
-            ),
-          )
         ],
-      ),
+        addVerticalSpace(8),
+        // Class goals container --> Mock data.
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OptionWidget(
+            name: "Class Goals",
+            icon: Icons.data_usage,
+            onTap: () {},
+          ),
+        )
+      ],
     );
   }
 
@@ -202,8 +205,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Center(child: Text('Delete Classroom')),
-          content: const Text(
-              'Are you sure you want to permanently delete this classroom?'),
+          content: const Text('Are you sure you want to permanently delete this classroom?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -225,16 +227,11 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   }
 
   /// Resets the state of the old classroom.
-  void _deleteClassroom() {
-    // Clean up the state.
-    setState(() {
-      students.clear();
-      selectedIconIndex = 10;
-      // TO DO: Clear books from "Assigned Reading" shelf.
-    });
+  void _deleteClassroom() async {
+    var success = await Provider.of<AppState>(context, listen: false).deleteClassroom();
 
     // Navigate to the "Create Classroom Screen".
-    if (mounted) {
+    if (success && mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(

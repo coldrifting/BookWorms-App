@@ -45,6 +45,7 @@ class AppState extends ChangeNotifier {
         profilePictureIndex: accountDetails.profilePictureIndex,
         recentlySearchedBooks: recentBooks
       );
+      getClassroomDetails();
     }
     _isParent = _account is Parent;
   }
@@ -192,7 +193,7 @@ class AppState extends ChangeNotifier {
   Classroom? get classroom => (_account as Teacher).classroom;
 
   void getClassroomDetails() async {
-    Classroom classroom = await classroomService.getClassroomDetails();
+    Classroom? classroom = await classroomService.getClassroomDetails();
     (_account as Teacher).classroom = classroom;
     notifyListeners();
   }
@@ -202,6 +203,13 @@ class AppState extends ChangeNotifier {
     (_account as Teacher).classroom = classroom;
     notifyListeners();
     return classroom;
+  }
+
+  Future<bool> deleteClassroom() async {
+    var success = await classroomService.deleteClassroom();
+    (_account as Teacher).classroom = null;
+    notifyListeners();
+    return success;
   }
 
 
