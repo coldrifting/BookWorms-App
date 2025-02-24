@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/search/browse_screen.dart';
@@ -326,7 +327,14 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdvancedSearchResultsScreen()
+                      )
+                    );                    
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: colorWhite,
                     backgroundColor: colorGreen,
