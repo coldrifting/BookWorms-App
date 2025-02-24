@@ -45,11 +45,11 @@ class AppState extends ChangeNotifier {
         profilePictureIndex: accountDetails.profilePictureIndex,
         recentlySearchedBooks: recentBooks
       );
-      getClassroomDetails();
     }
     _isParent = _account is Parent;
   }
 
+  // Loads account details according to the account's role.
   Future<void> loadAccountSpecifics() async {
     if (_isParent) {
       GetChildrenService getChildrenService = GetChildrenService();
@@ -58,6 +58,8 @@ class AppState extends ChangeNotifier {
       for (var i = 0; i < children.length; i++) {
         setChildBookshelves(i);
       }
+    } else {
+      getClassroomDetails();
     }
   }
 

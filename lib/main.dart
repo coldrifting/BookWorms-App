@@ -1,4 +1,3 @@
-import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/screens/setup/splash_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +66,6 @@ class _Navigation extends State<Navigation> {
   @override
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
-    var classroom = appState.classroom;
     var isParent = appState.isParent;
   
     List<Widget> pages = [
