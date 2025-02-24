@@ -197,6 +197,9 @@ class AppState extends ChangeNotifier {
   void getClassroomDetails() async {
     Classroom? classroom = await classroomService.getClassroomDetails();
     (_account as Teacher).classroom = classroom;
+    if (classroom != null) {
+      _setBookImages(classroom.bookshelves);
+    }
     notifyListeners();
   }
 
