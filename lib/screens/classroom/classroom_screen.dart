@@ -160,7 +160,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         ),
         addVerticalSpace(8.0),
         // Classroom bookshelves.
-        for (Bookshelf bookshelf in appState.classroom!.bookshelves) ...[
+        for (Bookshelf bookshelf in classroom.bookshelves) ...[
           BookshelfWidget(bookshelf: bookshelf),
           addVerticalSpace(16),
         ],
