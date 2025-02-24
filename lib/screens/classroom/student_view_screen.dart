@@ -7,7 +7,7 @@ import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 
 class StudentViewScreen extends StatefulWidget {
-  const StudentViewScreen({super.key});
+  const StudentViewScreen({super.key, });
 
   @override
   State<StudentViewScreen> createState() => _StudentViewScreenState();
