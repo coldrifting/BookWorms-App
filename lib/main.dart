@@ -26,7 +26,6 @@ class BookWorms extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    deleteToken();
     return ChangeNotifierProvider<AppState>(
       create: (context) => AppState(),
       child: MaterialApp(
