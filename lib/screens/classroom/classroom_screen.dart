@@ -1,5 +1,7 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,15 +25,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   late ScrollController _scrollController; // Scroll controller for students list.
   late MenuController _menuController; // Menu controller for the "delete classroom" drop-down menu.
   var selectedIconIndex = 10; // Corresponding to color black.
-
-  // Temporary until we have real child data.
-  List<String> students = [
-    "Annie C.",
-    "Henry B.",
-    "Lucas G.",
-    "Prim R.",
-    "Winnie S."
-  ];
 
   // Defined for the choice of class icon.
   final List<Color> _colors = [
@@ -80,6 +73,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   Widget _classroomView(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context);
+    Classroom classroom = appState.classroom!;
+    List<Student> students = classroom.students;
+
     return ListView(
       children: [
         Padding(
@@ -127,7 +123,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 ],
               ),
               // Classroom name.
-              Text(appState.classroom!.classroomName, style: textTheme.headlineMedium),
+              Text(classroom.classroomName, style: textTheme.headlineMedium),
               // Number of students text.
               Text(
                 "${students.length} Student${students.length == 1 ? "" : "s"}",
@@ -153,13 +149,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             ],
           ),
         ),
-        addVerticalSpace(8),
-        // Classroom bookshelves.
-        for (Bookshelf bookshelf in appState.classroom!.bookshelves) ...[
-          BookshelfWidget(bookshelf: bookshelf),
-          addVerticalSpace(8),
-        ],
-        addVerticalSpace(8),
         // Class goals container --> Mock data.
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -168,7 +157,14 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             icon: Icons.data_usage,
             onTap: () {},
           ),
-        )
+        ),
+        addVerticalSpace(8.0),
+        // Classroom bookshelves.
+        for (Bookshelf bookshelf in classroom.bookshelves) ...[
+          BookshelfWidget(bookshelf: bookshelf),
+          addVerticalSpace(16),
+        ],
+        addVerticalSpace(8),
       ],
     );
   }
@@ -232,23 +228,11 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     );
   }
 
-  /// Resets the state of the old classroom.
-  // void _deleteClassroom() async {
-  //   AppState appState = Provider.of<AppState>(context, listen: false);
-  //   var success = await appState.deleteClassroom();
-  //   // Navigate to the "Create Classroom Screen".
-  //   // if (success && mounted) {
-  //   //   Navigator.push(
-  //   //     context,
-  //   //     MaterialPageRoute(
-  //   //       builder: (context) => const CreateClassroomScreen(),
-  //   //     ),
-  //   //   );
-  //   // }
-  // }
-
   /// The student list widget containing student icons and shortened names.
   Widget _studentList(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    List<Student> students = appState.classroom!.students;
+
     return Column(
       children: [
         Row(
@@ -282,9 +266,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const StudentViewScreen(),
-                                  ),
+                                    builder: (context) => StudentViewScreen()),
                                 );
                               }
                             },
@@ -296,7 +278,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                           ),
                           addVerticalSpace(4),
                           // Student name.
-                          Text(style: textTheme.titleSmall, students[index]),
+                          Text(style: textTheme.titleSmall, students[index].name),
                         ],
                       ),
                     );
