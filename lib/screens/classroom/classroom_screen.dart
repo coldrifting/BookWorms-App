@@ -295,7 +295,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// Displays the classroom code in a dialog.
   Future<dynamic> _showClassroomCode(TextTheme textTheme) {
-    String classroomCode = "XXX XXX";
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    String classroomCode = appState.classroom!.classCode;
+    classroomCode = "${classroomCode.substring(0, 3)} ${classroomCode.substring(3,6)}";
 
     return showDialog(
       context: context,
@@ -305,10 +307,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Text(
-                classroomCode,
-                style: textTheme.headlineMediumGreenDark,
-              ),
+              child: Text(classroomCode, style: textTheme.headlineMediumGreenDark),
             ),
           ],
         ),
