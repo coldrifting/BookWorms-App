@@ -5,6 +5,8 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
 
+
+/// The [AdvancedSearchResultsScreen] contains a list of advanced search results. 
 class AdvancedSearchResultsScreen extends StatefulWidget {
   final List<BookSummary> bookSummaries;
 
@@ -17,6 +19,8 @@ class AdvancedSearchResultsScreen extends StatefulWidget {
   State<AdvancedSearchResultsScreen> createState() => _AdvancedSearchResultsScreenState();
 }
 
+
+/// The state of the [AdvancedSearchResultsScreen].
 class _AdvancedSearchResultsScreenState extends State<AdvancedSearchResultsScreen> {
   late List<BookSummary> bookSummaries;
 
@@ -26,6 +30,7 @@ class _AdvancedSearchResultsScreenState extends State<AdvancedSearchResultsScree
     bookSummaries = widget.bookSummaries;
   }
 
+  /// The advanced search results screen contains a list of advanced search results.
   @override
   Widget build(BuildContext context) {
     Widget mainContent;
