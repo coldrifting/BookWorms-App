@@ -26,9 +26,9 @@ class SearchService {
   }
 
   // Retrieve and decode the book summaries of the given query and filters from the server.
-  Future<List<BookSummary>> advancedSearch(String query, int? ratingMinimum, RangeValues levelRange) async {
+  Future<List<BookSummary>> advancedSearch(String? query, double? selectedRating, RangeValues? levelRange) async {
     final response = await client.sendRequest(
-      uri: advancedSearchQueryUri(query, ratingMinimum, levelRange),
+      uri: advancedSearchQueryUri(query, selectedRating, levelRange),
       method: "GET");
 
     if (response.ok) {

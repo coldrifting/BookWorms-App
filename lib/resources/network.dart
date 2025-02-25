@@ -71,15 +71,21 @@ Uri searchQueryUri(String query) {
   return Uri.parse("$serverBaseUri/search?query=$query");
 }
 
-Uri advancedSearchQueryUri(String query, int? ratingMinimum, RangeValues levelRange) {
+Uri advancedSearchQueryUri(String? query, double? selectedRating, RangeValues? levelRange) {
   String uriString = "$serverBaseUri/search?";
-  if (query.isNotEmpty) {
+  if (query != null) {
     uriString += "query=$query&";
   }
-  if (ratingMinimum != null) {
-    uriString += "ratingMin=$ratingMinimum&";
+  if (selectedRating != null) {
+    uriString += "ratingMin=$selectedRating&";
   }
-  uriString += "&levelMin=${levelRange.start}&levelMax=${levelRange.end}";
+  if (levelRange != null) {
+    uriString += "levelMin=${levelRange.start.toInt()}&levelMax=${levelRange.end.toInt()}";
+  }
+  if (uriString.endsWith("&"))
+  {
+    uriString = uriString.substring(0, uriString.length - 1);
+  }
   return Uri.parse(uriString);
 }
 
@@ -128,4 +134,4 @@ Uri getFullUri(String path) {
 }
 
 //const String serverBaseUri = "https://api.bookworms.app";
-const String serverBaseUri = "https://d354-2601-681-5f04-d080-b97d-840f-6a42-c8c9.ngrok-free.app";
+const String serverBaseUri = "https://6956-2601-681-5f04-d080-b97d-840f-6a42-c8c9.ngrok-free.app";

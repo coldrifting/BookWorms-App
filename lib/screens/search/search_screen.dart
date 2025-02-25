@@ -154,18 +154,30 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
 
   void _advancedSearch() async {
-    int? ratingMinimum = _selectedRating.indexOf(true);
-    if (ratingMinimum == -1) {
-      ratingMinimum = null;
+    String? currentQuery = _textEditingcontroller.text.isEmpty ? null : _textEditingcontroller.text;
+    int selectedRatingIndex = _selectedRating.indexOf(true);
+    double? selectedRating;
+    if (selectedRatingIndex == -1) {
+      selectedRating = null;
     } else {
-      ratingMinimum = 9 - ratingMinimum;
+      selectedRating = (9 - selectedRatingIndex) / 2.0;
     }
-    List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(_currentQuery, ratingMinimum, _selectedLevelRange);
+    RangeValues? selectedLevelRange = _selectedLevelRange.start == 1 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
+
+    List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(currentQuery, selectedRating, selectedLevelRange);
+    List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
+    List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
+    for (int i = 0; i < bookSummaries.length; i++) {
+      bookSummaries[i].setImage(bookImages[i]);
+    }
+
     if (mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AdvancedSearchResultsScreen()
+          builder: (context) => AdvancedSearchResultsScreen(
+            bookSummaries: bookSummaries
+          )
         )
       );   
     }
@@ -316,7 +328,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   Widget _advancedSearchScreen() {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    final levels = [Text('9+'), Text('8+'), Text('7+'), Text('6+')];
+    final levels = [Text('4.5+'), Text('4+'), Text('3.5+'), Text('3+')];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -324,51 +336,55 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Reading Level',
-                style: textTheme.titleMedium
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Reading Level',
+                    style: textTheme.titleMedium
+                  ),
+                  addVerticalSpace(8),
+                  RangeSlider(
+                    values: _selectedLevelRange,
+                    max: 100,
+                    divisions: 10,
+                    labels: RangeLabels(
+                      _selectedLevelRange.start.round().toString(),
+                      _selectedLevelRange.end.round().toString(),
+                    ),
+                    onChanged: (RangeValues values) {
+                      setState(() {
+                        _selectedLevelRange = values;
+                      });
+                    },
+                  )
+                ],
               ),
-              addVerticalSpace(8),
-              RangeSlider(
-                values: _selectedLevelRange,
-                max: 100,
-                divisions: 10,
-                labels: RangeLabels(
-                  _selectedLevelRange.start.round().toString(),
-                  _selectedLevelRange.end.round().toString(),
-                ),
-                onChanged: (RangeValues values) {
-                  setState(() {
-                    _selectedLevelRange = values;
-                  });
-                },
-              )
-            ],
-          ),
-          addVerticalSpace(16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Bookworms Rating',
-                style: textTheme.titleMedium
-              ),
-              addVerticalSpace(8),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: ToggleButtons(
-                  onPressed: (int index) {
-                    setState(() {
-                      for (int i = 0; i < _selectedRating.length; i++) {
-                        _selectedRating[i] = i == index;
-                      }
-                    });
-                  },
-                  isSelected: _selectedRating,
-                  children: levels
-                ),
+              addVerticalSpace(16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Bookworms Rating',
+                    style: textTheme.titleMedium
+                  ),
+                  addVerticalSpace(8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ToggleButtons(
+                      onPressed: (int index) {
+                        setState(() {
+                          for (int i = 0; i < _selectedRating.length; i++) {
+                            _selectedRating[i] = i == index;
+                          }
+                        });
+                      },
+                      isSelected: _selectedRating,
+                      children: levels
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
