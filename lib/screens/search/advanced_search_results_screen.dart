@@ -1,5 +1,6 @@
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/screens/search/no_results_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,23 @@ class _AdvancedSearchResultsScreenState extends State<AdvancedSearchResultsScree
 
   @override
   Widget build(BuildContext context) {
+    Widget mainContent;
+    if (bookSummaries.isNotEmpty) {
+      mainContent = ListView.builder(
+        itemCount: bookSummaries.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              BookSummaryWidget(book: bookSummaries[index]),
+              const Divider(color: colorGrey)
+            ],
+          );
+        }
+      );
+    } else {
+      mainContent = NoResultsScreen();
+    }
+
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
@@ -47,17 +65,7 @@ class _AdvancedSearchResultsScreenState extends State<AdvancedSearchResultsScree
           },
         ),
       ),
-      body: ListView.builder(
-        itemCount: bookSummaries.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              BookSummaryWidget(book: bookSummaries[index]),
-              const Divider(color: colorGrey)
-            ],
-          );
-        }
-      )
+      body: mainContent 
     );
   } 
 }

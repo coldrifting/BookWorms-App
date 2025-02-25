@@ -71,7 +71,7 @@ Uri searchQueryUri(String query) {
   return Uri.parse("$serverBaseUri/search?query=$query");
 }
 
-Uri advancedSearchQueryUri(String? query, double? selectedRating, RangeValues? levelRange) {
+Uri advancedSearchQueryUri(String? query, double? selectedRating, RangeValues? levelRange, List<String>? selectedGenres, List<String>? selectedTopics) {
   String uriString = "$serverBaseUri/search?";
   if (query != null) {
     uriString += "query=$query&";
@@ -81,6 +81,16 @@ Uri advancedSearchQueryUri(String? query, double? selectedRating, RangeValues? l
   }
   if (levelRange != null) {
     uriString += "levelMin=${levelRange.start.toInt()}&levelMax=${levelRange.end.toInt()}";
+  }
+  if (selectedGenres != null) {
+    for (String genre in selectedGenres) {
+      uriString += "subjects=$genre&";
+    }
+  }
+  if (selectedTopics != null) {
+    for (String topic in selectedTopics) {
+      uriString += "subjects=$topic&";
+    }    
   }
   if (uriString.endsWith("&"))
   {

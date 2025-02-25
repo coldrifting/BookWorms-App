@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
+import 'package:bookworms_app/screens/search/no_results_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/search/browse_screen.dart';
@@ -35,8 +36,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   late ScrollController _scrollController;
   late TabController _tabController;
 
-  var _selectedLevelRange = const RangeValues(1, 100);
-  final _selectedRating = List.filled(4, false);
+  var _selectedLevelRange = const RangeValues(0, 100);
+  final _selectedRating = List.filled(6, false);
+  final _selectedGenres = List.filled(6, false);
+  final _selectedTopics = List.filled(6, false);
 
   @override
   void initState() {
@@ -153,8 +156,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     });
   }
 
+  /// Fetches the advanced search results and the corresponding images.
   void _advancedSearch() async {
     String? currentQuery = _textEditingcontroller.text.isEmpty ? null : _textEditingcontroller.text;
+
     int selectedRatingIndex = _selectedRating.indexOf(true);
     double? selectedRating;
     if (selectedRatingIndex == -1) {
@@ -162,7 +167,31 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     } else {
       selectedRating = (9 - selectedRatingIndex) / 2.0;
     }
-    RangeValues? selectedLevelRange = _selectedLevelRange.start == 1 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
+
+    RangeValues? selectedLevelRange = _selectedLevelRange.start == 0 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
+    
+
+    List<String> genres = ["Fantasy fiction", "Adventure and adventurers", "Mystery and detective stories", "Fiction, historical, general", "Science fiction", "Fairy tales"];
+    List<String>? selectedGenres = [];
+    for (int i = 0; i < _selectedGenres.length; i++) {
+      if (_selectedGenres[i]) {
+        selectedGenres.add(genres[i]);
+      }
+    }
+    if (selectedGenres.isEmpty) {
+      selectedGenres = null;
+    }
+
+    List<String> topics = ["Friendship, fiction", "Family life, fiction", "Magic, fiction", "Love, fiction", "Conduct of life", "Animals, fiction"];
+    List<String>? selectedTopics = [];
+    for (int i = 0; i < _selectedTopics.length; i++) {
+      if (_selectedTopics[i]) {
+        selectedTopics.add(topics[i]);
+      }
+    }
+    if (selectedTopics.isEmpty) {
+      selectedTopics = null;
+    }
 
     List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(currentQuery, selectedRating, selectedLevelRange);
     List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
@@ -195,7 +224,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen();
     } else {
-      mainContent = _noResultsScreen();
+      mainContent = NoResultsScreen();
     }
 
     return Scaffold(
@@ -270,32 +299,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     );
   }
 
-  /// Sub-widget displayed when there are no search results.
-  Widget _noResultsScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.search_off,
-            size: 50.0,
-            color: colorGrey,
-          ),
-          addVerticalSpace(8),
-          const Text(
-            "No Results",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: colorGrey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Sub-widget containing the recents and advanced search tabs.
   Widget _recentsAdvancedSearchTabs() {
     return DefaultTabController(
@@ -328,7 +331,9 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   Widget _advancedSearchScreen() {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    final levels = [Text('4.5+'), Text('4+'), Text('3.5+'), Text('3+')];
+    final ratings = [Text('4.5+'), Text('4.0+'), Text('3.5+'), Text('3.0+'), Text('2.5+'), Text('2.0+')];
+    final genres = [Text('Fantasy'), Text('Adventure'), Text('Mystery'), Text('Historical Fiction'), Text('Science Fiction'), Text('Fairy Tales')];
+    final topics = [Text('Friendship'), Text('Family'), Text('Magic'), Text('Love'), Text('Manners'), Text('Animals')];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -336,6 +341,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,19 +351,27 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                     style: textTheme.titleMedium
                   ),
                   addVerticalSpace(8),
-                  RangeSlider(
-                    values: _selectedLevelRange,
-                    max: 100,
-                    divisions: 10,
-                    labels: RangeLabels(
-                      _selectedLevelRange.start.round().toString(),
-                      _selectedLevelRange.end.round().toString(),
-                    ),
-                    onChanged: (RangeValues values) {
-                      setState(() {
-                        _selectedLevelRange = values;
-                      });
-                    },
+                  Row(
+                    children: [
+                      Text('0'),
+                      Expanded(
+                        child: RangeSlider(
+                          values: _selectedLevelRange,
+                          max: 100,
+                          divisions: 10,
+                          labels: RangeLabels(
+                            _selectedLevelRange.start.round().toString(),
+                            _selectedLevelRange.end.round().toString(),
+                          ),
+                          onChanged: (RangeValues values) {
+                            setState(() {
+                              _selectedLevelRange = values;
+                            });
+                          },
+                        ),
+                      ),
+                      Text('100')
+                    ],
                   )
                 ],
               ),
@@ -376,12 +390,77 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                       onPressed: (int index) {
                         setState(() {
                           for (int i = 0; i < _selectedRating.length; i++) {
-                            _selectedRating[i] = i == index;
+                            if (i != index) {
+                              _selectedRating[i] = false;
+                            } else {
+                              _selectedRating[i] = !_selectedRating[i];
+                            }
                           }
                         });
                       },
                       isSelected: _selectedRating,
-                      children: levels
+                      children: ratings.map((level) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: level,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              addVerticalSpace(16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Genres',
+                    style: textTheme.titleMedium
+                  ),
+                  addVerticalSpace(8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ToggleButtons(
+                      onPressed: (int index) {
+                        setState(() {
+                          _selectedGenres[index] = !_selectedGenres[index];
+                        });
+                      },
+                      isSelected: _selectedGenres,
+                      children: genres.map((level) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: level,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              addVerticalSpace(16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Topics',
+                    style: textTheme.titleMedium
+                  ),
+                  addVerticalSpace(8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ToggleButtons(
+                      onPressed: (int index) {
+                        setState(() {
+                          _selectedTopics[index] = !_selectedTopics[index];
+                        });
+                      },
+                      isSelected: _selectedTopics,
+                      children: topics.map((level) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: level,
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],
