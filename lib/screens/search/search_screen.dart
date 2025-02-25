@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +27,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   var _searchResults = [];
   Timer? _debounceTimer;
 
-  late BookSummariesService _bookSummariesService;
+  late SearchService _bookSearchService;
   late BookImagesService _bookImagesService;
 
   late FocusNode _focusNode;
@@ -36,16 +35,13 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   late ScrollController _scrollController;
   late TabController _tabController;
 
-
-  final _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
-    ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
-    ["Popular Themes", "Courage", "Kindness", "Empathy", "Bravery", "Integrity", "Respect"],
-    ["BookWorms Ratings", "9+", "8+", "7+", "6+"]];
+  var _selectedLevelRange = const RangeValues(1, 100);
+  final _selectedRating = List.filled(4, false);
 
   @override
   void initState() {
     super.initState();
-    _bookSummariesService = BookSummariesService();
+    _bookSearchService = SearchService();
     _bookImagesService = BookImagesService();
     _focusNode = FocusNode();
     _focusNode.addListener(_onSearchBarFocusChanged);
@@ -109,8 +105,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
 
   /// Fetches the search results and the corresponding images.
-  Future<List<BookSummary>> search(String query) async {
-    List<BookSummary> bookSummaries = await _bookSummariesService.getBookSummaries(query);
+  Future<List<BookSummary>> _search(String query) async {
+    List<BookSummary> bookSummaries = await _bookSearchService.search(query);
     List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < bookSummaries.length; i++) {
@@ -132,7 +128,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await search(query);
+        List<BookSummary> results = await _search(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_focusNode.hasFocus) {
@@ -155,6 +151,24 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         });
       }
     });
+  }
+
+  void _advancedSearch() async {
+    int? ratingMinimum = _selectedRating.indexOf(true);
+    if (ratingMinimum == -1) {
+      ratingMinimum = null;
+    } else {
+      ratingMinimum = 9 - ratingMinimum;
+    }
+    List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(_currentQuery, ratingMinimum, _selectedLevelRange);
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AdvancedSearchResultsScreen()
+        )
+      );   
+    }
   }
 
   /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
@@ -302,38 +316,68 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   Widget _advancedSearchScreen() {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
+    final levels = [Text('9+'), Text('8+'), Text('7+'), Text('6+')];
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
-            children: List.generate(4, (index) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(_searchHeaders[index][0], style: textTheme.titleMedium),
-                  addVerticalSpace(8),
-                  SizedBox(
-                    height: 45,
-                    child: _filterScrollList(textTheme, index),
-                  ),
-                  addVerticalSpace(16),
-                ],
-              );
-            }),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Reading Level',
+                style: textTheme.titleMedium
+              ),
+              addVerticalSpace(8),
+              RangeSlider(
+                values: _selectedLevelRange,
+                max: 100,
+                divisions: 10,
+                labels: RangeLabels(
+                  _selectedLevelRange.start.round().toString(),
+                  _selectedLevelRange.end.round().toString(),
+                ),
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _selectedLevelRange = values;
+                  });
+                },
+              )
+            ],
+          ),
+          addVerticalSpace(16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Bookworms Rating',
+                style: textTheme.titleMedium
+              ),
+              addVerticalSpace(8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ToggleButtons(
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int i = 0; i < _selectedRating.length; i++) {
+                        _selectedRating[i] = i == index;
+                      }
+                    });
+                  },
+                  isSelected: _selectedRating,
+                  children: levels
+                ),
+              ),
+            ],
           ),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AdvancedSearchResultsScreen()
-                      )
-                    );                    
+                    _advancedSearch();                 
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: colorWhite,
@@ -350,36 +394,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
           ),  
         ],
       ),
-    );
-  }
-
-  // Horizontal list of scrollable filters.
-  Widget _filterScrollList(TextTheme textTheme, int headerIndex) {
-    return ListView.builder(
-      itemCount: _searchHeaders[headerIndex].length - 1,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: colorGreen,
-              border: Border.all(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            alignment: Alignment.center,
-            child: TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              child: Text(
-                _searchHeaders[headerIndex][index + 1],
-                style: textTheme.bodyLargeWhite,
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }
