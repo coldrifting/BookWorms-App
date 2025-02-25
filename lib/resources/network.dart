@@ -71,16 +71,16 @@ Uri searchQueryUri(String query) {
   return Uri.parse("$serverBaseUri/search?query=$query");
 }
 
-Uri advancedSearchQueryUri(String? query, double? selectedRating, RangeValues? levelRange, List<String>? selectedGenres, List<String>? selectedTopics) {
+Uri advancedSearchQueryUri(String? query, RangeValues? levelRange, double? selectedRating, List<String>? selectedGenres, List<String>? selectedTopics) {
   String uriString = "$serverBaseUri/search?";
   if (query != null) {
     uriString += "query=$query&";
   }
+  if (levelRange != null) {
+    uriString += "levelMin=${levelRange.start.toInt()}&levelMax=${levelRange.end.toInt()}&";
+  }
   if (selectedRating != null) {
     uriString += "ratingMin=$selectedRating&";
-  }
-  if (levelRange != null) {
-    uriString += "levelMin=${levelRange.start.toInt()}&levelMax=${levelRange.end.toInt()}";
   }
   if (selectedGenres != null) {
     for (String genre in selectedGenres) {

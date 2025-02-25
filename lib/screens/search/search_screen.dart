@@ -160,6 +160,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   void _advancedSearch() async {
     String? currentQuery = _textEditingcontroller.text.isEmpty ? null : _textEditingcontroller.text;
 
+    RangeValues? selectedLevelRange = _selectedLevelRange.start == 0 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
+
     List<double> ratings = [4.5, 4.0, 3.5, 3.0, 2.5, 2.0];
     double? selectedRating;
     for (int i = 0; i < _selectedRating.length; i++) {
@@ -168,8 +170,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         break;
       }
     }
-
-    RangeValues? selectedLevelRange = _selectedLevelRange.start == 0 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
 
     List<String> genres = ["Fantasy fiction", "Adventure and adventurers", "Mystery and detective stories", "Fiction, historical, general", "Science fiction", "Fairy tales"];
     List<String>? selectedGenres = [];
@@ -193,7 +193,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       selectedTopics = null;
     }
 
-    List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(currentQuery, selectedRating, selectedLevelRange, selectedGenres, selectedTopics);
+    List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(currentQuery, selectedLevelRange, selectedRating, selectedGenres, selectedTopics);
     List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < bookSummaries.length; i++) {
