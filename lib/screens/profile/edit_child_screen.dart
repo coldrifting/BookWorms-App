@@ -102,35 +102,27 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   ],
                 ),
                 addHorizontalSpace(16),
-                Expanded(child: _editChildNameWidget()),
+                Expanded(child: _editChildNameWidget(textTheme)),
               ],
             ),
-            _deleteChildWidget(textTheme),
+            _deleteChildButton(textTheme),
           ],
         ),
       ),
     );
   }
 
-  Widget _editChildNameWidget() {
+  Widget _editChildNameWidget(TextTheme textTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Edit Name",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold
-          ),
-        ),
+        Text("Edit Name", style: textTheme.titleMedium),
         Row(
           children: [
             Expanded(
-              child: TextField(
-                controller: _childNameController
-              )
+              child: TextField(controller: _childNameController)
             ),
-            const SizedBox(width: 16),
+            addHorizontalSpace(16),
             ElevatedButton(
               onPressed: () {
                 Provider.of<AppState>(context, listen: false).editChildName(widget.childID, _childNameController.text);
@@ -143,7 +135,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
     );
   }
 
-  Widget _deleteChildWidget(TextTheme textTheme) {
+  Widget _deleteChildButton(TextTheme textTheme) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: colorRed,
@@ -158,7 +150,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
         builder: (BuildContext context) { 
           return AlertWidget(
             title: "Delete Child Profile", 
-            message: "Deleting your child orofile cannot be undone. Are you sure you want to continue?", 
+            message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
             confirmText: "Delete", 
             cancelText: "Cancel", 
             action: () { Provider.of<AppState>(context, listen: false).removeChild(widget.childID); }
