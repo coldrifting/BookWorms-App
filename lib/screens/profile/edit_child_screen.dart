@@ -107,11 +107,11 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           MaterialPageRoute(builder: (context) => Navigation(initialIndex: 4)),
                           (route) => false,
                         );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => ManageChildrenScreen())
+                        // );
                       }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ManageChildrenScreen())
-                      );
                     }
                   );
                 }
@@ -190,6 +190,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
                               newName: _childNameController.text, 
                               profilePictureIndex: _selectedIconIndex
                             );
+                            _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
+                            _initialName = appState.children[widget.childID].name;
                           });
                         }
                       } : null,
@@ -285,7 +287,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           // TODO
                         },
                         onLongPress: (){
-                          
+
                         },
                         child: Container(
                           decoration: BoxDecoration(
