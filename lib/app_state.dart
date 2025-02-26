@@ -101,9 +101,18 @@ class AppState extends ChangeNotifier {
   void setChildClassrooms(int childId) async {
     ChildrenServices childrenServices = ChildrenServices();
     String guid = children[childId].id;
-    List<Classroom> classrooms = await childrenServices.getBookshelves(guid);
+    List<Classroom> classrooms = await childrenServices.setChildClassrooms(guid);
     (_account as Parent).children[childId].classrooms = classrooms;
     notifyListeners();
+  }
+
+  Future<Classroom> joinChildClassroom(int childId, String classCode) async {
+    ChildrenServices childrenServices = ChildrenServices();
+    String guid = children[childId].id;
+    Classroom newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
+    (_account as Parent).children[childId].classrooms.add(newClassroom);
+    notifyListeners();
+    return newClassroom;
   }
 
   // ***** Bookshelves *****

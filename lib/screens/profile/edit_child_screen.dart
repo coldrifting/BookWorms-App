@@ -208,7 +208,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
   }
 
   Widget _classroomList(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
+    AppState appState = Provider.of<AppState>(context);
     Child child = appState.children[appState.selectedChildID];
     List<Classroom> classrooms = child.classrooms;
 
@@ -238,35 +238,40 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 child: index == classrooms.length 
                 ? SizedBox(
                   width: 100,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: colorGreyDark!, width: 1.5),
-                        ),
-                        child: CircleAvatar(
-                          maxRadius: 45, 
-                          backgroundColor: colorGreyLight,
-                          child: Icon(size: 40, Icons.add, color: colorGreyDark!),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        height: 40,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            "Join Class",
-                            style: textTheme.titleSmall, 
-                            maxLines: 2, 
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
+                  child: GestureDetector(
+                    onTap: () {
+                      _joinClassDialog(textTheme);
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: colorGreyDark!, width: 1.5),
+                          ),
+                          child: CircleAvatar(
+                            maxRadius: 45, 
+                            backgroundColor: colorGreyLight,
+                            child: Icon(size: 40, Icons.add, color: colorGreyDark!),
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 100,
+                          height: 40,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              "Join Class",
+                              style: textTheme.titleSmall, 
+                              maxLines: 2, 
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
                 : SizedBox(
@@ -276,7 +281,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          // Navigation logic
+                          // TODO
                         },
                         child: SizedBox(
                           width: 90,
@@ -287,9 +292,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
                       addVerticalSpace(4),
                       SizedBox(
                         width: 100,
-                        height: 40, // Ensure a fixed height for text alignment
+                        height: 40,
                         child: Align(
-                          alignment: Alignment.topCenter, // Align text from the top
+                          alignment: Alignment.topCenter,
                           child: Text(
                             classrooms[index].classroomName,
                             style: textTheme.titleSmall, 
@@ -302,12 +307,64 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     ],
                   ),
                 ),
-        
               );
             }
           ),
         ),
       ],
+    );
+  }
+
+  dynamic _joinClassDialog(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    TextEditingController textEditingController = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child: Text("Join Class")),
+          content: TextField(
+            controller: textEditingController,
+            decoration: const InputDecoration(hintText: "Enter Classroom Code")
+          ),
+          actions: [
+            TextButton(
+              onPressed: () { Navigator.of(context).pop(); },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                //Navigator.of(context).pop();
+                Classroom newClassroom = await appState.joinChildClassroom(widget.childID, textEditingController.text);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: colorGreenDark,
+                      content: Row(
+                        children: [
+                          Text(
+                            'Successfully joined class "${newClassroom.classroomName}".', 
+                            style: textTheme.titleSmallWhite
+                          ),
+                          Spacer(),
+                          Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                        ],
+                      ),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(
+                "Join",
+                style: TextStyle(color: colorGreen),
+              ),
+            ),
+          ],
+        );
+      }
     );
   }
 

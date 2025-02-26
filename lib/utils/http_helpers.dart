@@ -68,7 +68,7 @@ Future<List<Child>> fromResponseListChild(http.Response response) async {
 
 Future<List<Classroom>> fromResponseListClassroom(http.Response response) async {
   List<dynamic> parsedListJson = jsonDecode(utf8.decode(response.bodyBytes));
-  return List<Classroom>.from(parsedListJson.map<Classroom>((dynamic i) => Classroom.fromJson(i)));
+  return parsedListJson.map<Classroom>((dynamic json) => Classroom.fromJson(json)).toList();
 }
 
 Future<List<BookSummary>> fromResponseListBookSummary(http.Response response) async {

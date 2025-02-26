@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:http/http.dart' as http;
 
@@ -56,7 +58,7 @@ class ChildrenServices {
     }
   }
 
-  Future<List<Classroom>> getBookshelves(String guid) async {
+  Future<List<Classroom>> setChildClassrooms(String guid) async {
     final response = await client.sendRequest(
       uri: childClassroomsUri(guid),
       method: "GET");
@@ -65,7 +67,21 @@ class ChildrenServices {
       return await fromResponseListClassroom(response);
     }
     else {
-      throw Exception('An error occurred when fetching children.');
+      throw Exception('An error occurred when setting the child\'s classrooms.');
+    }
+  }
+
+  Future<Classroom> joinChildClassroom(String guid, String classCode) async {
+    final response = await client.sendRequest(
+      uri: childJoinClassroomUri(guid, classCode),
+      method: "POST");
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Classroom.fromJson(data);
+    }
+    else {
+      throw Exception('An error occurred when joining the classroom.');
     }
   }
 }
