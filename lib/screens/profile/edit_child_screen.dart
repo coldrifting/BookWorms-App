@@ -1,3 +1,5 @@
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -99,53 +101,78 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Edit Name",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _childNameController
-                            )
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              Provider.of<AppState>(context, listen: false).editChildName(widget.childID, _childNameController.text);
-                            },
-                            child: const Text("Save")
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                addHorizontalSpace(16),
+                Expanded(child: _editChildNameWidget()),
               ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                Provider.of<AppState>(context, listen: false).removeChild(widget.childID);
-                Navigator.of(context).pop();
-              },
-              child: const Text("Delete Child")
-            )
+            _deleteChildWidget(textTheme),
           ],
         ),
       ),
     );
   }
 
-   /// Dialog to change the class icon to a specific color.
+  Widget _editChildNameWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Edit Name",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _childNameController
+              )
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: () {
+                Provider.of<AppState>(context, listen: false).editChildName(widget.childID, _childNameController.text);
+              },
+              child: const Text("Save")
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _deleteChildWidget(TextTheme textTheme) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: colorRed,
+        foregroundColor: colorWhite,
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      onPressed: () => showDialog(
+        context: context,
+        builder: (BuildContext context) { 
+          return AlertWidget(
+            title: "Delete Child Profile", 
+            message: "Deleting your child orofile cannot be undone. Are you sure you want to continue?", 
+            confirmText: "Delete", 
+            cancelText: "Cancel", 
+            action: () { Provider.of<AppState>(context, listen: false).removeChild(widget.childID); }
+          );
+        }
+      ),
+      child: Text(
+        'Delete Child',
+        style: textTheme.titleSmallWhite,
+      ),
+    );
+  }
+
+  /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeChildIconDialog(TextTheme textTheme) {
     return showDialog(
       context: context, 

@@ -1,3 +1,4 @@
+import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -167,7 +168,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    onPressed: () => _showDeleteConfirmationDialog(textTheme),
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (BuildContext context) { 
+                        return AlertWidget(
+                          title: "Delete Account", 
+                          message: "Deleting your account cannot be undone. Are you sure you want to continue?", 
+                          confirmText: "Delete", 
+                          cancelText: "Cancel", 
+                          action: _deleteAccount
+                        );
+                      }
+                    ),
                     child: Text(
                       'Delete Account',
                       style: textTheme.titleSmallWhite,
@@ -210,38 +222,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               },
               child: Text(
                 'Discard Changes',
-                style: TextStyle(color: colorRed),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // UI for showing deletion confirmation. If user clicks "Delete", then try
-  // to delete the account.
-  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Delete Account')),
-          content: const Text('Deleting your account cannot be undone. Are you sure you want to continue?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deleteAccount();
-              },
-              child: Text(
-                'Delete',
                 style: TextStyle(color: colorRed),
               ),
             ),
