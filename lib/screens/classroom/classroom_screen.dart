@@ -2,6 +2,7 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,21 +26,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   late ScrollController _scrollController; // Scroll controller for students list.
   late MenuController _menuController; // Menu controller for the "delete classroom" drop-down menu.
   var selectedIconIndex = 10; // Corresponding to color black.
-
-  // Defined for the choice of class icon.
-  final List<Color> _colors = [
-    Colors.pink,
-    Colors.red,
-    Colors.orange,
-    Colors.amber,
-    Colors.lightGreen,
-    Colors.green,
-    Colors.lightBlue,
-    Colors.blue,
-    Colors.purple,
-    Colors.brown,
-    Colors.black
-  ];
 
   @override
   void initState() {
@@ -93,7 +79,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         Icon(
                           size: 100,
                           Icons.school,
-                          color: _colors[selectedIconIndex],
+                          color: classroomColors[selectedIconIndex],
                         ),
                         // Drop down for deleting a classroom.
                         Positioned(
@@ -250,44 +236,44 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             borderRadius: BorderRadius.circular(6),
           ),
           child: students.isNotEmpty
-              ? ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  controller: _scrollController,
-                  itemCount: students.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (mounted) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => StudentViewScreen()),
-                                );
-                              }
-                            },
-                            // Student icon.
-                            child: SizedBox(
-                                width: 90,
-                                height: 90,
-                                child: UserIcons.getRandomIcon()),
-                          ),
-                          addVerticalSpace(4),
-                          // Student name.
-                          Text(style: textTheme.titleSmall, students[index].name),
-                        ],
+          ? ListView.builder(
+              scrollDirection: Axis.horizontal,
+              controller: _scrollController,
+              itemCount: students.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          if (mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => StudentViewScreen()),
+                            );
+                          }
+                        },
+                        // Student icon.
+                        child: SizedBox(
+                          width: 90,
+                          height: 90,
+                          child: UserIcons.getIcon(students[index].profilePictureIndex)),
                       ),
-                    );
-                  })
-              : const Center(
-                  child: Text(
-                      textAlign: TextAlign.center,
-                      "No students in the classroom.\n Use the invite button above!"),
-                ),
+                      addVerticalSpace(4),
+                      // Student name.
+                      Text(style: textTheme.titleSmall, students[index].name),
+                    ],
+                  ),
+                );
+              })
+          : const Center(
+              child: Text(
+                  textAlign: TextAlign.center,
+                  "No students in the classroom.\n Use the invite button above!"),
+            ),
         ),
       ],
     );
@@ -352,7 +338,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemCount: _colors.length,
+        itemCount: classroomColors.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
@@ -379,7 +365,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 child: Icon(
                   Icons.school,
                   size: 50,
-                  color: _colors[index],
+                  color: classroomColors[index],
                 ),
               ),
             ),

@@ -32,14 +32,9 @@ class OptionWidget extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                Icon(
-                  size: 48,
-                  icon
-                ),
+                Icon(size: 48,icon),
                 addHorizontalSpace(16),
-                Text(
-                  name,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
                 ),
               ],
             ),

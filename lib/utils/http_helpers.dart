@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:bookworms_app/models/book/book_summary.dart';
@@ -63,6 +64,11 @@ Map<String, dynamic> readResponse(http.Response response) {
 Future<List<Child>> fromResponseListChild(http.Response response) async {
   List<dynamic> parsedListJson = jsonDecode(utf8.decode(response.bodyBytes));
   return List<Child>.from(parsedListJson.map<Child>((dynamic i) => Child.fromJson(i)));
+}
+
+Future<List<Classroom>> fromResponseListClassroom(http.Response response) async {
+  List<dynamic> parsedListJson = jsonDecode(utf8.decode(response.bodyBytes));
+  return List<Classroom>.from(parsedListJson.map<Classroom>((dynamic i) => Classroom.fromJson(i)));
 }
 
 Future<List<BookSummary>> fromResponseListBookSummary(http.Response response) async {

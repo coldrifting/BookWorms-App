@@ -1,4 +1,5 @@
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
@@ -26,6 +27,7 @@ class EditChildScreen extends StatefulWidget {
 }
 
 class _EditChildScreenState extends State<EditChildScreen> {
+  late ScrollController _scrollController;
   late TextEditingController _childNameController;
   late int _selectedIconIndex;
 
@@ -46,6 +48,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
 
     _childNameController = TextEditingController(text: widget.child.name);
     _childNameController.addListener(_checkForChanges);
+    _scrollController = ScrollController();
 
     _hasChanges = false;
   }
@@ -68,6 +71,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
+    Child child = appState.children[appState.selectedChildID];
 
     return Scaffold(
       appBar: AppBar(
@@ -148,10 +152,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           constraints: const BoxConstraints(minWidth: 0.0),
                           padding: const EdgeInsets.all(5.0),
                           shape: const CircleBorder(),
-                          child: const Icon(
-                            Icons.mode_edit_outline_sharp,
-                            size: 15,
-                          ),
+                          child: const Icon(Icons.mode_edit_outline_sharp, size: 15),
                         ),
                       ),
                     ],
@@ -161,6 +162,10 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 ],
               ),
               addVerticalSpace(16),
+              Text("Reading Level: ${child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+              addVerticalSpace(16),
+              _classroomList(textTheme),
+              addVerticalSpace(32),  
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -199,7 +204,110 @@ class _EditChildScreenState extends State<EditChildScreen> {
           ),
         ),
       ),
-      
+    );
+  }
+
+  Widget _classroomList(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    Child child = appState.children[appState.selectedChildID];
+    List<Classroom> classrooms = child.classrooms;
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Manage Classrooms", style: textTheme.titleLarge),
+          ],
+        ),
+        addVerticalSpace(8),
+        Container(
+          height: 175, 
+          decoration: BoxDecoration(
+            color: colorGreyLight,
+            border: Border.all(color: colorGreyDark ?? colorBlack),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            controller: _scrollController,
+            itemCount: classrooms.length + 1,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: index == classrooms.length 
+                ? SizedBox(
+                  width: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: colorGreyDark!, width: 1.5),
+                        ),
+                        child: CircleAvatar(
+                          maxRadius: 45, 
+                          backgroundColor: colorGreyLight,
+                          child: Icon(size: 40, Icons.add, color: colorGreyDark!),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 100,
+                        height: 40,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            "Join Class",
+                            style: textTheme.titleSmall, 
+                            maxLines: 2, 
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                : SizedBox(
+                  width: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // Navigation logic
+                        },
+                        child: SizedBox(
+                          width: 90,
+                          height: 90,
+                          child: UserIcons.getIcon(classrooms[index].classIcon),
+                        ),
+                      ),
+                      addVerticalSpace(4),
+                      SizedBox(
+                        width: 100,
+                        height: 40, // Ensure a fixed height for text alignment
+                        child: Align(
+                          alignment: Alignment.topCenter, // Align text from the top
+                          child: Text(
+                            classrooms[index].classroomName,
+                            style: textTheme.titleSmall, 
+                            maxLines: 2, 
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        
+              );
+            }
+          ),
+        ),
+      ],
     );
   }
 
