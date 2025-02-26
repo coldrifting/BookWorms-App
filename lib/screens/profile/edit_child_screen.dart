@@ -284,6 +284,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         onTap: () {
                           // TODO
                         },
+                        onLongPress: (){
+                          
+                        },
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
