@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 final Uri userLoginUri = getFullUri("/user/login");
 final Uri userRegisterUri = getFullUri("/user/register");
 final Uri userDetailsUri = getFullUri("/user/details");
@@ -71,6 +73,34 @@ Uri bookshelvesDeleteUri(String childId, String bookshelfName) {
 
 Uri searchQueryUri(String query) {
   return Uri.parse("$serverBaseUri/search?query=$query");
+}
+
+Uri advancedSearchQueryUri(String? query, RangeValues? levelRange, double? selectedRating, List<String>? selectedGenres, List<String>? selectedTopics) {
+  String uriString = "$serverBaseUri/search?";
+  if (query != null) {
+    uriString += "query=$query&";
+  }
+  if (levelRange != null) {
+    uriString += "levelMin=${levelRange.start.toInt()}&levelMax=${levelRange.end.toInt()}&";
+  }
+  if (selectedRating != null) {
+    uriString += "ratingMin=$selectedRating&";
+  }
+  if (selectedGenres != null) {
+    for (String genre in selectedGenres) {
+      uriString += "subjects=$genre&";
+    }
+  }
+  if (selectedTopics != null) {
+    for (String topic in selectedTopics) {
+      uriString += "subjects=$topic&";
+    }    
+  }
+  if (uriString.endsWith("&"))
+  {
+    uriString = uriString.substring(0, uriString.length - 1);
+  }
+  return Uri.parse(uriString);
 }
 
 // ***** Classrooms - Teachers *****

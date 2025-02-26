@@ -12,7 +12,7 @@ import 'mocks/http_client_test.mocks.dart';
 
 void main() {
   group('BookSummariesService', () {
-    late BookSummariesService bookSummariesService;
+    late SearchService bookSummariesService;
     late MockClient mockClient;
 
     setUpAll(() {
@@ -22,7 +22,7 @@ void main() {
 
     setUp(() {
       mockClient = MockClient();
-      bookSummariesService = BookSummariesService(client: mockClient);
+      bookSummariesService = SearchService(client: mockClient);
     });
 
     test('returns a list of BookSummaries if the http call completes successfully', () async {
