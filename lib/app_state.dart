@@ -1,5 +1,7 @@
 import 'dart:collection';
 import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/resources/network.dart';
+import 'package:bookworms_app/services/account/child_details_edit_service.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom_service.dart';
 import 'package:flutter/material.dart';
@@ -77,11 +79,6 @@ class AppState extends ChangeNotifier {
     (_account as Parent).children.removeAt(childID);
     notifyListeners();
   }
-  
-  void editChildName(int childID, String newName) {
-    (_account as Parent).children[childID].name = newName;
-    notifyListeners();
-  }
 
   void setSelectedChild(int childID) {
     (_account as Parent).selectedChildID = childID;
@@ -89,8 +86,18 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-    void setChildIconIndex(int childId, int index) {
-    (_account as Parent).children[childId].profilePictureIndex = index;
+   void editChildProfileInfo(int childId, {String? newName, int? profilePictureIndex}) async {
+    Child child = (_account as Parent).children[childId];
+    // If not included as parameters, set to currently-saved value.
+    newName ??= child.name;
+    profilePictureIndex ??= child.profilePictureIndex;
+
+    ChildDetailsEditService childDetailsEditService = ChildDetailsEditService();
+    childDetailsEditService.setAccountDetails(child, newName: newName, iconIndex: profilePictureIndex);
+
+    child.name = newName;
+    (_account as Parent).children[selectedChildID].name = newName;
+    (_account as Parent).children[selectedChildID].profilePictureIndex = profilePictureIndex;
     notifyListeners();
   }
 

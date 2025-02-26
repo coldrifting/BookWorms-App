@@ -11,6 +11,10 @@ Uri childAddUri(String childName) {
   return Uri.parse("$serverBaseUri/children/add?childName=$childName");
 }
 
+Uri childEditDetailsUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/edit");
+}
+
 // ***** Books *****
 
 Uri bookDetailsUri(String bookId) {
@@ -113,5 +117,4 @@ Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
 
-//const String serverBaseUri = "https://api.bookworms.app";
-const String serverBaseUri = "https://217f-155-98-131-3.ngrok-free.app";
+const String serverBaseUri = "https://api.bookworms.app";

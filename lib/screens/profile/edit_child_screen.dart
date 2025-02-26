@@ -1,4 +1,6 @@
+import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,11 +29,25 @@ class _EditChildScreenState extends State<EditChildScreen> {
   late TextEditingController _childNameController;
   late int _selectedIconIndex;
 
+  final _formKey = GlobalKey<FormState>();
+
+  // Used to determine if any changes have been made to the account details.
+  late String _initialName;
+  late int _initialIconIndex;
+  late bool _hasChanges;
+
   @override
   void initState() {
     super.initState();
-    _childNameController = TextEditingController(text: widget.child.name);
+
+    _initialName = widget.child.name;
+    _initialIconIndex = widget.child.profilePictureIndex;
     _selectedIconIndex = widget.child.profilePictureIndex;
+
+    _childNameController = TextEditingController(text: widget.child.name);
+    _childNameController.addListener(_checkForChanges);
+
+    _hasChanges = false;
   }
 
   @override
@@ -40,9 +56,18 @@ class _EditChildScreenState extends State<EditChildScreen> {
     super.dispose();
   }
 
+  // Used to check if a change to the account details has been made.
+  void _checkForChanges() {
+    setState(() {
+      _hasChanges = _childNameController.text.trim() != _initialName 
+        || _selectedIconIndex != _initialIconIndex;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -60,76 +85,140 @@ class _EditChildScreenState extends State<EditChildScreen> {
           color: colorWhite,
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop();
+            // Notify the user if there are unsaved changes.
+            if (_hasChanges) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertWidget(
+                    title: "Unsaved Changes", 
+                    message: "Are you sure you want to continue?", 
+                    confirmText: "Discard Changes", 
+                    confirmColor: colorRed!,
+                    cancelText: "Keep Editing", 
+                    action: () {
+                      if (mounted) {
+                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => Navigation(initialIndex: 4)),
+                          (route) => false,
+                        );
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ManageChildrenScreen())
+                      );
+                    }
+                  );
+                }
+              );
+            } else {
+              Navigator.of(context).pop();
+            }
           },
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Stack(
-                  children: [
-                    IconButton(
-                      onPressed: () =>_changeChildIconDialog(textTheme),
-                      icon: CircleAvatar(
-                        maxRadius: 50,
-                        child: SizedBox.expand(
-                          child: FittedBox(
-                            child: UserIcons.getIcon(widget.child.profilePictureIndex),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Stack(
+                    children: [
+                      IconButton(
+                        onPressed: () =>_changeChildIconDialog(textTheme),
+                        icon: CircleAvatar(
+                          maxRadius: 50,
+                          child: SizedBox.expand(
+                            child: FittedBox(
+                              child: UserIcons.getIcon(_selectedIconIndex),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 70,
-                      left: 70,
-                      child: RawMaterialButton(
-                        onPressed: () => _changeChildIconDialog(textTheme),
-                        fillColor: colorWhite,
-                        constraints: const BoxConstraints(minWidth: 0.0),
-                        padding: const EdgeInsets.all(5.0),
-                        shape: const CircleBorder(),
-                        child: const Icon(
-                          Icons.mode_edit_outline_sharp,
-                          size: 15,
+                      Positioned(
+                        top: 70,
+                        left: 70,
+                        child: RawMaterialButton(
+                          onPressed: () => _changeChildIconDialog(textTheme),
+                          fillColor: colorWhite,
+                          constraints: const BoxConstraints(minWidth: 0.0),
+                          padding: const EdgeInsets.all(5.0),
+                          shape: const CircleBorder(),
+                          child: const Icon(
+                            Icons.mode_edit_outline_sharp,
+                            size: 15,
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+                  addHorizontalSpace(16),
+                  Expanded(child: _textFieldWidget(textTheme, _childNameController, "Edit Name")),
+                ],
+              ),
+              addVerticalSpace(16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 0),
+                      backgroundColor: _hasChanges ? colorGreen : colorGreyLight, 
+                      foregroundColor: _hasChanges ? colorWhite : colorBlack, 
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
-                  ],
-                ),
-                addHorizontalSpace(16),
-                Expanded(child: _editChildNameWidget(textTheme)),
-              ],
-            ),
-            _deleteChildButton(textTheme),
-          ],
+                    onPressed: _hasChanges
+                      ? () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          setState(() {
+                            _hasChanges = false;
+                            appState.editChildProfileInfo(
+                              widget.childID, 
+                              newName: _childNameController.text, 
+                              profilePictureIndex: _selectedIconIndex
+                            );
+                          });
+                        }
+                      } : null,
+                    child: Text(
+                      'Save',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ),
+                  _deleteChildButton(textTheme),
+                ]
+              ),
+            ],
+          ),
         ),
       ),
+      
     );
   }
 
-  Widget _editChildNameWidget(TextTheme textTheme) {
+  // Text form field input and title.
+  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Edit Name", style: textTheme.titleMedium),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(controller: _childNameController)
-            ),
-            addHorizontalSpace(16),
-            ElevatedButton(
-              onPressed: () {
-                Provider.of<AppState>(context, listen: false).editChildName(widget.childID, _childNameController.text);
-              },
-              child: const Text("Save")
-            )
-          ],
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(title, style: textTheme.titleMedium),
+        ),
+        TextFormField(
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a value';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -152,6 +241,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
             title: "Delete Child Profile", 
             message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
             confirmText: "Delete", 
+            confirmColor: colorRed!,
             cancelText: "Cancel", 
             action: () { Provider.of<AppState>(context, listen: false).removeChild(widget.childID); }
           );
@@ -201,7 +291,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 // Change selected color and exit popup.
                 setState(() {
                   _selectedIconIndex = index;
-                  Provider.of<AppState>(context, listen: false).setChildIconIndex(widget.childID, _selectedIconIndex);
+                  _checkForChanges();
                 });
                 Navigator.of(context).pop();
               },

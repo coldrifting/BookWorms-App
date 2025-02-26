@@ -1,4 +1,3 @@
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 
 /// [AlertWidget] is used for displaying an alert with a title, message body,
@@ -7,6 +6,7 @@ class AlertWidget extends StatefulWidget {
   final String title;
   final String message;
   final String confirmText;
+  final Color confirmColor;
   final String cancelText;
   final VoidCallback action;
 
@@ -15,6 +15,7 @@ class AlertWidget extends StatefulWidget {
     required this.title,
     required this.message,
     required this.confirmText,
+    required this.confirmColor,
     required this.cancelText,
     required this.action
   });
@@ -41,7 +42,7 @@ class _AlertWidgetState extends State<AlertWidget> {
           },
           child: Text(
             widget.confirmText,
-            style: TextStyle(color: colorRed),
+            style: TextStyle(color: widget.confirmColor),
           ),
         ),
       ],
