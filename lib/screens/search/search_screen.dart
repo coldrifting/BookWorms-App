@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
+import 'package:bookworms_app/screens/search/no_results_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bookworms_app/screens/search/browse_screen.dart';
@@ -27,7 +28,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   var _searchResults = [];
   Timer? _debounceTimer;
 
-  late BookSummariesService _bookSummariesService;
+  late SearchService _bookSearchService;
   late BookImagesService _bookImagesService;
 
   late FocusNode _focusNode;
@@ -35,16 +36,15 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   late ScrollController _scrollController;
   late TabController _tabController;
 
-
-  final _searchHeaders = [["Reading Level", "A", "B", "C", "D", "E", "F", "G", "H"],
-    ["Popular Topics", "Space", "Dinosaurs", "Ocean Life", "Cats", "Food", "Fairytale"],
-    ["Popular Themes", "Courage", "Kindness", "Empathy", "Bravery", "Integrity", "Respect"],
-    ["BookWorms Ratings", "9+", "8+", "7+", "6+"]];
+  var _selectedLevelRange = const RangeValues(0, 100);
+  final _selectedRating = List.filled(6, false);
+  final _selectedGenres = List.filled(6, false);
+  final _selectedTopics = List.filled(6, false);
 
   @override
   void initState() {
     super.initState();
-    _bookSummariesService = BookSummariesService();
+    _bookSearchService = SearchService();
     _bookImagesService = BookImagesService();
     _focusNode = FocusNode();
     _focusNode.addListener(_onSearchBarFocusChanged);
@@ -108,8 +108,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
 
   /// Fetches the search results and the corresponding images.
-  Future<List<BookSummary>> search(String query) async {
-    List<BookSummary> bookSummaries = await _bookSummariesService.getBookSummaries(query);
+  Future<List<BookSummary>> _search(String query) async {
+    List<BookSummary> bookSummaries = await _bookSearchService.search(query);
     List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < bookSummaries.length; i++) {
@@ -131,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await search(query);
+        List<BookSummary> results = await _search(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         if (_focusNode.hasFocus) {
@@ -156,6 +156,62 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     });
   }
 
+  /// Fetches the advanced search results and the corresponding images.
+  void _advancedSearch() async {
+    String? currentQuery = _textEditingcontroller.text.isEmpty ? null : _textEditingcontroller.text;
+
+    RangeValues? selectedLevelRange = _selectedLevelRange.start == 0 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
+
+    List<double> ratings = [4.5, 4.0, 3.5, 3.0, 2.5, 2.0];
+    double? selectedRating;
+    for (int i = 0; i < _selectedRating.length; i++) {
+      if (_selectedRating[i]) {
+        selectedRating = ratings[i];
+        break;
+      }
+    }
+
+    List<String> genres = ["Fantasy fiction", "Adventure and adventurers", "Mystery and detective stories", "Fiction, historical, general", "Science fiction", "Fairy tales"];
+    List<String>? selectedGenres = [];
+    for (int i = 0; i < _selectedGenres.length; i++) {
+      if (_selectedGenres[i]) {
+        selectedGenres.add(genres[i]);
+      }
+    }
+    if (selectedGenres.isEmpty) {
+      selectedGenres = null;
+    }
+
+    List<String> topics = ["Friendship, fiction", "Family life, fiction", "Magic, fiction", "Love, fiction", "Conduct of life", "Animals, fiction"];
+    List<String>? selectedTopics = [];
+    for (int i = 0; i < _selectedTopics.length; i++) {
+      if (_selectedTopics[i]) {
+        selectedTopics.add(topics[i]);
+      }
+    }
+    if (selectedTopics.isEmpty) {
+      selectedTopics = null;
+    }
+
+    List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(currentQuery, selectedLevelRange, selectedRating, selectedGenres, selectedTopics);
+    List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
+    List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
+    for (int i = 0; i < bookSummaries.length; i++) {
+      bookSummaries[i].setImage(bookImages[i]);
+    }
+
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AdvancedSearchResultsScreen(
+            bookSummaries: bookSummaries
+          )
+        )
+      );   
+    }
+  }
+
   /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
@@ -168,7 +224,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen();
     } else {
-      mainContent = _noResultsScreen();
+      mainContent = NoResultsScreen();
     }
 
     return Scaffold(
@@ -243,32 +299,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     );
   }
 
-  /// Sub-widget displayed when there are no search results.
-  Widget _noResultsScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.search_off,
-            size: 50.0,
-            color: colorGrey,
-          ),
-          addVerticalSpace(8),
-          const Text(
-            "No Results",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: colorGrey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Sub-widget containing the recents and advanced search tabs.
   Widget _recentsAdvancedSearchTabs() {
     return DefaultTabController(
@@ -301,77 +331,164 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   Widget _advancedSearchScreen() {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: List.generate(4, (index) {
-              return Column(
+    final ratings = [Text('4.5+'), Text('4.0+'), Text('3.5+'), Text('3.0+'), Text('2.5+'), Text('2.0+')];
+    final genres = [Text('Fantasy'), Text('Adventure'), Text('Mystery'), Text('Historical Fiction'), Text('Science Fiction'), Text('Fairy Tales')];
+    final topics = [Text('Friendship'), Text('Family'), Text('Magic'), Text('Love'), Text('Manners'), Text('Animals')];
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(_searchHeaders[index][0], style: textTheme.titleMedium),
+                  Text(
+                    'Reading Level',
+                    style: textTheme.titleMedium
+                  ),
                   addVerticalSpace(8),
-                  SizedBox(
-                    height: 45,
-                    child: _filterScrollList(textTheme, index),
-                  ),
-                  addVerticalSpace(16),
+                  Row(
+                    children: [
+                      Text('0'),
+                      Expanded(
+                        child: RangeSlider(
+                          values: _selectedLevelRange,
+                          max: 100,
+                          divisions: 10,
+                          labels: RangeLabels(
+                            _selectedLevelRange.start.round().toString(),
+                            _selectedLevelRange.end.round().toString(),
+                          ),
+                          onChanged: (RangeValues values) {
+                            setState(() {
+                              _selectedLevelRange = values;
+                            });
+                          },
+                        ),
+                      ),
+                      Text('100')
+                    ],
+                  )
                 ],
-              );
-            }),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: colorWhite,
-                    backgroundColor: colorGreen,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    minimumSize: Size(double.infinity, 64), 
+              ),
+              addVerticalSpace(16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Bookworms Rating',
+                    style: textTheme.titleMedium
                   ),
-                  child: Text('Search'),
-                ),
+                  addVerticalSpace(8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ToggleButtons(
+                      onPressed: (int index) {
+                        setState(() {
+                          for (int i = 0; i < _selectedRating.length; i++) {
+                            if (i != index) {
+                              _selectedRating[i] = false;
+                            } else {
+                              _selectedRating[i] = !_selectedRating[i];
+                            }
+                          }
+                        });
+                      },
+                      isSelected: _selectedRating,
+                      children: ratings.map((level) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: level,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
+              addVerticalSpace(16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Genres',
+                    style: textTheme.titleMedium
+                  ),
+                  addVerticalSpace(8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ToggleButtons(
+                      onPressed: (int index) {
+                        setState(() {
+                          _selectedGenres[index] = !_selectedGenres[index];
+                        });
+                      },
+                      isSelected: _selectedGenres,
+                      children: genres.map((level) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: level,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              addVerticalSpace(16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Topics',
+                    style: textTheme.titleMedium
+                  ),
+                  addVerticalSpace(8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: ToggleButtons(
+                      onPressed: (int index) {
+                        setState(() {
+                          _selectedTopics[index] = !_selectedTopics[index];
+                        });
+                      },
+                      isSelected: _selectedTopics,
+                      children: topics.map((level) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: level,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              addVerticalSpace(64),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _advancedSearch();                 
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: colorWhite,
+                        backgroundColor: colorGreen,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                        minimumSize: Size(double.infinity, 64), 
+                      ),
+                      child: Text('Search'),
+                    ),
+                  ),
+                ],
+              ),  
             ],
-          ),  
-        ],
-      ),
-    );
-  }
-
-  // Horizontal list of scrollable filters.
-  Widget _filterScrollList(TextTheme textTheme, int headerIndex) {
-    return ListView.builder(
-      itemCount: _searchHeaders[headerIndex].length - 1,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: colorGreen,
-              border: Border.all(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            alignment: Alignment.center,
-            child: TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              child: Text(
-                _searchHeaders[headerIndex][index + 1],
-                style: textTheme.bodyLargeWhite,
-              ),
-            ),
           ),
-        );
-      },
+        ),
+      ]
     );
   }
 }

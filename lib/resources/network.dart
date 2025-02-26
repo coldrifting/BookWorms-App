@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 final Uri userLoginUri = getFullUri("/user/login");
 final Uri userRegisterUri = getFullUri("/user/register");
 final Uri userDetailsUri = getFullUri("/user/details");
@@ -69,6 +71,34 @@ Uri searchQueryUri(String query) {
   return Uri.parse("$serverBaseUri/search?query=$query");
 }
 
+Uri advancedSearchQueryUri(String? query, RangeValues? levelRange, double? selectedRating, List<String>? selectedGenres, List<String>? selectedTopics) {
+  String uriString = "$serverBaseUri/search?";
+  if (query != null) {
+    uriString += "query=$query&";
+  }
+  if (levelRange != null) {
+    uriString += "levelMin=${levelRange.start.toInt()}&levelMax=${levelRange.end.toInt()}&";
+  }
+  if (selectedRating != null) {
+    uriString += "ratingMin=$selectedRating&";
+  }
+  if (selectedGenres != null) {
+    for (String genre in selectedGenres) {
+      uriString += "subjects=$genre&";
+    }
+  }
+  if (selectedTopics != null) {
+    for (String topic in selectedTopics) {
+      uriString += "subjects=$topic&";
+    }    
+  }
+  if (uriString.endsWith("&"))
+  {
+    uriString = uriString.substring(0, uriString.length - 1);
+  }
+  return Uri.parse(uriString);
+}
+
 // ***** Classrooms - Teachers *****
 
 Uri classroomDetailsUri() {
@@ -114,4 +144,4 @@ Uri getFullUri(String path) {
 }
 
 //const String serverBaseUri = "https://api.bookworms.app";
-const String serverBaseUri = "https://a5bd-155-98-131-5.ngrok-free.app";
+const String serverBaseUri = "https://6956-2601-681-5f04-d080-b97d-840f-6a42-c8c9.ngrok-free.app";
