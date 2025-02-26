@@ -335,21 +335,23 @@ class _EditChildScreenState extends State<EditChildScreen> {
             ),
             TextButton(
               onPressed: () async {
-                //Navigator.of(context).pop();
                 Classroom newClassroom = await appState.joinChildClassroom(widget.childID, textEditingController.text);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       backgroundColor: colorGreenDark,
-                      content: Row(
-                        children: [
-                          Text(
-                            'Successfully joined class "${newClassroom.classroomName}".', 
-                            style: textTheme.titleSmallWhite
-                          ),
-                          Spacer(),
-                          Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                        ],
+                      content: Expanded(
+                        child: Row(
+                          children: [
+                            Text(
+                              'Successfully joined class "${newClassroom.classroomName}".', 
+                              style: textTheme.titleSmallWhite,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Spacer(),
+                            Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                          ],
+                        ),
                       ),
                       duration: Duration(seconds: 2),
                     ),

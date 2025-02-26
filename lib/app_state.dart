@@ -111,6 +111,7 @@ class AppState extends ChangeNotifier {
     String guid = children[childId].id;
     Classroom newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
     (_account as Parent).children[childId].classrooms.add(newClassroom);
+    setChildBookshelves(childId); // Reset the child's bookshelves.
     notifyListeners();
     return newClassroom;
   }
