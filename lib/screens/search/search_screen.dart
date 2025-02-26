@@ -335,12 +335,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     final genres = [Text('Fantasy'), Text('Adventure'), Text('Mystery'), Text('Historical Fiction'), Text('Science Fiction'), Text('Fairy Tales')];
     final topics = [Text('Friendship'), Text('Family'), Text('Magic'), Text('Love'), Text('Manners'), Text('Animals')];
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
@@ -465,30 +464,31 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                   ),
                 ],
               ),
+              addVerticalSpace(64),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _advancedSearch();                 
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: colorWhite,
+                        backgroundColor: colorGreen,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+                        minimumSize: Size(double.infinity, 64), 
+                      ),
+                      child: Text('Search'),
+                    ),
+                  ),
+                ],
+              ),  
             ],
           ),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    _advancedSearch();                 
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: colorWhite,
-                    backgroundColor: colorGreen,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    minimumSize: Size(double.infinity, 64), 
-                  ),
-                  child: Text('Search'),
-                ),
-              ),
-            ],
-          ),  
-        ],
-      ),
+        ),
+      ]
     );
   }
 }
