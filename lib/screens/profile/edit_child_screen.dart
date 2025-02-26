@@ -1,5 +1,6 @@
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
@@ -283,10 +284,20 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         onTap: () {
                           // TODO
                         },
-                        child: SizedBox(
-                          width: 90,
-                          height: 90,
-                          child: UserIcons.getIcon(classrooms[index].classIcon),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: colorGreyDark!, width: 1.5),
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: colorWhite,
+                            maxRadius: 45, 
+                            child: Icon(
+                              size: 50, 
+                              Icons.school,
+                              color: classroomColors[classrooms[index].classIcon]
+                            ),
+                          ),
                         ),
                       ),
                       addVerticalSpace(4),
