@@ -14,7 +14,7 @@ class AboutScreen extends StatelessWidget {
         title: Text(
           "About",
           style: const TextStyle(
-            fontWeight: FontWeight.normal,
+            fontWeight: FontWeight.bold,
             color: colorWhite,
             overflow: TextOverflow.ellipsis
           )
