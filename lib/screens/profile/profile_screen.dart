@@ -1,3 +1,4 @@
+import 'package:bookworms_app/screens/profile/about_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,9 +77,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   addVerticalSpace(10),
                 ],
                 OptionWidget(
-                  name: "Settings",
+                  name: "About",
                   icon: Icons.settings,
-                  onTap: () {},
+                  onTap: () {
+                    pushScreen(context, const AboutScreen());
+                  },
                 ),
                 addVerticalSpace(10),
                 const Divider(),

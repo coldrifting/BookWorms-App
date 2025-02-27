@@ -13,6 +13,18 @@ Uri childAddUri(String childName) {
   return Uri.parse("$serverBaseUri/children/add?childName=$childName");
 }
 
+Uri childEditDetailsUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/edit");
+}
+
+Uri childClassroomsUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/classrooms/all");
+}
+
+Uri childJoinClassroomUri(String childId, String classCode) {
+  return Uri.parse("$serverBaseUri/children/$childId/classrooms/$classCode/join");
+}
+
 // ***** Books *****
 
 Uri bookDetailsUri(String bookId) {
@@ -144,4 +156,4 @@ Uri getFullUri(String path) {
 }
 
 //const String serverBaseUri = "https://api.bookworms.app";
-const String serverBaseUri = "https://6956-2601-681-5f04-d080-b97d-840f-6a42-c8c9.ngrok-free.app";
+const String serverBaseUri = "https://71ae-2601-681-5f04-d080-b97d-840f-6a42-c8c9.ngrok-free.app";

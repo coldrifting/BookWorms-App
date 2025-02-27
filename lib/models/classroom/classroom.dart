@@ -5,6 +5,7 @@ class Classroom {
   final String classCode;
   final String classroomName;
   final List<Student> students;
+  final int classIcon;
   final List<Bookshelf> bookshelves;
   // TO DO : Create and store a list of ClassroomGoal objects.
 
@@ -12,6 +13,7 @@ class Classroom {
     required this.classCode,
     required this.classroomName,
     required this.students,
+    required this.classIcon,
     required this.bookshelves,
   });
 
@@ -20,9 +22,12 @@ class Classroom {
     return Classroom(
       classCode: json['classCode'],
       classroomName: json['classroomName'],
-      students: (json['children'] as List)
+      students: json['children'] != null 
+      ? (json['children'] as List)
         .map((childJson) => Student.fromJson(childJson))
-        .toList(),
+        .toList()
+      : [],
+      classIcon: json['classIcon'],
       bookshelves: (json['bookshelves'] as List)
         .map((bookshelfJson) => Bookshelf.fromJson(bookshelfJson))
         .toList(),

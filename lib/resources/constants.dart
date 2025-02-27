@@ -15,3 +15,17 @@ enum BookshelfType {
     return color[shade]!;
   }
 }
+
+final List<Color> classroomColors = [
+  Colors.pink,
+  Colors.red,
+  Colors.orange,
+  Colors.amber,
+  Colors.lightGreen,
+  Colors.green,
+  Colors.lightBlue,
+  Colors.blue,
+  Colors.purple,
+  Colors.brown,
+  Colors.black
+];

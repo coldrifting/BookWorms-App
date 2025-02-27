@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom_service.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,7 @@ import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/models/account/parent_account.dart';
 import 'package:bookworms_app/models/account/teacher_account.dart';
 import 'package:bookworms_app/services/account/account_details_service.dart';
-import 'package:bookworms_app/services/account/add_child_service.dart';
 import 'package:bookworms_app/services/account/account_details_edit_service.dart';
-import 'package:bookworms_app/services/account/get_children_service.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
 
@@ -52,11 +51,12 @@ class AppState extends ChangeNotifier {
   // Loads account details according to the account's role.
   Future<void> loadAccountSpecifics() async {
     if (_isParent) {
-      GetChildrenService getChildrenService = GetChildrenService();
-      List<Child> children = await getChildrenService.getChildren();
+      ChildrenServices childrenServices = ChildrenServices();
+      List<Child> children = await childrenServices.getChildren();
       (_account as Parent).children = children;
       for (var i = 0; i < children.length; i++) {
         setChildBookshelves(i);
+        setChildClassrooms(i);
       }
     } else {
       getClassroomDetails();
@@ -67,8 +67,8 @@ class AppState extends ChangeNotifier {
   int get selectedChildID => (_account as Parent).selectedChildID;
 
   Future<void> addChild(String childName) async {
-    AddChildService addChildService = AddChildService();
-    Child newChild = await addChildService.addChild(childName);
+    ChildrenServices childrenServices = ChildrenServices();
+    Child newChild = await childrenServices.addChild(childName);
     (_account as Parent).children.add(newChild);
     notifyListeners();
   }
@@ -77,21 +77,42 @@ class AppState extends ChangeNotifier {
     (_account as Parent).children.removeAt(childID);
     notifyListeners();
   }
-  
-  void editChildName(int childID, String newName) {
-    (_account as Parent).children[childID].name = newName;
-    notifyListeners();
-  }
 
   void setSelectedChild(int childID) {
     (_account as Parent).selectedChildID = childID;
-    setChildBookshelves(childID);
     notifyListeners();
   }
 
-    void setChildIconIndex(int childId, int index) {
-    (_account as Parent).children[childId].profilePictureIndex = index;
+   void editChildProfileInfo(int childId, {String? newName, int? profilePictureIndex}) async {
+    Child child = (_account as Parent).children[childId];
+    // If not included as parameters, set to currently-saved value.
+    newName ??= child.name;
+    profilePictureIndex ??= child.profilePictureIndex;
+
+    ChildrenServices childrenServices = ChildrenServices();
+    childrenServices.setAccountDetails(child, newName: newName, iconIndex: profilePictureIndex);
+
+    child.name = newName;
+    child.profilePictureIndex = profilePictureIndex;
     notifyListeners();
+  }
+
+  void setChildClassrooms(int childId) async {
+    ChildrenServices childrenServices = ChildrenServices();
+    String guid = children[childId].id;
+    List<Classroom> classrooms = await childrenServices.setChildClassrooms(guid);
+    (_account as Parent).children[childId].classrooms = classrooms;
+    notifyListeners();
+  }
+
+  Future<Classroom> joinChildClassroom(int childId, String classCode) async {
+    ChildrenServices childrenServices = ChildrenServices();
+    String guid = children[childId].id;
+    Classroom newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
+    (_account as Parent).children[childId].classrooms.add(newClassroom);
+    setChildBookshelves(childId); // Reset the child's bookshelves.
+    notifyListeners();
+    return newClassroom;
   }
 
   // ***** Bookshelves *****

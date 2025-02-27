@@ -1,3 +1,4 @@
+import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -54,6 +55,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _hasChanges = false;
   }
 
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
+  }
+
+  
   // Used to check if a change to the account details has been made.
   void _checkForChanges() {
     setState(() {
@@ -64,16 +73,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
+    bool isParent = appState.isParent;
 
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +95,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () {
             // Notify the user if there are unsaved changes.
             if (_hasChanges) {
-              _notifyUnsavedChanges(textTheme);
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertWidget(
+                    title: "Unsaved Changes", 
+                    message: "Are you sure you want to continue?", 
+                    confirmText: "Discard Changes", 
+                    confirmColor: colorRed!,
+                    cancelText: "Keep Editing", 
+                    action: () {
+                      if (mounted) {
+                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => Navigation(initialIndex: isParent ? 4 : 3)),
+                          (route) => false,
+                        );
+                      }
+                    }
+                  );
+                }
+              );
             } else {
               Navigator.of(context).pop();
             }
@@ -111,14 +133,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 textTheme, 
                 _firstNameController, 
                 "Edit First Name", 
-                appState.firstName
               ),
               addVerticalSpace(32),
               _textFieldWidget(
                 textTheme, 
                 _lastNameController, 
                 "Edit Last Name", 
-                appState.lastName
               ),
               addVerticalSpace(32),
               Row(
@@ -167,11 +187,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    onPressed: () => _showDeleteConfirmationDialog(textTheme),
-                    child: Text(
-                      'Delete Account',
-                      style: textTheme.titleSmallWhite,
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (BuildContext context) { 
+                        return AlertWidget(
+                          title: "Delete Account", 
+                          message: "Deleting your account cannot be undone. Are you sure you want to continue?", 
+                          confirmText: "Delete", 
+                          confirmColor: colorRed!,
+                          cancelText: "Cancel", 
+                          action: _deleteAccount
+                        );
+                      }
                     ),
+                    child: Text('Delete Account', style: textTheme.titleSmallWhite),
                   ),
                 ],
               ),
@@ -179,75 +208,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Future<dynamic> _notifyUnsavedChanges(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    bool isParent = appState.isParent;
-
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Unsaved Changes')),
-          content: const Text('Are you sure you want to continue?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Keep Editing'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (mounted) {
-                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => Navigation(initialIndex: isParent ? 4 : 3)),
-                    (route) => false,
-                  );
-                }
-              },
-              child: Text(
-                'Discard Changes',
-                style: TextStyle(color: colorRed),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // UI for showing deletion confirmation. If user clicks "Delete", then try
-  // to delete the account.
-  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Delete Account')),
-          content: const Text('Deleting your account cannot be undone. Are you sure you want to continue?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deleteAccount();
-              },
-              child: Text(
-                'Delete',
-                style: TextStyle(color: colorRed),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -306,15 +266,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   // Text form field input and title.
-  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title, String text) {
+  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title) {
     return Column(
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: textTheme.titleMedium,
-          ),
+          child: Text(title, style: textTheme.titleMedium),
         ),
         TextFormField(
           controller: controller,
@@ -339,10 +296,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: Text(
-                'Cancel',
-                style: textTheme.titleSmall
-              ),
+              child: Text('Cancel', style: textTheme.titleSmall),
             ),
           ],
         ),
@@ -368,7 +322,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 setState(() {
                   _selectedIconIndex = index;
                   _checkForChanges();
-                  //appState.editAccountInfo(profilePictureIndex: index);
                 });
                 Navigator.of(context).pop();
               },

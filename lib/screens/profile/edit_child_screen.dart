@@ -1,3 +1,9 @@
+import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
+import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,14 +28,30 @@ class EditChildScreen extends StatefulWidget {
 }
 
 class _EditChildScreenState extends State<EditChildScreen> {
+  late ScrollController _scrollController;
   late TextEditingController _childNameController;
   late int _selectedIconIndex;
+
+  final _formKey = GlobalKey<FormState>();
+
+  // Used to determine if any changes have been made to the account details.
+  late String _initialName;
+  late int _initialIconIndex;
+  late bool _hasChanges;
 
   @override
   void initState() {
     super.initState();
-    _childNameController = TextEditingController(text: widget.child.name);
+
+    _initialName = widget.child.name;
+    _initialIconIndex = widget.child.profilePictureIndex;
     _selectedIconIndex = widget.child.profilePictureIndex;
+
+    _childNameController = TextEditingController(text: widget.child.name);
+    _childNameController.addListener(_checkForChanges);
+    _scrollController = ScrollController();
+
+    _hasChanges = false;
   }
 
   @override
@@ -38,9 +60,19 @@ class _EditChildScreenState extends State<EditChildScreen> {
     super.dispose();
   }
 
+  // Used to check if a change to the account details has been made.
+  void _checkForChanges() {
+    setState(() {
+      _hasChanges = _childNameController.text.trim() != _initialName 
+        || _selectedIconIndex != _initialIconIndex;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    Child child = appState.children[appState.selectedChildID];
 
     return Scaffold(
       appBar: AppBar(
@@ -58,94 +90,354 @@ class _EditChildScreenState extends State<EditChildScreen> {
           color: colorWhite,
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop();
+            // Notify the user if there are unsaved changes.
+            if (_hasChanges) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertWidget(
+                    title: "Unsaved Changes", 
+                    message: "Are you sure you want to continue?", 
+                    confirmText: "Discard Changes", 
+                    confirmColor: colorRed!,
+                    cancelText: "Keep Editing", 
+                    action: () {
+                      if (mounted) {
+                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => Navigation(initialIndex: 4)),
+                          (route) => false,
+                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => ManageChildrenScreen())
+                        // );
+                      }
+                    }
+                  );
+                }
+              );
+            } else {
+              Navigator.of(context).pop();
+            }
           },
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Stack(
-                  children: [
-                    IconButton(
-                      onPressed: () =>_changeChildIconDialog(textTheme),
-                      icon: CircleAvatar(
-                        maxRadius: 50,
-                        child: SizedBox.expand(
-                          child: FittedBox(
-                            child: UserIcons.getIcon(widget.child.profilePictureIndex),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 70,
-                      left: 70,
-                      child: RawMaterialButton(
-                        onPressed: () => _changeChildIconDialog(textTheme),
-                        fillColor: colorWhite,
-                        constraints: const BoxConstraints(minWidth: 0.0),
-                        padding: const EdgeInsets.all(5.0),
-                        shape: const CircleBorder(),
-                        child: const Icon(
-                          Icons.mode_edit_outline_sharp,
-                          size: 15,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Stack(
                     children: [
-                      const Text(
-                        "Edit Name",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
+                      IconButton(
+                        onPressed: () =>_changeChildIconDialog(textTheme),
+                        icon: CircleAvatar(
+                          maxRadius: 50,
+                          child: SizedBox.expand(
+                            child: FittedBox(
+                              child: UserIcons.getIcon(_selectedIconIndex),
+                            ),
+                          ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _childNameController
-                            )
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              Provider.of<AppState>(context, listen: false).editChildName(widget.childID, _childNameController.text);
-                            },
-                            child: const Text("Save")
-                          )
-                        ],
+                      Positioned(
+                        top: 70,
+                        left: 70,
+                        child: RawMaterialButton(
+                          onPressed: () => _changeChildIconDialog(textTheme),
+                          fillColor: colorWhite,
+                          constraints: const BoxConstraints(minWidth: 0.0),
+                          padding: const EdgeInsets.all(5.0),
+                          shape: const CircleBorder(),
+                          child: const Icon(Icons.mode_edit_outline_sharp, size: 15),
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Provider.of<AppState>(context, listen: false).removeChild(widget.childID);
-                Navigator.of(context).pop();
-              },
-              child: const Text("Delete Child")
-            )
-          ],
+                  addHorizontalSpace(16),
+                  Expanded(child: _textFieldWidget(textTheme, _childNameController, "Edit Name")),
+                ],
+              ),
+              addVerticalSpace(16),
+              Text("Reading Level: ${child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+              addVerticalSpace(16),
+              _classroomList(textTheme),
+              addVerticalSpace(32),  
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 0),
+                      backgroundColor: _hasChanges ? colorGreen : colorGreyLight, 
+                      foregroundColor: _hasChanges ? colorWhite : colorBlack, 
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: _hasChanges
+                      ? () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          setState(() {
+                            _hasChanges = false;
+                            appState.editChildProfileInfo(
+                              widget.childID, 
+                              newName: _childNameController.text, 
+                              profilePictureIndex: _selectedIconIndex
+                            );
+                            _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
+                            _initialName = appState.children[widget.childID].name;
+                          });
+                        }
+                      } : null,
+                    child: Text(
+                      'Save',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ),
+                  _deleteChildButton(textTheme),
+                ]
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-   /// Dialog to change the class icon to a specific color.
+  Widget _classroomList(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    Child child = appState.children[appState.selectedChildID];
+    List<Classroom> classrooms = child.classrooms;
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Manage Classrooms", style: textTheme.titleLarge),
+          ],
+        ),
+        addVerticalSpace(8),
+        Container(
+          height: 175, 
+          decoration: BoxDecoration(
+            color: colorGreyLight,
+            border: Border.all(color: colorGreyDark ?? colorBlack),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            controller: _scrollController,
+            itemCount: classrooms.length + 1,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: index == classrooms.length 
+                ? SizedBox(
+                  width: 100,
+                  child: GestureDetector(
+                    onTap: () {
+                      _joinClassDialog(textTheme);
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: colorGreyDark!, width: 1.5),
+                          ),
+                          child: CircleAvatar(
+                            maxRadius: 45, 
+                            backgroundColor: colorGreyLight,
+                            child: Icon(size: 40, Icons.add, color: colorGreyDark!),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          height: 40,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              "Join Class",
+                              style: textTheme.titleSmall, 
+                              maxLines: 2, 
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                : SizedBox(
+                  width: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // TODO
+                        },
+                        onLongPress: (){
+
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: colorGreyDark!, width: 1.5),
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: colorWhite,
+                            maxRadius: 45, 
+                            child: Icon(
+                              size: 50, 
+                              Icons.school,
+                              color: classroomColors[classrooms[index].classIcon]
+                            ),
+                          ),
+                        ),
+                      ),
+                      addVerticalSpace(4),
+                      SizedBox(
+                        width: 100,
+                        height: 40,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            classrooms[index].classroomName,
+                            style: textTheme.titleSmall, 
+                            maxLines: 2, 
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          ),
+        ),
+      ],
+    );
+  }
+
+  dynamic _joinClassDialog(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    TextEditingController textEditingController = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child: Text("Join Class")),
+          content: TextField(
+            controller: textEditingController,
+            decoration: const InputDecoration(hintText: "Enter Classroom Code")
+          ),
+          actions: [
+            TextButton(
+              onPressed: () { Navigator.of(context).pop(); },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Classroom newClassroom = await appState.joinChildClassroom(widget.childID, textEditingController.text);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: colorGreenDark,
+                      content: Expanded(
+                        child: Row(
+                          children: [
+                            Text(
+                              'Successfully joined class "${newClassroom.classroomName}".', 
+                              style: textTheme.titleSmallWhite,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Spacer(),
+                            Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                          ],
+                        ),
+                      ),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(
+                "Join",
+                style: TextStyle(color: colorGreen),
+              ),
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+  // Text form field input and title.
+  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(title, style: textTheme.titleMedium),
+        ),
+        TextFormField(
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a value';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _deleteChildButton(TextTheme textTheme) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: colorRed,
+        foregroundColor: colorWhite,
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      onPressed: () => showDialog(
+        context: context,
+        builder: (BuildContext context) { 
+          return AlertWidget(
+            title: "Delete Child Profile", 
+            message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
+            confirmText: "Delete", 
+            confirmColor: colorRed!,
+            cancelText: "Cancel", 
+            action: () { Provider.of<AppState>(context, listen: false).removeChild(widget.childID); }
+          );
+        }
+      ),
+      child: Text(
+        'Delete Child',
+        style: textTheme.titleSmallWhite,
+      ),
+    );
+  }
+
+  /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeChildIconDialog(TextTheme textTheme) {
     return showDialog(
       context: context, 
@@ -182,7 +474,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 // Change selected color and exit popup.
                 setState(() {
                   _selectedIconIndex = index;
-                  Provider.of<AppState>(context, listen: false).setChildIconIndex(widget.childID, _selectedIconIndex);
+                  _checkForChanges();
                 });
                 Navigator.of(context).pop();
               },
