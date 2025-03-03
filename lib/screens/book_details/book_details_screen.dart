@@ -265,16 +265,13 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// rating the book difficulty.
   Widget _actionButtons(TextTheme textTheme, BookSummary book) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ElevatedButton.icon(
             icon: const Icon(Icons.bookmark),
             onPressed: (() => {_saveToBookshelfModal(textTheme, book)}),
             label: const Text("Save")),
-        ElevatedButton.icon(
-            icon: const Icon(Icons.account_balance),
-            onPressed: (() => {}),
-            label: const Text("Locate")),
+        addHorizontalSpace(100),
         ElevatedButton.icon(
             icon: const Icon(Icons.fitness_center),
             onPressed: (() => {}),

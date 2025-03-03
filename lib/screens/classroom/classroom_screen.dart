@@ -109,7 +109,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 ],
               ),
               // Classroom name.
-              Text(classroom.classroomName, style: textTheme.headlineMedium),
+              Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
               // Number of students text.
               Text(
                 "${students.length} Student${students.length == 1 ? "" : "s"}",
