@@ -95,8 +95,7 @@ class AppState extends ChangeNotifier {
     childrenServices.setAccountDetails(child, newName: newName, iconIndex: profilePictureIndex);
 
     child.name = newName;
-    (_account as Parent).children[childId].name = newName;
-    (_account as Parent).children[childId].profilePictureIndex = profilePictureIndex;
+    child.profilePictureIndex = profilePictureIndex;
     notifyListeners();
   }
 
