@@ -47,17 +47,18 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               return Column(
                 children: [
                   addVerticalSpace(16),
-                  _createBookshelfWidget(textTheme)
+                  _createBookshelfWidget(textTheme),
+                  addVerticalSpace(16),
                 ],
               );
             } else {
               return Column(
                 children: [
-                  addVerticalSpace(16),
                   InkWell(
                     onTap: () { onBookClicked(index - 1); },
                     child: _bookshelfWidget(textTheme, index - 1)
                   ),
+                  addVerticalSpace(16),
                 ],
               );
             }
@@ -221,12 +222,14 @@ Widget _bookshelfContent(TextTheme textTheme, Bookshelf bookshelf, {bool isLocke
     ),
     child: Stack(
       children: [
-        if (isLocked)
-          Positioned(
-            top: 10,
-            right: 10,
-            child: Icon(Icons.lock, size: 18, color: Colors.grey[900]),
-          ),
+        Positioned(
+          top: 10,
+          right: 10,
+          child: Text(
+            bookshelf.type.name == "InProgress" ? "In Progress" : bookshelf.type.name, 
+            style: TextStyle(color: bookshelf.type.color[700]!)
+          )
+        ),
         Row(
           children: [
             Padding(

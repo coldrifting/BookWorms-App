@@ -4,6 +4,7 @@ import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -85,7 +86,8 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                         child: Text(bookshelf.name, style: textTheme.titleMedium),
                       ),
                       Spacer(),
-                      _dropDownMenu(textTheme),
+                      if (bookshelf.type == BookshelfType.custom)
+                        _dropDownMenu(textTheme),
                     ],
                   ),
                 ],
