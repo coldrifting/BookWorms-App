@@ -77,6 +77,14 @@ Uri bookshelvesDeleteUri(String childId, String bookshelfName) {
   return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/delete");
 }
 
+Uri bookshelvesRecommendAuthorsUri(String childId) {
+  return Uri.parse("$serverBaseUri/recommend/sameauthors?childId=$childId");
+}
+
+Uri bookshelvesRecommendDescriptionsUri(String childId) {
+  return Uri.parse("$serverBaseUri/recommend/similardescriptions?childId=$childId");
+}
+
 // ***** Search *****
 
 Uri searchQueryUri(String query) {

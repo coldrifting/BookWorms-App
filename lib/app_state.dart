@@ -141,6 +141,20 @@ class AppState extends ChangeNotifier {
     return fullBookshelf;
   }
 
+  Future<Bookshelf> getRecommendedAuthorsBookshelf(int childId) async {
+    String guid = children[childId].id;
+    Bookshelf bookshelf = await bookshelvesService.getRecommendedAuthorsBookshelf(guid);
+    _setBookImages([bookshelf]);
+    return bookshelf;
+  }
+
+  Future<Bookshelf> getRecommendedDescriptionsBookshelf(int childId) async {
+    String guid = children[childId].id;
+    Bookshelf bookshelf = await bookshelvesService.getRecommendedDescriptionBookshelf(guid);
+    _setBookImages([bookshelf]);
+    return bookshelf;
+  }
+
   void addChildBookshelf(int childId, Bookshelf bookshelf) async {
     String guid = children[childId].id;
     var success = await bookshelvesService.addBookshelf(guid, bookshelf.name);
