@@ -2,7 +2,6 @@ import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -107,10 +106,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           MaterialPageRoute(builder: (context) => Navigation(initialIndex: 4)),
                           (route) => false,
                         );
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => ManageChildrenScreen())
-                        // );
                       }
                     }
                   );
@@ -212,7 +207,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
 
   Widget _classroomList(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context);
-    Child child = appState.children[appState.selectedChildID];
+    Child child = appState.children[widget.childID];
     List<Classroom> classrooms = child.classrooms;
 
     return Column(
@@ -351,16 +346,15 @@ class _EditChildScreenState extends State<EditChildScreen> {
             ),
             TextButton(
               onPressed: () async {
-                Classroom newClassroom = await appState.joinChildClassroom(widget.childID, textEditingController.text);
+                appState.joinChildClassroom(widget.childID, textEditingController.text);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       backgroundColor: colorGreenDark,
-                      content: Expanded(
-                        child: Row(
+                      content: Row(
                           children: [
                             Text(
-                              'Successfully joined class "${newClassroom.classroomName}".', 
+                              'Successfully joined class!', 
                               style: textTheme.titleSmallWhite,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -368,17 +362,13 @@ class _EditChildScreenState extends State<EditChildScreen> {
                             Icon(Icons.check_circle_outline_rounded, color: colorWhite)
                           ],
                         ),
-                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
                   Navigator.pop(context);
                 }
               },
-              child: Text(
-                "Join",
-                style: TextStyle(color: colorGreen),
-              ),
+              child: Text("Join", style: TextStyle(color: colorGreen)),
             ),
           ],
         );

@@ -155,5 +155,5 @@ Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
 
-//const String serverBaseUri = "https://api.bookworms.app";
-const String serverBaseUri = "https://71ae-2601-681-5f04-d080-b97d-840f-6a42-c8c9.ngrok-free.app";
+const String serverBaseUri = "https://bookworms.app";
+//const String serverBaseUri = "https://2a4f-2601-681-5f04-d080-7c9a-925-5e5f-8ba4.ngrok-free.app";

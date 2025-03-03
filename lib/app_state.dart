@@ -70,6 +70,8 @@ class AppState extends ChangeNotifier {
     ChildrenServices childrenServices = ChildrenServices();
     Child newChild = await childrenServices.addChild(childName);
     (_account as Parent).children.add(newChild);
+    setChildBookshelves(children.length - 1);
+    setChildClassrooms(children.length - 1);
     notifyListeners();
   }
 
@@ -105,14 +107,13 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Classroom> joinChildClassroom(int childId, String classCode) async {
+  void joinChildClassroom(int childId, String classCode) async {
     ChildrenServices childrenServices = ChildrenServices();
     String guid = children[childId].id;
     Classroom newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
     (_account as Parent).children[childId].classrooms.add(newClassroom);
     setChildBookshelves(childId); // Reset the child's bookshelves.
     notifyListeners();
-    return newClassroom;
   }
 
   // ***** Bookshelves *****
