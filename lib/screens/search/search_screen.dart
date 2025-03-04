@@ -113,7 +113,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < bookSummaries.length; i++) {
-      bookSummaries[i].setImage(bookImages[i]);
+      bookSummaries[i].imageUrl = bookImages[i];
     }
     return bookSummaries;
   }
@@ -197,7 +197,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
     List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
     for (int i = 0; i < bookSummaries.length; i++) {
-      bookSummaries[i].setImage(bookImages[i]);
+      bookSummaries[i].imageUrl = bookImages[i];
     }
 
     if (mounted) {

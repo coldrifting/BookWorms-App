@@ -49,15 +49,7 @@ class ReviewWidget extends StatelessWidget {
               ],
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                onPressed: (() => {}), 
-                icon: const Icon(Icons.more_horiz),
-              ),
-            ],
-          ),
+          addVerticalSpace(12)
         ],
       ),
     );
