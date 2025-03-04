@@ -29,8 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     AppState appState = Provider.of<AppState>(context, listen: false);
-    _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(appState.selectedChildID);
-    _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(appState.selectedChildID);
+    if (appState.isParent) {
+      _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(appState.selectedChildID);
+      _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(appState.selectedChildID);
+    }
   }
 
   @override
@@ -61,18 +63,19 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           addVerticalSpace(16),
 
-          // Recommended bookshelf (similar descriptions).
-          _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
-          addVerticalSpace(24),
-
           if (isParent) ... [
+            // Recommended bookshelf (similar descriptions).
+            _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+            addVerticalSpace(24),
+
+            // Progress/goal tracker overview.
             _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
             addVerticalSpace(24),
-          ],
 
-          // Recommended bookshelf (similar authors).
-          _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
-          addVerticalSpace(24),
+            // Recommended bookshelf (similar authors).
+            _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+            addVerticalSpace(24),
+          ],
 
           // Custom bookshelves
           if (bookshelves.isNotEmpty)
@@ -89,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Fetches and displays the recommended bookshelf (authors, descriptions).
   Widget _getRecommendedBookshelf(Future<Bookshelf> future) {
     return FutureBuilder(
       future: future, 
@@ -96,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+          return SizedBox.shrink(); // Show nothing on error.
         } else {
           return BookshelfWidget(bookshelf: snapshot.data!);
         }

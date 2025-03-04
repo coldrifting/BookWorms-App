@@ -70,7 +70,7 @@ class _Navigation extends State<Navigation> {
   
     List<Widget> pages = [
       const HomeScreen(),
-      if (isParent) const BookshelvesScreen(),
+      const BookshelvesScreen(),
       const SearchScreen(),
       if (isParent) const ProgressScreen(),
       if (!isParent) ClassroomScreen(),
@@ -119,12 +119,11 @@ class _Navigation extends State<Navigation> {
           icon: Icon(Icons.home_outlined, color: colorWhite), 
           label: "Home"
         ),
-        if (isParent)
-          const NavigationDestination(
-            selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-            icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
-            label: "Bookshelf"
-          ),
+        const NavigationDestination(
+          selectedIcon: Icon(Icons.collections_bookmark_rounded), 
+          icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
+          label: "Bookshelf"
+        ),
         const NavigationDestination(
           selectedIcon: Icon(Icons.search_rounded), 
           icon: Icon(Icons.search_outlined, color: colorWhite), 

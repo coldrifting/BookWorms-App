@@ -7,7 +7,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
@@ -27,21 +26,21 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
-    Child selectedChild = appState.children[appState.selectedChildID];
+    List<Bookshelf> bookshelves = appState.bookshelves;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${selectedChild.name}'s Bookshelves",
+          "${appState.isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Bookshelves",
           style: const TextStyle(color: colorWhite)
         ),
         backgroundColor: colorGreen,
-        actions: const [ChangeChildWidget()], // TO DO: Update bookshelves to reflect current child.
+        actions: appState.isParent ? const [ChangeChildWidget()] : [SizedBox.shrink()], // TO DO: Update bookshelves to reflect current child.
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView.builder(
-          itemCount: selectedChild.bookshelves.length + 1,
+          itemCount: bookshelves.length + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
               return Column(
@@ -71,9 +70,15 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   // Upon clicking a book, open the [BookshelfScreen].
   void onBookClicked(int bookshelfIndex) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    Bookshelf fullBookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelfIndex);
+    Bookshelf bookshelf;
+    if (appState.isParent) {
+      bookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelfIndex);
+    } else {
+      bookshelf = appState.bookshelves[bookshelfIndex];
+    }
+
     if (mounted) {
-      pushScreen(context, BookshelfScreen(bookshelf: fullBookshelf));
+      pushScreen(context, BookshelfScreen(bookshelf: bookshelf));
     }
   }
 
@@ -107,8 +112,6 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   // Dialog for creating a new bookshelf.
   void _createBookshelf(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    int selectedChildId = appState.selectedChildID;
-
     showDialog(
       context: context,
       builder: (context) {
@@ -133,10 +136,14 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                 String name = controller.text.trim();
                 if (name.isNotEmpty) {
                   Navigator.pop(context, name);
-                  appState.addChildBookshelf(
-                    selectedChildId, 
-                    Bookshelf(type: BookshelfType.custom, name: name, books: [])
-                  );
+                  if (appState.isParent) {
+                    appState.addChildBookshelf(
+                      appState.selectedChildID, 
+                      Bookshelf(type: BookshelfType.custom, name: name, books: [])
+                    );
+                  } else {
+                    appState.createClassroomBookshelf(Bookshelf(type: BookshelfType.classroom, name: name, books: []));
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -169,7 +176,11 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             ),
             TextButton(
               onPressed: () {
-                appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+                if (appState.isParent) {
+                  appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+                } else {
+                  appState.deleteClassroomBookshelf(bookshelf);
+                }
                 Navigator.of(context).pop();
               },
               child: const Text('Delete'),
@@ -183,9 +194,9 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   /// A bookshelf includes the title, book cover(s), and author(s).
   Widget _bookshelfWidget(TextTheme textTheme, int bookshelfIndex) {
     AppState appState = Provider.of<AppState>(context);
-    Bookshelf bookshelf = appState.children[appState.selectedChildID].bookshelves[bookshelfIndex];
+    Bookshelf bookshelf = appState.bookshelves[bookshelfIndex];
 
-    return bookshelf.type == BookshelfType.custom
+    return bookshelf.type == BookshelfType.custom || !appState.isParent
     ? Slidable(
       key: UniqueKey(),
       endActionPane: ActionPane(
