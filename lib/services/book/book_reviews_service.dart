@@ -4,7 +4,7 @@ import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 
-/// The [BookReviewsService] handles the retrieval of book reviews from the server.
+/// The [BookReviewsService] handles sending the user review data to the server.
 class BookReviewsService {
   final http.Client client;
 
