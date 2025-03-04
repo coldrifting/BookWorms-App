@@ -49,6 +49,7 @@ class ExtendedAppBar extends StatelessWidget {
           addVerticalSpace(4),
           Text(
             style: textTheme.titleLargeWhite,
+            overflow: TextOverflow.ellipsis,
             name,
           ),
           Text(

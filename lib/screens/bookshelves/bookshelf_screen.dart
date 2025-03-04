@@ -2,8 +2,8 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -44,14 +44,13 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
-    Child selectedChild = appState.children[appState.selectedChildID];
     List<BookSummary> books = bookshelf.books;
 
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
         title: Text(
-          "${selectedChild.name}'s Bookshelves", 
+          "${appState.isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Bookshelves", 
           style: TextStyle(
             color: colorWhite, 
             overflow: TextOverflow.ellipsis
@@ -64,9 +63,9 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           onPressed: () { Navigator.of(context).pop(); },
         ),
         actions: [
-          ChangeChildWidget(
+          appState.isParent ? ChangeChildWidget(
             onChildChanged: () { Navigator.of(context).pop(); },
-          )
+          ) : SizedBox.shrink()
         ],
       ),
       body: Padding(
@@ -85,7 +84,8 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                         child: Text(bookshelf.name, style: textTheme.titleMedium),
                       ),
                       Spacer(),
-                      _dropDownMenu(textTheme),
+                      if (bookshelf.type == BookshelfType.custom || !appState.isParent)
+                        _dropDownMenu(textTheme),
                     ],
                   ),
                 ],
@@ -169,7 +169,11 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
   void _deleteBookshelf() {
     AppState appState = Provider.of<AppState>(context, listen: false);
     Navigator.of(context).pop();
-    appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+    if (appState.isParent) {
+      appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+    } else {
+      appState.deleteClassroomBookshelf(bookshelf);
+    }
   }
 
   // When clicking a book widget, navigates to the [BookDetailsScreen].
@@ -203,7 +207,11 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) { 
-              appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+              if (appState.isParent) {
+                appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+              } else {
+                appState.removeBookFromClassroomBookshelf(bookshelf, book);
+              }
               setState(() {
                 bookshelf.books.removeWhere((b) => b.id == book.id);
               });

@@ -3,7 +3,7 @@ class Student {
   final String name;
   int profilePictureIndex;
   int? readingLevel;
-  int? dateOfBirth;
+  String? dateOfBirth;
 
   Student({
     required this.id,

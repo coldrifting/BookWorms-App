@@ -11,8 +11,7 @@ class UserIcons {
   }
 
   /// Returns a random icon index.
-  static Widget getRandomIcon() {
-    int index = Random().nextInt(numIcons);
-    return getIcon(index);
+  static int getRandomIconIndex() {
+    return Random().nextInt(numIcons);
   }
 } 

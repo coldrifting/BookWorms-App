@@ -77,6 +77,14 @@ Uri bookshelvesDeleteUri(String childId, String bookshelfName) {
   return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/delete");
 }
 
+Uri bookshelvesRecommendAuthorsUri(String childId) {
+  return Uri.parse("$serverBaseUri/recommend/sameauthors?childId=$childId");
+}
+
+Uri bookshelvesRecommendDescriptionsUri(String childId) {
+  return Uri.parse("$serverBaseUri/recommend/similardescriptions?childId=$childId");
+}
+
 // ***** Search *****
 
 Uri searchQueryUri(String query) {
@@ -156,4 +164,3 @@ Uri getFullUri(String path) {
 }
 
 const String serverBaseUri = "https://bookworms.app";
-//const String serverBaseUri = "https://2a4f-2601-681-5f04-d080-7c9a-925-5e5f-8ba4.ngrok-free.app";

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:bookworms_app/models/book/book_summary.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
@@ -46,6 +48,54 @@ class ClassroomService {
       return true;
     } else {
       throw Exception('An error occurred when deleting the classroom.');
+    }
+  }
+
+  Future<bool> createClassroomBookshelf(Bookshelf bookshelf) async {
+    final response = await client.sendRequest(
+      uri: createClassroomBookshelfUri(bookshelf.name),
+      method: "POST");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when creating a new bookshelf.');
+    }
+  }
+
+  Future<bool> deleteClassroomBookshelf(Bookshelf bookshelf) async {
+    final response = await client.sendRequest(
+      uri: deleteClassroomBookshelfUri(bookshelf.name),
+      method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when deleting the bookshelf.');
+    }
+  }
+
+  Future<bool> insertBookIntoClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+    final response = await client.sendRequest(
+      uri: insertIntoClassroomBookshelfUri(bookshelf.name, book.id),
+      method: "PUT");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when adding the book to the bookshelf.');
+    }
+  }
+
+  Future<bool> removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+    final response = await client.sendRequest(
+      uri: removeBookFromClassroomBookshelfUri(bookshelf.name, book.id),
+      method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when remove the book from the bookshelf.');
     }
   }
 }

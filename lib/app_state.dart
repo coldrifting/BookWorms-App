@@ -3,6 +3,7 @@ import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom_service.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bookworms_app/models/account/account.dart';
@@ -72,6 +73,7 @@ class AppState extends ChangeNotifier {
     (_account as Parent).children.add(newChild);
     setChildBookshelves(children.length - 1);
     setChildClassrooms(children.length - 1);
+    newChild.profilePictureIndex = UserIcons.getRandomIconIndex();
     notifyListeners();
   }
 
@@ -139,6 +141,20 @@ class AppState extends ChangeNotifier {
     Bookshelf fullBookshelf = await bookshelvesService.getBookshelf(guid, bookshelf);
     _setBookImages([fullBookshelf]);
     return fullBookshelf;
+  }
+
+  Future<Bookshelf> getRecommendedAuthorsBookshelf(int childId) async {
+    String guid = children[childId].id;
+    Bookshelf bookshelf = await bookshelvesService.getRecommendedAuthorsBookshelf(guid);
+    _setBookImages([bookshelf]);
+    return bookshelf;
+  }
+
+  Future<Bookshelf> getRecommendedDescriptionsBookshelf(int childId) async {
+    String guid = children[childId].id;
+    Bookshelf bookshelf = await bookshelvesService.getRecommendedDescriptionBookshelf(guid);
+    _setBookImages([bookshelf]);
+    return bookshelf;
   }
 
   void addChildBookshelf(int childId, Bookshelf bookshelf) async {
@@ -239,6 +255,54 @@ class AppState extends ChangeNotifier {
     return success;
   }
 
+  void createClassroomBookshelf(Bookshelf bookshelf) async {
+    var success = await classroomService.createClassroomBookshelf(bookshelf);
+    if (success) {
+      (_account as Teacher).classroom!.bookshelves.add(bookshelf);
+      notifyListeners();
+    }
+  }
+
+  void deleteClassroomBookshelf(Bookshelf bookshelf) async {
+    var success = await classroomService.deleteClassroomBookshelf(bookshelf);
+    if (success) {
+      (_account as Teacher).classroom!.bookshelves.remove(bookshelf);
+      notifyListeners();
+    }
+  }
+
+  Future<bool> addBookToClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+    BookImagesService bookImagesService = BookImagesService();
+
+    int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
+    
+    if (!bookshelves[index].books.any((b) => b.id == book.id)) {
+      // Add the book server-side.
+      var success = await classroomService.insertBookIntoClassroomBookshelf(bookshelf, book);
+      
+      if (index != -1 && success) {
+        bookshelves[index].books.add(book);
+        var bookIds = await bookImagesService.getBookImages([book.id]);
+        book.imageUrl = bookIds[0];
+        notifyListeners();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+    int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
+    
+    // Remove the book server-side.
+    var success = await classroomService.removeBookFromClassroomBookshelf(bookshelf, book);
+    
+    if (index != -1 && success) {
+      bookshelves[index].books.removeWhere((b) => b.id == book.id);
+      _setBookImages([bookshelf]);
+      notifyListeners();
+    }
+  }
 
   // ***** Account *****
 
