@@ -281,8 +281,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   void _saveToBookshelfModal(TextTheme textTheme, BookSummary book) {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    int selectedChildId = appState.selectedChildID;
-    List<Bookshelf> bookshelves = appState.children[selectedChildId].bookshelves;
+    List<Bookshelf> bookshelves = appState.bookshelves;
 
     showModalBottomSheet(
       context: context,
@@ -322,7 +321,13 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                             ),
                           ),
                           onTap: () async {
-                            bool success = await appState.addBookToBookshelf(selectedChildId, bookshelf, book);
+                            bool success;
+                            if (appState.isParent) {
+                              success = await appState.addBookToBookshelf(appState.selectedChildID, bookshelf, book);
+                            } else {
+                              success = await appState.addBookToClassroomBookshelf(bookshelf, book);
+                            }
+
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

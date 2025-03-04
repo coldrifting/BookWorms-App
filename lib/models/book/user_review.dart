@@ -6,6 +6,7 @@ class UserReview {
   final int icon;
   final String text;
   final double starRating;
+  final String date;
 
   const UserReview({
     required this.firstName,
@@ -14,6 +15,7 @@ class UserReview {
     required this.icon,
     required this.text,
     required this.starRating,
+    required this.date
   });
 
   // Decodes the JSON to create a Review object.
@@ -24,7 +26,8 @@ class UserReview {
       role: json['reviewerRole'],
       icon: json['reviewerIcon'],
       starRating: (json['starRating'] as num).toDouble(),
-      text: json['reviewText']
+      text: json['reviewText'],
+      date: json['reviewDate']
     );
   }
 }
