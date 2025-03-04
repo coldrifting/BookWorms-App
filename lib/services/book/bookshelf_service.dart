@@ -42,7 +42,33 @@ class BookshelfService {
       final data = jsonDecode(response.body);
       return Bookshelf.fromJson(data);
     } else {
-      throw Exception("An error occurred when fetching the child's bookshelves.");
+      throw Exception("An error occurred when fetching the child's bookshelf.");
+    }
+  }
+
+  Future<Bookshelf> getRecommendedAuthorsBookshelf(String guid) async {
+    final response = await client.sendRequest(
+        uri: bookshelvesRecommendAuthorsUri(guid),
+        method: "GET");
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Bookshelf.fromJson(data);
+    } else {
+      throw Exception("An error occurred when fetching the child's recommended bookshelf.");
+    }
+  }
+
+  Future<Bookshelf> getRecommendedDescriptionBookshelf(String guid) async {
+    final response = await client.sendRequest(
+        uri: bookshelvesRecommendDescriptionsUri(guid),
+        method: "GET");
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Bookshelf.fromJson(data);
+    } else {
+      throw Exception("An error occurred when fetching the child's recommended bookshelf.");
     }
   }
 

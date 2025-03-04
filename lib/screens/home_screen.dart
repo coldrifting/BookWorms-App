@@ -21,10 +21,23 @@ class HomeScreen extends StatefulWidget {
 /// The state of the [HomeScreen].
 class _HomeScreenState extends State<HomeScreen> {
 
+  late Future<Bookshelf> _recommendedAuthorsBookshelf;
+  late final Future<Bookshelf> _recommendedDescriptionsBookshelf;
+
+  @override
+  void initState() {
+    super.initState();
+
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    if (appState.isParent) {
+      _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(appState.selectedChildID);
+      _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(appState.selectedChildID);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
     List<Bookshelf> bookshelves = appState.bookshelves.where((bookshelf) => bookshelf.books.length >= 3 
@@ -49,24 +62,49 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         children: [
           addVerticalSpace(16),
-          if (bookshelves.isNotEmpty) ...[
-            BookshelfWidget(bookshelf: bookshelves[0]),
-            addVerticalSpace(24),
-          ],
+
           if (isParent) ... [
+            // Recommended bookshelf (similar descriptions).
+            _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+            addVerticalSpace(24),
+
+            // Progress/goal tracker overview.
             _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
             addVerticalSpace(24),
+
+            // Recommended bookshelf (similar authors).
+            _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+            addVerticalSpace(24),
           ],
-          ...bookshelves.skip(1).map((bookshelf) {
-            return Column(
-              children: [
-                BookshelfWidget(bookshelf: bookshelf),
-                addVerticalSpace(24),
-              ],
-            );
-          }),
+
+          // Custom bookshelves
+          if (bookshelves.isNotEmpty)
+            ...bookshelves.map((bookshelf) {
+              return Column(
+                children: [
+                  BookshelfWidget(bookshelf: bookshelf),
+                  addVerticalSpace(24),
+                ],
+              );
+            }),
         ],
       ),
+    );
+  }
+
+  /// Fetches and displays the recommended bookshelf (authors, descriptions).
+  Widget _getRecommendedBookshelf(Future<Bookshelf> future) {
+    return FutureBuilder(
+      future: future, 
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return SizedBox.shrink(); // Show nothing on error.
+        } else {
+          return BookshelfWidget(bookshelf: snapshot.data!);
+        }
+      }
     );
   }
 

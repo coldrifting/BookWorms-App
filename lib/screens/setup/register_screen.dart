@@ -1,3 +1,4 @@
+import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -83,6 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             MaterialPageRoute(builder: (_) => const Navigation()),
           );
         }
+        appState.account.profilePictureIndex = UserIcons.getRandomIconIndex();
       }
     }
   }

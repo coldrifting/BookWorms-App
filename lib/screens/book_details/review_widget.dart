@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 /// The [ReviewWidget] captures a single user corresponding to a specific
 /// book. A user review contains the user's icon, name, role, star rating,
@@ -91,7 +91,7 @@ class ReviewWidget extends StatelessWidget {
       children: [
         Row(
           children: [
-            UserIcons.getRandomIcon(),
+            UserIcons.getIcon(review.icon),
             addHorizontalSpace(5),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +107,7 @@ class ReviewWidget extends StatelessWidget {
             _buildRole(),
           ],
         ),
-        _buildDate("Date"), // Temporary date
+        _buildDate(review.date),
       ],
     );
   }
@@ -127,8 +127,9 @@ class ReviewWidget extends StatelessWidget {
   }
 
   /// From the given date, determines the human-readable version comparative
-  /// to today's date. Right now, it returns a default string.
+  /// to today's date.
   Widget _buildDate(String date) {
-    return const Text("");
+    final dateTime = DateTime.parse(date).toUtc();
+    return Text(timeago.format(dateTime));
   }
 }
