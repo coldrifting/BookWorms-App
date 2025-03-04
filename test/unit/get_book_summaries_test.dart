@@ -11,8 +11,8 @@ import 'package:mockito/mockito.dart';
 import 'mocks/http_client_test.mocks.dart';
 
 void main() {
-  group('BookSummariesService', () {
-    late SearchService bookSummariesService;
+  group('SearchService', () {
+    late SearchService searchService;
     late MockClient mockClient;
 
     setUpAll(() {
@@ -22,7 +22,7 @@ void main() {
 
     setUp(() {
       mockClient = MockClient();
-      bookSummariesService = SearchService(client: mockClient);
+      searchService = SearchService(client: mockClient);
     });
 
     test('returns a list of BookSummaries if the http call completes successfully', () async {
@@ -52,7 +52,7 @@ void main() {
       when(mockClient.get(searchQueryUri("test"), headers: {"Accept": "application/json"}))
           .thenAnswer((_) async => http.Response(mockResponse, 200));
 
-      final result = await bookSummariesService.search('test');
+      final result = await searchService.search('test');
 
       expect(result, isA<List<BookSummary>>());
       expect(result.length, 3);
@@ -80,7 +80,7 @@ void main() {
       when(mockClient.get(searchQueryUri("test"), headers: {"Accept": "application/json"}))
           .thenAnswer((_) async => http.Response('Not Found', 404));
 
-      expect(() async => await bookSummariesService.search('test'), throwsException);
+      expect(() async => await searchService.search('test'), throwsException);
     });
   });
 }
