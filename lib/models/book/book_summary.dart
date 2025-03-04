@@ -4,7 +4,7 @@ class BookSummary {
   final String title;
   final List<String> authors;
   final int? level;
-  final double? rating;
+  double? rating;
   String? imageUrl;
 
   BookSummary({
@@ -26,9 +26,5 @@ class BookSummary {
         ? ((json['rating'] as num).toDouble() * 10).roundToDouble() / 10 // Round to 1 decimal place
         : null
     );
-  }
-
-  void setImage(String newImageUrl) {
-    imageUrl = newImageUrl;
   }
 }

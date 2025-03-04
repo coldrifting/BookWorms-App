@@ -301,7 +301,7 @@ class AppState extends ChangeNotifier {
     BookImagesService bookImagesService = BookImagesService();
     List<String> recentBookImages = await bookImagesService.getBookImages(recentBookIds);
     for (int i = 0; i < recentBookIds.length; i++) {
-      recentBooks[i].setImage(recentBookImages[i]);
+      recentBooks[i].imageUrl = recentBookImages[i];
     }
     return ListQueue<BookSummary>.from(recentBooks);
   }

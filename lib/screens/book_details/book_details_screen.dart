@@ -1,6 +1,9 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/services/book/book_details_service.dart';
+import 'package:bookworms_app/services/book/book_summary_service.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,7 +36,6 @@ class BookDetailsScreen extends StatefulWidget {
 /// The state of the [BookDetailsScreen].
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late ScrollController _scrollController; // Sets initial screen offset.
-
   final GlobalKey _parentKey = GlobalKey();
   final GlobalKey _imageKey = GlobalKey();
 
@@ -42,24 +44,21 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late CachedNetworkImage image;
 
   var isExpanded = false; // Denotes if the description/book information is expanded.
-  var maxLength = 500; // Max length of the shortened description.
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setScrollOffset();
+    });
     bookSummary = widget.summaryData;
     bookDetails = widget.detailsData;
-
     image = CachedNetworkImage(
       imageUrl: bookSummary.imageUrl!,
       placeholder: (context, url) => Center(child: CircularProgressIndicator()),
       errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
     );
-    
-    _scrollController = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setScrollOffset();
-    });
   }
 
   // Set the offset of the scroll controller.
@@ -386,7 +385,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               "Reviews  |  $rating",
             ),
             IconButton(
-              onPressed: (addReview),
+              onPressed: (_addReview),
               icon: const Icon(Icons.add),
             ),
           ],
@@ -396,12 +395,26 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
-  void addReview() {
+  void _addReview() {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => CreateReviewWidget(bookId: bookSummary.id)));
-        // TODO - Refresh reviews here
-        //.whenComplete();
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateReviewWidget(
+          bookId: bookSummary.id,
+          updateReviews: _updateReviews
+        )
+      )
+    );
+  }
+
+  Future<void> _updateReviews() async {
+    BookSummaryService bookSummaryService = BookSummaryService();
+    double? updatedbookRating = (await bookSummaryService.getBookSummary(bookSummary.id)).rating;
+    BookDetailsService bookDetailsService = BookDetailsService();
+    List<UserReview> updatedBookReviews =  (await bookDetailsService.getBookDetails(bookSummary.id)).reviews;
+    setState(() {
+      bookSummary.rating = updatedbookRating;
+      bookDetails.reviews = updatedBookReviews;
+    });
   }
 }
