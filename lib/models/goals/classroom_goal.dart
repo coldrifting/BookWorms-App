@@ -1,58 +1,38 @@
 import 'package:bookworms_app/models/goals/goal.dart';
 
-class ClassroomCompletionGoal extends Goal {
+enum ClassroomGoalType{ completion, numBooks }
+
+class ClassroomGoal extends Goal {
+  final ClassroomGoalType type;
   final int studentsCompleted;
   final int totalStudents;
-  final int avgCompletionTime;
+  final int? avgCompletionTime;
+  final int? targetNumBooks;
+  final int? avgBooksRead;
 
-  ClassroomCompletionGoal({
-    required super.goalId,
-    required super.title,
-    required super.startDate,
-    required super.endDate,
-    required this.studentsCompleted,
-    required this.totalStudents,
-    required this.avgCompletionTime
+  ClassroomGoal({
+    required super.goalId, 
+    required super.title, 
+    required super.startDate, 
+    required super.endDate, 
+    required this.type,
+    required this.studentsCompleted, 
+    required this.totalStudents, 
+    this.avgCompletionTime, 
+    this.targetNumBooks, 
+    this.avgBooksRead
   });
 
-  factory ClassroomCompletionGoal.fromJson(Map<String, dynamic> json) {
-    return ClassroomCompletionGoal(
+  factory ClassroomGoal.fromJson(Map<String, dynamic> json, String goalType) {
+    return ClassroomGoal(
       goalId: json['goalId'],
       title: json['title'],
       startDate: json['startDate'],
       endDate: json['endDate'],
-      studentsCompleted: json['progress'],
-      totalStudents: json['duration'],
-      avgCompletionTime: json['avgCompletionTime']
-    );
-  }
-}
-
-class ClassroomNumBookGoal extends Goal {
-  final int studentsCompleted;
-  final int totalStudents;
-  final int targetNumBooks;
-  final int avgBooksRead;
-
-  ClassroomNumBookGoal({
-    required super.goalId,
-    required super.title,
-    required super.startDate,
-    required super.endDate,
-    required this.studentsCompleted,
-    required this.totalStudents,
-    required this.targetNumBooks,
-    required this.avgBooksRead
-  });
-
-  factory ClassroomNumBookGoal.fromJson(Map<String, dynamic> json) {
-    return ClassroomNumBookGoal(
-      goalId: json['goalId'],
-      title: json['title'],
-      startDate: json['startDate'],
-      endDate: json['endDate'],
+      type: goalType == "completionGoals" ? ClassroomGoalType.completion : ClassroomGoalType.numBooks,
       studentsCompleted: json['studentsCompleted'],
       totalStudents: json['totalStudents'],
+      avgCompletionTime: json['averageCompletionTime'],
       targetNumBooks: json['targetNumBooks'],
       avgBooksRead: json['avgerageBooksRead']
     );
