@@ -7,10 +7,12 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 
 class CreateReviewWidget extends StatefulWidget {
   final String bookId;
+  final Future<void> Function() updateReviews;
 
   const CreateReviewWidget({
     super.key,
     required this.bookId,
+    required this.updateReviews
   });
 
   @override
@@ -22,12 +24,14 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
   String _content = '';
   double _rating = 0.0;
 
-  void _saveReview() {
+  Future<void> _saveReview() async {
     if (_formKey.currentState?.validate() ?? false) {
       BookReviewsService bookReviewsService = BookReviewsService();
-      bookReviewsService.sendReview(widget.bookId, _content, _rating);
-      _rating = 0.0;
-      Navigator.of(context).pop();
+      await bookReviewsService.sendReview(widget.bookId, _content, _rating);
+      await widget.updateReviews();
+      if (mounted) {
+        Navigator.of(context).pop();
+      } 
     }
   }
 

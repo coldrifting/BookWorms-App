@@ -1,6 +1,10 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/services/book/book_details_service.dart';
+import 'package:bookworms_app/services/book/book_difficulty_service.dart';
+import 'package:bookworms_app/services/book/book_summary_service.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,7 +37,6 @@ class BookDetailsScreen extends StatefulWidget {
 /// The state of the [BookDetailsScreen].
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late ScrollController _scrollController; // Sets initial screen offset.
-
   final GlobalKey _parentKey = GlobalKey();
   final GlobalKey _imageKey = GlobalKey();
 
@@ -41,25 +44,22 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late BookDetails bookDetails;
   late CachedNetworkImage image;
 
-  var isExpanded = false; // Denotes if the description/book information is expanded.
-  var maxLength = 500; // Max length of the shortened description.
+  var _isExpanded = false; // Denotes if the description/book information is expanded.
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setScrollOffset();
+    });
     bookSummary = widget.summaryData;
     bookDetails = widget.detailsData;
-
     image = CachedNetworkImage(
       imageUrl: bookSummary.imageUrl!,
       placeholder: (context, url) => Center(child: CircularProgressIndicator()),
       errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
     );
-    
-    _scrollController = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setScrollOffset();
-    });
   }
 
   // Set the offset of the scroll controller.
@@ -78,8 +78,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       // Calculate the new scroll offset
       double offset = newImageHeight - 200;
       _scrollController.jumpTo(offset > 0 ? offset : newImageHeight);
+    }
   }
-}
 
 
   /// The entire book details page, containing book image, details, action buttons,
@@ -154,7 +154,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     // Toggles the expansion of the description/book information.
     void toggleExpansion() {
       setState(() {
-        isExpanded = !isExpanded;
+        _isExpanded = !_isExpanded;
       });
     }
 
@@ -190,7 +190,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           _description(textTheme),
           // "Expand" icon
           IconButton(
-            icon: Icon(isExpanded
+            icon: Icon(_isExpanded
                 ? Icons.keyboard_arrow_up_sharp
                 : Icons.keyboard_arrow_down_sharp),
             onPressed: toggleExpansion,
@@ -210,8 +210,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         children: [
           RichText(
             // If not expanded, 5 lines are shown at most with ellipsis present.
-            maxLines: isExpanded ? null : 5,
-            overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+            maxLines: _isExpanded ? null : 5,
+            overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             text: TextSpan(
               style: textTheme.bodyLarge,
               children: <TextSpan>[
@@ -226,7 +226,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               ],
             ),
           ),
-          if (isExpanded) ..._expandedDetails(textTheme)
+          if (_isExpanded) ..._expandedDetails(textTheme)
         ],
       ),
     );
@@ -268,19 +268,21 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ElevatedButton.icon(
-            icon: const Icon(Icons.bookmark),
-            onPressed: (() => {_saveToBookshelfModal(textTheme, book)}),
-            label: const Text("Save")),
+          icon: const Icon(Icons.bookmark),
+          onPressed: (() => {_saveToBookshelfModal(textTheme)}),
+          label: const Text("Save")
+        ),
         addHorizontalSpace(100),
         ElevatedButton.icon(
-            icon: const Icon(Icons.fitness_center),
-            onPressed: (() => {}),
-            label: const Text("Rate")),
+          icon: const Icon(Icons.fitness_center),
+          onPressed: (() => {_rateBookDifficultyDialog(textTheme)}),
+          label: const Text("Rate")
+        ),
       ],
     );
   }
 
-  void _saveToBookshelfModal(TextTheme textTheme, BookSummary book) {
+  void _saveToBookshelfModal(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context, listen: false);
     List<Bookshelf> bookshelves = appState.bookshelves;
 
@@ -324,9 +326,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           onTap: () async {
                             bool success;
                             if (appState.isParent) {
-                              success = await appState.addBookToBookshelf(appState.selectedChildID, bookshelf, book);
+                              success = await appState.addBookToBookshelf(appState.selectedChildID, bookshelf, bookSummary);
                             } else {
-                              success = await appState.addBookToClassroomBookshelf(bookshelf, book);
+                              success = await appState.addBookToClassroomBookshelf(bookshelf, bookSummary);
                             }
 
                             if (context.mounted) {
@@ -368,6 +370,66 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
+void _rateBookDifficultyDialog(TextTheme textTheme) {
+  AppState appState = Provider.of<AppState>(context, listen: false);
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Center(
+          child: Text(
+            'Rate Book Difficulty',
+            style: textTheme.titleLarge,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "How difficult was the book for ${appState.children[appState.selectedChildID].name}?",
+              textAlign: TextAlign.center,
+            ),
+            addVerticalSpace(16),
+            _difficultyButton('Very Easy', 1, textTheme),
+            _difficultyButton('Easy', 2, textTheme),
+            _difficultyButton('Just Right', 3, textTheme),
+            _difficultyButton('Hard', 4, textTheme),
+            _difficultyButton('Very Hard', 5, textTheme),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget _difficultyButton(String text, int index, TextTheme textTheme) {
+  AppState appState = Provider.of<AppState>(context, listen: false);
+  return Padding(
+    padding: const EdgeInsets.all(4.0),
+    child: SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: () {
+          BookDifficultyService bookDifficultyService = BookDifficultyService();
+          bookDifficultyService.sendDifficulty(
+            bookSummary.id,
+            appState.children[appState.selectedChildID].id,
+            index
+          );
+          Navigator.of(context, rootNavigator: true).pop();
+        },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+        child: Text(text, style: textTheme.bodyLarge),
+      ),
+    ),
+  );
+}
+
   /// The list of review widgets corresponding to the given book.
   Widget _reviewList(TextTheme textTheme) {
     var rating = bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
@@ -391,7 +453,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               "Reviews  |  $rating",
             ),
             IconButton(
-              onPressed: (addReview),
+              onPressed: (_addReview),
               icon: const Icon(Icons.add),
             ),
           ],
@@ -401,12 +463,26 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
-  void addReview() {
+  void _addReview() {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => CreateReviewWidget(bookId: bookSummary.id)));
-        // TODO - Refresh reviews here
-        //.whenComplete();
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateReviewWidget(
+          bookId: bookSummary.id,
+          updateReviews: _updateReviews
+        )
+      )
+    );
+  }
+
+  Future<void> _updateReviews() async {
+    BookSummaryService bookSummaryService = BookSummaryService();
+    double? updatedbookRating = (await bookSummaryService.getBookSummary(bookSummary.id)).rating;
+    BookDetailsService bookDetailsService = BookDetailsService();
+    List<UserReview> updatedBookReviews =  (await bookDetailsService.getBookDetails(bookSummary.id)).reviews;
+    setState(() {
+      bookSummary.rating = updatedbookRating;
+      bookDetails.reviews = updatedBookReviews;
+    });
   }
 }

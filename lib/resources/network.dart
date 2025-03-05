@@ -35,12 +35,16 @@ Uri bookDetailsAllUri(String bookId) {
   return Uri.parse("$serverBaseUri/books/$bookId/details/all");
 }
 
+Uri bookCoverUri(String bookId) {
+  return Uri.parse("$serverBaseUri/books/$bookId/cover");
+}
+
 Uri bookReviewUri(String bookId) {
   return Uri.parse("$serverBaseUri/books/$bookId/review");
 }
 
-Uri bookCoverUri(String bookId) {
-  return Uri.parse("$serverBaseUri/books/$bookId/cover");
+Uri bookDifficultyUri(String bookId) {
+  return Uri.parse("$serverBaseUri/books/$bookId/rate-difficulty");
 }
 
 // ***** Bookshelves *****

@@ -8,9 +8,9 @@ class BookDetails {
   final String? isbn13;
   final int publishYear;
   final int? pageCount;
-  final List<UserReview> reviews;
+  List<UserReview> reviews;
 
-  const BookDetails({
+  BookDetails({
     required this.description,
     required this.subjects,
     // NOTE : At least one of the isbns will be non-empty, but it is not guaranteed both will be non-empty.
