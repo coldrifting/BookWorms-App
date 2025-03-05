@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
-import 'package:bookworms_app/services/classroom_service.dart';
+import 'package:bookworms_app/services/classroom/classroom_service.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

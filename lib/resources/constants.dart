@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+// A goal has a type of 'child' or 'classroom'.
+enum GoalType {
+  child(),
+  classroom();
+}
+
 // Bookshelf type to define the bookshelf color.
 enum BookshelfType {
   completed("Completed", Colors.green),
