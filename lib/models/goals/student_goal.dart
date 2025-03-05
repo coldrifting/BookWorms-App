@@ -1,21 +1,18 @@
 import 'dart:ffi';
+import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/constants.dart';
 
-class CompletionGoal {
-  final String goalId;
+class CompletionGoal extends Goal {
   final GoalType type;
-  final String title;
-  final String startDate;
-  final String endDate;
   final Float progress;
   final int duration;
 
   CompletionGoal({
-    required this.goalId,
+    required super.goalId,
     required this.type,
-    required this.title,
-    required this.startDate,
-    required this.endDate,
+    required super.title,
+    required super.startDate,
+    required super.endDate,
     required this.progress,
     required this.duration,
   });
@@ -33,21 +30,17 @@ class CompletionGoal {
   }
 }
 
-class NumBookGoal {
-  final String goalId;
+class NumBookGoal extends Goal {
   final GoalType type;
-  final String title;
-  final String startDate;
-  final String endDate;
   final int targetNumBooks;
   final int numBooks;
 
   NumBookGoal({
-    required this.goalId,
+    required super.goalId,
     required this.type,
-    required this.title,
-    required this.startDate,
-    required this.endDate,
+    required super.title,
+    required super.startDate,
+    required super.endDate,
     required this.targetNumBooks,
     required this.numBooks,
   });
