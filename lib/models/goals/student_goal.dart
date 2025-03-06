@@ -30,19 +30,13 @@ class StudentGoal extends Goal {
     this.classCode, 
   });
 
-  factory StudentGoal.fromJson(Map<String, dynamic> json, String goalType) {
+  factory StudentGoal.fromJson(Map<String, dynamic> json, StudentGoalType goalType) {
     return StudentGoal(
       goalId: json['goalId'],
       title: json['title'],
       startDate: json['startDate'],
       endDate: json['endDate'],
-      type: switch (goalType) {
-        "completionGoals" => StudentGoalType.completion,
-        "numBookGoals" => StudentGoalType.numBook,
-        "classCompletionGoals" => StudentGoalType.classCompletion,
-        "classNumBooksGoals" => StudentGoalType.classNumBook,
-        String() => throw Exception("Not a defined goal type."),
-      },
+      type: goalType,
       progress: json['progress'],
       duration: json['duration'],
       targetNumBooks: json['targetNumBooks'],

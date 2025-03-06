@@ -3,7 +3,7 @@ import 'package:bookworms_app/models/goals/goal.dart';
 enum ClassroomGoalType{ completion, numBooks }
 
 class ClassroomGoal extends Goal {
-  final ClassroomGoalType type;
+  final ClassroomGoalType? type;
   final int studentsCompleted;
   final int totalStudents;
   final int? avgCompletionTime;
@@ -23,18 +23,18 @@ class ClassroomGoal extends Goal {
     this.avgBooksRead
   });
 
-  factory ClassroomGoal.fromJson(Map<String, dynamic> json, String goalType) {
+  factory ClassroomGoal.fromJson(Map<String, dynamic> json, ClassroomGoalType goalType) {
     return ClassroomGoal(
       goalId: json['goalId'],
       title: json['title'],
       startDate: json['startDate'],
       endDate: json['endDate'],
-      type: goalType == "completionGoals" ? ClassroomGoalType.completion : ClassroomGoalType.numBooks,
+      type: goalType,
       studentsCompleted: json['studentsCompleted'],
       totalStudents: json['totalStudents'],
       avgCompletionTime: json['averageCompletionTime'],
       targetNumBooks: json['targetNumBooks'],
-      avgBooksRead: json['avgerageBooksRead']
+      avgBooksRead: json['averageBooksRead']
     );
   }
 }

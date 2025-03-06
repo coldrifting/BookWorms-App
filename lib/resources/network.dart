@@ -167,7 +167,7 @@ Uri getClassroomGoalsUri() {
   return Uri.parse("$serverBaseUri/homeroom/goals");
 }
 
-Uri classroomAddGoalUri() {
+Uri addClassroomGoalUri() {
   return Uri.parse("$serverBaseUri/homeroom/goals/add");
 }
 
