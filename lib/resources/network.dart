@@ -161,6 +161,32 @@ Uri deleteClassroomBookshelfUri(String bookshelfName) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/delete");
 }
 
+// ***** Classroom Goals *****
+
+Uri getClassroomGoalsUri() {
+  return Uri.parse("$serverBaseUri/homeroom/goals");
+}
+
+Uri addClassroomGoalUri() {
+  return Uri.parse("$serverBaseUri/homeroom/goals/add");
+}
+
+Uri getClassroomGoalDetailsUri(String goalId) {
+  return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/details");
+}
+
+Uri getClassroomGoalStudentDetailsUri(String goalId) {
+  return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/details/all");
+}
+
+Uri editClassroomGoalUri(String goalId) {
+  return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/edit");
+}
+
+Uri deleteClassroomGoalUri(String goalId) {
+  return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/delete");
+}
+
 // ***** Other *****
 
 Uri getFullUri(String path) {
