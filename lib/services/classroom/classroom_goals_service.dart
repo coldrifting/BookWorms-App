@@ -17,26 +17,7 @@ class ClassroomGoalsService {
 
     if (response.ok) {
       final data = jsonDecode(response.body);
-      List<ClassroomGoal> goals = [];
-
-      // Parse completion goals.
-      if (data.containsKey("completionGoals")) {
-        goals.addAll(
-          (data["completionGoals"] as List).map(
-            (goal) => ClassroomGoal.fromJson(json: goal, goalType: ClassroomGoalType.completion),
-          ),
-        );
-      }
-
-      // Parse numBook goals.
-      if (data.containsKey("numBookGoals")) {
-        goals.addAll(
-          (data["numBookGoals"] as List).map(
-            (goal) => ClassroomGoal.fromJson(json: goal, goalType: ClassroomGoalType.numBooks),
-          ),
-        );
-      }
-      return goals;
+      return data.map((goal) => ClassroomGoal.fromJson(json: goal));
     } else {
       throw Exception('An error occurred when getting the classroom goals.');
     }
@@ -55,8 +36,7 @@ class ClassroomGoalsService {
 
     if (response.ok) {
       final data = jsonDecode(response.body);
-      ClassroomGoalType newGoalType = targetNumBooks == null ? ClassroomGoalType.completion : ClassroomGoalType.numBooks;
-      return ClassroomGoal.fromJson(json: data, goalType: newGoalType);
+      return ClassroomGoal.fromJson(json: data);
     } else {
       throw Exception('An error occurred when adding the classroom goal.');
     }
@@ -89,7 +69,7 @@ class ClassroomGoalsService {
     if (response.ok) {
       return;
     } else {
-      throw Exception('An error occurred when deleting the classroom goal.');
+      throw Exception('An error occurred when editing the classroom goal.');
     }
   }
 

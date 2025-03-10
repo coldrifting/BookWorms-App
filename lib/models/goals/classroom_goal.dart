@@ -1,15 +1,15 @@
+import 'package:bookworms_app/models/goals/completion_goal.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
+import 'package:bookworms_app/models/goals/num_books_goal.dart';
 import 'package:bookworms_app/models/goals/student_goal_status.dart';
 
 enum ClassroomGoalType{ completion, numBooks }
 
 class ClassroomGoal extends Goal {
-  final ClassroomGoalType? type;
   final int studentsCompleted;
   final int totalStudents;
-  final int? avgCompletionTime;
-  final int? targetNumBooks;
-  final int? avgBooksRead;
+  final CompletionGoal? completionGoal;
+  final NumBooksGoal? numBooksGoal;
   final List<StudentGoalStatus>? studentGoalStatus;
 
   ClassroomGoal({
@@ -19,25 +19,21 @@ class ClassroomGoal extends Goal {
     required super.endDate, 
     required this.studentsCompleted, 
     required this.totalStudents, 
-    this.type,
-    this.avgCompletionTime, 
-    this.targetNumBooks, 
-    this.avgBooksRead,
+    this.completionGoal,
+    this.numBooksGoal,
     this.studentGoalStatus
   });
 
-  factory ClassroomGoal.fromJson({required Map<String, dynamic> json, ClassroomGoalType? goalType}) {
+  factory ClassroomGoal.fromJson({required Map<String, dynamic> json}) {
     return ClassroomGoal(
       goalId: json['goalId'],
       title: json['title'],
       startDate: json['startDate'],
       endDate: json['endDate'],
-      type: goalType,
       studentsCompleted: json['studentsCompleted'],
       totalStudents: json['totalStudents'],
-      avgCompletionTime: json['averageCompletionTime'],
-      targetNumBooks: json['targetNumBooks'],
-      avgBooksRead: json['averageBooksRead'],
+      completionGoal: CompletionGoal.fromJson(json['completionGoalData']),
+      numBooksGoal: NumBooksGoal.fromJson(json['numBooksGoalData']),
       studentGoalStatus: (json['studentGoalStatus'] as List)
         .map((goalStatus) => StudentGoalStatus.fromJson(goalStatus))
         .toList()
