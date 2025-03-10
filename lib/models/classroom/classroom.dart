@@ -1,5 +1,6 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
+import 'package:bookworms_app/models/goals/classroom_goal.dart';
 
 class Classroom {
   final String classCode;
@@ -7,7 +8,7 @@ class Classroom {
   final List<Student> students;
   final int classIcon;
   final List<Bookshelf> bookshelves;
-  // TO DO : Create and store a list of ClassroomGoal objects.
+  List<ClassroomGoal>? classroomGoals;
 
   Classroom({
     required this.classCode,
@@ -15,6 +16,7 @@ class Classroom {
     required this.students,
     required this.classIcon,
     required this.bookshelves,
+    this.classroomGoals
   });
 
   // Decodes the JSON to create a Classroom object.

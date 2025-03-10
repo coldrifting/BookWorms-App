@@ -1,7 +1,9 @@
 import 'dart:collection';
 import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
+import 'package:bookworms_app/services/classroom/classroom_goals_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_service.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
@@ -303,6 +305,20 @@ class AppState extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+  // ***** Classroom Goals - Teacher *****
+
+  ClassroomGoalsService classroomGoalsService = ClassroomGoalsService();
+  List<ClassroomGoal>? get classroomGoals => (_account as Teacher).classroom?.classroomGoals;
+
+
+  void getClassroomGoals() async {
+    List<ClassroomGoal> goals = await classroomGoalsService.getClassroomGoals();
+    (_account as Teacher).classroom?.classroomGoals = goals;
+    notifyListeners();
+  }
+
 
   // ***** Account *****
 

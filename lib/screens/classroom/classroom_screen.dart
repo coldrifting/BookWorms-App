@@ -3,6 +3,7 @@ import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/screens/classroom/class_goals_screen.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -141,7 +142,15 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           child: OptionWidget(
             name: "Class Goals",
             icon: Icons.data_usage,
-            onTap: () {},
+            onTap: () {
+              if (mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ClassGoalsScreen()),
+                );
+              }
+            },
           ),
         ),
         addVerticalSpace(8.0),
