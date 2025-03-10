@@ -21,8 +21,7 @@ class AccountDetailsEditService {
 
     if (response.ok) {
       return AccountDetails.fromJson(readResponse(response));
-    }
-    else {
+    } else {
       throw Exception("An error occurred when editing the user account information.");
     }
   }

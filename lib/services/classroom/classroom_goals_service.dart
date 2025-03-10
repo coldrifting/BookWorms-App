@@ -9,7 +9,7 @@ class ClassroomGoalsService {
 
   ClassroomGoalsService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<List<ClassroomGoal>?> getClassroomGoals() async {
+  Future<List<ClassroomGoal>> getClassroomGoals() async {
     final response = await client.sendRequest(
       uri: getClassroomGoalsUri(),
       method: "GET"
@@ -23,7 +23,7 @@ class ClassroomGoalsService {
       if (data.containsKey("completionGoals")) {
         goals.addAll(
           (data["completionGoals"] as List).map(
-            (goal) => ClassroomGoal.fromJson(goal, ClassroomGoalType.completion),
+            (goal) => ClassroomGoal.fromJson(json: goal, goalType: ClassroomGoalType.completion),
           ),
         );
       }
@@ -32,19 +32,17 @@ class ClassroomGoalsService {
       if (data.containsKey("numBookGoals")) {
         goals.addAll(
           (data["numBookGoals"] as List).map(
-            (goal) => ClassroomGoal.fromJson(goal, ClassroomGoalType.numBooks),
+            (goal) => ClassroomGoal.fromJson(json: goal, goalType: ClassroomGoalType.numBooks),
           ),
         );
       }
       return goals;
-    } else if (response.statusCode >= 400 && response.statusCode < 500) {
-      return null;
     } else {
       throw Exception('An error occurred when getting the classroom goals.');
     }
   }
 
-  Future<ClassroomGoal?> addClassroomGoal(String title, String endDate, {int? targetNumBooks}) async {
+  Future<ClassroomGoal> addClassroomGoal(String title, String endDate, {int? targetNumBooks}) async {
     final response = await client.sendRequest(
       uri: addClassroomGoalUri(),
       method: "POST",
@@ -58,11 +56,40 @@ class ClassroomGoalsService {
     if (response.ok) {
       final data = jsonDecode(response.body);
       ClassroomGoalType newGoalType = targetNumBooks == null ? ClassroomGoalType.completion : ClassroomGoalType.numBooks;
-      return ClassroomGoal.fromJson(data, newGoalType);
-    } else if (response.statusCode >= 400 && response.statusCode < 500) {
-      return null;
+      return ClassroomGoal.fromJson(json: data, goalType: newGoalType);
     } else {
       throw Exception('An error occurred when adding the classroom goal.');
+    }
+  }
+
+  Future<ClassroomGoal> getClassroomGoalStudentDetails(String goalId) async {
+    final response = await client.sendRequest(
+      uri: getClassroomGoalStudentDetailsUri(goalId),
+      method: "GET"
+    );
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return ClassroomGoal.fromJson(json: data);
+    } else {
+      throw Exception('An error occurred when getting the classroom student goal details.');
+    }
+  }
+
+  Future<void> editClassroomGoal({required String goalId, String? newTitle, String? newEndDate, int? newTargetNumBooks}) async {
+    final response = await client.sendRequest(
+      uri: editClassroomGoalUri(goalId),
+      method: "PUT",
+      payload: {
+        if (newTitle != null) "newTitle": newTitle,
+        if (newEndDate != null) "newEndDate": newEndDate,
+        if (newTargetNumBooks != null) "newTargetNumBooks": newTargetNumBooks
+      }
+    );
+    if (response.ok) {
+      return;
+    } else {
+      throw Exception('An error occurred when deleting the classroom goal.');
     }
   }
 
