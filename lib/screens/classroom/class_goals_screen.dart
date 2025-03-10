@@ -65,29 +65,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 }
               );
             } else {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: colorWhite,
-                    border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          goals.isEmpty ? "Add your first class goal" : "Add a new goal", 
-                          style: textTheme.titleMedium
-                        ),
-                        Spacer(),
-                        Icon(Icons.add_circle_outline, size: 32, color: colorGreyDark),
-                      ],
-                    )
-                  )
-                ),
-              );
+              return _addClassGoalWidget(textTheme);
             }
           },
         ),
@@ -156,6 +134,128 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _addClassGoalWidget(TextTheme textTheme) {
+    List<ClassroomGoal> goals = [];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: InkWell(
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorWhite,
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Row(
+              children: [
+                Text(
+                  goals.isEmpty ? "Add your first class goal" : "Add a new goal", 
+                  style: textTheme.titleMedium
+                ),
+                Spacer(),
+                Icon(Icons.add_circle_outline, size: 32, color: colorGreyDark),
+              ],
+            )
+          )
+        ),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              TextEditingController titleController = TextEditingController();
+              TextEditingController dateController = TextEditingController();
+              String selectedMetric = "Completion";
+
+              return StatefulBuilder(
+                builder: (context, setState) {
+
+                  // On click, pulls up the date picker.
+                  Future<void> selectDate() async {
+                    final DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2025),
+                      lastDate: DateTime(2026)
+                    );
+
+                    setState(() {
+                      dateController.text = pickedDate != null 
+                        ? "${pickedDate.month}/${pickedDate.day}/${pickedDate.year}"
+                        : "No selected date";
+                    });
+                  }
+
+                  return AlertDialog(
+                    title: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text("Add Class Goal"),
+                            addHorizontalSpace(32),
+                            Icon(Icons.cancel, size: 32),
+                            addHorizontalSpace(4),
+                            Icon(Icons.check_circle_rounded, size: 32)
+                          ],
+                        ),
+                        Divider(color: colorGrey)
+                      ],
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Goal Title.
+                        TextField(
+                          controller: titleController,
+                          decoration: InputDecoration(
+                            labelText: "Goal Title",
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        addVerticalSpace(16),
+                        // End Date.
+                        TextFormField(
+                          controller: dateController,
+                          readOnly: true,
+                          onTap: selectDate,
+                          decoration: InputDecoration(
+                            labelText: "Select End Date",
+                            border: OutlineInputBorder(),
+                            suffixIcon: Icon(Icons.calendar_today),
+                          ),
+                        ),
+                        addVerticalSpace(16),
+                        // Metric Type.
+                        DropdownButtonFormField<String>(
+                          onChanged: (value) {
+                            setState(() {
+                              selectedMetric = value!;
+                            });
+                          },
+                          items: ["Completion", "Number of Books"]
+                            .map((metric) => DropdownMenuItem(
+                              value: metric,
+                              child: Text(metric, style: textTheme.bodyLarge),
+                            ))
+                            .toList(),
+                          decoration: InputDecoration(
+                            labelText: "Metric Type",
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        }
       ),
     );
   }
