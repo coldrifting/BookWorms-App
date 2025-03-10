@@ -198,9 +198,17 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                           children: [
                             Text("Add Class Goal"),
                             addHorizontalSpace(32),
-                            Icon(Icons.cancel, size: 32),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Icon(Icons.cancel, size: 32, color: colorGreyDark),
+                            ),
                             addHorizontalSpace(4),
-                            Icon(Icons.check_circle_rounded, size: 32)
+                            InkWell(
+                              onTap: () {},
+                              child: Icon(Icons.check_circle_rounded, size: 32, color: colorGreen),
+                            ),
                           ],
                         ),
                         Divider(color: colorGrey)
