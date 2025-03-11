@@ -63,60 +63,85 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     Classroom classroom = appState.classroom!;
     List<Student> students = classroom.students;
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+    return Container(
+      color: colorGreyLight,
+      child: ListView(
+        children: [
+          Column(
             children: [
               // Classroom information (icon, name, number of students).
-              Row(
-                children: [
-                  Expanded(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Customizable Classroom icon.
-                        Icon(
-                          size: 100,
-                          Icons.school,
-                          color: classroomColors[selectedIconIndex],
-                        ),
-                        // Drop down for deleting a classroom.
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: _dropDownMenu(textTheme),
-                        ),
-                        // Pencil edit button.
-                        Positioned(
-                          top: 55,
-                          right: 130,
-                          child: RawMaterialButton(
-                            onPressed: () => _changeClassIconDialog(textTheme),
-                            fillColor: colorWhite,
-                            constraints: const BoxConstraints(minWidth: 0.0),
-                            padding: const EdgeInsets.all(5.0),
-                            shape: const CircleBorder(),
-                            child: const Icon(
-                              Icons.mode_edit_outline_sharp,
-                              size: 15,
+              Container(
+                decoration: BoxDecoration(
+                  color: colorWhite,
+                  border: Border(
+                    bottom: BorderSide(color: colorGrey),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Customizable Classroom icon.
+                                Container(
+                                  width: 115,
+                                  height: 115,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.school,
+                                      size: 100,
+                                      color: classroomColors[selectedIconIndex],
+                                    ),
+                                  ),
+                                ),
+                                // Drop down for deleting a classroom.
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: _dropDownMenu(textTheme),
+                                ),
+                                // Pencil edit button.
+                                Positioned(
+                                  top: 70,
+                                  right: 125,
+                                  child: RawMaterialButton(
+                                    onPressed: () => _changeClassIconDialog(textTheme),
+                                    fillColor: colorWhite,
+                                    constraints: const BoxConstraints(minWidth: 0.0),
+                                    padding: const EdgeInsets.all(5.0),
+                                    shape: const CircleBorder(),
+                                    child: const Icon(
+                                      Icons.mode_edit_outline_sharp,
+                                      size: 15,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                      // Classroom name.
+                      Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
+                      // Number of students text.
+                      Text(
+                        "${students.length} Student${students.length == 1 ? "" : "s"}",
+                        style: textTheme.bodyLarge),
+                      addVerticalSpace(8),
+                    ],
                   ),
-                ],
+                ),
               ),
-              // Classroom name.
-              Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
-              // Number of students text.
-              Text(
-                "${students.length} Student${students.length == 1 ? "" : "s"}",
-                style: textTheme.bodyLarge),
               addVerticalSpace(8),
-              const Divider(thickness: 2),
               // "Invite Students" button.
               FractionallySizedBox(
                 widthFactor: 0.4,
@@ -132,35 +157,38 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   child: const Text("Invite Students")
                 ),
               ),
-              _studentList(textTheme),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _studentList(textTheme),
+              ),
             ],
           ),
-        ),
-        // Class goals container --> Mock data.
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: OptionWidget(
-            name: "Class Goals",
-            icon: Icons.data_usage,
-            onTap: () {
-              if (mounted) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ClassGoalsScreen()),
-                );
-              }
-            },
+          // Class goals container --> Mock data.
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: OptionWidget(
+              name: "Class Goals",
+              icon: Icons.data_usage,
+              onTap: () {
+                if (mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ClassGoalsScreen()),
+                  );
+                }
+              },
+            ),
           ),
-        ),
-        addVerticalSpace(8.0),
-        // Classroom bookshelves.
-        for (Bookshelf bookshelf in classroom.bookshelves) ...[
-          BookshelfWidget(bookshelf: bookshelf),
-          addVerticalSpace(16),
+          addVerticalSpace(8.0),
+          // Classroom bookshelves.
+          for (Bookshelf bookshelf in classroom.bookshelves) ...[
+            BookshelfWidget(bookshelf: bookshelf),
+            addVerticalSpace(16),
+          ],
+          addVerticalSpace(8),
         ],
-        addVerticalSpace(8),
-      ],
+      ),
     );
   }
 
@@ -240,8 +268,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         Container(
           height: 160,
           decoration: BoxDecoration(
-            color: colorGreyLight,
-            border: Border.all(color: colorGreyDark ?? colorBlack),
+            color: colorWhite,
+            border: Border.all(color: colorGreyDark!),
             borderRadius: BorderRadius.circular(6),
           ),
           child: students.isNotEmpty
