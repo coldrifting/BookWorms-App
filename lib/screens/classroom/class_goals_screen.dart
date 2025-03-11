@@ -339,6 +339,8 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
             builder: (BuildContext context) {
               TextEditingController titleController = TextEditingController();
               TextEditingController dateController = TextEditingController();
+              final formKey = GlobalKey<FormState>();
+              
               String selectedMetric = "Completion";
 
               return StatefulBuilder(
@@ -360,72 +362,95 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                     });
                   }
 
-                  return AlertDialog(
-                    title: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text("Add Class Goal"),
-                            addHorizontalSpace(32),
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Icon(Icons.cancel, size: 32, color: colorGreyDark),
+                  return Form(
+                    key: formKey,
+                    child: AlertDialog(
+                      title: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text("Add Class Goal"),
+                              addHorizontalSpace(32),
+                              InkWell(
+                                onTap: () => Navigator.of(context).pop(),
+                                child: Icon(Icons.cancel, size: 32, color: colorGreyDark),
+                              ),
+                              addHorizontalSpace(4),
+                              InkWell(
+                                onTap: () {
+                                  if (formKey.currentState?.validate() ?? false) {
+                                    appState.addClassroomGoal(titleController.text, dateController.text);
+                                  }
+                                },
+                                child: Icon(Icons.check_circle_rounded, size: 32, color: colorGreen),
+                              ),
+                            ],
+                          ),
+                          Divider(color: colorGrey)
+                        ],
+                      ),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Goal Title.
+                          TextFormField(
+                            controller: titleController,
+                            decoration: InputDecoration(
+                              labelText: "Goal Title",
+                              border: OutlineInputBorder(),
                             ),
-                            addHorizontalSpace(4),
-                            InkWell(
-                              onTap: () {},
-                              child: Icon(Icons.check_circle_rounded, size: 32, color: colorGreen),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please input a goal title';
+                              }
+                              return null;
+                            },
+                          ),
+                          addVerticalSpace(16),
+                          // End Date.
+                          TextFormField(
+                            controller: dateController,
+                            readOnly: true,
+                            onTap: selectDate,
+                            decoration: InputDecoration(
+                              labelText: "Select Due Date",
+                              border: OutlineInputBorder(),
+                              suffixIcon: Icon(Icons.calendar_today),
                             ),
-                          ],
-                        ),
-                        Divider(color: colorGrey)
-                      ],
-                    ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Goal Title.
-                        TextField(
-                          controller: titleController,
-                          decoration: InputDecoration(
-                            labelText: "Goal Title",
-                            border: OutlineInputBorder(),
+                            validator: (value) {
+                              if (value == null || value == "No selected date") {
+                                return 'Please input a due date';
+                              }
+                              return null;
+                            },
                           ),
-                        ),
-                        addVerticalSpace(16),
-                        // End Date.
-                        TextFormField(
-                          controller: dateController,
-                          readOnly: true,
-                          onTap: selectDate,
-                          decoration: InputDecoration(
-                            labelText: "Select End Date",
-                            border: OutlineInputBorder(),
-                            suffixIcon: Icon(Icons.calendar_today),
+                          addVerticalSpace(16),
+                          // Metric Type.
+                          DropdownButtonFormField<String>(
+                            onChanged: (value) {
+                              setState(() {
+                                selectedMetric = value!;
+                              });
+                            },
+                            items: ["Completion", "Number of Books"]
+                              .map((metric) => DropdownMenuItem(
+                                value: metric,
+                                child: Text(metric, style: textTheme.bodyLarge),
+                              ))
+                              .toList(),
+                            decoration: InputDecoration(
+                              labelText: "Metric Type",
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a metric';
+                              }
+                              return null;
+                            },
                           ),
-                        ),
-                        addVerticalSpace(16),
-                        // Metric Type.
-                        DropdownButtonFormField<String>(
-                          onChanged: (value) {
-                            setState(() {
-                              selectedMetric = value!;
-                            });
-                          },
-                          items: ["Completion", "Number of Books"]
-                            .map((metric) => DropdownMenuItem(
-                              value: metric,
-                              child: Text(metric, style: textTheme.bodyLarge),
-                            ))
-                            .toList(),
-                          decoration: InputDecoration(
-                            labelText: "Metric Type",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },
