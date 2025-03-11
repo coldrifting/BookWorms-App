@@ -26,16 +26,53 @@ var x = SystemUiOverlayStyle(
 );
 
 class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
+  List<ClassroomGoal> activeGoals = [];
+  List<ClassroomGoal> pastGoals = [];
+  List<ClassroomGoal> futureGoals = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _organizeGoals();
+  }
+
+  // Groups the goals into their respective lists (past / active / future goals).
+  void _organizeGoals() {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    List<ClassroomGoal> goals = appState.classroom!.classroomGoals;
+
+    for (var goal in goals) {
+      DateTime start = DateTime.parse(goal.startDate);
+      DateTime end = DateTime.parse(goal.endDate);
+      if (DateTime.now().isBefore(start)) { // Future goal.
+        futureGoals.add(goal);
+      } else if (DateTime.now().isAfter(end)) { // Past goal.
+        pastGoals.add(goal);
+      } else { // Active goal.
+        activeGoals.add(goal);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
-    List<ClassroomGoal> goals = appState.classroom!.classroomGoals;
+
+    List<dynamic> goalItems = [
+      if (activeGoals.isNotEmpty) 'Active Goals', 
+      ...activeGoals, 
+      if (futureGoals.isNotEmpty) 'Upcoming Goals', 
+      ...futureGoals,
+      if (pastGoals.isNotEmpty) 'Past Goals', 
+      ...pastGoals
+    ];
 
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
-        title: const Text("Class Goals",
+        title: const Text(
+          "Class Goals",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: colorWhite,
@@ -46,46 +83,81 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
         leading: IconButton(
           color: colorWhite,
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Container(
         color: colorGreyLight,
-        child: ListView.builder(
-          itemCount: goals.length + 1,
-          itemBuilder: (context, index) {
-            if (index != 0) {
-              return InkWell(
-                child: classGoalItem(textTheme, index - 1),
-                onTap: () async {
-                  ClassroomGoal goal = await appState.getClassroomGoalStudentDetails(goals[index - 1].goalId);
-                  if (mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ClassGoalDetails(goal: goal)),
-                    );
-                  }
-                }
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView.builder(
+            itemCount: goalItems.length + 1,
+            itemBuilder: (context, index) {
+              // Add class goal button.
+              if (index == 0) {
+                return Column(
+                  children: [
+                    _addClassGoalWidget(textTheme),
+                    if (goalItems.length != index) const Divider(height: 1, color: Colors.grey),
+                  ],
+                );
+              }
+          
+              // Header string ('Active Goals', 'Past Goals', 'Upcoming Goals')
+              dynamic item = goalItems[index - 1];
+              if (item is String) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Center(
+                    child: Text(
+                      item, 
+                      style: textTheme.headlineMedium!.copyWith(color: colorGreen)
+                    ),
+                  ),
+                );
+              }
+          
+              // Classroom goal item.
+              Widget Function(ClassroomGoal) callback = _getGoalDetailsCallback(item);
+                return Column(
+                children: [
+                  InkWell(
+                    onTap: () => _navigateToGoalDetails(context, appState, item),
+                    child: _classGoalItem(textTheme, item, callback),
+                  ),
+                  if (goalItems.length != index) const Divider(height: 1, color: Colors.grey),
+                ],
               );
-            } else {
-              return _addClassGoalWidget(textTheme);
-            }
-          },
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget classGoalItem(TextTheme textTheme, int index) {
-    AppState appState = Provider.of<AppState>(context);
-    ClassroomGoal goal = appState.classroom!.classroomGoals[index];
-    DateTime endDate = DateTime.parse(goal.endDate);
+  // Navigates from classroom goal screen to goal detail screen (displays all students' completion status).
+  Future<void> _navigateToGoalDetails(BuildContext context, AppState appState, ClassroomGoal goal) async {
+    ClassroomGoal detailedGoal = await appState.getClassroomGoalStudentDetails(goal.goalId);
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ClassGoalDetails(goal: detailedGoal)),
+      );
+    }
+  }
 
+  // Gets the function callback related to the specific goal (active/past or future).
+  Widget Function(ClassroomGoal) _getGoalDetailsCallback(ClassroomGoal goal) {
+    if (activeGoals.contains(goal) || pastGoals.contains(goal)) {
+      return _goalDetails;
+    } else {
+      return _futureGoalDetails;
+    }
+  }
+
+  Widget _classGoalItem(TextTheme textTheme, ClassroomGoal goal, Widget Function(ClassroomGoal) getGoalDetailsWidget) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
           color: colorWhite,
@@ -105,66 +177,121 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 ],
               ),
               addVerticalSpace(8),
-              Text(
-                "Completed by ${goal.studentsCompleted}/${goal.totalStudents} students", 
-                style: textTheme.bodyMedium
-              ),
-              addVerticalSpace(8),
-              LinearPercentIndicator(
-                lineHeight: 8.0,
-                percent: _getTimePercentage(goal.startDate, goal.endDate),
-                progressColor: colorGreen,
-                barRadius: const Radius.circular(4),
-              ),
-              addVerticalSpace(12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (goal.completionGoal != null) ...[
-                        Text("Average Time", style: textTheme.bodyMedium),
-                        Text(goal.completionGoal!.avgCompletionTime != null 
-                          ? "${goal.completionGoal!.avgCompletionTime} min." 
-                          : "--", 
-                          style: textTheme.labelLarge
-                        ),
-                      ],
-                      if (goal.numBooksGoal != null) ...[
-                        Text("Average Books Read", style: textTheme.bodyMedium),
-                        Text(goal.numBooksGoal!.avgBooksRead != null 
-                          ? "${goal.numBooksGoal!.avgBooksRead} books." 
-                          : "--", 
-                          style: textTheme.labelLarge
-                        ),
-                      ]
-                    ],
-                  ),
-                  SizedBox(
-                    height: 40,
-                    child: VerticalDivider(
-                      color: Colors.black,
-                      thickness: 1,
-                      width: 20,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("End Date", style: textTheme.bodyMedium),
-                      Text(
-                        "${endDate.month}/${endDate.day}/${endDate.year}", 
-                        style: textTheme.labelLarge
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              getGoalDetailsWidget(goal)
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _goalDetails(ClassroomGoal goal) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    DateTime endDate = DateTime.parse(goal.endDate);
+
+    return Column(
+      children: [
+        Text(
+          "Completed by ${goal.studentsCompleted}/${goal.totalStudents} students", 
+          style: textTheme.bodyMedium
+        ),
+        addVerticalSpace(8),
+        LinearPercentIndicator(
+          lineHeight: 8.0,
+          percent: _getTimePercentage(goal.startDate, goal.endDate),
+          progressColor: colorGreen,
+          barRadius: const Radius.circular(4),
+        ),
+        addVerticalSpace(12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (goal.completionGoal != null) ...[
+                  Text("Average Time", style: textTheme.bodyMedium),
+                  Text(goal.completionGoal!.avgCompletionTime != null 
+                    ? "${goal.completionGoal!.avgCompletionTime} min." 
+                    : "--", 
+                    style: textTheme.labelLarge
+                  ),
+                ],
+                if (goal.numBooksGoal != null) ...[
+                  Text("Average Books Read", style: textTheme.bodyMedium),
+                  Text(goal.numBooksGoal!.avgBooksRead != null 
+                    ? "${goal.numBooksGoal!.avgBooksRead} books." 
+                    : "--", 
+                    style: textTheme.labelLarge
+                  ),
+                ]
+              ],
+            ),
+            SizedBox(
+              height: 40,
+              child: VerticalDivider(
+                color: Colors.black,
+                thickness: 1,
+                width: 20,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Due Date", style: textTheme.bodyMedium),
+                Text(
+                  "${endDate.month}/${endDate.day}/${endDate.year}", 
+                  style: textTheme.labelLarge
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _futureGoalDetails(ClassroomGoal goal) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    DateTime startDate = DateTime.parse(goal.startDate);
+    DateTime endDate = DateTime.parse(goal.endDate);
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Start Date", style: textTheme.bodyMedium),
+                Text(
+                  "${startDate.month}/${startDate.day}/${startDate.year}", 
+                  style: textTheme.labelLarge
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 40,
+              child: VerticalDivider(
+                color: Colors.black,
+                thickness: 1,
+                width: 20,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Due Date", style: textTheme.bodyMedium),
+                Text(
+                  "${endDate.month}/${endDate.day}/${endDate.year}", 
+                  style: textTheme.labelLarge
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -184,7 +311,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     List<ClassroomGoal> goals = appState.classroom!.classroomGoals;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: InkWell(
         child: Container(
           decoration: BoxDecoration(
