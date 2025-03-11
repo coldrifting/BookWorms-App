@@ -7,6 +7,7 @@ import 'package:bookworms_app/screens/classroom/class_goals_screen.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
@@ -59,133 +60,154 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   }
 
   Widget _classroomView(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context);
-    Classroom classroom = appState.classroom!;
-    List<Student> students = classroom.students;
+  AppState appState = Provider.of<AppState>(context);
+  Classroom classroom = appState.classroom!;
 
-    return Container(
-      color: colorGreyLight,
-      child: ListView(
-        children: [
-          Column(
-            children: [
-              // Classroom information (icon, name, number of students).
-              Container(
-                decoration: BoxDecoration(
-                  color: colorWhite,
-                  border: Border(
-                    bottom: BorderSide(color: colorGrey),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                // Customizable Classroom icon.
-                                Container(
-                                  width: 115,
-                                  height: 115,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.school,
-                                      size: 100,
-                                      color: classroomColors[selectedIconIndex],
-                                    ),
-                                  ),
-                                ),
-                                // Drop down for deleting a classroom.
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: _dropDownMenu(textTheme),
-                                ),
-                                // Pencil edit button.
-                                Positioned(
-                                  top: 70,
-                                  right: 125,
-                                  child: RawMaterialButton(
-                                    onPressed: () => _changeClassIconDialog(textTheme),
-                                    fillColor: colorWhite,
-                                    constraints: const BoxConstraints(minWidth: 0.0),
-                                    padding: const EdgeInsets.all(5.0),
-                                    shape: const CircleBorder(),
-                                    child: const Icon(
-                                      Icons.mode_edit_outline_sharp,
-                                      size: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+  return CustomScrollView(
+    slivers: [
+      // Classroom icon
+      SliverStickyHeader(
+        header: _classroomHeader(textTheme, classroom)
+      ),
+          
+      // Classroom title and number of students (pinned).
+      SliverStickyHeader(
+        header: _pinnedClassroomHeader(textTheme, classroom),
+        sliver: SliverList(
+          delegate: SliverChildListDelegate([
+            Container(
+              color: colorGreyLight,
+              child: Column(
+                children: [
+                  addVerticalSpace(8),
+                  FractionallySizedBox(
+                    widthFactor: 0.4,
+                    child: TextButton(
+                      onPressed: () => _showClassroomCode(textTheme),
+                      style: TextButton.styleFrom(
+                        backgroundColor: colorGreen,
+                        foregroundColor: colorWhite,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
-                      // Classroom name.
-                      Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
-                      // Number of students text.
-                      Text(
-                        "${students.length} Student${students.length == 1 ? "" : "s"}",
-                        style: textTheme.bodyLarge),
-                      addVerticalSpace(8),
+                      child: const Text("Invite Students"),
+                    ),
+                  ),
+                  addVerticalSpace(8),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _studentList(textTheme),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: OptionWidget(
+                      name: "Class Goals",
+                      icon: Icons.data_usage,
+                      onTap: () {
+                        if (mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ClassGoalsScreen()),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  for (Bookshelf bookshelf in classroom.bookshelves) ...[
+                    BookshelfWidget(bookshelf: bookshelf),
+                    addVerticalSpace(16),
+                  ],
+                ],
+              ),
+            ),
+          ]),
+        )
+      ),
+    ],
+  );
+}
+
+  /// Classroom information (icon, name, number of students).
+  Widget _classroomHeader(TextTheme textTheme, Classroom classroom) {
+    return Container(
+      color: colorWhite,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Customizable Classroom icon.
+                      Container(
+                        width: 115,
+                        height: 115,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.school,
+                            size: 100,
+                            color: classroomColors[selectedIconIndex],
+                          ),
+                        ),
+                      ),
+                      // Drop down for deleting a classroom.
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: _dropDownMenu(textTheme),
+                      ),
+                      // Pencil edit button.
+                      Positioned(
+                        top: 70,
+                        right: 125,
+                        child: RawMaterialButton(
+                          onPressed: () => _changeClassIconDialog(textTheme),
+                          fillColor: colorWhite,
+                          constraints: const BoxConstraints(minWidth: 0.0),
+                          padding: const EdgeInsets.all(5.0),
+                          shape: const CircleBorder(),
+                          child: const Icon(
+                            Icons.mode_edit_outline_sharp,
+                            size: 15,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              addVerticalSpace(8),
-              // "Invite Students" button.
-              FractionallySizedBox(
-                widthFactor: 0.4,
-                child: TextButton(
-                  onPressed: () => _showClassroomCode(textTheme),
-                  style: TextButton.styleFrom(
-                    backgroundColor: colorGreenDark,
-                    foregroundColor: colorWhite,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: const Text("Invite Students")
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: _studentList(textTheme),
-              ),
-            ],
-          ),
-          // Class goals container --> Mock data.
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: OptionWidget(
-              name: "Class Goals",
-              icon: Icons.data_usage,
-              onTap: () {
-                if (mounted) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ClassGoalsScreen()),
-                  );
-                }
-              },
+              ],
             ),
-          ),
-          addVerticalSpace(8.0),
-          // Classroom bookshelves.
-          for (Bookshelf bookshelf in classroom.bookshelves) ...[
-            BookshelfWidget(bookshelf: bookshelf),
-            addVerticalSpace(16),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// Pinned header---stays static on scroll.
+  Widget _pinnedClassroomHeader(TextTheme textTheme, Classroom classroom) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorWhite,
+        border: Border(
+          bottom: BorderSide(color: colorGrey),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Classroom name.
+          Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
+          // Number of students text.
+          Text(
+            "${classroom.students.length} Student${classroom.students.length == 1 ? "" : "s"}",
+            style: textTheme.bodyLarge),
           addVerticalSpace(8),
         ],
       ),
