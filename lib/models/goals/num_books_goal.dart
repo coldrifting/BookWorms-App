@@ -1,6 +1,6 @@
 class NumBooksGoal {
-  final int targetNumBooks;
-  final int avgBooksRead;
+  final int? targetNumBooks;
+  final int? avgBooksRead;
 
   NumBooksGoal({
     required this.targetNumBooks,

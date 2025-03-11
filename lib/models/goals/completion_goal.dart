@@ -1,5 +1,5 @@
 class CompletionGoal {
-  final int avgCompletionTime;
+  final int? avgCompletionTime;
 
   CompletionGoal({
     required this.avgCompletionTime

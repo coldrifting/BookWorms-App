@@ -8,7 +8,7 @@ class Classroom {
   final List<Student> students;
   final int classIcon;
   final List<Bookshelf> bookshelves;
-  List<ClassroomGoal>? classroomGoals;
+  List<ClassroomGoal> classroomGoals = [];
 
   Classroom({
     required this.classCode,
@@ -16,7 +16,6 @@ class Classroom {
     required this.students,
     required this.classIcon,
     required this.bookshelves,
-    this.classroomGoals
   });
 
   // Decodes the JSON to create a Classroom object.

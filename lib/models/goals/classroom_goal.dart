@@ -32,11 +32,17 @@ class ClassroomGoal extends Goal {
       endDate: json['endDate'],
       studentsCompleted: json['studentsCompleted'],
       totalStudents: json['totalStudents'],
-      completionGoal: CompletionGoal.fromJson(json['completionGoalData']),
-      numBooksGoal: NumBooksGoal.fromJson(json['numBooksGoalData']),
-      studentGoalStatus: (json['studentGoalStatus'] as List)
-        .map((goalStatus) => StudentGoalStatus.fromJson(goalStatus))
-        .toList()
+      completionGoal: json['completionGoalData'] != null 
+        ? CompletionGoal.fromJson(json['completionGoalData'])
+        : null,
+      numBooksGoal: json['numBooksGoalData'] != null
+        ? NumBooksGoal.fromJson(json['numBooksGoalData'])
+        : null,
+      studentGoalStatus: json['studentGoalStatus'] != null
+        ? (json['studentGoalStatus'] as List)
+          .map((goalStatus) => StudentGoalStatus.fromJson(goalStatus))
+          .toList()
+        : null
     );
   }
 }

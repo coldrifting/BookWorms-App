@@ -239,6 +239,7 @@ class AppState extends ChangeNotifier {
     (_account as Teacher).classroom = classroom;
     if (classroom != null) {
       _setBookImages(classroom.bookshelves);
+      getClassroomGoals();
     }
     notifyListeners();
   }
@@ -310,12 +311,37 @@ class AppState extends ChangeNotifier {
   // ***** Classroom Goals - Teacher *****
 
   ClassroomGoalsService classroomGoalsService = ClassroomGoalsService();
-  List<ClassroomGoal>? get classroomGoals => (_account as Teacher).classroom?.classroomGoals;
-
 
   void getClassroomGoals() async {
     List<ClassroomGoal> goals = await classroomGoalsService.getClassroomGoals();
-    (_account as Teacher).classroom?.classroomGoals = goals;
+    (_account as Teacher).classroom!.classroomGoals = goals;
+    notifyListeners();
+  }
+
+  void addClassroomGoal(String title, String endDate, {int? targetNumBooks}) async {
+    ClassroomGoal newGoal = await classroomGoalsService.addClassroomGoal(title, endDate, targetNumBooks);
+    (_account as Teacher).classroom!.classroomGoals.add(newGoal);
+    notifyListeners();
+  }
+
+  Future<ClassroomGoal> getClassroomGoalStudentDetails(String goalId) async {
+    ClassroomGoal goal = await classroomGoalsService.getClassroomGoalStudentDetails(goalId);
+    return goal;
+  }
+
+  Future<ClassroomGoal> editClassroomGoal(String goalId, {String? newTitle, String? newEndDate, int? newTargetNumBooks}) async {
+    ClassroomGoal goal = await classroomGoalsService.editClassroomGoal(goalId, newTitle, newEndDate, newTargetNumBooks);
+    int index = classroom!.classroomGoals.indexWhere((g) => g.goalId == goalId);
+    if (index != -1) {
+      classroom!.classroomGoals[index] = goal;
+      notifyListeners();
+    }
+    return goal;
+  }
+
+  void deleteClassroomGoal(goalId) async {
+    await classroomGoalsService.deleteClassroomGoal(goalId);
+    classroom!.classroomGoals.removeWhere((g) => g.goalId == goalId);
     notifyListeners();
   }
 
