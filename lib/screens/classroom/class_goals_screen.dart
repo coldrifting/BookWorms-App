@@ -98,8 +98,6 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 return Column(
                   children: [
                     _addClassGoalWidget(textTheme),
-                    addVerticalSpace(8),
-                    if (goalItems.length != index) const Divider(height: 1, color: Colors.grey),
                   ],
                 );
               }
@@ -109,11 +107,17 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
               if (item is String) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Center(
-                    child: Text(
-                      item, 
-                      style: textTheme.headlineMedium!.copyWith(color: colorGreen)
-                    ),
+                  child: Column(
+                    children: [
+                      const Divider(height: 1, color: Colors.grey),
+                      addVerticalSpace(12),
+                      Center(
+                        child: Text(
+                          item, 
+                          style: textTheme.headlineMedium!.copyWith(color: colorGreen)
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
@@ -127,7 +131,6 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                     child: _classGoalItem(textTheme, item, callback),
                   ),
                   addVerticalSpace(8),
-                  if (goalItems.length != index) const Divider(height: 1, color: Colors.grey),
                 ],
               );
             },
@@ -174,7 +177,13 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(goal.title, style: textTheme.titleLarge),
+                  Flexible(
+                    child: Text(
+                      goal.title, 
+                      style: textTheme.titleSmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   Icon(Icons.arrow_forward_rounded, size: 24, color: colorGreyDark),
                 ],
               ),
