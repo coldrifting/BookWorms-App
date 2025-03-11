@@ -98,6 +98,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 return Column(
                   children: [
                     _addClassGoalWidget(textTheme),
+                    addVerticalSpace(8),
                     if (goalItems.length != index) const Divider(height: 1, color: Colors.grey),
                   ],
                 );
@@ -125,6 +126,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                     onTap: () => _navigateToGoalDetails(context, appState, item),
                     child: _classGoalItem(textTheme, item, callback),
                   ),
+                  addVerticalSpace(8),
                   if (goalItems.length != index) const Divider(height: 1, color: Colors.grey),
                 ],
               );
@@ -303,6 +305,10 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     int totalDuration = end.difference(start).inDays;
     int elapsedDuration = DateTime.now().difference(start).inDays;
 
+    if (DateTime.now().isAfter(end)) {
+      return 1;
+    }
+
     return elapsedDuration / totalDuration;
   }
 
@@ -342,13 +348,14 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
               final formKey = GlobalKey<FormState>();
               
               String selectedMetric = "Completion";
+              DateTime? pickedDate;
 
               return StatefulBuilder(
                 builder: (context, setState) {
 
                   // On click, pulls up the date picker.
                   Future<void> selectDate() async {
-                    final DateTime? pickedDate = await showDatePicker(
+                    pickedDate = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2025),
@@ -357,7 +364,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
 
                     setState(() {
                       dateController.text = pickedDate != null 
-                        ? "${pickedDate.month}/${pickedDate.day}/${pickedDate.year}"
+                        ? "${pickedDate!.month}/${pickedDate!.day}/${pickedDate!.year}"
                         : "No selected date";
                     });
                   }
@@ -379,7 +386,10 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                               InkWell(
                                 onTap: () {
                                   if (formKey.currentState?.validate() ?? false) {
-                                    appState.addClassroomGoal(titleController.text, dateController.text);
+                                    appState.addClassroomGoal(
+                                      titleController.text, 
+                                      "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}"
+                                    );
                                   }
                                 },
                                 child: Icon(Icons.check_circle_rounded, size: 32, color: colorGreen),

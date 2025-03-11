@@ -26,6 +26,8 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    DateTime endDate = DateTime.parse(goal.endDate);
+    int daysLeft = endDate.difference(DateTime.now()).inDays;
 
     return Scaffold(
       appBar: AppBar(
@@ -45,9 +47,42 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
         ),
       ),
       body: ListView.builder(
-        itemCount: goal.studentGoalStatus!.length,
+        itemCount: goal.studentGoalStatus!.length + 1,
         itemBuilder: (context, index) {
-          return _studentItem(textTheme, goal.studentGoalStatus![index]);
+          // Student Completion Information.
+          if (index == 0) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        Text(
+                          "${goal.studentsCompleted}/${goal.totalStudents} students completed this goal",
+                          style: textTheme.titleSmall,
+                        ),
+                        if (daysLeft > 0)
+                        Text(
+                          "$daysLeft day${daysLeft == 1 ? "" : "s"} until due date"
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(),
+              ],
+            );
+          }
+
+          // Student list.
+          return Column(
+            children: [
+              _studentItem(textTheme, goal.studentGoalStatus![index - 1]),
+              Divider()
+            ],
+          );
         },
       ),
     );
@@ -58,14 +93,21 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          CircleAvatar(child: UserIcons.getIcon(studentGoalStatus.childIcon)),
-          addHorizontalSpace(8),
-          Text(studentGoalStatus.childName),
+          CircleAvatar(
+            maxRadius: 35,
+            child: SizedBox.expand(
+              child: FittedBox(
+                child: UserIcons.getIcon(studentGoalStatus.childIcon),
+              ),
+            ),
+          ),
+          addHorizontalSpace(16),
+          Text(studentGoalStatus.childName, style: textTheme.titleMedium),
           Spacer(),
           if (studentGoalStatus.hasAchievedGoal)
             Text("COMPLETE", style: TextStyle(color: colorGreen))
           else 
-            Text("INCOMPLETE", style: TextStyle(color: colorRed))
+            Text("INCOMPLETE", style: TextStyle(color: colorRed, fontWeight: FontWeight.bold))
         ],
       ),
     );
