@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,20 +27,18 @@ var x = SystemUiOverlayStyle(
 );
 
 class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
-  List<ClassroomGoal> activeGoals = [];
-  List<ClassroomGoal> pastGoals = [];
-  List<ClassroomGoal> futureGoals = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _organizeGoals();
-  }
+  late List<ClassroomGoal> activeGoals;
+  late List<ClassroomGoal> pastGoals;
+  late List<ClassroomGoal> futureGoals;
 
   // Groups the goals into their respective lists (past / active / future goals).
   void _organizeGoals() {
     AppState appState = Provider.of<AppState>(context, listen: false);
     List<ClassroomGoal> goals = appState.classroom!.classroomGoals;
+
+    activeGoals = [];
+    pastGoals = [];
+    futureGoals = [];
 
     for (var goal in goals) {
       DateTime start = DateTime.parse(goal.startDate);
@@ -58,6 +57,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
+    _organizeGoals();
 
     List<dynamic> goalItems = [
       if (activeGoals.isNotEmpty) 'Active Goals', 
@@ -89,7 +89,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
       body: Container(
         color: colorGreyLight,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: ListView.builder(
             itemCount: goalItems.length + 1,
             itemBuilder: (context, index) {
@@ -97,6 +97,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
               if (index == 0) {
                 return Column(
                   children: [
+                    addVerticalSpace(16),
                     _addClassGoalWidget(textTheme),
                   ],
                 );
@@ -207,12 +208,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
           style: textTheme.bodyMedium
         ),
         addVerticalSpace(8),
-        LinearPercentIndicator(
-          lineHeight: 8.0,
-          percent: _getTimePercentage(goal.startDate, goal.endDate),
-          progressColor: colorGreen,
-          barRadius: const Radius.circular(4),
-        ),
+        _completionBarWidget(goal.studentsCompleted, goal.totalStudents),
         addVerticalSpace(12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -229,15 +225,34 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                   ),
                 ],
                 if (goal.numBooksGoal != null) ...[
-                  Text("Average Books Read", style: textTheme.bodyMedium),
+                  Text("Avg. Books Read", style: textTheme.bodyMedium),
                   Text(goal.numBooksGoal!.avgBooksRead != null 
-                    ? "${goal.numBooksGoal!.avgBooksRead} books." 
+                    ? "${goal.numBooksGoal!.avgBooksRead}" 
                     : "--", 
                     style: textTheme.labelLarge
                   ),
                 ]
               ],
             ),
+            if (goal.numBooksGoal != null) ...[
+              SizedBox(
+                height: 40,
+                child: VerticalDivider(
+                  color: Colors.black,
+                  thickness: 1,
+                  width: 20,
+                ),
+              ),
+              Column(
+                children: [
+                  Text("Target Books", style: textTheme.bodyMedium),
+                  Text(
+                    "${goal.numBooksGoal!.targetNumBooks}",
+                    style: textTheme.labelLarge
+                  ),
+                ],
+              ),
+            ],
             SizedBox(
               height: 40,
               child: VerticalDivider(
@@ -307,18 +322,24 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
   }
 
   // Calculates the percentage of time between the start date, now, and the end date.
-  double _getTimePercentage(String startDate, String endDate) {
-    DateTime start = DateTime.parse(startDate);
-    DateTime end = DateTime.parse(endDate);
-
-    int totalDuration = end.difference(start).inDays;
-    int elapsedDuration = DateTime.now().difference(start).inDays;
-
-    if (DateTime.now().isAfter(end)) {
-      return 1;
+  Widget _completionBarWidget(int numStudentsCompleted, int numTotalStudents) {
+    double percentCompleted = numStudentsCompleted / numTotalStudents;
+    Color barColor;
+    if (percentCompleted < 0.5) {
+      barColor = colorRed!;
+    } else if (percentCompleted < 0.9) {
+      barColor = colorYellow;
+    } else {
+      barColor = colorGreen!;
     }
 
-    return elapsedDuration / totalDuration;
+    return LinearPercentIndicator(
+      lineHeight: 8.0,
+      percent: percentCompleted,
+      progressColor: barColor,
+      barRadius: const Radius.circular(4),
+      backgroundColor: Colors.grey[300],
+    );
   }
 
   Widget _addClassGoalWidget(TextTheme textTheme) {
@@ -399,6 +420,26 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                                       titleController.text, 
                                       "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}"
                                     );
+                                    if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: colorGreenDark,
+                      content: Row(
+                          children: [
+                            Text(
+                              'Successfully created class goal!', 
+                              style: textTheme.titleSmallWhite,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Spacer(),
+                            Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                          ],
+                        ),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
                                   }
                                 },
                                 child: Icon(Icons.check_circle_rounded, size: 32, color: colorGreen),

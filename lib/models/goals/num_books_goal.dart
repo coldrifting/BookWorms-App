@@ -1,6 +1,6 @@
 class NumBooksGoal {
   final int? targetNumBooks;
-  final int? avgBooksRead;
+  final double? avgBooksRead;
 
   NumBooksGoal({
     required this.targetNumBooks,
@@ -10,7 +10,7 @@ class NumBooksGoal {
   factory NumBooksGoal.fromJson(Map<String, dynamic> json) {
     return NumBooksGoal(
       targetNumBooks: json['targetNumBooks'],
-      avgBooksRead: json['avageBooksRead']
+      avgBooksRead: (json['averageBooksRead'] as num?)?.toDouble()
     );
   }
 }

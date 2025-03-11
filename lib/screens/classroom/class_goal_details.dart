@@ -26,17 +26,20 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    DateTime startDate = DateTime.parse(goal.startDate);
     DateTime endDate = DateTime.parse(goal.endDate);
     int daysLeft = endDate.difference(DateTime.now()).inDays;
 
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
-        title: const Text("Daily Reading",
+        title: Text(goal.title,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: colorWhite,
-            overflow: TextOverflow.ellipsis)),
+            overflow: TextOverflow.ellipsis
+          )
+        ),
         backgroundColor: colorGreen,
         leading: IconButton(
           color: colorWhite,
@@ -46,44 +49,95 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
           },
         ),
       ),
-      body: ListView.builder(
-        itemCount: goal.studentGoalStatus!.length + 1,
-        itemBuilder: (context, index) {
-          // Student Completion Information.
-          if (index == 0) {
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: [
-                        Text(
-                          "${goal.studentsCompleted}/${goal.totalStudents} students completed this goal",
-                          style: textTheme.titleSmall,
+      body: Container(
+        color: colorGreyLight,
+        child: ListView.builder(
+          itemCount: goal.studentGoalStatus!.length + 1,
+          itemBuilder: (context, index) {
+            // Student Completion Information.
+            if (index == 0) {
+              return Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: colorWhite,
+                      border: Border(
+                        bottom: BorderSide(color: colorGrey),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text("Start Date", style: textTheme.bodyMedium),
+                                    Text(
+                                      "${startDate.month}/${startDate.day}/${startDate.year}", 
+                                      style: textTheme.labelLarge
+                                    ),
+                                  ],
+                                ),
+                                addHorizontalSpace(16),
+                                SizedBox(
+                                  height: 40,
+                                  child: VerticalDivider(
+                                    color: Colors.black,
+                                    thickness: 1,
+                                    width: 20,
+                                  ),
+                                ),
+                                addHorizontalSpace(16),
+                                Column(
+                                  children: [
+                                    Text("Due Date", style: textTheme.bodyMedium),
+                                    Text(
+                                      "${endDate.month}/${endDate.day}/${endDate.year}", 
+                                      style: textTheme.labelLarge
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            addVerticalSpace(12),
+                            Text(
+                              "${goal.studentsCompleted}/${goal.totalStudents} students completed this goal",
+                              style: textTheme.titleSmall,
+                            ),
+                            if (daysLeft > 0)
+                            Text(
+                              "$daysLeft day${daysLeft == 1 ? "" : "s"} until due date"
+                            )
+                          ],
                         ),
-                        if (daysLeft > 0)
-                        Text(
-                          "$daysLeft day${daysLeft == 1 ? "" : "s"} until due date"
-                        )
-                      ],
+                      ),
                     ),
                   ),
+                  addVerticalSpace(8),
+                ],
+              );
+            }
+        
+            // Student list.
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Container(
+                color: colorWhite,
+                child: Column(
+                  children: [
+                    _studentItem(textTheme, goal.studentGoalStatus![index - 1]),
+                    if (goal.studentGoalStatus!.length != index) Divider(color: colorGreyLight)
+                  ],
                 ),
-                Divider(),
-              ],
+              ),
             );
-          }
-
-          // Student list.
-          return Column(
-            children: [
-              _studentItem(textTheme, goal.studentGoalStatus![index - 1]),
-              Divider()
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -105,7 +159,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
           Text(studentGoalStatus.childName, style: textTheme.titleMedium),
           Spacer(),
           if (studentGoalStatus.hasAchievedGoal)
-            Text("COMPLETE", style: TextStyle(color: colorGreen))
+            Text("COMPLETE", style: TextStyle(color: colorGreen, fontWeight: FontWeight.bold))
           else 
             Text("INCOMPLETE", style: TextStyle(color: colorRed, fontWeight: FontWeight.bold))
         ],
