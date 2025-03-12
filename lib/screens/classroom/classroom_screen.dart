@@ -27,13 +27,16 @@ class ClassroomScreen extends StatefulWidget {
 class _ClassroomScreenState extends State<ClassroomScreen> {
   late ScrollController _scrollController; // Scroll controller for students list.
   late MenuController _menuController; // Menu controller for the "delete classroom" drop-down menu.
-  var selectedIconIndex = 10; // Corresponding to color black.
+  late int selectedIconIndex;
 
   @override
   void initState() {
     super.initState();
+
     _scrollController = ScrollController();
     _menuController = MenuController();
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    selectedIconIndex = appState.classroom!.classIcon;
   }
 
   @override
@@ -94,13 +97,20 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                       child: const Text("Invite Students"),
                     ),
                   ),
-                  addVerticalSpace(8),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: _studentList(textTheme),
                   ),
+
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                    child: Text(""),
+                  ),
+
+
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
                     child: OptionWidget(
                       name: "Class Goals",
                       icon: Icons.data_usage,
@@ -202,6 +212,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
       ),
       child: Column(
         children: [
+          addVerticalSpace(4),
           // Classroom name.
           Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
           // Number of students text.
@@ -347,22 +358,64 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Center(child: Text('Class Code')),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Center(
+          child: Column(
+            children: [
+              Icon(Icons.school, color: colorGreen!, size: 36),
+              Text(
+                'Classroom Code',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
+              ),
+            ],
+          ),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Center(
-              child: Text(classroomCode, style: textTheme.headlineMediumGreenDark),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colorGreen!.withAlpha(10),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: colorGreen!, width: 2),
+              ),
+              child: SelectableText(
+                classroomCode,
+                style: textTheme.headlineMediumGreenDark.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            addVerticalSpace(12),
+            Text(
+              "Let’s get learning! Pass this code along so parents can enroll their students!",
+              textAlign: TextAlign.center,
+              style: textTheme.bodyMedium,
             ),
           ],
         ),
         actions: <Widget>[
           TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: colorGreen, 
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: classroomCode));
               Navigator.pop(context);
             },
-            child: Text('COPY', style: textTheme.titleSmall),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('COPY', style: textTheme.titleSmall?.copyWith(color: Colors.white)),
+                    addHorizontalSpace(4),
+                    const Icon(Icons.copy, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
