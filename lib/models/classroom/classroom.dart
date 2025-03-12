@@ -6,8 +6,8 @@ class Classroom {
   final String classCode;
   final String classroomName;
   final List<Student> students;
-  final int classIcon;
   final List<Bookshelf> bookshelves;
+  int classIcon;
   List<ClassroomGoal> classroomGoals = [];
 
   Classroom({

@@ -111,13 +111,18 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void joinChildClassroom(int childId, String classCode) async {
+  Future<bool> joinChildClassroom(int childId, String classCode) async {
     ChildrenServices childrenServices = ChildrenServices();
     String guid = children[childId].id;
-    Classroom newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
-    (_account as Parent).children[childId].classrooms.add(newClassroom);
-    setChildBookshelves(childId); // Reset the child's bookshelves.
-    notifyListeners();
+    Classroom? newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
+
+    if (newClassroom != null) {
+      (_account as Parent).children[childId].classrooms.add(newClassroom);
+      setChildBookshelves(childId); // Reset the child's bookshelves.
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 
   // ***** Bookshelves *****
@@ -249,6 +254,12 @@ class AppState extends ChangeNotifier {
     (_account as Teacher).classroom = classroom;
     notifyListeners();
     return classroom;
+  }
+
+  void changeClassroomIcon(int newIcon) async {
+    classroomService.changeClassroomIcon(newIcon);
+    (_account as Teacher).classroom!.classIcon = newIcon;
+    notifyListeners();
   }
 
   Future<bool> deleteClassroom() async {

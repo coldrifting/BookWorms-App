@@ -149,6 +149,10 @@ Uri renameClassroomBookshelfUri(String bookshelfName, String newBookshelfName) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/rename?newBookshelfName=$newBookshelfName");
 }
 
+Uri changeClassroomIconUri() {
+  return Uri.parse("$serverBaseUri/homeroom/icon");
+}
+
 Uri insertIntoClassroomBookshelfUri(String bookshelfName, String bookId) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/insert?bookId=$bookId");
 }

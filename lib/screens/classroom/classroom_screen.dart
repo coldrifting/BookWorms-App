@@ -32,11 +32,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   @override
   void initState() {
     super.initState();
-
     _scrollController = ScrollController();
     _menuController = MenuController();
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    selectedIconIndex = appState.classroom!.classIcon;
   }
 
   @override
@@ -65,6 +62,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   Widget _classroomView(TextTheme textTheme) {
   AppState appState = Provider.of<AppState>(context);
   Classroom classroom = appState.classroom!;
+
+  // Set the classroom icon.
+  setState(() => selectedIconIndex = appState.classroom!.classIcon);
 
   return CustomScrollView(
     slivers: [
@@ -101,13 +101,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: _studentList(textTheme),
                   ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-                    child: Text(""),
-                  ),
-
-
 
                   Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
@@ -400,7 +393,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
-              Clipboard.setData(ClipboardData(text: classroomCode));
+              Clipboard.setData(ClipboardData(text: classroomCode.replaceFirst(' ', '')));
               Navigator.pop(context);
             },
             child: Center(
@@ -441,6 +434,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// The icon list composed of the list of given colors.
   Widget _getIconList() {
+    AppState appState = Provider.of<AppState>(context);
+
     return SizedBox(
       width: double.maxFinite,
       height: 400,
@@ -456,6 +451,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             onTap: () {
               // Change selected color and exit popup.
               setState(() {
+                appState.changeClassroomIcon(index);
                 selectedIconIndex = index;
               });
               Navigator.of(context).pop();

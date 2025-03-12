@@ -71,7 +71,7 @@ class ChildrenServices {
     }
   }
 
-  Future<Classroom> joinChildClassroom(String guid, String classCode) async {
+  Future<Classroom?> joinChildClassroom(String guid, String classCode) async {
     final response = await client.sendRequest(
       uri: childJoinClassroomUri(guid, classCode),
       method: "POST");
@@ -81,7 +81,7 @@ class ChildrenServices {
       return Classroom.fromJson(data);
     }
     else {
-      throw Exception('An error occurred when joining the classroom.');
+      return null;
     }
   }
 }

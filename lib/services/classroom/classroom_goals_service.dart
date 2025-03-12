@@ -66,6 +66,7 @@ class ClassroomGoalsService {
         if (newTargetNumBooks != null) "newTargetNumBooks": newTargetNumBooks
       }
     );
+    
     if (response.ok) {
       final data = jsonDecode(response.body);
       return ClassroomGoal.fromJson(json: data);

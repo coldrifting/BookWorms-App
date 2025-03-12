@@ -4,6 +4,7 @@ import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
@@ -334,41 +335,86 @@ class _EditChildScreenState extends State<EditChildScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Center(child: Text("Join Class")),
-          content: TextField(
-            controller: textEditingController,
-            decoration: const InputDecoration(hintText: "Enter Classroom Code")
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Center(
+            child: Column(
+              children: [
+                Icon(Icons.school, color: colorGreen!, size: 36),
+                Text(
+                  'Join Class',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
+                ),
+              ],
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Enter your 6-digit classroom code:"),
+                addVerticalSpace(8),
+                PinCodeTextField(
+                  appContext: context,
+                  length: 6,
+                  controller: textEditingController,
+                  keyboardType: TextInputType.number,
+                  animationType: AnimationType.fade,
+                  enableActiveFill: false,
+                  autoFocus: true,
+                  cursorColor: colorGreen,
+                  pastedTextStyle: TextStyle(color: colorGreenDark, fontWeight: FontWeight.bold),
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
+                    borderRadius: BorderRadius.circular(10),
+                    fieldHeight: 40,
+                    fieldWidth: 35,
+                    inactiveColor: colorGreenGradTop,
+                    activeColor: colorGreen,
+                    selectedColor: colorGreen,
+                  ),
+                ),
+                Text("Need help? Ask your teacher!")
+              ],
+            ),
           ),
           actions: [
             TextButton(
-              onPressed: () { Navigator.of(context).pop(); },
-              child: Text("Cancel"),
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("Cancel", style: TextStyle(color: colorGrey)),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorGreen,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
               onPressed: () async {
-                appState.joinChildClassroom(widget.childID, textEditingController.text);
+                bool success = await appState.joinChildClassroom(widget.childID, textEditingController.text);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      backgroundColor: colorGreenDark,
+                      backgroundColor: success ? colorGreenDark : colorRed,
                       content: Row(
-                          children: [
-                            Text(
-                              'Successfully joined class!', 
-                              style: textTheme.titleSmallWhite,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Spacer(),
-                            Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                          ],
-                        ),
-                      duration: Duration(seconds: 2),
+                        children: [
+                          Text(
+                            success ? 'Successfully joined class!' : 'An error occurred. Try again!', 
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const Spacer(),
+                          Icon(
+                            success ? Icons.check_circle_outline_rounded : Icons.error_outline, 
+                            color: Colors.white
+                          )
+                        ],
+                      ),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
                   Navigator.pop(context);
                 }
               },
-              child: Text("Join", style: TextStyle(color: colorGreen)),
+              child: Text("Join", style: TextStyle(color: colorWhite)),
             ),
           ],
         );
