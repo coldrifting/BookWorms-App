@@ -2,6 +2,7 @@ import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -36,7 +37,6 @@ class _BookshelfWidget extends State<BookshelfWidget> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      height: 335,
       // Bookshelf shadow
       decoration: BoxDecoration(
         color: colorWhite,
@@ -54,13 +54,32 @@ class _BookshelfWidget extends State<BookshelfWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              // Bookshelf name
-              child: Text(widget.bookshelf.name, style: textTheme.titleLarge),
+            Container(
+              decoration: BoxDecoration(
+                color: colorWhite,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorGreyLight!,
+                    blurRadius: 2,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(widget.bookshelf.name, style: textTheme.titleLarge),
+                    ],
+                  ),
+                  addVerticalSpace(4),
+                ],
+              ),
             ),
             // List of bookshelf books
-            Expanded(
+            SizedBox(
+              height: 250,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
@@ -76,6 +95,28 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                       const VerticalDivider()
                     ]
                   ]
+                ],
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: colorWhite,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorGreyLight!,
+                    blurRadius: 2,
+                    offset: Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      addVerticalSpace(12),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -114,7 +155,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
             padding: const EdgeInsets.only(bottom: 8.0),
             // Cover image
             child: CachedNetworkImage(
-              height: 175,
+              height: 160,
               imageUrl: book.imageUrl!,
               placeholder: (context, url) => Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
@@ -128,18 +169,17 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                 Text(
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 18, 
+                    fontSize: 14, 
                     fontWeight: FontWeight.bold, 
                     overflow: TextOverflow.ellipsis, 
                     height: 1.2,
                   ),
-                  maxLines: 2,
                   book.title,
                 ),
                 // Book author
                 Text(
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16, overflow: TextOverflow.ellipsis), 
+                  style: const TextStyle(fontSize: 12, overflow: TextOverflow.ellipsis), 
                   maxLines: 1,
                   book.authors.isNotEmpty 
                   ? book.authors.map((author) => author).join(', ')
@@ -149,14 +189,14 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                 if (book.rating != null && book.level != null) ...[
                   Text(
                     textAlign: TextAlign.center,
-                    style: textTheme.bodyMedium, 
+                    style: textTheme.bodySmall, 
                     "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
                   ),
                 ]
                 else if (book.rating != null || book.level != null) ...[
                   Text(
                     textAlign: TextAlign.center,
-                    style: textTheme.bodyMedium, 
+                    style: textTheme.bodySmall, 
                     book.rating == null ? "${book.level}" : "${book.rating}★"
                   ),
                 ]
