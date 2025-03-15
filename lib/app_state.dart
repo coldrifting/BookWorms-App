@@ -257,9 +257,11 @@ class AppState extends ChangeNotifier {
   }
 
   void changeClassroomIcon(int newIcon) async {
-    classroomService.changeClassroomIcon(newIcon);
-    (_account as Teacher).classroom!.classIcon = newIcon;
-    notifyListeners();
+    var success = await classroomService.changeClassroomIcon(newIcon);
+    if (success) {
+      (_account as Teacher).classroom!.classIcon = newIcon;
+      notifyListeners();
+    }
   }
 
   Future<bool> deleteClassroom() async {

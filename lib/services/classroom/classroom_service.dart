@@ -39,17 +39,13 @@ class ClassroomService {
     }
   }
 
-  void changeClassroomIcon(int newIcon) async {
+  Future<bool> changeClassroomIcon(int newIcon) async {
     final response = await client.sendRequest(
-      uri: changeClassroomIconUri(),
-      method: "PUT",
-      payload: {
-        "newIcon": newIcon
-      }
-    );
+      uri: changeClassroomIconUri(newIcon),
+      method: "PUT");
 
     if (response.ok) {
-      return;
+      return true;
     } else {
       throw Exception('An error occurred when deleting the classroom.');
     }

@@ -78,51 +78,48 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         header: _pinnedClassroomHeader(textTheme, classroom),
         sliver: SliverList(
           delegate: SliverChildListDelegate([
-            Container(
-              color: colorGreyLight,
-              child: Column(
-                children: [
-                  addVerticalSpace(8),
-                  FractionallySizedBox(
-                    widthFactor: 0.4,
-                    child: TextButton(
-                      onPressed: () => _showClassroomCode(textTheme),
-                      style: TextButton.styleFrom(
-                        backgroundColor: colorGreen,
-                        foregroundColor: colorWhite,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
+            Column(
+              children: [
+                addVerticalSpace(16),
+                FractionallySizedBox(
+                  widthFactor: 0.4,
+                  child: TextButton(
+                    onPressed: () => _showClassroomCode(textTheme),
+                    style: TextButton.styleFrom(
+                      backgroundColor: colorGreen,
+                      foregroundColor: colorWhite,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      child: const Text("Invite Students"),
                     ),
+                    child: const Text("Invite Students"),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: _studentList(textTheme),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: _studentList(textTheme),
+                ),
+            
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
+                  child: OptionWidget(
+                    name: "Class Goals",
+                    icon: Icons.data_usage,
+                    onTap: () {
+                      if (mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ClassGoalsScreen()),
+                        );
+                      }
+                    },
                   ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-                    child: OptionWidget(
-                      name: "Class Goals",
-                      icon: Icons.data_usage,
-                      onTap: () {
-                        if (mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ClassGoalsScreen()),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  for (Bookshelf bookshelf in classroom.bookshelves) ...[
-                    BookshelfWidget(bookshelf: bookshelf),
-                    addVerticalSpace(16),
-                  ],
+                ),
+                for (Bookshelf bookshelf in classroom.bookshelves) ...[
+                  BookshelfWidget(bookshelf: bookshelf),
+                  addVerticalSpace(16),
                 ],
-              ),
+              ],
             ),
           ]),
         )
@@ -199,9 +196,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     return Container(
       decoration: BoxDecoration(
         color: colorWhite,
-        border: Border(
-          bottom: BorderSide(color: colorGrey),
-        ),
+        boxShadow: [BoxShadow(color: colorGrey, blurRadius: 3)]
       ),
       child: Column(
         children: [

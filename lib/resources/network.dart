@@ -149,8 +149,8 @@ Uri renameClassroomBookshelfUri(String bookshelfName, String newBookshelfName) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/rename?newBookshelfName=$newBookshelfName");
 }
 
-Uri changeClassroomIconUri() {
-  return Uri.parse("$serverBaseUri/homeroom/icon");
+Uri changeClassroomIconUri(int newIcon) {
+  return Uri.parse("$serverBaseUri/homeroom/icon?newIcon=$newIcon");
 }
 
 Uri insertIntoClassroomBookshelfUri(String bookshelfName, String bookId) {
@@ -198,4 +198,4 @@ Uri getFullUri(String path) {
 }
 
 //const String serverBaseUri = "https://bookworms.app";
-const String serverBaseUri = "https://9913-2601-681-5f04-d080-b17d-7acd-bbb6-652e.ngrok-free.app";
+const String serverBaseUri = "https://b23d-2601-681-5f04-d080-9861-452d-a366-b5b7.ngrok-free.app";
