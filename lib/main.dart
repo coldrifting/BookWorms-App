@@ -107,11 +107,11 @@ class _Navigation extends State<Navigation> {
             MaterialPageRoute(builder: (context) => Navigation(initialIndex: index)),
             (route) => false,
           );
-      } else {
-        setState(() {
-          selectedIndex = index;
-        });
-      }
+        } else {
+          setState(() {
+            selectedIndex = index;
+          });
+        }
       },
       destinations: <NavigationDestination>[
         const NavigationDestination(

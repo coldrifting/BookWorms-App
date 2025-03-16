@@ -4,16 +4,16 @@ import 'package:bookworms_app/models/goals/classroom_goal.dart';
 
 class Classroom {
   final String classCode;
-  final String classroomName;
   final List<Student> students;
   final List<Bookshelf> bookshelves;
+  String classroomName;
   int classIcon;
   List<ClassroomGoal> classroomGoals = [];
 
   Classroom({
     required this.classCode,
-    required this.classroomName,
     required this.students,
+    required this.classroomName,
     required this.classIcon,
     required this.bookshelves,
   });

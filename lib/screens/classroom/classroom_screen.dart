@@ -185,49 +185,62 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// The drop down menu for displaying the option to delete the classroom.
   Widget _dropDownMenu(TextTheme textTheme) {
-  return MenuAnchor(
-    controller: _menuController,
-    builder: (BuildContext context, MenuController controller, Widget? child) {
-      return IconButton(
-        icon: Icon(Icons.more_horiz, size: 30),
-        onPressed: () {
-          if (controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
-      );
-    },
-    menuChildren: [
-      MenuItemButton(
-        onPressed: () {
-          _menuController.close();
-          _showDeleteConfirmationDialog(textTheme);
-        },
-        child: Row(
-          children: [
-            Icon(Icons.delete_forever, color: Colors.red[400], size: 20),
-            addHorizontalSpace(8),
-            Text(
-              'Delete Classroom',
-              style: textTheme.bodyMedium?.copyWith(
-                color: Colors.red[800],
-                fontWeight: FontWeight.bold,
+    return MenuAnchor(
+      controller: _menuController,
+      builder: (BuildContext context, MenuController controller, Widget? child) {
+        return IconButton(
+          icon: Icon(Icons.more_horiz, size: 30),
+          onPressed: () {
+            if (controller.isOpen) {
+              controller.close();
+            } else {
+              controller.open();
+            }
+          },
+        );
+      },
+      menuChildren: [
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+            _showDeleteConfirmationDialog(textTheme);
+          },
+          child: Row(
+            children: [
+              Icon(Icons.delete_forever, color: colorRed, size: 20),
+              addHorizontalSpace(8),
+              Text(
+                'Delete Classroom',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorRed,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+            _showEditClassNameDialog(textTheme);
+          },
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 20),
+              addHorizontalSpace(8),
+              Text('Edit Name', style: textTheme.labelLarge),
+            ],
+          ),
+        ),
+      ],
+      style: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.white),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        )),
       ),
-    ],
-    style: MenuStyle(
-      backgroundColor: WidgetStateProperty.all(Colors.white),
-      shape: WidgetStateProperty.all(RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      )),
-    ),
-  );
-}
+    );
+  }
 
 
   /// Confirmation dialog to confirm the deletion of the classroom.
@@ -241,15 +254,14 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           content: const Text('Are you sure you want to permanently delete this classroom?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await appState.deleteClassroom();
+                setState(() {});
               },
               child: const Text('Delete'),
             ),
@@ -258,6 +270,51 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
       },
     );
   }
+
+  Future<void> _showEditClassNameDialog(TextTheme textTheme) {
+    TextEditingController controller = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text('Rename Your Classroom')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: "Enter a new classroom name",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel', style: TextStyle(color: colorGreyDark!)),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (controller.text.trim().isNotEmpty) {
+                  Navigator.of(context).pop();
+                  Provider.of<AppState>(context, listen: false).renameClassroom(controller.text.trim());
+                }
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: colorGreen,
+                foregroundColor: colorWhite
+              ),
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeClassIconDialog(TextTheme textTheme) {
@@ -352,6 +409,6 @@ class _SliverDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(_SliverDelegate oldDelegate) {
-    return false;
+    return true;
   }
 }

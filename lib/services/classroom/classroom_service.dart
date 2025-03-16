@@ -51,6 +51,18 @@ class ClassroomService {
     }
   }
 
+  Future<bool> changeClassroomName(String newName) async {
+    final response = await client.sendRequest(
+      uri: renameClassroomUri(newName),
+      method: "PUT");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when renaming the classroom.');
+    }
+  }
+
   Future<bool> deleteClassroom() async {
     final response = await client.sendRequest(
       uri: deleteClassroomUri(),

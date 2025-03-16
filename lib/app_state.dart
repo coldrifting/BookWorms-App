@@ -259,7 +259,7 @@ class AppState extends ChangeNotifier {
   void changeClassroomIcon(int newIcon) async {
     var success = await classroomService.changeClassroomIcon(newIcon);
     if (success) {
-      (_account as Teacher).classroom!.classIcon = newIcon;
+      classroom!.classIcon = newIcon;
       notifyListeners();
     }
   }
@@ -271,10 +271,18 @@ class AppState extends ChangeNotifier {
     return success;
   }
 
+  void renameClassroom(String newName) async {
+    var success = await classroomService.changeClassroomName(newName);
+    if (success) {
+      classroom!.classroomName = newName;
+      notifyListeners();
+    }
+  }
+
   void createClassroomBookshelf(Bookshelf bookshelf) async {
     var success = await classroomService.createClassroomBookshelf(bookshelf);
     if (success) {
-      (_account as Teacher).classroom!.bookshelves.add(bookshelf);
+      classroom!.bookshelves.add(bookshelf);
       notifyListeners();
     }
   }
@@ -282,7 +290,7 @@ class AppState extends ChangeNotifier {
   void deleteClassroomBookshelf(Bookshelf bookshelf) async {
     var success = await classroomService.deleteClassroomBookshelf(bookshelf);
     if (success) {
-      (_account as Teacher).classroom!.bookshelves.remove(bookshelf);
+      classroom!.bookshelves.remove(bookshelf);
       notifyListeners();
     }
   }
