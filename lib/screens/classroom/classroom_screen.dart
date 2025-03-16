@@ -1,20 +1,13 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/screens/classroom/class_bookshelves_screen.dart';
 import 'package:bookworms_app/screens/classroom/class_goals_screen.dart';
-import 'package:bookworms_app/widgets/bookshelf_widget.dart';
+import 'package:bookworms_app/screens/classroom/students_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
-import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:provider/provider.dart';
 
 class ClassroomScreen extends StatefulWidget {
@@ -25,14 +18,12 @@ class ClassroomScreen extends StatefulWidget {
 }
 
 class _ClassroomScreenState extends State<ClassroomScreen> {
-  late ScrollController _scrollController; // Scroll controller for students list.
   late MenuController _menuController; // Menu controller for the "delete classroom" drop-down menu.
   late int selectedIconIndex;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
     _menuController = MenuController();
   }
 
@@ -64,67 +55,50 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   Classroom classroom = appState.classroom!;
 
   // Set the classroom icon.
-  setState(() => selectedIconIndex = appState.classroom!.classIcon);
+  selectedIconIndex = appState.classroom!.classIcon;
 
-  return CustomScrollView(
-    slivers: [
-      // Classroom icon
-      SliverStickyHeader(
-        header: _classroomHeader(textTheme, classroom)
-      ),
-          
-      // Classroom title and number of students (pinned).
-      SliverStickyHeader(
-        header: _pinnedClassroomHeader(textTheme, classroom),
-        sliver: SliverList(
-          delegate: SliverChildListDelegate([
-            Column(
-              children: [
-                addVerticalSpace(16),
-                FractionallySizedBox(
-                  widthFactor: 0.4,
-                  child: TextButton(
-                    onPressed: () => _showClassroomCode(textTheme),
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorGreen,
-                      foregroundColor: colorWhite,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    child: const Text("Invite Students"),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: _studentList(textTheme),
-                ),
-            
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-                  child: OptionWidget(
-                    name: "Class Goals",
-                    icon: Icons.data_usage,
-                    onTap: () {
-                      if (mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ClassGoalsScreen()),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                for (Bookshelf bookshelf in classroom.bookshelves) ...[
-                  BookshelfWidget(bookshelf: bookshelf),
-                  addVerticalSpace(16),
-                ],
+  return DefaultTabController(
+    length: 3,
+    child: NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) => [
+        // Classroom header
+        SliverToBoxAdapter(child: _classroomHeader(textTheme, classroom)),
+
+        // Pinned classroom header
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+          delegate: _SliverDelegate(
+            child: _pinnedClassroomHeader(textTheme, classroom),
+          ),
+        ),
+
+        // Sticky Tab Bar
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+          delegate: _SliverDelegate(
+            child: TabBar(
+              labelColor: colorGreen,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: colorGreen,
+              tabs: const [
+                Tab(text: "Students"),
+                Tab(text: "Goals"),
+                Tab(text: "Bookshelves"),
               ],
             ),
-          ]),
-        )
+          ),
+        ),
+      ],
+      body: TabBarView(
+        children: [
+          StudentsScreen(),
+          ClassGoalsScreen(),
+          ClassBookshelves(),
+        ],
       ),
-    ],
+    ),
   );
 }
 
@@ -193,23 +167,17 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// Pinned header---stays static on scroll.
   Widget _pinnedClassroomHeader(TextTheme textTheme, Classroom classroom) {
-    return Container(
-      decoration: BoxDecoration(
-        color: colorWhite,
-        boxShadow: [BoxShadow(color: colorGrey, blurRadius: 3)]
-      ),
-      child: Column(
-        children: [
-          addVerticalSpace(4),
-          // Classroom name.
-          Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
-          // Number of students text.
-          Text(
-            "${classroom.students.length} Student${classroom.students.length == 1 ? "" : "s"}",
-            style: textTheme.bodyLarge),
-          addVerticalSpace(8),
-        ],
-      ),
+    return Column(
+      children: [
+        addVerticalSpace(4),
+        // Classroom name.
+        Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
+        // Number of students text.
+        Text(
+          "${classroom.students.length} Student${classroom.students.length == 1 ? "" : "s"}",
+          style: textTheme.bodyLarge),
+        addVerticalSpace(8),
+      ],
     );
   }
 
@@ -269,144 +237,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           ],
         );
       },
-    );
-  }
-
-  /// The student list widget containing student icons and shortened names.
-  Widget _studentList(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context);
-    List<Student> students = appState.classroom!.students;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Students", style: textTheme.titleLarge),
-          ],
-        ),
-        addVerticalSpace(8),
-        Container(
-          height: 160,
-          decoration: BoxDecoration(
-            color: colorWhite,
-            border: Border.all(color: colorGreyDark!),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: students.isNotEmpty
-          ? ListView.builder(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController,
-              itemCount: students.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => StudentViewScreen()),
-                            );
-                          }
-                        },
-                        // Student icon.
-                        child: SizedBox(
-                          width: 90,
-                          height: 90,
-                          child: UserIcons.getIcon(students[index].profilePictureIndex)),
-                      ),
-                      addVerticalSpace(4),
-                      // Student name.
-                      Text(style: textTheme.titleSmall, students[index].name),
-                    ],
-                  ),
-                );
-              })
-          : const Center(
-              child: Text(
-                  textAlign: TextAlign.center,
-                  "No students in the classroom.\n Use the invite button above!"),
-            ),
-        ),
-      ],
-    );
-  }
-
-  /// Displays the classroom code in a dialog.
-  Future<dynamic> _showClassroomCode(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    String classroomCode = appState.classroom!.classCode;
-    classroomCode = "${classroomCode.substring(0, 3)} ${classroomCode.substring(3,6)}";
-
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Center(
-          child: Column(
-            children: [
-              Icon(Icons.school, color: colorGreen!, size: 36),
-              Text(
-                'Classroom Code',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
-              ),
-            ],
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorGreen!.withAlpha(10),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorGreen!, width: 2),
-              ),
-              child: SelectableText(
-                classroomCode,
-                style: textTheme.headlineMediumGreenDark.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-            addVerticalSpace(12),
-            Text(
-              "Let’s get learning! Pass this code along so parents can enroll their students!",
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium,
-            ),
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: colorGreen, 
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: classroomCode.replaceFirst(' ', '')));
-              Navigator.pop(context);
-            },
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('COPY', style: textTheme.titleSmall?.copyWith(color: Colors.white)),
-                    addHorizontalSpace(4),
-                    const Icon(Icons.copy, color: Colors.white),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -476,5 +306,33 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         },
       ),
     );
+  }
+}
+
+// Custom SliverPersistentHeaderDelegate to manage the behavior and layout of the pinned 
+// classroom title and TabBar. It is responsible for building the widgets, defining their 
+// height, and ensuring that they remain pinned at the top of the screen.
+class _SliverDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _SliverDelegate({required this.child});
+
+  @override
+  double get minExtent => child is TabBar ? (child as TabBar).preferredSize.height : 75.0;
+  @override
+  double get maxExtent => child is TabBar ? (child as TabBar).preferredSize.height : 75.0;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Material(
+      color: Colors.white,
+      elevation: 1,
+      child: child,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverDelegate oldDelegate) {
+    return false;
   }
 }

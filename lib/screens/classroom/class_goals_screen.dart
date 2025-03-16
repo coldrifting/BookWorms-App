@@ -68,75 +68,53 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
       ...pastGoals
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: const Text(
-          "Class Goals",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: colorWhite,
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Container(
-        color: colorGreyLight,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ListView.builder(
-            itemCount: goalItems.length + 1,
-            itemBuilder: (context, index) {
-              // Add class goal button.
-              if (index == 0) {
-                return Column(
-                  children: [
-                    addVerticalSpace(16),
-                    _addClassGoalWidget(textTheme),
-                  ],
-                );
-              }
-          
-              // Header string ('Active Goals', 'Past Goals', 'Upcoming Goals')
-              dynamic item = goalItems[index - 1];
-              if (item is String) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Column(
-                    children: [
-                      const Divider(height: 1, color: Colors.grey),
-                      addVerticalSpace(12),
-                      Center(
-                        child: Text(
-                          item, 
-                          style: textTheme.headlineMedium!.copyWith(color: colorGreen)
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-          
-              // Classroom goal item.
-              Widget Function(ClassroomGoal) callback = _getGoalDetailsCallback(item);
-                return Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ListView.builder(
+        itemCount: goalItems.length + 1,
+        itemBuilder: (context, index) {
+          // Add class goal button.
+          if (index == 0) {
+            return Column(
+              children: [
+                addVerticalSpace(16),
+                _addClassGoalWidget(textTheme),
+              ],
+            );
+          }
+      
+          // Header string ('Active Goals', 'Past Goals', 'Upcoming Goals')
+          dynamic item = goalItems[index - 1];
+          if (item is String) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Column(
                 children: [
-                  InkWell(
-                    onTap: () => _navigateToGoalDetails(context, appState, item),
-                    child: _classGoalItem(textTheme, item, callback),
+                  const Divider(height: 1, color: Colors.grey),
+                  addVerticalSpace(12),
+                  Center(
+                    child: Text(
+                      item, 
+                      style: textTheme.headlineMedium!.copyWith(color: colorGreen)
+                    ),
                   ),
-                  addVerticalSpace(8),
                 ],
-              );
-            },
-          ),
-        ),
+              ),
+            );
+          }
+      
+          // Classroom goal item.
+          Widget Function(ClassroomGoal) callback = _getGoalDetailsCallback(item);
+            return Column(
+            children: [
+              InkWell(
+                onTap: () => _navigateToGoalDetails(context, appState, item),
+                child: _classGoalItem(textTheme, item, callback),
+              ),
+              addVerticalSpace(8),
+            ],
+          );
+        },
       ),
     );
   }
@@ -421,25 +399,25 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                                       "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}"
                                     );
                                     if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: colorGreenDark,
-                      content: Row(
-                          children: [
-                            Text(
-                              'Successfully created class goal!', 
-                              style: textTheme.titleSmallWhite,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Spacer(),
-                            Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                          ],
-                        ),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  Navigator.pop(context);
-                }
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: colorGreenDark,
+                                          content: Row(
+                                              children: [
+                                                Text(
+                                                  'Successfully created class goal!', 
+                                                  style: textTheme.titleSmallWhite,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                Spacer(),
+                                                Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                                              ],
+                                            ),
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      );
+                                      Navigator.pop(context);
+                                    }
                                   }
                                 },
                                 child: Icon(Icons.check_circle_rounded, size: 32, color: colorGreen),
