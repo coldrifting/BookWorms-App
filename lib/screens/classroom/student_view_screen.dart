@@ -28,11 +28,14 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
-        title: const Text("",
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: colorWhite,
-                overflow: TextOverflow.ellipsis)),
+        title: const Text(
+          "",
+          style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: colorWhite,
+            overflow: TextOverflow.ellipsis
+          )
+        ),
         backgroundColor: colorGreen,
         leading: IconButton(
           color: colorWhite,

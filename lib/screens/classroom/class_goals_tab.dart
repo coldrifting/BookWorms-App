@@ -70,7 +70,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
             child: ListView.builder(
               itemCount: displayedGoals.length + 2,
               itemBuilder: (context, index) {
@@ -92,8 +92,9 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                           _goalItemWidget(textTheme, "Past", Icons.check_circle_rounded, pastGoals),
                         ],
                       ),
+                      addVerticalSpace(16),
                       if (displayedGoals.isEmpty) ...[
-                        addVerticalSpace(32),
+                        addVerticalSpace(16),
                         Center(
                           child: Text("No Goals to be Shown", style: TextStyle(color: colorGrey)),
                         )
@@ -103,12 +104,12 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 } else {
                   return Column(
                     children: [
-                      addVerticalSpace(16),
                       _classGoalItem(
                         textTheme, 
                         displayedGoals[index - 2], 
                         _getGoalDetailsCallback(displayedGoals[index - 2], selectedGoalsTitle)
                       ),
+                      addVerticalSpace(16),
                     ],
                   );
                 }

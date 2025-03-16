@@ -17,7 +17,32 @@ class StudentsScreen extends StatefulWidget {
 }
 
 class _StudentsScreenState extends State<StudentsScreen> {
+  late TextEditingController textEditingController;
   late List<Student> students;
+  late List<Student> filteredStudents;
+
+  @override
+  void initState() {
+    super.initState();
+    textEditingController = TextEditingController();
+    textEditingController.addListener(_filterStudents);
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  /// Filters the student list based on the search input.
+  void _filterStudents() {
+    setState(() {
+      filteredStudents = students
+        .where((student) =>
+          student.name.toLowerCase().contains(textEditingController.text.toLowerCase()))
+        .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,96 +54,121 @@ class _StudentsScreenState extends State<StudentsScreen> {
       children: [
         addVerticalSpace(8),
         // "Invite Students" button.
-        FractionallySizedBox(
-          widthFactor: 0.4,
-          child: TextButton(
-            onPressed: () => _showClassroomCode(textTheme),
-            style: TextButton.styleFrom(
-              backgroundColor: colorGreen,
-              foregroundColor: colorWhite,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: SearchBar(
+                    controller: textEditingController,
+                    padding: const WidgetStatePropertyAll(
+                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                    ),
+                    elevation: const WidgetStatePropertyAll(0),
+                    backgroundColor: WidgetStatePropertyAll(colorGreyLight),
+                    shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        side: BorderSide(color: colorGreyDark!, width: 2),
+                      ),
+                    ),
+                    leading: Icon(Icons.search, color: colorGreyDark),
+                  ),
+                ),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Invite Students"),
-                addHorizontalSpace(8),
-                Icon(Icons.person_add_alt_1_rounded, color: colorWhite),
-              ],
-            ),
+              addHorizontalSpace(8),
+              TextButton(
+                onPressed: () => _showClassroomCode(textTheme),
+                style: TextButton.styleFrom(
+                  backgroundColor: colorGreen,
+                  foregroundColor: colorWhite,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Invite"),
+                    addHorizontalSpace(8),
+                    Icon(Icons.person_add_alt_1_rounded, color: colorWhite),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         // List of students in the classroom, if any.
-        students.isNotEmpty
-        ? _studentsGrid(textTheme)
-        : const Center(
-            child: Text(
-              textAlign: TextAlign.center,
-              "No students in the classroom.\n Use the invite button above!"
+        Expanded(
+          child: students.isNotEmpty
+          ? _studentsGrid(textTheme)
+          : const Center(
+              child: Text(
+                textAlign: TextAlign.center,
+                "No students in the classroom.\nUse the invite button above!"
+              ),
             ),
-          ),
+        ),
       ],
     );
   }
 
   // Grid of students in the classroom.
   Widget _studentsGrid(TextTheme textTheme) {
-    return Expanded(
-      child: GridView.builder(
-        primary: false,
-        padding: const EdgeInsets.all(18),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 8.0,
-          crossAxisSpacing: 8.0,
-          childAspectRatio: 0.8,
+    return GridView.builder(
+      primary: false,
+      padding: const EdgeInsets.all(18),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: filteredStudents.length,
+      itemBuilder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(
+          color: colorWhite,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withAlpha(20),
+              blurRadius: 4,
+              spreadRadius: 2,
+            )
+          ],
         ),
-        itemCount: students.length,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-            color: colorWhite,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withAlpha(20),
-                blurRadius: 4,
-                spreadRadius: 2,
-              )
-            ],
-          ),
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StudentViewScreen()),
-                        );
-                      }
-                    },
-                    // Student icon.
-                    child: SizedBox(
-                      width: 90,
-                      height: 90,
-                      child: UserIcons.getIcon(students[index].profilePictureIndex)),
-                  ),
-                  addVerticalSpace(4),
-                  // Student name.
-                  Text(style: textTheme.titleSmall, students[index].name),
-                ],
-              ),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    if (mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StudentViewScreen()),
+                      );
+                    }
+                  },
+                  // Student icon.
+                  child: SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: UserIcons.getIcon(filteredStudents[index].profilePictureIndex)),
+                ),
+                addVerticalSpace(4),
+                // Student name.
+                Text(style: textTheme.titleSmall, filteredStudents[index].name),
+              ],
             ),
-          );
-        },
-      )
+          ),
+        );
+      },
     );
   }
 
