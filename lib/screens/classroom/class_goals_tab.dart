@@ -173,7 +173,6 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     );
   }
 
-
   Widget _addClassGoalButton(TextTheme textTheme) {
     return FractionallySizedBox(
       widthFactor: 0.4,

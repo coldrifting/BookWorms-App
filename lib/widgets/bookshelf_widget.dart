@@ -1,6 +1,9 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
+import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:provider/provider.dart';
 
 /// The [BookshelfWidget] displays an overview of a user's bookshelf. It
 /// includes a short display of book covers, the bookshelf title, and some
@@ -36,6 +40,9 @@ class _BookshelfWidget extends State<BookshelfWidget> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context);
+    Bookshelf bookshelf = widget.bookshelf;
+
     return Container(
       // Bookshelf shadow
       decoration: BoxDecoration(
@@ -49,78 +56,92 @@ class _BookshelfWidget extends State<BookshelfWidget> {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: colorWhite,
-                boxShadow: [
-                  BoxShadow(
-                    color: colorGreyLight!,
-                    blurRadius: 2,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(widget.bookshelf.name, style: textTheme.titleLarge),
-                    ],
-                  ),
-                  addVerticalSpace(4),
-                ],
-              ),
-            ),
-            // List of bookshelf books
-            SizedBox(
-              height: 250,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (int i = 0; i < widget.bookshelf.books.length; i++) ...[
-                    InkWell(
-                      child: _bookPreview(book: widget.bookshelf.books[i], textTheme: textTheme),
-                      onTap: () async {
-                        onBookClicked(widget.bookshelf.books[i]);
-                      }
+      child: InkWell(
+        onTap: () {
+          if (mounted && bookshelf.type == BookshelfType.custom ||
+          (!appState.isParent && bookshelf.type == BookshelfType.classroom)) {
+            // Change the screen to the "bookshelf" screen.
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BookshelfScreen(bookshelf: bookshelf)
+              )
+            );
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: colorWhite,
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorGreyLight!,
+                      blurRadius: 2,
+                      offset: Offset(0, 3),
                     ),
-                    // Add the divider on every book but the last.
-                    if (i < widget.bookshelf.books.length - 1) ...[
-                      const VerticalDivider()
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(widget.bookshelf.name, style: textTheme.titleLarge),
+                      ],
+                    ),
+                    addVerticalSpace(4),
+                  ],
+                ),
+              ),
+              // List of bookshelf books
+              SizedBox(
+                height: 250,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    for (int i = 0; i < widget.bookshelf.books.length; i++) ...[
+                      InkWell(
+                        child: _bookPreview(book: widget.bookshelf.books[i], textTheme: textTheme),
+                        onTap: () async {
+                          onBookClicked(widget.bookshelf.books[i]);
+                        }
+                      ),
+                      // Add the divider on every book but the last.
+                      if (i < widget.bookshelf.books.length - 1) ...[
+                        const VerticalDivider()
+                      ]
                     ]
-                  ]
-                ],
+                  ],
+                ),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: colorWhite,
-                boxShadow: [
-                  BoxShadow(
-                    color: colorGreyLight!,
-                    blurRadius: 2,
-                    offset: Offset(0, -2),
-                  ),
-                ],
+              Container(
+                decoration: BoxDecoration(
+                  color: colorWhite,
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorGreyLight!,
+                      blurRadius: 2,
+                      offset: Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        addVerticalSpace(12),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      addVerticalSpace(12),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

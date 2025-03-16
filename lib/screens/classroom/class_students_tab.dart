@@ -48,7 +48,11 @@ class _StudentsScreenState extends State<StudentsScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
-    students = appState.classroom!.students;
+
+    students = List.of(appState.classroom!.students)
+      ..sort((s1, s2) => s1.name.compareTo(s2.name));
+
+    filteredStudents = students;
 
     return Column(
       children: [
