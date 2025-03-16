@@ -58,6 +58,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             children: [
+              // Search bar.
               Expanded(
                 child: SizedBox(
                   height: 40,
@@ -68,12 +69,10 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     ),
                     elevation: const WidgetStatePropertyAll(0),
                     backgroundColor: WidgetStatePropertyAll(colorGreyLight),
-                    shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        side: BorderSide(color: colorGreyDark!, width: 2),
-                      ),
-                    ),
+                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      side: BorderSide(color: colorGreyDark!, width: 2),
+                    )),
                     leading: Icon(Icons.search, color: colorGreyDark),
                   ),
                 ),
@@ -216,7 +215,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
             ),
           ],
         ),
-        actions: <Widget>[
+        actions: [
           TextButton(
             style: TextButton.styleFrom(
               backgroundColor: colorGreen, 
