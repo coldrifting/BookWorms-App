@@ -17,14 +17,7 @@ class StudentsScreen extends StatefulWidget {
 }
 
 class _StudentsScreenState extends State<StudentsScreen> {
-  //late ScrollController _scrollController; // Scroll controller for students list.
   late List<Student> students;
-
-  @override
-  void initState() {
-    super.initState();
-    //_scrollController = ScrollController();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +40,16 @@ class _StudentsScreenState extends State<StudentsScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
-            child: const Text("Invite Students"),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Invite Students"),
+                addHorizontalSpace(8),
+                Icon(Icons.person_add_alt_1_rounded, color: colorWhite),
+              ],
+            ),
           ),
         ),
-        addVerticalSpace(8),
         // List of students in the classroom, if any.
         students.isNotEmpty
         ? _studentsGrid(textTheme)
@@ -68,39 +67,55 @@ class _StudentsScreenState extends State<StudentsScreen> {
   Widget _studentsGrid(TextTheme textTheme) {
     return Expanded(
       child: GridView.builder(
-        //controller: _scrollController,
         primary: false,
         padding: const EdgeInsets.all(18),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: 8.0,
           crossAxisSpacing: 8.0,
+          childAspectRatio: 0.8,
         ),
         itemCount: students.length,
         itemBuilder: (context, index) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  if (mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StudentViewScreen()),
-                    );
-                  }
-                },
-                // Student icon.
-                child: SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: UserIcons.getIcon(students[index].profilePictureIndex)),
-              ),
-              addVerticalSpace(4),
-              // Student name.
-              Text(style: textTheme.titleSmall, students[index].name),
+          return Container(
+            decoration: BoxDecoration(
+            color: colorWhite,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withAlpha(20),
+                blurRadius: 4,
+                spreadRadius: 2,
+              )
             ],
+          ),
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StudentViewScreen()),
+                        );
+                      }
+                    },
+                    // Student icon.
+                    child: SizedBox(
+                      width: 90,
+                      height: 90,
+                      child: UserIcons.getIcon(students[index].profilePictureIndex)),
+                  ),
+                  addVerticalSpace(4),
+                  // Student name.
+                  Text(style: textTheme.titleSmall, students[index].name),
+                ],
+              ),
+            ),
           );
         },
       )

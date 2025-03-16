@@ -1,9 +1,9 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
-import 'package:bookworms_app/screens/classroom/class_bookshelves_screen.dart';
-import 'package:bookworms_app/screens/classroom/class_goals_screen.dart';
-import 'package:bookworms_app/screens/classroom/students_screen.dart';
+import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
+import 'package:bookworms_app/screens/classroom/class_goals_tab.dart';
+import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
@@ -61,10 +61,10 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     length: 3,
     child: NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
-        // Classroom header
+        // Classroom header.
         SliverToBoxAdapter(child: _classroomHeader(textTheme, classroom)),
 
-        // Pinned classroom header
+        // Pinned classroom header.
         SliverPersistentHeader(
           pinned: true,
           floating: false,
@@ -73,7 +73,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           ),
         ),
 
-        // Sticky Tab Bar
+        // Pinned TabBar.
         SliverPersistentHeader(
           pinned: true,
           floating: false,
@@ -83,9 +83,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               unselectedLabelColor: Colors.grey,
               indicatorColor: colorGreen,
               tabs: const [
-                Tab(text: "Students"),
-                Tab(text: "Goals"),
-                Tab(text: "Bookshelves"),
+                Tab(icon: Icon(Icons.groups), text: "Students"),
+                Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
+                Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Bookshelves"),
               ],
             ),
           ),
@@ -110,6 +110,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           children: [
+            addVerticalSpace(8),
             Row(
               children: [
                 Expanded(
@@ -123,6 +124,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
+                          border: Border.all(color: Colors.grey[350]!, width: 2)
                         ),
                         child: Center(
                           child: Icon(
@@ -183,33 +185,50 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// The drop down menu for displaying the option to delete the classroom.
   Widget _dropDownMenu(TextTheme textTheme) {
-    return MenuAnchor(
-      controller: _menuController,
-      builder:
-          (BuildContext context, MenuController controller, Widget? child) {
-        return IconButton(
-          icon: const Icon(Icons.more_horiz),
-          onPressed: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
-          },
-        );
-      },
-      menuChildren: [
-        MenuItemButton(
-          onPressed: () {
-            _menuController.close();
-            // Confirm that the user wants to delete the classroom.
-            _showDeleteConfirmationDialog(textTheme);
-          },
-          child: const Text('Delete Classroom'),
-        )
-      ],
-    );
-  }
+  return MenuAnchor(
+    controller: _menuController,
+    builder: (BuildContext context, MenuController controller, Widget? child) {
+      return IconButton(
+        icon: Icon(Icons.more_horiz, size: 30),
+        onPressed: () {
+          if (controller.isOpen) {
+            controller.close();
+          } else {
+            controller.open();
+          }
+        },
+      );
+    },
+    menuChildren: [
+      MenuItemButton(
+        onPressed: () {
+          _menuController.close();
+          _showDeleteConfirmationDialog(textTheme);
+        },
+        child: Row(
+          children: [
+            Icon(Icons.delete_forever, color: Colors.red[400], size: 20),
+            addHorizontalSpace(8),
+            Text(
+              'Delete Classroom',
+              style: textTheme.bodyMedium?.copyWith(
+                color: Colors.red[800],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+    style: MenuStyle(
+      backgroundColor: WidgetStateProperty.all(Colors.white),
+      shape: WidgetStateProperty.all(RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      )),
+    ),
+  );
+}
+
 
   /// Confirmation dialog to confirm the deletion of the classroom.
   Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
