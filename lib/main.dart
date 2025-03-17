@@ -70,7 +70,7 @@ class _Navigation extends State<Navigation> {
   
     List<Widget> pages = [
       const HomeScreen(),
-      const BookshelvesScreen(),
+      if (isParent) const BookshelvesScreen(),
       const SearchScreen(),
       if (isParent) const ProgressScreen(),
       if (!isParent) ClassroomScreen(),
@@ -107,11 +107,11 @@ class _Navigation extends State<Navigation> {
             MaterialPageRoute(builder: (context) => Navigation(initialIndex: index)),
             (route) => false,
           );
-      } else {
-        setState(() {
-          selectedIndex = index;
-        });
-      }
+        } else {
+          setState(() {
+            selectedIndex = index;
+          });
+        }
       },
       destinations: <NavigationDestination>[
         const NavigationDestination(
@@ -119,11 +119,12 @@ class _Navigation extends State<Navigation> {
           icon: Icon(Icons.home_outlined, color: colorWhite), 
           label: "Home"
         ),
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-          icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
-          label: "Bookshelf"
-        ),
+        if (isParent) 
+          const NavigationDestination(
+            selectedIcon: Icon(Icons.collections_bookmark_rounded), 
+            icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
+            label: "Bookshelf"
+          ),
         const NavigationDestination(
           selectedIcon: Icon(Icons.search_rounded), 
           icon: Icon(Icons.search_outlined, color: colorWhite), 

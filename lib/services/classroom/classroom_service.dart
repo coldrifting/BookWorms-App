@@ -39,6 +39,30 @@ class ClassroomService {
     }
   }
 
+  Future<bool> changeClassroomIcon(int newIcon) async {
+    final response = await client.sendRequest(
+      uri: changeClassroomIconUri(newIcon),
+      method: "PUT");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when deleting the classroom.');
+    }
+  }
+
+  Future<bool> changeClassroomName(String newName) async {
+    final response = await client.sendRequest(
+      uri: renameClassroomUri(newName),
+      method: "PUT");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when renaming the classroom.');
+    }
+  }
+
   Future<bool> deleteClassroom() async {
     final response = await client.sendRequest(
       uri: deleteClassroomUri(),
@@ -71,7 +95,19 @@ class ClassroomService {
     if (response.ok) {
       return true;
     } else {
-      throw Exception('An error occurred when deleting the bookshelf.');
+      throw Exception('An error occurred when deleting the classroom bookshelf.');
+    }
+  }
+
+  Future<bool> renameClassroomBookshelf(String oldName, String newName) async {
+    final response = await client.sendRequest(
+      uri: renameClassroomBookshelfUri(oldName, newName),
+      method: "POST");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when renaming the classroom bookshelf.');
     }
   }
 

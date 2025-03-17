@@ -29,10 +29,14 @@ extension WhiteTextTheme on TextTheme {
   TextStyle get displaySmallWhite => displaySmall!.copyWith(color: colorWhite);
   TextStyle get headlineLargeWhite => headlineLarge!.copyWith(color: colorWhite);
   TextStyle get headlineMediumGreenDark => headlineMedium!.copyWith(color: colorGreenDark);
+  TextStyle get headlineMediumWhite => headlineMedium!.copyWith(color: colorWhite);
   TextStyle get headlineSmallWhite => headlineSmall!.copyWith(color: colorWhite);
-  TextStyle get headerHeadlineMediumWhite => headlineMedium!.copyWith(color: colorWhite);
   TextStyle get titleLargeWhite => titleLarge!.copyWith(color: colorWhite);
   TextStyle get titleMediumWhite => titleMedium!.copyWith(color: colorWhite);
   TextStyle get titleSmallWhite => titleSmall!.copyWith(color: colorWhite);
   TextStyle get bodyLargeWhite => bodyLarge!.copyWith(color: colorWhite);
+  TextStyle get bodyMediumWhite => bodyMedium!.copyWith(color: colorWhite);
+  TextStyle get bodySmallWhite => bodySmall!.copyWith(color: colorWhite);
+  TextStyle get labelLargeWhite => labelLarge!.copyWith(color: colorWhite);
+  TextStyle get labelMediumWhite => labelMedium!.copyWith(color: colorWhite);
 }

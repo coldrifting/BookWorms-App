@@ -6,14 +6,14 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 
 class ExtendedAppBar extends StatelessWidget {
   final String name;
-  final String username;
   final Widget icon;
+  final String? username;
 
   const ExtendedAppBar({
     super.key,
     required this.name, 
-    required this.username, 
-    required this.icon
+    required this.icon,
+    this.username, 
    });
 
   @override
@@ -52,11 +52,13 @@ class ExtendedAppBar extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             name,
           ),
-          Text(
-            style: textTheme.bodyLargeWhite,
-            "@$username"
-          ),
-          addVerticalSpace(4),
+          if (username != null) ...[
+            Text(
+              style: textTheme.bodyLargeWhite,
+              "@$username"
+            ),
+            addVerticalSpace(4),
+          ]
         ],
       ),
     );

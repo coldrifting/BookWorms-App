@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:bookworms_app/screens/search/browse_screen.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';

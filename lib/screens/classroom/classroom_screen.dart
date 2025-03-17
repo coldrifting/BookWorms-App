@@ -1,18 +1,13 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/constants.dart';
-import 'package:bookworms_app/widgets/bookshelf_widget.dart';
+import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
+import 'package:bookworms_app/screens/classroom/class_goals_tab.dart';
+import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
-import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:provider/provider.dart';
 
 class ClassroomScreen extends StatefulWidget {
@@ -23,14 +18,12 @@ class ClassroomScreen extends StatefulWidget {
 }
 
 class _ClassroomScreenState extends State<ClassroomScreen> {
-  late ScrollController _scrollController; // Scroll controller for students list.
   late MenuController _menuController; // Menu controller for the "delete classroom" drop-down menu.
-  var selectedIconIndex = 10; // Corresponding to color black.
+  late int selectedIconIndex;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
     _menuController = MenuController();
   }
 
@@ -58,98 +51,133 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   }
 
   Widget _classroomView(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context);
-    Classroom classroom = appState.classroom!;
-    List<Student> students = classroom.students;
+  AppState appState = Provider.of<AppState>(context);
+  Classroom classroom = appState.classroom!;
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Classroom information (icon, name, number of students).
-              Row(
-                children: [
-                  Expanded(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Customizable Classroom icon.
-                        Icon(
-                          size: 100,
-                          Icons.school,
-                          color: classroomColors[selectedIconIndex],
+  // Set the classroom icon.
+  selectedIconIndex = appState.classroom!.classIcon;
+
+  return DefaultTabController(
+    length: 3,
+    child: NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) => [
+        // Classroom header.
+        SliverToBoxAdapter(child: _classroomHeader(textTheme, classroom)),
+
+        // Pinned classroom header.
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+          delegate: _SliverDelegate(
+            child: _pinnedClassroomHeader(textTheme, classroom),
+          ),
+        ),
+
+        // Pinned TabBar.
+        SliverPersistentHeader(
+          pinned: true,
+          floating: false,
+          delegate: _SliverDelegate(
+            child: TabBar(
+              labelColor: colorGreen,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: colorGreen,
+              tabs: const [
+                Tab(icon: Icon(Icons.groups), text: "Students"),
+                Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
+                Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Bookshelves"),
+              ],
+            ),
+          ),
+        ),
+      ],
+      body: TabBarView(
+        children: [
+          StudentsScreen(),
+          ClassGoalsScreen(),
+          ClassBookshelves(),
+        ],
+      ),
+    ),
+  );
+}
+
+  /// Classroom information (icon, name, number of students).
+  Widget _classroomHeader(TextTheme textTheme, Classroom classroom) {
+    return Container(
+      color: colorWhite,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          children: [
+            addVerticalSpace(8),
+            Row(
+              children: [
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Customizable Classroom icon.
+                      Container(
+                        width: 115,
+                        height: 115,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey[350]!, width: 2)
                         ),
-                        // Drop down for deleting a classroom.
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: _dropDownMenu(textTheme),
-                        ),
-                        // Pencil edit button.
-                        Positioned(
-                          top: 55,
-                          right: 130,
-                          child: RawMaterialButton(
-                            onPressed: () => _changeClassIconDialog(textTheme),
-                            fillColor: colorWhite,
-                            constraints: const BoxConstraints(minWidth: 0.0),
-                            padding: const EdgeInsets.all(5.0),
-                            shape: const CircleBorder(),
-                            child: const Icon(
-                              Icons.mode_edit_outline_sharp,
-                              size: 15,
-                            ),
+                        child: Center(
+                          child: Icon(
+                            Icons.school,
+                            size: 100,
+                            color: classroomColors[selectedIconIndex],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      // Drop down for deleting a classroom.
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: _dropDownMenu(textTheme),
+                      ),
+                      // Pencil edit button.
+                      Positioned(
+                        top: 70,
+                        right: 125,
+                        child: RawMaterialButton(
+                          onPressed: () => _changeClassIconDialog(textTheme),
+                          fillColor: colorWhite,
+                          constraints: const BoxConstraints(minWidth: 0.0),
+                          padding: const EdgeInsets.all(5.0),
+                          shape: const CircleBorder(),
+                          child: const Icon(
+                            Icons.mode_edit_outline_sharp,
+                            size: 15,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              // Classroom name.
-              Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
-              // Number of students text.
-              Text(
-                "${students.length} Student${students.length == 1 ? "" : "s"}",
-                style: textTheme.bodyLarge),
-              addVerticalSpace(8),
-              const Divider(thickness: 2),
-              // "Invite Students" button.
-              FractionallySizedBox(
-                widthFactor: 0.4,
-                child: TextButton(
-                  onPressed: () => _showClassroomCode(textTheme),
-                  style: TextButton.styleFrom(
-                    backgroundColor: colorGreenDark,
-                    foregroundColor: colorWhite,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: const Text("Invite Students")
                 ),
-              ),
-              _studentList(textTheme),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
-        // Class goals container --> Mock data.
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: OptionWidget(
-            name: "Class Goals",
-            icon: Icons.data_usage,
-            onTap: () {},
-          ),
-        ),
-        addVerticalSpace(8.0),
-        // Classroom bookshelves.
-        for (Bookshelf bookshelf in classroom.bookshelves) ...[
-          BookshelfWidget(bookshelf: bookshelf),
-          addVerticalSpace(16),
-        ],
+      ),
+    );
+  }
+
+  /// Pinned header---stays static on scroll.
+  Widget _pinnedClassroomHeader(TextTheme textTheme, Classroom classroom) {
+    return Column(
+      children: [
+        addVerticalSpace(4),
+        // Classroom name.
+        Text(classroom.classroomName, style: textTheme.headlineMedium, textAlign: TextAlign.center),
+        // Number of students text.
+        Text(
+          "${classroom.students.length} Student${classroom.students.length == 1 ? "" : "s"}",
+          style: textTheme.bodyLarge),
         addVerticalSpace(8),
       ],
     );
@@ -159,10 +187,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   Widget _dropDownMenu(TextTheme textTheme) {
     return MenuAnchor(
       controller: _menuController,
-      builder:
-          (BuildContext context, MenuController controller, Widget? child) {
+      builder: (BuildContext context, MenuController controller, Widget? child) {
         return IconButton(
-          icon: const Icon(Icons.more_horiz),
+          icon: Icon(Icons.more_horiz, size: 30),
           onPressed: () {
             if (controller.isOpen) {
               controller.close();
@@ -176,14 +203,45 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         MenuItemButton(
           onPressed: () {
             _menuController.close();
-            // Confirm that the user wants to delete the classroom.
             _showDeleteConfirmationDialog(textTheme);
           },
-          child: const Text('Delete Classroom'),
-        )
+          child: Row(
+            children: [
+              Icon(Icons.delete_forever, color: colorRed, size: 20),
+              addHorizontalSpace(8),
+              Text(
+                'Delete Classroom',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorRed,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+            _showEditClassNameDialog(textTheme);
+          },
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 20),
+              addHorizontalSpace(8),
+              Text('Edit Name', style: textTheme.labelLarge),
+            ],
+          ),
+        ),
       ],
+      style: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.white),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        )),
+      ),
     );
   }
+
 
   /// Confirmation dialog to confirm the deletion of the classroom.
   Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
@@ -196,15 +254,14 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           content: const Text('Are you sure you want to permanently delete this classroom?'),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await appState.deleteClassroom();
+                setState(() {});
               },
               child: const Text('Delete'),
             ),
@@ -214,101 +271,50 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     );
   }
 
-  /// The student list widget containing student icons and shortened names.
-  Widget _studentList(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context);
-    List<Student> students = appState.classroom!.students;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Students", style: textTheme.titleLarge),
-          ],
-        ),
-        addVerticalSpace(8),
-        Container(
-          height: 160,
-          decoration: BoxDecoration(
-            color: colorGreyLight,
-            border: Border.all(color: colorGreyDark ?? colorBlack),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: students.isNotEmpty
-          ? ListView.builder(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController,
-              itemCount: students.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => StudentViewScreen()),
-                            );
-                          }
-                        },
-                        // Student icon.
-                        child: SizedBox(
-                          width: 90,
-                          height: 90,
-                          child: UserIcons.getIcon(students[index].profilePictureIndex)),
-                      ),
-                      addVerticalSpace(4),
-                      // Student name.
-                      Text(style: textTheme.titleSmall, students[index].name),
-                    ],
-                  ),
-                );
-              })
-          : const Center(
-              child: Text(
-                  textAlign: TextAlign.center,
-                  "No students in the classroom.\n Use the invite button above!"),
-            ),
-        ),
-      ],
-    );
-  }
-
-  /// Displays the classroom code in a dialog.
-  Future<dynamic> _showClassroomCode(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    String classroomCode = appState.classroom!.classCode;
-    classroomCode = "${classroomCode.substring(0, 3)} ${classroomCode.substring(3,6)}";
+  Future<void> _showEditClassNameDialog(TextTheme textTheme) {
+    TextEditingController controller = TextEditingController();
 
     return showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Center(child: Text('Class Code')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: Text(classroomCode, style: textTheme.headlineMediumGreenDark),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text('Rename Your Classroom')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: "Enter a new classroom name",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel', style: TextStyle(color: colorGreyDark!)),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (controller.text.trim().isNotEmpty) {
+                  Navigator.of(context).pop();
+                  Provider.of<AppState>(context, listen: false).renameClassroom(controller.text.trim());
+                }
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: colorGreen,
+                foregroundColor: colorWhite
+              ),
+              child: const Text('Save'),
             ),
           ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: classroomCode));
-              Navigator.pop(context);
-            },
-            child: Text('COPY', style: textTheme.titleSmall),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
+
 
   /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeClassIconDialog(TextTheme textTheme) {
@@ -329,6 +335,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// The icon list composed of the list of given colors.
   Widget _getIconList() {
+    AppState appState = Provider.of<AppState>(context);
+
     return SizedBox(
       width: double.maxFinite,
       height: 400,
@@ -344,6 +352,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             onTap: () {
               // Change selected color and exit popup.
               setState(() {
+                appState.changeClassroomIcon(index);
                 selectedIconIndex = index;
               });
               Navigator.of(context).pop();
@@ -373,5 +382,33 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         },
       ),
     );
+  }
+}
+
+// Custom SliverPersistentHeaderDelegate to manage the behavior and layout of the pinned 
+// classroom title and TabBar. It is responsible for building the widgets, defining their 
+// height, and ensuring that they remain pinned at the top of the screen.
+class _SliverDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _SliverDelegate({required this.child});
+
+  @override
+  double get minExtent => child is TabBar ? (child as TabBar).preferredSize.height : 75.0;
+  @override
+  double get maxExtent => child is TabBar ? (child as TabBar).preferredSize.height : 75.0;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Material(
+      color: Colors.white,
+      elevation: 1,
+      child: child,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverDelegate oldDelegate) {
+    return true;
   }
 }

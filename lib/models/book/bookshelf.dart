@@ -23,8 +23,8 @@ class Bookshelf {
       },
       name: json['name'],
       books: (json['books'] as List)
-                .map((reviewJson) => BookSummary.fromJson(reviewJson))
-                .toList()
+        .map((reviewJson) => BookSummary.fromJson(reviewJson))
+        .toList()
     );
   }
 }

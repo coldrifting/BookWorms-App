@@ -1,7 +1,9 @@
 import 'dart:collection';
 import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
+import 'package:bookworms_app/services/classroom/classroom_goals_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_service.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
@@ -109,13 +111,18 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void joinChildClassroom(int childId, String classCode) async {
+  Future<bool> joinChildClassroom(int childId, String classCode) async {
     ChildrenServices childrenServices = ChildrenServices();
     String guid = children[childId].id;
-    Classroom newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
-    (_account as Parent).children[childId].classrooms.add(newClassroom);
-    setChildBookshelves(childId); // Reset the child's bookshelves.
-    notifyListeners();
+    Classroom? newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
+
+    if (newClassroom != null) {
+      (_account as Parent).children[childId].classrooms.add(newClassroom);
+      setChildBookshelves(childId); // Reset the child's bookshelves.
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 
   // ***** Bookshelves *****
@@ -237,6 +244,7 @@ class AppState extends ChangeNotifier {
     (_account as Teacher).classroom = classroom;
     if (classroom != null) {
       _setBookImages(classroom.bookshelves);
+      getClassroomGoals();
     }
     notifyListeners();
   }
@@ -248,6 +256,14 @@ class AppState extends ChangeNotifier {
     return classroom;
   }
 
+  void changeClassroomIcon(int newIcon) async {
+    var success = await classroomService.changeClassroomIcon(newIcon);
+    if (success) {
+      classroom!.classIcon = newIcon;
+      notifyListeners();
+    }
+  }
+
   Future<bool> deleteClassroom() async {
     var success = await classroomService.deleteClassroom();
     (_account as Teacher).classroom = null;
@@ -255,10 +271,31 @@ class AppState extends ChangeNotifier {
     return success;
   }
 
+  void renameClassroom(String newName) async {
+    var success = await classroomService.changeClassroomName(newName);
+    if (success) {
+      classroom!.classroomName = newName;
+      notifyListeners();
+    }
+  }
+
+  void renameClassroomBookshelf(String oldName, String newName) async {
+    var success = await classroomService.renameClassroomBookshelf(oldName, newName);
+    if (success) {
+      for (var bookshelf in classroom!.bookshelves) {
+        if (bookshelf.name == oldName) {
+          bookshelf.name = newName;
+          break;
+        }
+      }
+      notifyListeners();
+    }
+  }
+
   void createClassroomBookshelf(Bookshelf bookshelf) async {
     var success = await classroomService.createClassroomBookshelf(bookshelf);
     if (success) {
-      (_account as Teacher).classroom!.bookshelves.add(bookshelf);
+      classroom!.bookshelves.add(bookshelf);
       notifyListeners();
     }
   }
@@ -266,7 +303,7 @@ class AppState extends ChangeNotifier {
   void deleteClassroomBookshelf(Bookshelf bookshelf) async {
     var success = await classroomService.deleteClassroomBookshelf(bookshelf);
     if (success) {
-      (_account as Teacher).classroom!.bookshelves.remove(bookshelf);
+      classroom!.bookshelves.remove(bookshelf);
       notifyListeners();
     }
   }
@@ -303,6 +340,45 @@ class AppState extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+  // ***** Classroom Goals - Teacher *****
+
+  ClassroomGoalsService classroomGoalsService = ClassroomGoalsService();
+
+  void getClassroomGoals() async {
+    List<ClassroomGoal> goals = await classroomGoalsService.getClassroomGoals();
+    (_account as Teacher).classroom!.classroomGoals = goals;
+    notifyListeners();
+  }
+
+  void addClassroomGoal(String title, String endDate, {int? targetNumBooks}) async {
+    ClassroomGoal newGoal = await classroomGoalsService.addClassroomGoal(title, endDate, targetNumBooks);
+    (_account as Teacher).classroom!.classroomGoals.add(newGoal);
+    notifyListeners();
+  }
+
+  Future<ClassroomGoal> getClassroomGoalStudentDetails(String goalId) async {
+    ClassroomGoal goal = await classroomGoalsService.getClassroomGoalStudentDetails(goalId);
+    return goal;
+  }
+
+  Future<ClassroomGoal> editClassroomGoal(String goalId, {String? newTitle, String? newEndDate, int? newTargetNumBooks}) async {
+    ClassroomGoal goal = await classroomGoalsService.editClassroomGoal(goalId, newTitle, newEndDate, newTargetNumBooks);
+    int index = classroom!.classroomGoals.indexWhere((g) => g.goalId == goalId);
+    if (index != -1) {
+      classroom!.classroomGoals[index] = goal;
+      notifyListeners();
+    }
+    return goal;
+  }
+
+  void deleteClassroomGoal(goalId) async {
+    await classroomGoalsService.deleteClassroomGoal(goalId);
+    classroom!.classroomGoals.removeWhere((g) => g.goalId == goalId);
+    notifyListeners();
+  }
+
 
   // ***** Account *****
 
