@@ -264,20 +264,27 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// Buttons for saving a book to a bookshelf, locating a near library, and
   /// rating the book difficulty.
   Widget _actionButtons(TextTheme textTheme, BookSummary book) {
+    AppState appState = Provider.of<AppState>(context);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton.icon(
           icon: const Icon(Icons.bookmark),
           onPressed: (() => {_saveToBookshelfModal(textTheme)}),
           label: const Text("Save")
         ),
-        addHorizontalSpace(100),
         ElevatedButton.icon(
-          icon: const Icon(Icons.fitness_center),
-          onPressed: (() => {_rateBookDifficultyDialog(textTheme)}),
-          label: const Text("Rate")
+          icon: const Icon(Icons.edit_note_sharp),
+          onPressed: _addReview,
+          label: const Text("Review")
         ),
+        if (appState.isParent) ...[
+          ElevatedButton.icon(
+            icon: const Icon(Icons.fitness_center),
+            onPressed: (() => {_rateBookDifficultyDialog(textTheme)}),
+            label: const Text("Rate")
+          ),
+        ]
       ],
     );
   }
@@ -446,18 +453,15 @@ Widget _difficultyButton(String text, int index, TextTheme textTheme) {
       // Replace with lazy loading.
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               style: textTheme.titleMedium,
               "Reviews  |  $rating",
-            ),
-            IconButton(
-              onPressed: (_addReview),
-              icon: const Icon(Icons.add),
-            ),
+            )
           ],
         ),
+        addVerticalSpace(8),
         ...reviews,
       ],
     );
