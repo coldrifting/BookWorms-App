@@ -81,7 +81,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(bookshelf.name, style: textTheme.titleMedium),
+                        child: Text(bookshelf.name, style: textTheme.titleMedium, overflow: TextOverflow.ellipsis),
                       ),
                       Spacer(),
                       if (bookshelf.type == BookshelfType.custom || !appState.isParent)
@@ -126,12 +126,93 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
         MenuItemButton(
           onPressed: () {
             _menuController.close();
-            // Confirm that the user wants to delete the classroom.
+            // Confirm that the user wants to delete the bookshelf.
             _showDeleteConfirmationDialog(textTheme);
           },
-          child: const Text('Delete Bookshelf'),
+          child: Row(
+            children: [
+              Icon(Icons.delete_forever, color: colorRed, size: 20),
+              addHorizontalSpace(8),
+              Text(
+                'Delete Bookshelf',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorRed,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+            _showEditBookshelfNameDialog(textTheme);
+          },
+          child: Row(
+            children: [
+              Icon(Icons.edit, color: colorGreyDark, size: 20),
+              addHorizontalSpace(8),
+              Text(
+                'Rename Bookshelf',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorGreyDark,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         )
       ],
+      style: MenuStyle(
+        backgroundColor: WidgetStateProperty.all(Colors.white),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        )),
+      ),
+    );
+  }
+
+  Future<void> _showEditBookshelfNameDialog(TextTheme textTheme) {
+    TextEditingController controller = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Center(child: Text('Rename Bookshelf')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: "Enter a new bookshelf name",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel', style: TextStyle(color: colorGreyDark!)),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (controller.text.trim().isNotEmpty) {
+                  Navigator.of(context).pop();
+                  Provider.of<AppState>(context, listen: false).renameClassroomBookshelf(bookshelf.name, controller.text.trim());
+                }
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: colorGreen,
+                foregroundColor: colorWhite
+              ),
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -3,7 +3,6 @@ import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -15,15 +14,6 @@ class ClassGoalsScreen extends StatefulWidget {
   @override
   State<ClassGoalsScreen> createState() => _ClassGoalsScreenState();
 }
-
-var x = SystemUiOverlayStyle(
-  // Status bar color
-  statusBarColor: Colors.red,
-
-  // Status bar brightness (optional)
-  statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
-  statusBarBrightness: Brightness.light, // For iOS (dark icons)
-);
 
 class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
   late List<ClassroomGoal> activeGoals;

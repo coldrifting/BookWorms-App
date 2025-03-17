@@ -154,7 +154,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => StudentViewScreen()),
+                          builder: (context) => StudentViewScreen(student: filteredStudents[index])),
                       );
                     }
                   },

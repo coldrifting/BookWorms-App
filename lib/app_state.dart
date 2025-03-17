@@ -279,6 +279,19 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  void renameClassroomBookshelf(String oldName, String newName) async {
+    var success = await classroomService.renameClassroomBookshelf(oldName, newName);
+    if (success) {
+      for (var bookshelf in classroom!.bookshelves) {
+        if (bookshelf.name == oldName) {
+          bookshelf.name = newName;
+          break;
+        }
+      }
+      notifyListeners();
+    }
+  }
+
   void createClassroomBookshelf(Bookshelf bookshelf) async {
     var success = await classroomService.createClassroomBookshelf(bookshelf);
     if (success) {
