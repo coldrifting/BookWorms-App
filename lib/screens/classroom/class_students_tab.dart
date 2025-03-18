@@ -51,8 +51,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
 
     students = List.of(appState.classroom!.students)
       ..sort((s1, s2) => s1.name.compareTo(s2.name));
-
-    filteredStudents = students;
+    _filterStudents();
 
     return Column(
       children: [
@@ -120,6 +119,12 @@ class _StudentsScreenState extends State<StudentsScreen> {
 
   // Grid of students in the classroom.
   Widget _studentsGrid(TextTheme textTheme) {
+    if (filteredStudents.isEmpty) {
+      return Center(
+        child: Text("No students to show.")
+      );
+    }
+
     return GridView.builder(
       primary: false,
       padding: const EdgeInsets.all(18),
