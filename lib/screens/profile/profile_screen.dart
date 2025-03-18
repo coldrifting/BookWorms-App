@@ -55,9 +55,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             username: appState.username,
             icon: UserIcons.getIcon(appState.account.profilePictureIndex),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
               children: [
                 addVerticalSpace(10),
                 OptionWidget(
