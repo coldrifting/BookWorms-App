@@ -87,11 +87,19 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                 ),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Stack(
                       children: [
-                        Text(widget.bookshelf.name, style: textTheme.titleLarge),
-                      ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(widget.bookshelf.name, style: textTheme.titleLarge),
+                          ],
+                        ),
+                        Positioned(
+                          right: 10,
+                          child: Icon(Icons.arrow_forward, color: colorBlack)
+                        )
+                      ]
                     ),
                     addVerticalSpace(4),
                   ],
