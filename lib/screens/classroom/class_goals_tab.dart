@@ -124,10 +124,10 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected ? colorWhite : colorGreenGradTop,
-          border: Border.all(color: isSelected ? colorGreenGradTop : colorGreen!, width: isSelected ? 4 : 3),
+          color: !isSelected ? colorWhite : colorGreenGradTop,
+          border: Border.all(color: colorGreen!, width: isSelected ? 4 : 3),
           borderRadius: BorderRadius.circular(16),
-          boxShadow: isSelected
+          boxShadow: !isSelected
               ? [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4))]
               : [],
         ),
@@ -138,22 +138,22 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: isSelected ? colorGreenGradTop : colorWhite, size: 28),
+              Icon(icon, color: !isSelected ? colorGreen : colorWhite, size: 28),
               addVerticalSpace(4),
               Text(
                 title, 
-                style: isSelected 
-                  ? textTheme.titleMedium!.copyWith(color: colorGreenGradTop) 
+                style: !isSelected 
+                  ? textTheme.titleMedium!.copyWith(color: colorGreen) 
                   : textTheme.titleMediumWhite, 
                 textAlign: TextAlign.center
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Divider(color: isSelected ? colorGreenGradTop : colorWhite),
+                child: Divider(color: !isSelected ? colorGreen : colorWhite),
               ),
               Text(
                 "${goals.length} goal${goals.length == 1 ? "" : "s"}",
-                style: isSelected ? textTheme.bodyMediumWhite.copyWith(color: colorGreenGradTop) : textTheme.bodyMediumWhite, 
+                style: !isSelected ? textTheme.bodyMediumWhite.copyWith(color: colorGreen) : textTheme.bodyMediumWhite, 
                 textAlign: TextAlign.center
               )
             ],
