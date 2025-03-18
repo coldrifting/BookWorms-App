@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/screens/search/browse_screen.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
@@ -21,7 +20,6 @@ class SearchScreen extends StatefulWidget {
 
 /// The state of the [SearchScreen].
 class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
-  var _isInActiveSearch = false;
   var _isInAdvancedSearch = false; 
   var _currentQuery = "";
   var _searchResults = [];
@@ -30,7 +28,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   late SearchService _bookSearchService;
   late BookImagesService _bookImagesService;
 
-  late FocusNode _focusNode;
   late TextEditingController _textEditingcontroller;
   late ScrollController _scrollController;
   late TabController _tabController;
@@ -45,8 +42,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     super.initState();
     _bookSearchService = SearchService();
     _bookImagesService = BookImagesService();
-    _focusNode = FocusNode();
-    _focusNode.addListener(_onSearchBarFocusChanged);
     _textEditingcontroller = TextEditingController();
     _scrollController = ScrollController();
     _tabController = TabController(length: 2, vsync: this);
@@ -56,46 +51,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    _focusNode.dispose();
     _textEditingcontroller.dispose();
     _scrollController.dispose();
     _tabController.dispose();
     super.dispose();
-  }
-
-  /// Callback for when there is a change to the search bar focus.
-  /// Sets the state of the search.
-  void _onSearchBarFocusChanged() {
-    setState(() {
-      _isInActiveSearch = _focusNode.hasFocus;
-    });
-
-    // Unregisters the focus listener if the search has become active.
-    if (_isInActiveSearch) {
-      _focusNode.removeListener(_onSearchBarFocusChanged);
-    }
-  }
-
-  /// Callback for when the 'Cancel' button is pressed.
-  /// Unfocuses and clears the search bar; clears the search results.
-  void _onCancelPressed() {
-    setState(() {
-      if (_focusNode.hasFocus) {
-        _focusNode.unfocus();
-      }
-      // If the search bar is unfocused, the callback will not be called.
-      else {
-        _isInActiveSearch = false;
-      }
-
-      _isInAdvancedSearch = false;
-      _currentQuery = "";
-      _searchResults.clear();
-      _textEditingcontroller.clear();
-    });
-
-    // Reregister the search listener.
-    _focusNode.addListener(_onSearchBarFocusChanged);
   }
 
   /// Callback for when the tab is changed.
@@ -133,19 +92,17 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         List<BookSummary> results = await _search(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
-        if (_focusNode.hasFocus) {
-          setState(() {
-            _searchResults = results;
-          });
+        setState(() {
+          _searchResults = results;
+        });
 
-          // Scroll to the top of the list.
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              0.0,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut
-            );
-          }
+        // Scroll to the top of the list.
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            0.0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut
+          );
         }
       } else {
         setState(() {
@@ -216,9 +173,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     // The sub-widget is determined by the current search status.
     Widget mainContent;
-    if (!_isInActiveSearch) {
-      mainContent = const BrowseScreen();
-    } else if (_currentQuery.isEmpty) {
+    if (_currentQuery.isEmpty) {
       mainContent = _recentsAdvancedSearchTabs();
     } else if (_searchResults.isNotEmpty) {
       mainContent = _resultsScreen();
@@ -259,7 +214,6 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
           child: SearchBar(
             leading: const Icon(Icons.search),
             hintText: "Find a book",
-            focusNode: _focusNode,
             controller: _textEditingcontroller,
             onChanged: !_isInAdvancedSearch ? _onSearchQueryChanged : null,
             shape: WidgetStateProperty.all(
@@ -268,16 +222,18 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
               )
             ),
             shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+            trailing: [
+              if (_textEditingcontroller.text.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _textEditingcontroller.clear();
+                    _onSearchQueryChanged("");
+                  },
+                ),
+            ],
           ),
         ),
-        if (_isInActiveSearch)
-          TextButton(
-            onPressed: _onCancelPressed,
-            style: TextButton.styleFrom(
-              foregroundColor: colorBlack,
-            ),
-            child: const Text("Cancel"),
-          ),
       ],
     );
   }
