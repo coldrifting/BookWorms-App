@@ -357,7 +357,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   appContext: context,
                   length: 6,
                   controller: textEditingController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   animationType: AnimationType.fade,
                   enableActiveFill: false,
                   autoFocus: true,
