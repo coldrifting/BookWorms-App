@@ -44,9 +44,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
         leading: IconButton(
           color: colorWhite,
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Container(

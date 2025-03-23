@@ -1,32 +1,34 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
-import 'package:flutter/material.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
-class ClassGoalsScreen extends StatefulWidget {
-  const ClassGoalsScreen({super.key});
+class GoalsScreen extends StatefulWidget {
+  final dynamic goalsList;
+
+  const GoalsScreen({super.key, required this.goalsList});
 
   @override
-  State<ClassGoalsScreen> createState() => _ClassGoalsScreenState();
+  State<GoalsScreen> createState() => _GoalsScreenState();
 }
 
-class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
-  late List<ClassroomGoal> activeGoals;
-  late List<ClassroomGoal> pastGoals;
-  late List<ClassroomGoal> futureGoals;
-  late List<ClassroomGoal> displayedGoals;
+class _GoalsScreenState extends State<GoalsScreen> {
+  late dynamic goals = widget.goalsList;
+  late dynamic activeGoals;
+  late dynamic pastGoals;
+  late dynamic futureGoals;
+  late dynamic displayedGoals;
   late String selectedGoalsTitle;
+
+  late bool isChildGoal;
 
   // Groups the goals into their respective lists (past / active / future goals).
   void _organizeGoals() {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    List<ClassroomGoal> goals = appState.classroom!.classroomGoals;
-
     activeGoals = [];
     pastGoals = [];
     futureGoals = [];
@@ -44,11 +46,15 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     }
     displayedGoals = activeGoals;
     selectedGoalsTitle = "Active";
+
+    // The goal list is either composed of classroom or child goals.
+    goals is List<ClassroomGoal> ? isChildGoal = false : true;
   }
 
   @override
   void initState() {
     super.initState();
+    goals = widget.goalsList;
     _organizeGoals();
   }
 
@@ -67,7 +73,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 if (index == 0) {
                   return Column(
                     children: [
-                      _addClassGoalButton(textTheme),
+                      _addGoalButton(textTheme),
                       addVerticalSpace(8),
                     ],
                   );
@@ -94,7 +100,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 } else {
                   return Column(
                     children: [
-                      _classGoalItem(
+                      _goalItem(
                         textTheme, 
                         displayedGoals[index - 2], 
                         _getGoalDetailsCallback(displayedGoals[index - 2], selectedGoalsTitle)
@@ -112,7 +118,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
   }
 
   /// Goal item (Active / Upcoming / Past Goals).
-  Widget _goalItemWidget(TextTheme textTheme, String title, IconData icon, List<ClassroomGoal> goals) {
+  Widget _goalItemWidget(TextTheme textTheme, String title, IconData icon, dynamic goals) {
     bool isSelected = selectedGoalsTitle == title;
 
     return InkWell(
@@ -128,8 +134,8 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
           border: Border.all(color: colorGreen!, width: isSelected ? 4 : 3),
           borderRadius: BorderRadius.circular(16),
           boxShadow: !isSelected
-              ? [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4))]
-              : [],
+            ? [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4))]
+            : [],
         ),
         height: 125,
         width: 125,
@@ -163,11 +169,11 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     );
   }
 
-  Widget _addClassGoalButton(TextTheme textTheme) {
+  Widget _addGoalButton(TextTheme textTheme) {
     return FractionallySizedBox(
       widthFactor: 0.4,
       child: TextButton(
-        onPressed: () => _addClassGoalAlert(textTheme),
+        onPressed: () => _addGoalAlert(textTheme),
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,
@@ -188,7 +194,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
   }
 
   /// Alert modal for adding a new classroom goal.
-  dynamic _addClassGoalAlert(TextTheme textTheme) {
+  dynamic _addGoalAlert(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context, listen: false);
 
     return showDialog(
@@ -236,30 +242,32 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                         addHorizontalSpace(4),
                         InkWell(
                           onTap: () {
-                            if (formKey.currentState?.validate() ?? false) {
-                              appState.addClassroomGoal(
-                                titleController.text, 
-                                "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}"
-                              );
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: colorGreenDark,
-                                    content: Row(
-                                        children: [
-                                          Text(
-                                            'Successfully created class goal!', 
-                                            style: textTheme.titleSmallWhite,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Spacer(),
-                                          Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                                        ],
-                                      ),
-                                    duration: Duration(seconds: 2),
-                                  ),
+                            if (!isChildGoal) {
+                              if (formKey.currentState?.validate() ?? false) {
+                                appState.addClassroomGoal(
+                                  titleController.text, 
+                                  "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}"
                                 );
-                                Navigator.pop(context);
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: colorGreenDark,
+                                      content: Row(
+                                          children: [
+                                            Text(
+                                              'Successfully created class goal!', 
+                                              style: textTheme.titleSmallWhite,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Spacer(),
+                                            Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                                          ],
+                                        ),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                }
                               }
                             }
                           },
@@ -340,7 +348,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     );
   }
 
-  Widget _classGoalItem(TextTheme textTheme, ClassroomGoal goal, Widget Function(ClassroomGoal) getGoalDetailsWidget) {
+  Widget _goalItem(TextTheme textTheme, dynamic goal, Widget Function(dynamic) getGoalDetailsWidget) {
     AppState appState = Provider.of<AppState>(context);
 
     return Container(
@@ -350,7 +358,10 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
-        onTap: () => _navigateToGoalDetails(context, appState, goal),
+        onTap: () => {
+          if (!isChildGoal)
+            _navigateToGoalDetails(context, appState, goal)
+        },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -378,44 +389,63 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     );
   }
 
-  Widget _goalDetails(ClassroomGoal goal) {
+  Widget _goalDetails(dynamic goal) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     DateTime endDate = DateTime.parse(goal.endDate);
 
     return Column(
       children: [
-        Text(
-          "Completed by ${goal.studentsCompleted}/${goal.totalStudents} students", 
-          style: textTheme.bodyMedium
-        ),
-        addVerticalSpace(8),
-        _completionBarWidget(goal.studentsCompleted, goal.totalStudents),
-        addVerticalSpace(12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (goal.completionGoal != null) ...[
-                  Text("Average Time", style: textTheme.bodyMedium),
-                  Text(goal.completionGoal!.avgCompletionTime != null 
-                    ? "${goal.completionGoal!.avgCompletionTime} min." 
-                    : "--", 
-                    style: textTheme.labelLarge
-                  ),
+        if (!isChildGoal) ... [
+          Text(
+            "Completed by ${goal.studentsCompleted}/${goal.totalStudents} students", 
+            style: textTheme.bodyMedium
+          ),
+          addVerticalSpace(8),
+          _completionBarWidget(goal.studentsCompleted, goal.totalStudents),
+          addVerticalSpace(12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (goal.completionGoal != null) ...[
+                    Text("Average Time", style: textTheme.bodyMedium),
+                    Text(goal.completionGoal!.avgCompletionTime != null 
+                      ? "${goal.completionGoal!.avgCompletionTime} min." 
+                      : "--", 
+                      style: textTheme.labelLarge
+                    ),
+                  ],
+                  if (goal.numBooksGoal != null) ...[
+                    Text("Avg. Books Read", style: textTheme.bodyMedium),
+                    Text(goal.numBooksGoal!.avgBooksRead != null 
+                      ? "${goal.numBooksGoal!.avgBooksRead}" 
+                      : "--", 
+                      style: textTheme.labelLarge
+                    ),
+                  ]
                 ],
-                if (goal.numBooksGoal != null) ...[
-                  Text("Avg. Books Read", style: textTheme.bodyMedium),
-                  Text(goal.numBooksGoal!.avgBooksRead != null 
-                    ? "${goal.numBooksGoal!.avgBooksRead}" 
-                    : "--", 
-                    style: textTheme.labelLarge
+              ),
+              if (goal.numBooksGoal != null) ...[
+                SizedBox(
+                  height: 40,
+                  child: VerticalDivider(
+                    color: Colors.black,
+                    thickness: 1,
+                    width: 20,
                   ),
-                ]
+                ),
+                Column(
+                  children: [
+                    Text("Target Books", style: textTheme.bodyMedium),
+                    Text(
+                      "${goal.numBooksGoal!.targetNumBooks}",
+                      style: textTheme.labelLarge
+                    ),
+                  ],
+                ),
               ],
-            ),
-            if (goal.numBooksGoal != null) ...[
               SizedBox(
                 height: 40,
                 child: VerticalDivider(
@@ -425,40 +455,23 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
                 ),
               ),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Target Books", style: textTheme.bodyMedium),
+                  Text("Due Date", style: textTheme.bodyMedium),
                   Text(
-                    "${goal.numBooksGoal!.targetNumBooks}",
+                    "${endDate.month}/${endDate.day}/${endDate.year}", 
                     style: textTheme.labelLarge
                   ),
                 ],
               ),
             ],
-            SizedBox(
-              height: 40,
-              child: VerticalDivider(
-                color: Colors.black,
-                thickness: 1,
-                width: 20,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Due Date", style: textTheme.bodyMedium),
-                Text(
-                  "${endDate.month}/${endDate.day}/${endDate.year}", 
-                  style: textTheme.labelLarge
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ],
     );
   }
 
-  Widget _futureGoalDetails(ClassroomGoal goal) {
+  Widget _futureGoalDetails(dynamic goal) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     DateTime startDate = DateTime.parse(goal.startDate);
     DateTime endDate = DateTime.parse(goal.endDate);
@@ -535,7 +548,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
   }
 
   // Gets the function callback related to the specific goal (active/past or future).
-  Widget Function(ClassroomGoal) _getGoalDetailsCallback(ClassroomGoal goal, String title) {
+  Widget Function(dynamic) _getGoalDetailsCallback(dynamic goal, String title) {
     if (title.contains("Upcoming")) {
       return _futureGoalDetails;
     } else {

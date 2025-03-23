@@ -1,4 +1,4 @@
-import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bookworms_app/app_state.dart';
@@ -24,9 +24,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
-        onTap: () {
-          _showChildSelection(selectedChild);
-        },
+        onTap: () => showChildSelection(selectedChild),
         child: CircleAvatar(
           child: SizedBox.expand(
             child: FittedBox(
@@ -38,49 +36,11 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
     );
   }
 
-  void _showChildSelection(Child selectedChild) {
+  void showChildSelection(Child selectedChild) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Text(
-                "Switch Profiles",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                ),
-              ),
-              addVerticalSpace(16),
-              Expanded (
-                child: ListView.builder(
-                  itemCount: Provider.of<AppState>(context).children.length,
-                  itemBuilder: (context, index) {
-                    Child child = Provider.of<AppState>(context).children[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        child: UserIcons.getIcon(child.profilePictureIndex)
-                      ),
-                      title: Text(child.name),
-                      onTap: () {
-                        Provider.of<AppState>(context, listen: false).setSelectedChild(index);
-                        Navigator.pop(context);
-
-                        // Function to be called when changing the selected child.
-                        if (widget.onChildChanged != null) {
-                          widget.onChildChanged!();
-                        }
-                      },
-                      selected: index == Provider.of<AppState>(context).selectedChildID,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
+        return ChildSelectionListWidget(onChildChanged: widget.onChildChanged);
       },
     );
   }
