@@ -1,4 +1,6 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/classroom/classroom_goal_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -59,35 +61,62 @@ class _HomeScreenState extends State<HomeScreen> {
         ] : [],
       ),
       // Bookshelves list
-      body: ListView(
-        children: [
-          addVerticalSpace(16),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            stops: [0, 0.19, 0.1],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [colorGreenGradTop, colorGreenLight, colorWhite],
 
-          if (isParent) ... [
-            // Recommended bookshelf (similar descriptions).
-            _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
-            addVerticalSpace(24),
-
-            // Progress/goal tracker overview.
-            _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
-            addVerticalSpace(24),
-
-            // Recommended bookshelf (similar authors).
-            _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
-            addVerticalSpace(24),
-          ],
-
-          // Custom bookshelves
-          if (bookshelves.isNotEmpty)
-            ...bookshelves.map((bookshelf) {
-              return Column(
+          )
+        ),
+        child: ListView(
+          children: [
+            addVerticalSpace(16),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BookshelfWidget(bookshelf: bookshelf),
+                  Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
+                  Text("Check out an overview of your students' progress.", style: textTheme.bodyMediumWhite),
                   addVerticalSpace(24),
                 ],
-              );
-            }),
-        ],
+              ),
+            ),
+        
+            if (isParent) ... [
+              // Recommended bookshelf (similar descriptions).
+              _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+              addVerticalSpace(24),
+        
+              // Progress/goal tracker overview.
+              _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
+              addVerticalSpace(24),
+        
+              // Recommended bookshelf (similar authors).
+              _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+              addVerticalSpace(24),
+            ],
+        
+            if (!isParent) ...[
+              _teacherProgressData(),
+              addVerticalSpace(24),
+            ],
+        
+            // Custom bookshelves
+            if (bookshelves.isNotEmpty)
+              ...bookshelves.map((bookshelf) {
+                return Column(
+                  children: [
+                    BookshelfWidget(bookshelf: bookshelf),
+                    addVerticalSpace(24),
+                  ],
+                );
+              }),
+          ],
+        ),
       ),
     );
   }
@@ -106,6 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     );
+  }
+
+  Widget _teacherProgressData() {
+    return ClassroomGoalDashboard();
   }
 
   /// Displays the up-to-date progress of the currently-selected child.

@@ -191,10 +191,35 @@ Uri deleteClassroomGoalUri(String goalId) {
   return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/delete");
 }
 
+// ***** Child Goals *****
+Uri getChildGoalsUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals");
+}
+
+Uri addChildGoalUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/add");
+}
+
+Uri getChildGoalDetailsUri(String childId, String goalId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/details");
+}
+
+Uri editChildGoalUri(String childId, String goalId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/edit");
+}
+
+Uri deleteChildGoalUri(String childId, String goalId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/delete");
+}
+
+Uri updateChildGoalProgressUri(String childId, String goalId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/updateProgress");
+}
+
 // ***** Other *****
 
 Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
 
-const String serverBaseUri = "https://bookworms.app";
+const String serverBaseUri = "https://a1fa-2601-681-5f04-d080-ecf5-d818-1d61-6a9e.ngrok-free.app";
