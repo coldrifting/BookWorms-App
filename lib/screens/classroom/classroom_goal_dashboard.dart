@@ -36,9 +36,6 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
             controller: pageController,
             scrollDirection: Axis.horizontal,
             itemCount: numPages,
-            onPageChanged: (index) {
-              selectedIndex = index;
-            },
             itemBuilder: (context, index) {
               return Padding(
                 padding: EdgeInsets.only(left: 8.0, bottom: 12.0, right: 8.0),
