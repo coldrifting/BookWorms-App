@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 
 /// The [BookDetailsScreen] contains detailed information regarding a
 /// specific book. It also displays relevant user reviews and actions to
-/// "save", "locate", and "rate" the book.
+/// "save", "review", and "rate" the book.
 class BookDetailsScreen extends StatefulWidget {
   final BookSummary summaryData; // Overview book data
   final BookDetails detailsData; // More specific book data
@@ -271,18 +271,27 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         ElevatedButton.icon(
           icon: const Icon(Icons.bookmark),
           onPressed: (() => {_saveToBookshelfModal(textTheme)}),
-          label: const Text("Save")
+          label: const Text("Save"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+          ),
         ),
         ElevatedButton.icon(
           icon: const Icon(Icons.edit_note_sharp),
           onPressed: _addReview,
-          label: const Text("Review")
+          label: const Text("Review"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+          ),
         ),
         if (appState.isParent) ...[
           ElevatedButton.icon(
             icon: const Icon(Icons.fitness_center),
             onPressed: (() => {_rateBookDifficultyDialog(textTheme)}),
-            label: const Text("Rate")
+            label: const Text("Rate"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+            ),
           ),
         ]
       ],
@@ -393,7 +402,7 @@ void _rateBookDifficultyDialog(TextTheme textTheme) {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "How difficult was the book for ${appState.children[appState.selectedChildID].name}?",
+              "How difficult was this book for ${appState.children[appState.selectedChildID].name}?",
               textAlign: TextAlign.center,
             ),
             addVerticalSpace(16),

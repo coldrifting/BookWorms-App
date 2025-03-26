@@ -18,29 +18,30 @@ class OptionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          height: 100,
-          decoration: BoxDecoration(
-            color: colorWhite,
-            border: Border.all(color: colorGreyDark ?? colorBlack),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Icon(size: 48,icon),
-                addHorizontalSpace(16),
-                Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
-                ),
-              ],
-            ),
-          ),
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: colorBlack,
+        backgroundColor: colorWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
         ),
+        side: BorderSide(color: colorGreyDark ?? colorBlack),
+        padding: EdgeInsets.all(16.0),
       ),
+      child: Row(
+        children: [
+          Icon(size: 48, icon),
+          addHorizontalSpace(16),
+          Text(
+            name,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold
+            )
+          ),
+        ],
+      )
     );
   } 
 }
