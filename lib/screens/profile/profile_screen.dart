@@ -86,18 +86,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 addVerticalSpace(10),
                 const Divider(),
                 addVerticalSpace(10),
-                OptionWidget(
-                  name: "Sign Out",
-                  icon: Icons.logout_outlined,
-                  onTap: () {
-                    signOut();
-                  },
-                ),
+                _signOutWidget()
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _signOutWidget() {
+    return ElevatedButton(
+      onPressed: signOut,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: colorBlack,
+        backgroundColor: colorWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        side: BorderSide(color: colorGreyDark ?? colorBlack),
+        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(size: 32, Icons.logout_outlined),
+          addHorizontalSpace(8),
+          Text(
+            "Sign Out",
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold
+            )
+          ),
+        ],
+      )
     );
   }
 }
