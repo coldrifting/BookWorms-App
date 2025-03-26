@@ -86,15 +86,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
         
-            if (isParent) ... [
-              // Recommended bookshelf (similar descriptions).
-              _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
-              addVerticalSpace(24),
-        
+            if (isParent) ... [        
               // Progress/goal tracker overview.
               _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
               addVerticalSpace(24),
         
+              // Recommended bookshelf (similar descriptions).
+              _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+              addVerticalSpace(24),
+
               // Recommended bookshelf (similar authors).
               _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
               addVerticalSpace(24),

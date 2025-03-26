@@ -171,9 +171,9 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
         borderRadius: BorderRadius.circular(4.0),
         color: colorWhite,
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+      margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0, bottom: 28.0),
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      width: 375,
+      width: 355,
       child: Center(
         child: Text(
           "No goals to show.\nHave a nice day!",
