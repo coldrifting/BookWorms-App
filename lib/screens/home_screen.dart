@@ -1,5 +1,4 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/classroom_goal_dashboard.dart';
 import 'package:flutter/material.dart';

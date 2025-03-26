@@ -25,10 +25,13 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    DateTime startDate = DateTime.parse(goal.startDate);
-    DateTime endDate = DateTime.parse(goal.endDate);
-    int daysLeft = endDate.difference(DateTime.now()).inDays;
+    final textTheme = Theme.of(context).textTheme;
+
+    final startDate = DateTime.parse(goal.startDate);
+    final endParsed = DateTime.parse(goal.endDate);
+    final endDate = DateTime(endParsed.year, endParsed.month, endParsed.day);
+    final dateNow = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    int daysRemaining = endDate.difference(dateNow).inDays;
 
     return Scaffold(
       appBar: AppBar(
@@ -107,9 +110,9 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
                               "${goal.studentsCompleted}/${goal.totalStudents} students completed this goal",
                               style: textTheme.titleSmall,
                             ),
-                            if (daysLeft > 0)
+                            if (daysRemaining > 0)
                             Text(
-                              "$daysLeft day${daysLeft == 1 ? "" : "s"} until due date"
+                              "$daysRemaining day${daysRemaining == 1 ? "" : "s"} until due date"
                             )
                           ],
                         ),
