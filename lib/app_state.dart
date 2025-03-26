@@ -62,7 +62,7 @@ class AppState extends ChangeNotifier {
         setChildClassrooms(i);
       }
     } else {
-      getClassroomDetails();
+      setClassroomDetails();
     }
   }
 
@@ -239,12 +239,12 @@ class AppState extends ChangeNotifier {
   ClassroomService classroomService = ClassroomService();
   Classroom? get classroom => (_account as Teacher).classroom;
 
-  void getClassroomDetails() async {
+  void setClassroomDetails() async {
     Classroom? classroom = await classroomService.getClassroomDetails();
     (_account as Teacher).classroom = classroom;
     if (classroom != null) {
       _setBookImages(classroom.bookshelves);
-      getClassroomGoals();
+      classroom.classroomGoals = await getClassroomGoals();
     }
     notifyListeners();
   }
@@ -346,10 +346,8 @@ class AppState extends ChangeNotifier {
 
   ClassroomGoalsService classroomGoalsService = ClassroomGoalsService();
 
-  void getClassroomGoals() async {
-    List<ClassroomGoal> goals = await classroomGoalsService.getClassroomGoals();
-    (_account as Teacher).classroom!.classroomGoals = goals;
-    notifyListeners();
+  Future<List<ClassroomGoal>> getClassroomGoals() async {
+    return await classroomGoalsService.getClassroomGoals();
   }
 
   void addClassroomGoal(String title, String endDate, {int? targetNumBooks}) async {

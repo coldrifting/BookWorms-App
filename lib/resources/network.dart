@@ -222,4 +222,4 @@ Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
 
-const String serverBaseUri = "https://a1fa-2601-681-5f04-d080-ecf5-d818-1d61-6a9e.ngrok-free.app";
+const String serverBaseUri = "https://8d42-2601-681-5f04-d080-1981-b38a-e0dc-5a0b.ngrok-free.app";

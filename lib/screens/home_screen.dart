@@ -1,4 +1,5 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/classroom_goal_dashboard.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
         title: Text(
-          "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Home",
+          "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Dashboard",
           style: const TextStyle(
             color: colorWhite
           )
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
               addVerticalSpace(24),
             ],
         
-            if (!isParent) ...[
+            if (!isParent && appState.classroom != null) ...[
               _teacherProgressData(),
               addVerticalSpace(24),
             ],
