@@ -61,62 +61,79 @@ class _HomeScreenState extends State<HomeScreen> {
         ] : [],
       ),
       // Bookshelves list
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            stops: [0, 0.19, 0.1],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [colorGreenGradTop, colorGreenLight, colorWhite],
-
-          )
-        ),
-        child: ListView(
-          children: [
-            addVerticalSpace(16),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
-                  Text("Check out an overview of your students' progress.", style: textTheme.bodyMediumWhite),
-                  addVerticalSpace(24),
-                ],
-              ),
+      body: ListView(
+        children: [
+          Container(      
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                stops: [0, 0.2, 0.51, 0.58],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [colorGreenGradTop, colorWhite, colorWhite, colorGreenGradTop],
+              )
             ),
-        
-            if (isParent) ... [        
-              // Progress/goal tracker overview.
-              _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
-              addVerticalSpace(24),
-        
-              // Recommended bookshelf (similar descriptions).
-              _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
-              addVerticalSpace(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                addVerticalSpace(16),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
+                      Text("Check out an overview of your students' progress.", style: textTheme.bodyMediumWhite),
+                      addVerticalSpace(24),
+                    ],
+                  ),
+                ),
+              if (!isParent && appState.classroom != null) ...[
+                _teacherProgressData(),
+                addVerticalSpace(24),
+              ],
 
-              // Recommended bookshelf (similar authors).
-              _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
-              addVerticalSpace(24),
-            ],
-        
-            if (!isParent && appState.classroom != null) ...[
-              _teacherProgressData(),
-              addVerticalSpace(24),
-            ],
-        
-            // Custom bookshelves
-            if (bookshelves.isNotEmpty)
-              ...bookshelves.map((bookshelf) {
-                return Column(
+              if (isParent) ... [        
+                // Progress/goal tracker overview.
+                _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
+                addVerticalSpace(24),
+                      
+                // Recommended bookshelf (similar descriptions).
+                _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+                addVerticalSpace(24),
+              
+                // Recommended bookshelf (similar authors).
+                _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+                addVerticalSpace(24),
+              ],
+
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BookshelfWidget(bookshelf: bookshelf),
-                    addVerticalSpace(24),
+                    Text("Recommended for me", style: textTheme.titleMediumWhite),
+                    Text("Get a glimpse of your curated bookshelves.", style: textTheme.bodyMediumWhite),
+                    addVerticalSpace(16),
                   ],
-                );
-              }),
-          ],
-        ),
+                ),
+              ),
+                      
+              // Custom bookshelves
+              if (bookshelves.isNotEmpty)
+                Column(
+                  children: bookshelves.map((bookshelf) {
+                    return Column(
+                      children: [
+                        BookshelfWidget(bookshelf: bookshelf),
+                        addVerticalSpace(24),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -222,4 +222,5 @@ Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
 
-const String serverBaseUri = "https://8d42-2601-681-5f04-d080-1981-b38a-e0dc-5a0b.ngrok-free.app";
+const String serverBaseUri = "https://bookworms.app";
+//const String serverBaseUri = "http://10.0.2.2:8080";
