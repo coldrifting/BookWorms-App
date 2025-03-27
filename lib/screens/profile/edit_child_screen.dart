@@ -4,6 +4,7 @@ import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
@@ -28,16 +29,17 @@ class EditChildScreen extends StatefulWidget {
 }
 
 class _EditChildScreenState extends State<EditChildScreen> {
-  late ScrollController _scrollController;
-  late TextEditingController _childNameController;
-  late int _selectedIconIndex;
-
   final _formKey = GlobalKey<FormState>();
 
   // Used to determine if any changes have been made to the account details.
   late String _initialName;
   late int _initialIconIndex;
+  late String? _initialDOB;
   late bool _hasChanges;
+
+  late TextEditingController _childNameController;
+  late int _selectedIconIndex;
+  late String? _selectedDOB;
 
   @override
   void initState() {
@@ -45,13 +47,13 @@ class _EditChildScreenState extends State<EditChildScreen> {
 
     _initialName = widget.child.name;
     _initialIconIndex = widget.child.profilePictureIndex;
-    _selectedIconIndex = widget.child.profilePictureIndex;
+    _initialDOB = widget.child.dob;
+    _hasChanges = false;
 
     _childNameController = TextEditingController(text: widget.child.name);
     _childNameController.addListener(_checkForChanges);
-    _scrollController = ScrollController();
-
-    _hasChanges = false;
+    _selectedIconIndex = widget.child.profilePictureIndex;
+    _selectedDOB = widget.child.dob;
   }
 
   @override
@@ -64,7 +66,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
   void _checkForChanges() {
     setState(() {
       _hasChanges = _childNameController.text.trim() != _initialName 
-        || _selectedIconIndex != _initialIconIndex;
+        || _selectedIconIndex != _initialIconIndex
+        || _selectedDOB != _initialDOB;
     });
   }
 
@@ -72,7 +75,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
-    Child child = appState.children[appState.selectedChildID];
 
     return Scaffold(
       appBar: AppBar(
@@ -155,11 +157,42 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     ],
                   ),
                   addHorizontalSpace(16),
-                  Expanded(child: _textFieldWidget(textTheme, _childNameController, "Edit Name")),
+                  Expanded(
+                    child: _textFieldWidget(textTheme, _childNameController, "Edit Name")
+                  ),
                 ],
               ),
               addVerticalSpace(16),
-              Text("Reading Level: ${child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+              Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+              addVerticalSpace(16),
+              Row(
+                children: [
+                  Text("Date of Birth:", style: textTheme.titleMedium),
+                  addHorizontalSpace(16),
+                  OutlinedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: () async {
+                      final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          _selectedDOB = DateFormat('yyyy-MM-dd').format(pickedDate);
+                          _checkForChanges();
+                        });
+                      }
+                    },
+                    child: Text(_selectedDOB ?? "Set Date", style: textTheme.titleMedium),
+                  )
+                ],
+              ),
               addVerticalSpace(16),
               _classroomList(textTheme),
               addVerticalSpace(32),  
@@ -184,7 +217,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
                             appState.editChildProfileInfo(
                               widget.childID, 
                               newName: _childNameController.text, 
-                              profilePictureIndex: _selectedIconIndex
+                              profilePictureIndex: _selectedIconIndex,
+                              newDOB: _selectedDOB
                             );
                             _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
                             _initialName = appState.children[widget.childID].name;
@@ -229,7 +263,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
           ),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            controller: _scrollController,
             itemCount: classrooms.length + 1,
             itemBuilder: (context, index) {
               return Padding(
