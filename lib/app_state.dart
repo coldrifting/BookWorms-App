@@ -89,17 +89,19 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-   void editChildProfileInfo(int childId, {String? newName, int? profilePictureIndex}) async {
+   void editChildProfileInfo(int childId, {String? newName, int? profilePictureIndex, String? newDOB}) async {
     Child child = (_account as Parent).children[childId];
     // If not included as parameters, set to currently-saved value.
     newName ??= child.name;
     profilePictureIndex ??= child.profilePictureIndex;
+    newDOB ??= child.dob;
 
     ChildrenServices childrenServices = ChildrenServices();
-    childrenServices.setAccountDetails(child, newName: newName, iconIndex: profilePictureIndex);
+    childrenServices.setAccountDetails(child, newName: newName, iconIndex: profilePictureIndex, newDOB: newDOB);
 
     child.name = newName;
     child.profilePictureIndex = profilePictureIndex;
+    child.dob = newDOB;
     notifyListeners();
   }
 

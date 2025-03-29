@@ -334,7 +334,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bookworms Rating',
+                    'Average User Rating',
                     style: textTheme.titleMedium
                   ),
                   addVerticalSpace(8),

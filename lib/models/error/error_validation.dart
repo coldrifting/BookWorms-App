@@ -1,5 +1,5 @@
 class ErrorValidation {
-  final Map<String, List<String>> errors;
+  final Map<String, dynamic> errors;
 
   ErrorValidation({
     required this.errors

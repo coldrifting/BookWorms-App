@@ -37,9 +37,9 @@ class RegisterService {
       return true;
     }
     else if (response.badRequest) {
-      // Bad Request (problem with name or password).
+      // Bad Request (problem with username or password).
       final ErrorValidation data = ErrorValidation.fromJson(mappedResponse);
-      data.errors.forEach((String field, List<String> errorDescArr) {
+      data.errors.forEach((String field, dynamic errorDescArr) {
         if (errorDescArr.isNotEmpty) {
           fieldErrors[field] = errorDescArr.join(" ");
         }
