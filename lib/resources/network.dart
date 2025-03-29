@@ -1,4 +1,31 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
+
+final String serverBaseUri = getServerAddress();
+
+// Add the below argument to after flutter run or flutter build
+// to override the API url
+// --dart-define=API_URL=https://bookworms.app
+String getServerAddress() {
+  const String url = String.fromEnvironment("API_URL");
+  if (url != "") {
+    return url;
+  }
+
+  // Release
+  if (kReleaseMode) {
+    return "https://bookworms.app:443";
+  }
+
+  // Emulator connection to localhost debug server
+  if (Platform.isAndroid) {
+    return "http://10.0.2.2:8080";
+  }
+
+  // Web App, Others
+  return "http://localhost:8080";
+}
 
 final Uri userLoginUri = getFullUri("/user/login");
 final Uri userRegisterUri = getFullUri("/user/register");
@@ -196,6 +223,3 @@ Uri deleteClassroomGoalUri(String goalId) {
 Uri getFullUri(String path) {
   return Uri.parse("$serverBaseUri$path");
 }
-
-//const String serverBaseUri = "https://bookworms.app";
-const String serverBaseUri = "http://10.0.2.2:8080";

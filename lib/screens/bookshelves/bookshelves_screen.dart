@@ -30,39 +30,37 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "${appState.children[appState.selectedChildID].name}'s Bookshelves",
-          style: const TextStyle(color: colorWhite)
-        ),
-        backgroundColor: colorGreen,
-        actions: const [ChangeChildWidget()]
-      ),
+          title: Text(
+              "${appState.children[appState.selectedChildID].name}'s Bookshelves",
+              style: const TextStyle(color: colorWhite)),
+          backgroundColor: colorGreen,
+          actions: const [ChangeChildWidget()]),
+      floatingActionButton: FloatingActionButton.extended(
+          foregroundColor: colorWhite,
+          backgroundColor: colorGreen,
+          icon: const Icon(Icons.add),
+          label: Text("Add Bookshelf"),
+          onPressed: () {
+            _createBookshelf(textTheme);
+          }),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView.builder(
-          itemCount: bookshelves.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
+            itemCount: bookshelves.length,
+            itemBuilder: (context, index) {
+              double bottomPadding = index == bookshelves.length - 1 ? 16 : 0;
               return Column(
                 children: [
                   addVerticalSpace(16),
-                  _createBookshelfWidget(textTheme),
-                  addVerticalSpace(16),
-                ],
-              );
-            } else {
-              return Column(
-                children: [
                   InkWell(
-                    onTap: () { onBookClicked(index - 1); },
-                    child: _bookshelfWidget(textTheme, index - 1)
-                  ),
-                  addVerticalSpace(16),
+                      onTap: () {
+                        onBookClicked(index);
+                      },
+                      child: _bookshelfWidget(textTheme, index)),
+                  addVerticalSpace(bottomPadding)
                 ],
               );
-            }
-          }
-        ),
+            }),
       ),
     );
   }
@@ -70,38 +68,12 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
   // Upon clicking a book, open the [BookshelfScreen].
   void onBookClicked(int bookshelfIndex) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    Bookshelf bookshelf = await appState.getChildBookshelf(appState.selectedChildID, bookshelfIndex);
+    Bookshelf bookshelf = await appState.getChildBookshelf(
+        appState.selectedChildID, bookshelfIndex);
 
     if (mounted) {
       pushScreen(context, BookshelfScreen(bookshelf: bookshelf));
     }
-  }
-
-  /// The labeled button for creating a bookshelf.
-  Widget _createBookshelfWidget(TextTheme textTheme) {
-    return Material(
-      color: colorGreyLight,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        onTap: () { _createBookshelf(textTheme); },
-        splashColor: colorGreyDark!.withValues(alpha: 0.1),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: colorGreyDark ?? Colors.black, width: 1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.add, size: 20),
-              addHorizontalSpace(8),
-              Text("Create New Bookshelf", style: textTheme.titleMedium!),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   // Dialog for creating a new bookshelf.
@@ -132,15 +104,16 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                 if (name.isNotEmpty) {
                   Navigator.pop(context, name);
                   appState.addChildBookshelf(
-                    appState.selectedChildID, 
-                    Bookshelf(type: BookshelfType.custom, name: name, books: [])
-                  );
+                      appState.selectedChildID,
+                      Bookshelf(
+                          type: BookshelfType.custom, name: name, books: []));
                 }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorGreen,
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
               child: Text('Create', style: textTheme.titleSmallWhite),
             ),
@@ -159,15 +132,19 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Center(child: Text('Delete Bookshelf')),
-          content: Text('Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"'),
+          content: Text(
+              'Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"'),
           actions: [
             TextButton(
-              onPressed: () { Navigator.of(context).pop(); },
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+                appState.deleteChildBookshelf(
+                    appState.selectedChildID, bookshelf);
                 Navigator.of(context).pop();
               },
               child: const Text('Delete'),
@@ -184,32 +161,37 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     Bookshelf bookshelf = appState.bookshelves[bookshelfIndex];
 
     return bookshelf.type == BookshelfType.custom
-    ? Slidable(
-      key: UniqueKey(),
-      endActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        dismissible: DismissiblePane(
-          onDismissed: () { appState.deleteChildBookshelf(appState.selectedChildID, bookshelf); },
-        ),
-        children: [
-          SlidableAction(
-            onPressed: (BuildContext context) { _deleteBookshelf(textTheme, bookshelf); },
-            backgroundColor: colorRed!,
-            foregroundColor: colorWhite,
-            borderRadius: BorderRadius.circular(4),
-            icon: Icons.delete,
-            label: 'Delete',
-          ),
-        ],
-      ),
-      child: _bookshelfContent(textTheme, bookshelf)
-    )
-    : _bookshelfContent(textTheme, bookshelf, isLocked: true);
+        ? Slidable(
+            key: UniqueKey(),
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              dismissible: DismissiblePane(
+                onDismissed: () {
+                  appState.deleteChildBookshelf(
+                      appState.selectedChildID, bookshelf);
+                },
+              ),
+              children: [
+                SlidableAction(
+                  onPressed: (BuildContext context) {
+                    _deleteBookshelf(textTheme, bookshelf);
+                  },
+                  backgroundColor: colorRed!,
+                  foregroundColor: colorWhite,
+                  borderRadius: BorderRadius.circular(4),
+                  icon: Icons.delete,
+                  label: 'Delete',
+                ),
+              ],
+            ),
+            child: _bookshelfContent(textTheme, bookshelf))
+        : _bookshelfContent(textTheme, bookshelf, isLocked: true);
   }
 }
 
 /// The content of the bookshelf (images, title, authors, rating, level).
-Widget _bookshelfContent(TextTheme textTheme, Bookshelf bookshelf, {bool isLocked = false}) {
+Widget _bookshelfContent(TextTheme textTheme, Bookshelf bookshelf,
+    {bool isLocked = false}) {
   var authors = bookshelf.books.expand((book) => book.authors);
 
   return Container(
@@ -218,45 +200,41 @@ Widget _bookshelfContent(TextTheme textTheme, Bookshelf bookshelf, {bool isLocke
       border: Border.all(color: bookshelf.type.color[700]!),
       borderRadius: BorderRadius.circular(4),
     ),
-    child: Stack(
-      children: [
-        Positioned(
+    child: Stack(children: [
+      Positioned(
           top: 10,
           right: 10,
           child: Text(
-            bookshelf.type.name == "InProgress" ? "In Progress" : bookshelf.type.name, 
-            style: TextStyle(color: bookshelf.type.color[700]!)
-          )
-        ),
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
+              bookshelf.type.name == "InProgress"
+                  ? "In Progress"
+                  : bookshelf.type.name,
+              style: TextStyle(color: bookshelf.type.color[700]!))),
+      Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
                 width: 100,
                 height: 100,
-                child: BookshelfImageLayoutWidget(bookshelf: bookshelf)
+                child: BookshelfImageLayoutWidget(bookshelf: bookshelf)),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(bookshelf.name, style: textTheme.titleSmall),
+                  Text(printFirstAuthors(authors, 2),
+                      style: const TextStyle(
+                          fontSize: 14, overflow: TextOverflow.ellipsis)),
+                ],
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(bookshelf.name, style: textTheme.titleSmall),
-                    Text(
-                      printFirstAuthors(authors, 2),
-                      style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis)
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ]
-    ),
+          ),
+        ],
+      ),
+    ]),
   );
 }
