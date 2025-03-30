@@ -54,16 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ChangeChildWidget()
         ] : [],
       ),
-      body: ListView(
-        children: [
-          Column(
+      body: SingleChildScrollView(
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _displayGoalProgress(textTheme),
               _displayBookshelves(textTheme),
             ],
           ),
-        ],
       ),
     );
   }
@@ -158,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
             addVerticalSpace(24),
           ],
-
+    
           // Custom bookshelves
           if (bookshelves.isNotEmpty)
             Column(
@@ -173,25 +171,32 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           if (bookshelves.isEmpty)
             Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorBlack.withValues(alpha: 0.2),
-                      spreadRadius: 1,
-                      blurRadius: 6,
-                      offset: const Offset(0, 4),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorBlack.withValues(alpha: 0.2),
+                          spreadRadius: 1,
+                          blurRadius: 6,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: colorWhite,
                     ),
-                  ],
-                  borderRadius: BorderRadius.circular(4.0),
-                  color: colorWhite,
-                ),
-                margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                width: 355,
-                child: Center(
-                  child: Text("No bookshelves to show.\nHave a nice day!", textAlign: TextAlign.center)
-                )
+                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    width: 355,
+                    child: SizedBox(
+                      height: 100,
+                      child: Center(
+                        child: Text("No bookshelves to show.\nHave a nice day!", textAlign: TextAlign.center)
+                      ),
+                    )
+                  ),
+                ],
               ),
             )
         ],
