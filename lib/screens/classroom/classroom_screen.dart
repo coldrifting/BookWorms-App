@@ -94,7 +94,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         body: TabBarView(
           children: [
             StudentsScreen(),
-            GoalsScreen(goalsList: classroom.classroomGoals),
+            GoalsScreen(),
             ClassBookshelves(),
           ],
         ),

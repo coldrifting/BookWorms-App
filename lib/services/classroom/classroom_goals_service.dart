@@ -42,9 +42,9 @@ class ClassroomGoalsService {
     }
   }
 
-  Future<ClassroomGoal> getClassroomGoalStudentDetails(String goalId) async {
+  Future<ClassroomGoal> getClassroomGoalDetails(String goalId, bool extended) async {
     final response = await client.sendRequest(
-      uri: getClassroomGoalStudentDetailsUri(goalId),
+      uri: getClassroomGoalDetailsUri(goalId, extended),
       method: "GET"
     );
 
@@ -52,7 +52,7 @@ class ClassroomGoalsService {
       final data = jsonDecode(response.body);
       return ClassroomGoal.fromJson(json: data);
     } else {
-      throw Exception('An error occurred when getting the classroom student goal details.');
+      throw Exception('An error occurred when getting the classroom goal details.');
     }
   }
 

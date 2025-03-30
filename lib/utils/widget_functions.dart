@@ -48,7 +48,7 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
 }
 
 // Alert modal for adding a new classroom goal.
-  dynamic addGoalAlert(TextTheme textTheme, BuildContext context, bool isChildGoal) {
+  dynamic addGoalAlert(TextTheme textTheme, BuildContext context, bool isChildGoal, [void Function()? callback]) {
     AppState appState = Provider.of<AppState>(context, listen: false);
     
     return showDialog(
@@ -102,21 +102,27 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
                                   titleController.text, 
                                   "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}"
                                 );
+                                setState(() {
+                                  if (callback != null) {
+                                    callback();
+                                  }
+                                });
+
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       backgroundColor: colorGreenDark,
                                       content: Row(
-                                          children: [
-                                            Text(
-                                              'Successfully created class goal!', 
-                                              style: textTheme.titleSmallWhite,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Spacer(),
-                                            Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                                          ],
-                                        ),
+                                        children: [
+                                          Text(
+                                            'Successfully created class goal!', 
+                                            style: textTheme.titleSmallWhite,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Spacer(),
+                                          Icon(Icons.check_circle_outline_rounded, color: colorWhite)
+                                        ],
+                                      ),
                                       duration: Duration(seconds: 2),
                                     ),
                                   );

@@ -92,7 +92,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               child: TabBarView(
                 children: [
                   Center(child: Text("Overall Progress")),
-                  Center(child: GoalsScreen(goalsList: [])),
+                  Center(child: GoalsScreen()),
                 ],
               ),
             ),

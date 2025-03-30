@@ -46,7 +46,7 @@ class BookshelfService {
     }
   }
 
-  Future<Bookshelf> getRecommendedAuthorsBookshelf(String guid) async {
+  Future<Bookshelf> getRecommendedAuthorsBookshelf([String? guid]) async {
     final response = await client.sendRequest(
         uri: bookshelvesRecommendAuthorsUri(guid),
         method: "GET");
@@ -59,7 +59,7 @@ class BookshelfService {
     }
   }
 
-  Future<Bookshelf> getRecommendedDescriptionBookshelf(String guid) async {
+  Future<Bookshelf> getRecommendedDescriptionBookshelf(String? guid) async {
     final response = await client.sendRequest(
         uri: bookshelvesRecommendDescriptionsUri(guid),
         method: "GET");

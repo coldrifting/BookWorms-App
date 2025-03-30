@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
+import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -93,7 +94,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
                 padding: EdgeInsets.only(bottom: 12.0),
                 child: InkWell(
                   onTap: () async {
-                    ClassroomGoal detailedGoal = await appState.getClassroomGoalStudentDetails(selectedGoal.goalId);
+                    ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(selectedGoal.goalId);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -216,13 +217,15 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
 
   Widget _goalItem(TextTheme textTheme, ClassroomGoal goal, DateTime date) {
     final appState = Provider.of<AppState>(context);
+    final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
+
 
     final selectedDate = DateTime(date.year, date.month, date.day);
     final endParsed = DateTime.parse(goal.endDate);
     final endDate = DateTime(endParsed.year, endParsed.month, endParsed.day);
     int daysRemaining = endDate.difference(selectedDate).inDays;
 
-    final percentCompleted = goal.totalStudents == 0 ? 0 : ((goal.studentsCompleted / goal.totalStudents) * 100).toInt();
+    final percentCompleted = ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt();
 
     return Container(
       decoration: BoxDecoration(
@@ -281,7 +284,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
                         addHorizontalSpace(16),
                         TextButton(
                           onPressed: () async {
-                            ClassroomGoal detailedGoal = await appState.getClassroomGoalStudentDetails(goal.goalId);
+                            ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

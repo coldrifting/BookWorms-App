@@ -152,15 +152,21 @@ class AppState extends ChangeNotifier {
     return fullBookshelf;
   }
 
-  Future<Bookshelf> getRecommendedAuthorsBookshelf(int childId) async {
-    String guid = children[childId].id;
+  Future<Bookshelf> getRecommendedAuthorsBookshelf([int? childId]) async {
+    String? guid;
+    if (childId != null) {
+      guid = children[childId].id;
+    }
     Bookshelf bookshelf = await bookshelvesService.getRecommendedAuthorsBookshelf(guid);
     _setBookImages([bookshelf]);
     return bookshelf;
   }
 
-  Future<Bookshelf> getRecommendedDescriptionsBookshelf(int childId) async {
-    String guid = children[childId].id;
+  Future<Bookshelf> getRecommendedDescriptionsBookshelf([int? childId]) async {
+    String? guid;
+    if (childId != null) {
+      guid = children[childId].id;
+    }
     Bookshelf bookshelf = await bookshelvesService.getRecommendedDescriptionBookshelf(guid);
     _setBookImages([bookshelf]);
     return bookshelf;
@@ -347,6 +353,7 @@ class AppState extends ChangeNotifier {
   // ***** Classroom Goals - Teacher *****
 
   ClassroomGoalsService classroomGoalsService = ClassroomGoalsService();
+  List<dynamic>? get goals => isParent ? [] : classroom!.classroomGoals;
 
   Future<List<ClassroomGoal>> getClassroomGoals() async {
     return await classroomGoalsService.getClassroomGoals();
@@ -358,8 +365,13 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<ClassroomGoal> getClassroomGoalStudentDetails(String goalId) async {
-    ClassroomGoal goal = await classroomGoalsService.getClassroomGoalStudentDetails(goalId);
+  Future<ClassroomGoal> getBasicClassroomGoalDetails(String goalId) async {
+    ClassroomGoal goal = await classroomGoalsService.getClassroomGoalDetails(goalId, false);
+    return goal;
+  }
+
+  Future<ClassroomGoal> getDetailedClassroomGoalDetails(String goalId) async {
+    ClassroomGoal goal = await classroomGoalsService.getClassroomGoalDetails(goalId, true);
     return goal;
   }
 

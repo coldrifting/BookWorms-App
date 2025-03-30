@@ -1,5 +1,7 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
+import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
+import 'package:bookworms_app/models/goals/student_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
@@ -9,26 +11,26 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class GoalsScreen extends StatefulWidget {
-  final dynamic goalsList;
-
-  const GoalsScreen({super.key, required this.goalsList});
+  const GoalsScreen({super.key});
 
   @override
   State<GoalsScreen> createState() => _GoalsScreenState();
 }
 
 class _GoalsScreenState extends State<GoalsScreen> {
-  late dynamic goals = widget.goalsList;
-  late dynamic activeGoals;
-  late dynamic pastGoals;
-  late dynamic futureGoals;
+  late dynamic goals;
+  late dynamic activeGoals = [];
+  late dynamic pastGoals = [];
+  late dynamic futureGoals = [];
   late dynamic displayedGoals;
-  late String selectedGoalsTitle;
-
+  late String selectedGoalsTitle = "Active";
   late bool isChildGoal;
 
   // Groups the goals into their respective lists (past / active / future goals).
   void _organizeGoals() {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+
+    goals = appState.goals;
     activeGoals = [];
     pastGoals = [];
     futureGoals = [];
@@ -44,18 +46,14 @@ class _GoalsScreenState extends State<GoalsScreen> {
         activeGoals.add(goal);
       }
     }
-    displayedGoals = activeGoals;
-    selectedGoalsTitle = "Active";
-
-    // The goal list is either composed of classroom or child goals.
-    goals is List<ClassroomGoal> ? isChildGoal = false : true;
+    isChildGoal = goals is! List<ClassroomGoal>;
   }
 
   @override
   void initState() {
     super.initState();
-    goals = widget.goalsList;
     _organizeGoals();
+    displayedGoals = activeGoals;
   }
 
   @override
@@ -70,49 +68,55 @@ class _GoalsScreenState extends State<GoalsScreen> {
             child: ListView.builder(
               itemCount: displayedGoals.length + 2,
               itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      _addGoalButton(textTheme),
-                      addVerticalSpace(8),
-                    ],
-                  );
-                } else if (index == 1) {
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _goalItemWidget(textTheme, "Active", Icons.alarm, activeGoals),
-                          _goalItemWidget(textTheme, "Upcoming", Icons.flag, futureGoals),
-                          _goalItemWidget(textTheme, "Past", Icons.check_circle_rounded, pastGoals),
-                        ],
-                      ),
-                      addVerticalSpace(16),
-                      // if (displayedGoals.isEmpty) ...[
-                      //   addVerticalSpace(16),
-                      //   Center(
-                      //     child: Text("No Goals to be Shown", style: TextStyle(color: colorGrey)),
-                      //   )
-                      // ]
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      _goalItem(
-                        textTheme, 
-                        displayedGoals[index - 2], 
-                        _getGoalDetailsCallback(displayedGoals[index - 2], selectedGoalsTitle)
-                      ),
-                      addVerticalSpace(16),
-                    ],
-                  );
-                }
+                if (index == 0) { return _addGoalSection(textTheme); }
+                else if (index == 1) { return _goalCategorySelector(textTheme); } 
+
+                final goal = displayedGoals[index - 2];
+                return Column(
+                  children: [
+                    _goalItem(
+                      textTheme, 
+                      goal,
+                      _getGoalDetailsCallback(displayedGoals[index - 2], selectedGoalsTitle)
+                    ),
+                    addVerticalSpace(16),
+                  ],
+                );
               },
             )
           ),
         )
+      ],
+    );
+  }
+
+  Widget _addGoalSection(TextTheme textTheme) {
+    return Column(
+      children: [
+        _addGoalButton(textTheme),
+        addVerticalSpace(8),
+      ],
+    );
+  }
+
+  Widget _goalCategorySelector(TextTheme textTheme) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _goalItemWidget(textTheme, "Active", Icons.alarm, activeGoals),
+            _goalItemWidget(textTheme, "Upcoming", Icons.flag, futureGoals),
+            _goalItemWidget(textTheme, "Past", Icons.check_circle_rounded, pastGoals),
+          ],
+        ),
+        addVerticalSpace(16),
+        if (displayedGoals.isEmpty) ...[
+          addVerticalSpace(16),
+          Center(
+            child: Text("No Goals to be Shown", style: TextStyle(color: colorGrey)),
+          )
+        ]
       ],
     );
   }
@@ -122,20 +126,18 @@ class _GoalsScreenState extends State<GoalsScreen> {
     bool isSelected = selectedGoalsTitle == title;
 
     return InkWell(
-      onTap: () {
-        setState(() {
-          displayedGoals = goals;
-          selectedGoalsTitle = title;
-        });
-      },
+      onTap: () => setState(() {
+        displayedGoals = goals;
+        selectedGoalsTitle = title;
+      }),
       child: Container(
         decoration: BoxDecoration(
-          color: !isSelected ? colorWhite : colorGreenGradTop,
+          color: isSelected ? colorGreenGradTop : colorWhite,
           border: Border.all(color: colorGreen!, width: isSelected ? 4 : 3),
           borderRadius: BorderRadius.circular(16),
-          boxShadow: !isSelected
-            ? [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4))]
-            : [],
+          boxShadow: isSelected
+            ? []
+            : [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4))],
         ),
         height: 125,
         width: 125,
@@ -144,13 +146,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: !isSelected ? colorGreen : colorWhite, size: 28),
+              Icon(icon, color: isSelected ? colorWhite : colorGreen, size: 28),
               addVerticalSpace(4),
               Text(
                 title, 
-                style: !isSelected 
-                  ? textTheme.titleMedium!.copyWith(color: colorGreen) 
-                  : textTheme.titleMediumWhite, 
+                style: isSelected 
+                  ? textTheme.titleMediumWhite
+                  : textTheme.titleMedium!.copyWith(color: colorGreen), 
                 textAlign: TextAlign.center
               ),
               Padding(
@@ -173,7 +175,9 @@ class _GoalsScreenState extends State<GoalsScreen> {
     return FractionallySizedBox(
       widthFactor: 0.4,
       child: TextButton(
-        onPressed: () => addGoalAlert(textTheme, context, isChildGoal),
+        onPressed: () { 
+          addGoalAlert(textTheme, context, isChildGoal, _organizeGoals);
+        },
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,
@@ -203,9 +207,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
-        onTap: () => {
-          if (!isChildGoal)
-            _navigateToGoalDetails(context, appState, goal)
+        onTap: () {
+          if (!isChildGoal) { _navigateToGoalDetails(context, appState, goal); }
         },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -236,17 +239,19 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   Widget _goalDetails(dynamic goal) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context);
+
     DateTime endDate = DateTime.parse(goal.endDate);
 
     return Column(
       children: [
-        if (!isChildGoal) ... [
+        if (!appState.isParent) ... [
           Text(
-            "Completed by ${goal.studentsCompleted}/${goal.totalStudents} students", 
+            "Completed by ${goal.classGoalDetails.studentsCompleted}/${goal.classGoalDetails.studentsTotal} students", 
             style: textTheme.bodyMedium
           ),
           addVerticalSpace(8),
-          _completionBarWidget(goal.studentsCompleted, goal.totalStudents),
+          _completionBarWidget(goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
           addVerticalSpace(12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -254,25 +259,24 @@ class _GoalsScreenState extends State<GoalsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (goal.completionGoal != null) ...[
+                  if (goal.goalMetric == "Completion") ...[
                     Text("Average Time", style: textTheme.bodyMedium),
                     Text(goal.completionGoal!.avgCompletionTime != null 
-                      ? "${goal.completionGoal!.avgCompletionTime} min." 
+                      ? "${goal.progress.toString().substring(3)} min." 
                       : "--", 
                       style: textTheme.labelLarge
                     ),
                   ],
-                  if (goal.numBooksGoal != null) ...[
+                  if (goal.goalMetric == "BooksRead") ...[
                     Text("Avg. Books Read", style: textTheme.bodyMedium),
-                    Text(goal.numBooksGoal!.avgBooksRead != null 
-                      ? "${goal.numBooksGoal!.avgBooksRead}" 
-                      : "--", 
+                    Text(
+                      goal.progress.toString(), 
                       style: textTheme.labelLarge
                     ),
                   ]
                 ],
               ),
-              if (goal.numBooksGoal != null) ...[
+              if (goal.goalMetric == "NumBooks") ...[
                 SizedBox(
                   height: 40,
                   child: VerticalDivider(
@@ -285,7 +289,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   children: [
                     Text("Target Books", style: textTheme.bodyMedium),
                     Text(
-                      "${goal.numBooksGoal!.targetNumBooks}",
+                      "${goal.target}",
                       style: textTheme.labelLarge
                     ),
                   ],
@@ -362,7 +366,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   // Calculates the percentage of time between the start date, now, and the end date.
   Widget _completionBarWidget(int numStudentsCompleted, int numTotalStudents) {
-    double percentCompleted = numStudentsCompleted / numTotalStudents;
+    double percentCompleted = numTotalStudents == 0 ? 0.0 : numStudentsCompleted / numTotalStudents;
     Color barColor;
     if (percentCompleted < 0.5) {
       barColor = colorRed!;
@@ -383,7 +387,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   // Navigates from classroom goal screen to goal detail screen (displays all students' completion status).
   Future<void> _navigateToGoalDetails(BuildContext context, AppState appState, ClassroomGoal goal) async {
-    ClassroomGoal detailedGoal = await appState.getClassroomGoalStudentDetails(goal.goalId);
+    ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId);
     if (context.mounted) {
       Navigator.push(
         context,
