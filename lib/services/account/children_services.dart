@@ -40,13 +40,14 @@ class ChildrenServices {
     }
   }
 
-  Future<Child> setAccountDetails(Child child, {String? newName, int? iconIndex}) async {
+  Future<Child> setAccountDetails(Child child, {String? newName, int? iconIndex, String? newDOB}) async {
     final response = await client.sendRequest(
         uri: childEditDetailsUri(child.id),
         method: "PUT",
         payload: {
           "newName": newName,
-          "childIcon": iconIndex
+          "childIcon": iconIndex,
+          "dateOfBirth": newDOB
         }
       );
 

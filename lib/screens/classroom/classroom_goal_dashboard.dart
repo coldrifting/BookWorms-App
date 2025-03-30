@@ -41,6 +41,10 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     List<List<ClassroomGoal>> activeGoals = goalData[0];
     List<int> goalCounts = goalData[1];
 
+    // The goal list is either composed of classroom or child goals.
+    //final isChildGoal = activeGoals is! List<ClassroomGoal>;
+    final isChildGoal = false; // TODO
+
     return Column(
       children: [
         SizedBox(
@@ -106,7 +110,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
               );
             },
           )
-          : _noGoalsWidget()
+          : _noGoalsWidget(textTheme, isChildGoal)
         ),
       ],
     );
@@ -155,9 +159,8 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     return [goalLists, goalCounts];
   }
 
-
   // "No goals to show" display.
-  Widget _noGoalsWidget() {
+  Widget _noGoalsWidget(TextTheme textTheme, bool isChildGoal) {
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -175,11 +178,39 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       width: 355,
       child: Center(
-        child: Text(
-          "No goals to show.\nHave a nice day!",
-          textAlign: TextAlign.center
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("No class goals assigned today.\nAdd one now!", textAlign: TextAlign.center),
+            addVerticalSpace(8),
+            _addGoalButton(textTheme, isChildGoal)
+          ],
         )
       )
+    );
+  }
+
+  Widget _addGoalButton(TextTheme textTheme, bool isChildGoal) {
+    return FractionallySizedBox(
+      widthFactor: 0.5,
+      child: TextButton(
+        onPressed: () => addGoalAlert(textTheme, context, isChildGoal),
+        style: TextButton.styleFrom(
+          backgroundColor: colorGreen,
+          foregroundColor: colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Add New Goal"),
+            addHorizontalSpace(8),
+            Icon(Icons.add_chart, color: colorWhite),
+          ],
+        ),
+      ),
     );
   }
 
@@ -191,7 +222,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     final endDate = DateTime(endParsed.year, endParsed.month, endParsed.day);
     int daysRemaining = endDate.difference(selectedDate).inDays;
 
-    final percentCompleted = ((goal.studentsCompleted / goal.totalStudents) * 100).toInt();
+    final percentCompleted = goal.totalStudents == 0 ? 0 : ((goal.studentsCompleted / goal.totalStudents) * 100).toInt();
 
     return Container(
       decoration: BoxDecoration(

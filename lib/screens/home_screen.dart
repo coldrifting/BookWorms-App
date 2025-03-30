@@ -22,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 
 /// The state of the [HomeScreen].
 class _HomeScreenState extends State<HomeScreen> {
-
   late Future<Bookshelf> _recommendedAuthorsBookshelf;
   late final Future<Bookshelf> _recommendedDescriptionsBookshelf;
 
@@ -42,97 +41,159 @@ class _HomeScreenState extends State<HomeScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
-    List<Bookshelf> bookshelves = appState.bookshelves.where((bookshelf) => bookshelf.books.length >= 3 
-      && (bookshelf.type.name == "Custom" || bookshelf.type.name == "Classroom")).toList();
 
     return Scaffold(
-      // Home app bar
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
         title: Text(
           "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Dashboard",
-          style: const TextStyle(
-            color: colorWhite
-          )
+          style: const TextStyle(color: colorWhite)
         ),
         backgroundColor: colorGreen,
         actions: isParent ? const [
           ChangeChildWidget()
         ] : [],
       ),
-      // Bookshelves list
       body: ListView(
         children: [
-          Container(      
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                stops: [0, 0.2, 0.51, 0.58],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [colorGreenGradTop, colorWhite, colorWhite, colorGreenGradTop],
-              )
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _displayGoalProgress(textTheme),
+              _displayBookshelves(textTheme),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Displays goal progress of students or current child.
+  Widget _displayGoalProgress(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    var isParent = appState.isParent;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          stops: [0, 0.33],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [colorGreenGradTop, colorWhite],
+        )
+      ),
+      child: Column(
+        children: [
+          addVerticalSpace(16),
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                addVerticalSpace(16),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
-                      Text("Check out an overview of your students' progress.", style: textTheme.bodyMediumWhite),
-                      addVerticalSpace(24),
-                    ],
-                  ),
-                ),
-              if (!isParent && appState.classroom != null) ...[
-                _teacherProgressData(),
-                addVerticalSpace(24),
-              ],
-
-              if (isParent) ... [        
-                // Progress/goal tracker overview.
-                _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
-                addVerticalSpace(24),
-                      
-                // Recommended bookshelf (similar descriptions).
-                _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
-                addVerticalSpace(24),
-              
-                // Recommended bookshelf (similar authors).
-                _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
-                addVerticalSpace(24),
-              ],
-
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    Text("Recommended for me", style: textTheme.titleMediumWhite),
-                    Text("Get a glimpse of your curated bookshelves.", style: textTheme.bodyMediumWhite),
-                    addVerticalSpace(16),
+                    Icon(Icons.sunny, color: colorWhite),
+                    addHorizontalSpace(8),
+                    Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
                   ],
                 ),
-              ),
-                      
-              // Custom bookshelves
-              if (bookshelves.isNotEmpty)
-                Column(
-                  children: bookshelves.map((bookshelf) {
-                    return Column(
-                      children: [
-                        BookshelfWidget(bookshelf: bookshelf),
-                        addVerticalSpace(24),
-                      ],
-                    );
-                  }).toList(),
-                ),
+                Text("Check out an overview of your students' progress.", style: textTheme.bodyMediumWhite),
+                addVerticalSpace(24),
               ],
             ),
           ),
+          // Parent -- Child data.
+          if (!isParent && appState.classroom != null) ...[
+            ClassroomGoalDashboard(),
+          ],
+          if (isParent) ... [        
+            _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
+            addVerticalSpace(24),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // Displays curated and "large enough" (book count >= 3) custom bookshelves.
+  Widget _displayBookshelves(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    var isParent = appState.isParent;
+    List<Bookshelf> bookshelves = appState.bookshelves.where((bookshelf) => bookshelf.books.length >= 3 
+      && (bookshelf.type.name == "Custom" || bookshelf.type.name == "Classroom")).toList();
+
+    return Container(
+      decoration: BoxDecoration(
+      gradient: LinearGradient(
+        stops: [0, 0.005, 0.005],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [colorGreen!, colorGreen!, colorGreenGradTop],
+      )
+    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.bookmark, color: colorWhite),
+                    addHorizontalSpace(8),
+                    Text("Recommended for me", style: textTheme.titleMediumWhite),
+                  ],
+                ),
+                Text("Explore your curated and personal collections", style: textTheme.bodyMediumWhite),
+                addVerticalSpace(8),
+              ]
+            ),
+          ),
+          // Display recommended bookshelves for the selected child.
+          if (isParent) ... [
+            _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+            addVerticalSpace(24),
+            _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+            addVerticalSpace(24),
+          ],
+
+          // Custom bookshelves
+          if (bookshelves.isNotEmpty)
+            Column(
+              children: bookshelves.map((bookshelf) {
+                return Column(
+                  children: [
+                    BookshelfWidget(bookshelf: bookshelf),
+                    addVerticalSpace(24),
+                  ],
+                );
+              }).toList(),
+            ),
+          if (bookshelves.isEmpty)
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorBlack.withValues(alpha: 0.2),
+                      spreadRadius: 1,
+                      blurRadius: 6,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(4.0),
+                  color: colorWhite,
+                ),
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                width: 355,
+                child: Center(
+                  child: Text("No bookshelves to show.\nHave a nice day!", textAlign: TextAlign.center)
+                )
+              ),
+            )
         ],
       ),
     );
@@ -152,10 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     );
-  }
-
-  Widget _teacherProgressData() {
-    return ClassroomGoalDashboard();
   }
 
   /// Displays the up-to-date progress of the currently-selected child.
@@ -180,18 +237,12 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Align(
               alignment: Alignment.topLeft,
-              child: Text(
-                style: textTheme.titleMedium,
-                "$selectedChild's Progress"
-              ),
+              child: Text("$selectedChild's Progress", style: textTheme.titleMedium),
             ),
             Expanded(
               child: Align(
                 alignment: Alignment.center,
-                child: Text(
-                  style: textTheme.bodyLarge,
-                  "No progress to display"
-                ),
+                child: Text("No progress to display", style: textTheme.bodyLarge),
               ),
             ),
           ]

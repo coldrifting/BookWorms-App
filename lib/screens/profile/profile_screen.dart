@@ -37,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
 
@@ -79,25 +80,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 OptionWidget(
                   name: "About",
                   icon: Icons.settings,
-                  onTap: () {
-                    pushScreen(context, const AboutScreen());
-                  },
+                  onTap: () => pushScreen(context, const AboutScreen()),
                 ),
                 addVerticalSpace(10),
                 const Divider(),
                 addVerticalSpace(10),
-                OptionWidget(
-                  name: "Sign Out",
-                  icon: Icons.logout_outlined,
-                  onTap: () {
-                    signOut();
-                  },
-                ),
+                _signOutWidget(textTheme)
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _signOutWidget(TextTheme textTheme) {
+    return ElevatedButton(
+      onPressed: signOut,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: colorBlack,
+        backgroundColor: colorWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        side: BorderSide(color: colorGreyDark ?? colorBlack),
+        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(size: 32, Icons.logout_outlined),
+          addHorizontalSpace(8),
+          Text("Sign Out", style: textTheme.titleSmall),
+        ],
+      )
     );
   }
 }
