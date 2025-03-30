@@ -95,7 +95,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
                   ],
                 ),
-                Text("Check out an overview of your students' progress.", style: textTheme.bodyMediumWhite),
+                Text(
+                  "Check out an overview of ${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "your students'"} progress",
+                  style: textTheme.bodyMediumWhite
+                ),
                 addVerticalSpace(24),
               ],
             ),
