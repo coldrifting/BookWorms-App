@@ -1,22 +1,22 @@
 class Goal {
-  final String goalId;
+  final String? goalId;
   final String goalType;
   final String goalMetric;
   final String title;
   final String startDate;
   final String endDate;
   final int target;
-  final int progress;
+  final int? progress;
 
   Goal({
-    required this.goalId,
+    this.goalId,
     required this.goalType,
     required this.goalMetric,
     required this.title,
     required this.startDate,
     required this.endDate,
     required this.target,
-    required this.progress
+    this.progress
   });
 
   factory Goal.fromJson(Map<String, dynamic> json) {

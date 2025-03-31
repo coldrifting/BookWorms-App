@@ -259,8 +259,8 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                appState.deleteClassroomGoal(goal.goalId);
-                setState(() {});
+                await appState.deleteClassroomGoal(goal.goalId);
+                //setState(() {});
               },
               child: Text('Delete', style: TextStyle(color: colorRed)),
             ),

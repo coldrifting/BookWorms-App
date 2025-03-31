@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -95,13 +96,20 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
                         ),
                         addHorizontalSpace(4),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             if (!isChildGoal) {
                               if (formKey.currentState?.validate() ?? false) {
-                                appState.addClassroomGoal(
-                                  titleController.text, 
-                                  "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}"
+                                DateTime today = DateTime.now();
+                                Goal newGoal = Goal(
+                                  goalType: "Classroom",
+                                  goalMetric: selectedMetric,
+                                  title: titleController.text,
+                                  startDate: "${today.year}-${today!.month.toString().padLeft(2, '0')}-${today!.day.toString().padLeft(2, '0')}", // TODO
+                                  endDate: "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}",
+                                  target: 0 //TODO
                                 );
+
+                                await appState.addClassroomGoal(newGoal);
                                 setState(() {
                                   if (callback != null) {
                                     callback();

@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
+import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
@@ -363,8 +364,8 @@ class AppState extends ChangeNotifier {
     return await classroomGoalsService.getClassroomGoals();
   }
 
-  void addClassroomGoal(String title, String endDate, {int? targetNumBooks}) async {
-    ClassroomGoal newGoal = await classroomGoalsService.addClassroomGoal(title, endDate, targetNumBooks);
+  Future<void> addClassroomGoal(Goal goal) async {
+    ClassroomGoal newGoal = await classroomGoalsService.addClassroomGoal(goal);
     (_account as Teacher).classroom!.classroomGoals.add(newGoal);
     notifyListeners();
   }
@@ -389,7 +390,7 @@ class AppState extends ChangeNotifier {
     return goal;
   }
 
-  void deleteClassroomGoal(goalId) async {
+  Future<void> deleteClassroomGoal(goalId) async {
     await classroomGoalsService.deleteClassroomGoal(goalId);
     classroom!.classroomGoals.removeWhere((g) => g.goalId == goalId);
     notifyListeners();

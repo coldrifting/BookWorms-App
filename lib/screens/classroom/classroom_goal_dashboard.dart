@@ -94,7 +94,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
                 padding: EdgeInsets.only(bottom: 12.0),
                 child: InkWell(
                   onTap: () async {
-                    ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(selectedGoal.goalId);
+                    ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(selectedGoal.goalId!);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -284,7 +284,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
                         addHorizontalSpace(16),
                         TextButton(
                           onPressed: () async {
-                            ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId);
+                            ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId!);
                             Navigator.push(
                               context,
                               MaterialPageRoute(

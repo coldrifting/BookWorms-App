@@ -1,7 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
-import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
-import 'package:bookworms_app/models/goals/student_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
@@ -47,13 +45,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
       }
     }
     isChildGoal = goals is! List<ClassroomGoal>;
+    displayedGoals = activeGoals;
   }
 
   @override
   void initState() {
     super.initState();
     _organizeGoals();
-    displayedGoals = activeGoals;
   }
 
   @override
@@ -77,7 +75,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     _goalItem(
                       textTheme, 
                       goal,
-                      _getGoalDetailsCallback(displayedGoals[index - 2], selectedGoalsTitle)
+                      _getGoalDetailsCallback(goal, selectedGoalsTitle)
                     ),
                     addVerticalSpace(16),
                   ],
@@ -261,9 +259,9 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 children: [
                   if (goal.goalMetric == "Completion") ...[
                     Text("Average Time", style: textTheme.bodyMedium),
-                    Text(goal.completionGoal!.avgCompletionTime != null 
-                      ? "${goal.progress.toString().substring(3)} min." 
-                      : "--", 
+                    Text(goal.progress.toString(), // TODO
+                      //? "${goal.progress.toString().substring(3)} min." 
+                      //: "--", 
                       style: textTheme.labelLarge
                     ),
                   ],
@@ -387,7 +385,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   // Navigates from classroom goal screen to goal detail screen (displays all students' completion status).
   Future<void> _navigateToGoalDetails(BuildContext context, AppState appState, ClassroomGoal goal) async {
-    ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId);
+    ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId!);
     if (context.mounted) {
       Navigator.push(
         context,

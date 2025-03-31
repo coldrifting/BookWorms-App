@@ -24,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<Bookshelf> _recommendedAuthorsBookshelf;
   late final Future<Bookshelf> _recommendedDescriptionsBookshelf;
-  late bool existsRecommended = false;
+  late bool existsRecommended;
 
   @override
   void initState() {
@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     AppState appState = Provider.of<AppState>(context, listen: false);
     var isParent = appState.isParent;
+    existsRecommended = false;
 
     _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(isParent ? appState.selectedChildID : null);
     _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(isParent ? appState.selectedChildID : null);
@@ -153,10 +154,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           // Display recommended bookshelves.
-            _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
-            addVerticalSpace(24),
-            _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
-            addVerticalSpace(24),
+          _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+          addVerticalSpace(24),
+          _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+          addVerticalSpace(24),
     
           // Display custom bookshelves.
           if (bookshelves.isNotEmpty)
