@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
@@ -46,27 +47,27 @@ class BookshelfService {
     }
   }
 
-  Future<Bookshelf> getRecommendedAuthorsBookshelf([String? guid]) async {
+  Future<List<BookSummary>> getRecommendedAuthorsBookshelf([String? guid]) async {
     final response = await client.sendRequest(
         uri: bookshelvesRecommendAuthorsUri(guid),
         method: "GET");
 
     if (response.ok) {
-      final data = jsonDecode(response.body);
-      return Bookshelf.fromJson(data);
+      final data = jsonDecode(response.body) as List;
+      return data.map((entry) => BookSummary.fromJson(entry)).toList();
     } else {
       throw Exception("An error occurred when fetching the child's recommended bookshelf.");
     }
   }
 
-  Future<Bookshelf> getRecommendedDescriptionBookshelf(String? guid) async {
+  Future<List<BookSummary>> getRecommendedDescriptionBookshelf(String? guid) async {
     final response = await client.sendRequest(
         uri: bookshelvesRecommendDescriptionsUri(guid),
         method: "GET");
 
     if (response.ok) {
-      final data = jsonDecode(response.body);
-      return Bookshelf.fromJson(data);
+      final data = jsonDecode(response.body) as List;
+      return data.map((entry) => BookSummary.fromJson(entry)).toList();
     } else {
       throw Exception("An error occurred when fetching the child's recommended bookshelf.");
     }

@@ -5,7 +5,8 @@ enum BookshelfType {
   completed("Completed", Colors.green),
   inProgress("InProgress", Colors.lightBlue),
   custom("Custom", Colors.grey),
-  classroom("Classroom", Colors.red);
+  classroom("Classroom", Colors.red),
+  recommended("Recommended", Colors.grey);
 
   final MaterialColor color;
   final String name;

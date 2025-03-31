@@ -40,7 +40,6 @@ class _BookshelfWidget extends State<BookshelfWidget> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    AppState appState = Provider.of<AppState>(context);
     Bookshelf bookshelf = widget.bookshelf;
 
     return Container(
@@ -58,8 +57,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
       ),
       child: InkWell(
         onTap: () {
-          if (mounted && bookshelf.type == BookshelfType.custom ||
-          (!appState.isParent && bookshelf.type == BookshelfType.classroom)) {
+          if (mounted) {
             // Change the screen to the "bookshelf" screen.
             Navigator.push(
               context,

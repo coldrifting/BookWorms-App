@@ -24,16 +24,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<Bookshelf> _recommendedAuthorsBookshelf;
   late final Future<Bookshelf> _recommendedDescriptionsBookshelf;
+  late bool existsRecommended = false;
 
   @override
   void initState() {
     super.initState();
 
     AppState appState = Provider.of<AppState>(context, listen: false);
-    if (appState.isParent) {
-      _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(appState.selectedChildID);
-      _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(appState.selectedChildID);
-    }
+    var isParent = appState.isParent;
+
+    _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(isParent ? appState.selectedChildID : null);
+    _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(isParent ? appState.selectedChildID : null);
   }
 
   @override
@@ -119,7 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // Displays curated and "large enough" (book count >= 3) custom bookshelves.
   Widget _displayBookshelves(TextTheme textTheme) {
     AppState appState = Provider.of<AppState>(context);
-    var isParent = appState.isParent;
     List<Bookshelf> bookshelves = appState.bookshelves.where((bookshelf) => bookshelf.books.length >= 3 
       && (bookshelf.type.name == "Custom" || bookshelf.type.name == "Classroom")).toList();
 
@@ -152,15 +152,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ]
             ),
           ),
-          // Display recommended bookshelves for the selected child.
-          if (isParent) ... [
+          // Display recommended bookshelves.
             _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
             addVerticalSpace(24),
             _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
             addVerticalSpace(24),
-          ],
     
-          // Custom bookshelves
+          // Display custom bookshelves.
           if (bookshelves.isNotEmpty)
             Column(
               children: bookshelves.map((bookshelf) {
@@ -172,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }).toList(),
             ),
-          if (bookshelves.isEmpty)
+          if (!existsRecommended && bookshelves.isEmpty)
             Center(
               child: Column(
                 children: [
@@ -199,6 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )
                   ),
+                  addVerticalSpace(32),
                 ],
               ),
             )
@@ -217,6 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
         } else if (snapshot.hasError) {
           return SizedBox.shrink(); // Show nothing on error.
         } else {
+          existsRecommended = true;
           return BookshelfWidget(bookshelf: snapshot.data!);
         }
       }

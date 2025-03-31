@@ -1,6 +1,8 @@
 import 'dart:collection';
+import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_goals_service.dart';
@@ -157,7 +159,8 @@ class AppState extends ChangeNotifier {
     if (childId != null) {
       guid = children[childId].id;
     }
-    Bookshelf bookshelf = await bookshelvesService.getRecommendedAuthorsBookshelf(guid);
+    List<BookSummary> bookDetails = await bookshelvesService.getRecommendedAuthorsBookshelf(guid);
+    Bookshelf bookshelf = Bookshelf(books: bookDetails, type: BookshelfType.recommended, name: "Recommended Authors");
     _setBookImages([bookshelf]);
     return bookshelf;
   }
@@ -167,7 +170,8 @@ class AppState extends ChangeNotifier {
     if (childId != null) {
       guid = children[childId].id;
     }
-    Bookshelf bookshelf = await bookshelvesService.getRecommendedDescriptionBookshelf(guid);
+    List<BookSummary> bookDetails = await bookshelvesService.getRecommendedDescriptionBookshelf(guid);
+    Bookshelf bookshelf = Bookshelf(books: bookDetails, type: BookshelfType.recommended, name: "Recommended Books");
     _setBookImages([bookshelf]);
     return bookshelf;
   }
