@@ -1,3 +1,4 @@
+import 'package:bookworms_app/screens/setup/ping_screen.dart';
 import 'package:bookworms_app/screens/setup/splash_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class BookWorms extends StatelessWidget {
             navigatorKey: navigatorKey,
             title: 'BookWorms',
             theme: appTheme,
-            home: const SplashScreen(),
+            home: const PingScreen(),
             scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
               PointerDeviceKind.touch,
               PointerDeviceKind.mouse,
@@ -72,6 +73,30 @@ class _Navigation extends State<Navigation> {
   bool onNotificationPush(SearchModifiedNotification searchNotify) {
     isSearchScreenModified = searchNotify.isModified;
     return true;
+  }
+
+  void onBottomNavItemTapped(int index) {
+    if (selectedIndex == index) {
+      var nav = _navigatorKeys[index]?.currentState;
+      if (nav == null) {
+        return;
+      }
+
+      while (nav.canPop()) {
+        nav.pop();
+      }
+
+      bool shouldResetSearch =
+          _navLabels[index] == "Search" && isSearchScreenModified;
+
+      if (shouldResetSearch) {
+        // TODO
+      }
+    } else {
+      setState(() {
+        selectedIndex = index;
+      });
+    }
   }
 
   /// Main widget containing app bar, page navigator, and bottom bar.
@@ -117,34 +142,8 @@ class _Navigation extends State<Navigation> {
                 backgroundColor: colorGreen,
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                 selectedIndex: selectedIndex,
-                onDestinationSelected: (int index) {
-                  if (selectedIndex == index) {
-                    var nav = _navigatorKeys[index]?.currentState;
-                    if (nav == null) {
-                      return;
-                    }
-
-                    bool shouldResetSearch =
-                        _navLabels[index] == "Search" && isSearchScreenModified;
-
-                    if (nav.canPop() || shouldResetSearch) {
-                      nav.pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => pages[index]),
-                          (_) => false);
-                    }
-                  } else {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  }
-                },
-                destinations: getDest(isParent)
-                    .map((x) => NavigationDestination(
-                        selectedIcon:
-                            Icon(x.selectedIcon, color: colorGreenDark),
-                        icon: Icon(x.icon, color: colorWhite),
-                        label: x.label))
-                    .toList())));
+                onDestinationSelected: onBottomNavItemTapped,
+                destinations: getDestWidgets(isParent))));
   }
 }
 
@@ -174,6 +173,15 @@ List<Destination> getDest(bool isParent) {
   }).toList();
 
   return list;
+}
+
+List<Widget> getDestWidgets(bool isParent) {
+  return getDest(isParent)
+      .map((x) => NavigationDestination(
+          selectedIcon: Icon(x.selectedIcon, color: colorGreenDark),
+          icon: Icon(x.icon, color: colorWhite),
+          label: x.label))
+      .toList();
 }
 
 List<Destination> dest = [
