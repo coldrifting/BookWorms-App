@@ -3,6 +3,7 @@ import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -163,7 +164,31 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 ],
               ),
               addVerticalSpace(16),
-              Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+              Row(
+                children: [
+                  Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+                  RawMaterialButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ReadingLevelInfoWidget(),
+                        ),
+                      );
+                    },
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8.0),
+                    constraints: BoxConstraints(
+                      maxWidth: 40,
+                    ),
+                    child: const Icon(
+                      Icons.help_outline,
+                      color: colorBlack,
+                      size: 20
+                    )
+                  ),
+                ],
+              ),
               addVerticalSpace(16),
               Row(
                 children: [

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
@@ -300,9 +301,33 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Reading Level',
-                    style: textTheme.titleMedium
+                  Row(
+                    children: [
+                      Text(
+                        'Reading Level',
+                        style: textTheme.titleMedium
+                      ),
+                      RawMaterialButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ReadingLevelInfoWidget(),
+                            ),
+                          );
+                        },
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(8.0),
+                        constraints: BoxConstraints(
+                          maxWidth: 40,
+                        ),
+                        child: const Icon(
+                          Icons.help_outline,
+                          color: colorBlack,
+                          size: 20
+                        )
+                      ),
+                    ],
                   ),
                   addVerticalSpace(8),
                   Row(

@@ -6,6 +6,7 @@ import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/services/book/book_difficulty_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -183,8 +184,45 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           // Book difficulty and rating
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Text(
-                style: textTheme.bodyLarge, "Level $difficulty   |   $rating"),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  style: textTheme.bodyLarge,
+                  "Level $difficulty",
+                ),
+                RawMaterialButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReadingLevelInfoWidget(),
+                      ),
+                    );
+                  },
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(4.0),
+                  constraints: BoxConstraints(
+                    maxWidth: 40,
+                  ),
+                  child: const Icon(
+                    Icons.help_outline,
+                    color: colorBlack,
+                    size: 20
+                  )
+                ),
+                Container(
+                  height: 40,
+                  width: 1,
+                  color: Colors.black,
+                ),
+                addHorizontalSpace(16),
+                Text(
+                  style: textTheme.bodyLarge,
+                  rating,
+                )
+              ],
+            ),
           ),
           // Book description (including extra book details)
           _description(textTheme),
