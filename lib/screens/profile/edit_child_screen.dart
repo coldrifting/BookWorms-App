@@ -76,6 +76,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
 
+    NavigatorState navState = Navigator.of(context);
+
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
@@ -230,7 +232,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
-                  _deleteChildButton(textTheme),
+                  _deleteChildButton(textTheme, navState),
                 ]
               ),
             ],
@@ -476,7 +478,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
     );
   }
 
-  Widget _deleteChildButton(TextTheme textTheme) {
+  Widget _deleteChildButton(TextTheme textTheme, NavigatorState navState) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: colorRed,
@@ -495,7 +497,10 @@ class _EditChildScreenState extends State<EditChildScreen> {
             confirmText: "Delete", 
             confirmColor: colorRed!,
             cancelText: "Cancel", 
-            action: () { Provider.of<AppState>(context, listen: false).removeChild(widget.childID); }
+            action: () {
+              Provider.of<AppState>(context, listen: false).removeChild(widget.childID);
+              navState.pop(context);
+            }
           );
         }
       ),
