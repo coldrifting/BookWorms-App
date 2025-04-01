@@ -1,4 +1,3 @@
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
@@ -76,6 +75,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
 
+    // A reference to a Nav state is needed since modal popups are not
+    // technically contained within the proper nested navigation context
     NavigatorState navState = Navigator.of(context);
 
     return Scaffold(
@@ -107,17 +108,14 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     cancelText: "Keep Editing", 
                     action: () {
                       if (mounted) {
-                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => Navigation(initialIndex: 4)),
-                          (route) => false,
-                        );
+                        navState.pop();
                       }
                     }
                   );
                 }
               );
             } else {
-              Navigator.of(context).pop();
+              navState.pop();
             }
           },
         ),
@@ -225,6 +223,30 @@ class _EditChildScreenState extends State<EditChildScreen> {
                             _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
                             _initialName = appState.children[widget.childID].name;
                           });
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: colorGreenDark,
+                                content: Row(
+                                  children: [
+                                    Text(
+                                      'Child Details Updated',
+                                      style: TextStyle(color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Spacer(),
+                                    Icon(
+                                        Icons.check_circle_outline_rounded,
+                                        color: Colors.white
+                                    )
+                                  ],
+                                ),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                          navState.pop();
                         }
                       } : null,
                     child: Text(
@@ -498,8 +520,24 @@ class _EditChildScreenState extends State<EditChildScreen> {
             confirmColor: colorRed!,
             cancelText: "Cancel", 
             action: () {
-              Provider.of<AppState>(context, listen: false).removeChild(widget.childID);
-              navState.pop(context);
+              Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: colorRed,
+                  content: Row(
+                    children: [
+                      Text(
+                        'Removed ${widget.child.name} from children',
+                        style: textTheme.titleSmallWhite
+                      ),
+                      Spacer(),
+                      Icon(Icons.close_rounded, color: colorWhite)
+                    ],
+                  ),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+              navState.pop(true);
             }
           );
         }
