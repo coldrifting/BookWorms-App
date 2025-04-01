@@ -166,14 +166,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     }
 
     if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AdvancedSearchResultsScreen(
-            bookSummaries: bookSummaries
-          )
-        )
-      );   
+      pushScreen(context, AdvancedSearchResultsScreen(bookSummaries: bookSummaries));
     }
   }
 

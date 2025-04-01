@@ -50,13 +50,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                            onPressed: () => {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const LoginScreen()
-                                ),
-                              )
+                            onPressed: () {
+                              pushScreen(context, const LoginScreen(), replace: true);
                             },
                             style: TextButton.styleFrom(
                               foregroundColor: colorWhite,
@@ -65,13 +60,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           ),
                           addHorizontalSpace(32),
                           TextButton(
-                            onPressed: () => {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const RegisterScreen()
-                                ),
-                              )
+                            onPressed: () {
+                              pushScreen(context, const RegisterScreen());
                             },
                             style: TextButton.styleFrom(
                               backgroundColor: colorWhite,

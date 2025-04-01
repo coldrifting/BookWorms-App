@@ -61,10 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await appState.loadAccountSpecifics();
       if (mounted) {
         // Navigate to the home screen.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Navigation()),
-        );
+        pushScreen(context, const Navigation(), replace: true);
       }
     }
   }
@@ -142,11 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 LoginRegisterWidget(
                     onSignIn: attemptLogin,
                     onSignUp: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterScreen()),
-                      );
+                      pushScreen(context, const RegisterScreen(), replace: true);
                     },
                     signIn: true),
               ],

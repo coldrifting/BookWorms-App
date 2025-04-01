@@ -527,10 +527,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
   Future<void> _navigateToGoalDetails(BuildContext context, AppState appState, ClassroomGoal goal) async {
     ClassroomGoal detailedGoal = await appState.getClassroomGoalStudentDetails(goal.goalId);
     if (context.mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ClassGoalDetails(goal: detailedGoal)),
-      );
+      pushScreen(context, ClassGoalDetails(goal: detailedGoal));
     }
   }
 

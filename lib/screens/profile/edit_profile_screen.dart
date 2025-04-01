@@ -221,10 +221,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (status) {
       // Clear navigation stack and navigate to the welcome screen.
       if (mounted) {
-        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-          (route) => false,
-        );
+        pushScreen(context, const WelcomeScreen(), root: true, replace: true);
       }
     }
   }

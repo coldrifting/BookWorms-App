@@ -1,4 +1,5 @@
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -55,10 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
           if (mounted) {
             // Hide the soft keyboard on login success
             FocusManager.instance.primaryFocus?.unfocus();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-            );
+            pushScreen(context, const WelcomeScreen(), replace: true);
           }
           return;
         } 
@@ -66,22 +64,13 @@ class _SplashScreenState extends State<SplashScreen> {
           // If a user with a parent account opens the app while a JWT has been saved but no child profiles exist.
           // This will occur if the user exits the app immediately after registration.
           if (appState.isParent && appState.children.isEmpty) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const AddFirstChild()),
-            );
+            pushScreen(context, const AddFirstChild(), replace: true);
           } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const Navigation()),
-            );
+            pushScreen(context, const Navigation(), replace: true);
           }
         }
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-        );
+        pushScreen(context, const WelcomeScreen(), replace: true);
       }
     }
   }

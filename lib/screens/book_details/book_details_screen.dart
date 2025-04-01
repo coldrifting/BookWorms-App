@@ -477,15 +477,7 @@ Widget _difficultyButton(String text, int index, TextTheme textTheme) {
   }
 
   void _addReview() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CreateReviewWidget(
-          bookId: bookSummary.id,
-          updateReviews: _updateReviews
-        )
-      )
-    );
+    pushScreen(context, CreateReviewWidget(bookId: bookSummary.id, updateReviews: _updateReviews));
   }
 
   Future<void> _updateReviews() async {
