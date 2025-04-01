@@ -15,11 +15,11 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => SearchScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
 /// The state of the [SearchScreen].
-class SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
+class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInAdvancedSearch = false; 
   var _currentQuery = "";
   var _searchResults = [];
