@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/theme.dart';
@@ -340,33 +341,17 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                             ),
                           ),
                           onTap: () async {
-                            bool success;
+                            bool isSuccess;
                             if (appState.isParent) {
-                              success = await appState.addBookToBookshelf(appState.selectedChildID, bookshelf, bookSummary);
+                              isSuccess = await appState.addBookToBookshelf(appState.selectedChildID, bookshelf, bookSummary);
                             } else {
-                              success = await appState.addBookToClassroomBookshelf(bookshelf, bookSummary);
+                              isSuccess = await appState.addBookToClassroomBookshelf(bookshelf, bookSummary);
                             }
 
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: success ? colorGreenDark : colorGreyDark,
-                                  content: Row(
-                                    children: [
-                                      Text(
-                                        success ? 'Saved book to ${bookshelf.name}.' : 'Already saved to ${bookshelf.name}.', 
-                                        style: textTheme.titleSmallWhite
-                                      ),
-                                      Spacer(),
-                                      if (success)
-                                        Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                                    ],
-                                  ),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                              Navigator.pop(context);
-                            }
+                            String resultMessage = isSuccess 
+                              ? "Saved book to ${bookshelf.name}." 
+                              : 'Already saved to ${bookshelf.name}.';
+                            resultAlert(context, Result(isSuccess: isSuccess, message: resultMessage, color: colorGreyDark));
                           },
                         ),
                         if (index != bookshelves.length - 1) ... [

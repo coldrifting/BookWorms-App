@@ -174,7 +174,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
       widthFactor: 0.4,
       child: TextButton(
         onPressed: () { 
-          addGoalAlert(textTheme, context, isChildGoal, _organizeGoals);
+          addGoalAlert(textTheme, context, _organizeGoals);
         },
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,

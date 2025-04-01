@@ -188,6 +188,10 @@ Uri removeBookFromClassroomBookshelfUri(String bookshelfName, String bookId) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/remove?bookId=$bookId");
 }
 
+Uri removeStudentFromClassroomUri(String childId) {
+  return Uri.parse("$serverBaseUri/homeroom/children/remove?childId=$childId");
+}
+
 Uri deleteClassroomBookshelfUri(String bookshelfName) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/delete");
 }

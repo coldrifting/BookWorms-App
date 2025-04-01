@@ -2,13 +2,11 @@ import 'package:bookworms_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/screens/setup/add_first_child.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/services/status_code_exceptions.dart';
-
 
 /// The [SplashScreen] displays an animation while user data is initialized.
 class SplashScreen extends StatefulWidget {

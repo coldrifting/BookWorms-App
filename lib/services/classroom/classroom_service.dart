@@ -123,6 +123,18 @@ class ClassroomService {
     }
   }
 
+  Future<bool> deleteStudentFromClassroom(String childId) async {
+    final response = await client.sendRequest(
+      uri: removeStudentFromClassroomUri(childId),
+      method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    } else {
+      throw Exception('An error occurred when deleting the child from the classroom.');
+    }
+  }
+
   Future<bool> removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
     final response = await client.sendRequest(
       uri: removeBookFromClassroomBookshelfUri(bookshelf.name, book.id),

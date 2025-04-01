@@ -1,10 +1,12 @@
 import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/message_format.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
@@ -423,29 +425,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
               ),
               onPressed: () async {
                 bool success = await appState.joinChildClassroom(widget.childID, textEditingController.text);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: success ? colorGreenDark : colorRed,
-                      content: Row(
-                        children: [
-                          Text(
-                            success ? 'Successfully joined class!' : 'An error occurred. Try again!', 
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const Spacer(),
-                          Icon(
-                            success ? Icons.check_circle_outline_rounded : Icons.error_outline, 
-                            color: Colors.white
-                          )
-                        ],
-                      ),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  Navigator.pop(context);
-                }
+                Result result = Result(isSuccess: success, message: "Successfully joined the class.");
+                resultAlert(context, result);
               },
               child: Text("Join", style: TextStyle(color: colorWhite)),
             ),

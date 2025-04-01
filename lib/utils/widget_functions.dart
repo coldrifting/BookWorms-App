@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
@@ -49,8 +50,9 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
 }
 
 // Alert modal for adding a new classroom goal.
-  dynamic addGoalAlert(TextTheme textTheme, BuildContext context, bool isChildGoal, [void Function()? callback]) {
+  dynamic addGoalAlert(TextTheme textTheme, BuildContext context, [void Function()? callback]) {
     AppState appState = Provider.of<AppState>(context, listen: false);
+    var isParent = appState.isParent;
     
     return showDialog(
       context: context,
@@ -97,45 +99,25 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
                         addHorizontalSpace(4),
                         InkWell(
                           onTap: () async {
-                            if (!isChildGoal) {
+                            if (!isParent) {
                               if (formKey.currentState?.validate() ?? false) {
                                 DateTime today = DateTime.now();
                                 Goal newGoal = Goal(
                                   goalType: "Classroom",
                                   goalMetric: selectedMetric,
                                   title: titleController.text,
-                                  startDate: "${today.year}-${today!.month.toString().padLeft(2, '0')}-${today!.day.toString().padLeft(2, '0')}", // TODO
+                                  startDate: "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}", // TODO
                                   endDate: "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}",
                                   target: 0 //TODO
                                 );
 
-                                await appState.addClassroomGoal(newGoal);
+                                Result result = await appState.addClassroomGoal(newGoal);
                                 setState(() {
                                   if (callback != null) {
                                     callback();
                                   }
                                 });
-
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: colorGreenDark,
-                                      content: Row(
-                                        children: [
-                                          Text(
-                                            'Successfully created class goal!', 
-                                            style: textTheme.titleSmallWhite,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Spacer(),
-                                          Icon(Icons.check_circle_outline_rounded, color: colorWhite)
-                                        ],
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                  Navigator.pop(context);
-                                }
+                                resultAlert(context, result);
                               }
                             }
                           },
@@ -215,3 +197,30 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
       }
     );
   }
+
+
+dynamic resultAlert(BuildContext context, Result result) {
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: result.isSuccess ? colorGreenDark : colorRed,
+        content: Row(
+          children: [
+            Text(
+              result.message, 
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+            const Spacer(),
+            Icon(
+              result.isSuccess ? Icons.check_circle_outline_rounded : Icons.error_outline, 
+              color: Colors.white
+            )
+          ],
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+    Navigator.pop(context);
+  }
+}

@@ -42,10 +42,6 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     List<List<ClassroomGoal>> activeGoals = goalData[0];
     List<int> goalCounts = goalData[1];
 
-    // The goal list is either composed of classroom or child goals.
-    //final isChildGoal = activeGoals is! List<ClassroomGoal>;
-    final isChildGoal = false; // TODO
-
     return Column(
       children: [
         SizedBox(
@@ -111,7 +107,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
               );
             },
           )
-          : _noGoalsWidget(textTheme, isChildGoal)
+          : _noGoalsWidget(textTheme)
         ),
       ],
     );
@@ -161,7 +157,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
   }
 
   // "No goals to show" display.
-  Widget _noGoalsWidget(TextTheme textTheme, bool isChildGoal) {
+  Widget _noGoalsWidget(TextTheme textTheme) {
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -184,18 +180,18 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
           children: [
             Text("No class goals assigned today.\nAdd one now!", textAlign: TextAlign.center),
             addVerticalSpace(8),
-            _addGoalButton(textTheme, isChildGoal)
+            _addGoalButton(textTheme)
           ],
         )
       )
     );
   }
 
-  Widget _addGoalButton(TextTheme textTheme, bool isChildGoal) {
+  Widget _addGoalButton(TextTheme textTheme) {
     return FractionallySizedBox(
       widthFactor: 0.5,
       child: TextButton(
-        onPressed: () => addGoalAlert(textTheme, context, isChildGoal),
+        onPressed: () => addGoalAlert(textTheme, context),
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,

@@ -219,19 +219,6 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
             ],
           ),
         ),
-        // MenuItemButton(
-        //   onPressed: () {
-        //     menuController.close();
-        //     _showDeleteConfirmationDialog(textTheme);
-        //   },
-        //   child: Row(
-        //     children: [
-        //       Icon(Icons.edit, size: 20),
-        //       addHorizontalSpace(8),
-        //       Text('Edit Name', style: textTheme.labelLarge),
-        //     ],
-        //   ),
-        // ),
       ],
       style: MenuStyle(
         backgroundColor: WidgetStateProperty.all(Colors.white),
@@ -249,7 +236,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Center(child: Text('Delete Delete')),
+          title: const Center(child: Text('Delete Goal')),
           content: const Text('Are you sure you want to permanently delete this goal?'),
           actions: [
             TextButton(
@@ -260,7 +247,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 await appState.deleteClassroomGoal(goal.goalId);
-                //setState(() {});
+                // TODO: Navigate out
               },
               child: Text('Delete', style: TextStyle(color: colorRed)),
             ),
