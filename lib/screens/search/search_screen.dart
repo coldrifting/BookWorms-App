@@ -37,16 +37,6 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
   final _selectedGenres = List.filled(6, false);
   final _selectedTopics = List.filled(6, false);
 
-  bool canBeReset() {
-    return _currentQuery != "" || _isInAdvancedSearch;
-  }
-
-  void reset() {
-    _textEditingcontroller.clear();
-    _onSearchQueryChanged("");
-    _tabController.index = 0;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -56,6 +46,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     _scrollController = ScrollController();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
+    _notifyIfChanged();
   }
 
   @override
@@ -73,6 +64,12 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     setState(() {
       _isInAdvancedSearch = _tabController.index == 1;
     });
+    _notifyIfChanged();
+  }
+
+  void _notifyIfChanged() {
+    // Notify main app of changes for proper reset
+    SearchModifiedNotification(isModified: _currentQuery != "" || _isInAdvancedSearch).dispatch(context);
   }
 
   /// Fetches the search results and the corresponding images.
@@ -95,6 +92,8 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     if (_debounceTimer != null) {
       _debounceTimer!.cancel();
     }
+
+    _notifyIfChanged();
 
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
@@ -456,4 +455,10 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
       ]
     );
   }
+}
+
+class SearchModifiedNotification extends Notification {
+  final bool isModified;
+
+  const SearchModifiedNotification({required this.isModified});
 }

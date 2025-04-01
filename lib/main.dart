@@ -19,8 +19,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // Store nav keys for sub navigation
 final Map<int, GlobalKey<NavigatorState>> navKeys = {};
 
-final GlobalKey<SearchScreenState> searchState = GlobalKey<SearchScreenState>();
-
 /// Bookworms is a virtual book search solution for children's books.
 /// It allows for the saving of books to bookshelves, the tracking of
 /// a child's goals, and creating classrooms to assign readings to students.
@@ -60,6 +58,8 @@ class Navigation extends StatefulWidget {
 class _Navigation extends State<Navigation> {
   late int selectedIndex;
 
+  bool isSearchScreenModified = false;
+
   final Map<int, GlobalKey<NavigatorState>> _navigatorKeys = {};
   final Map<int, String> _navLabels = {};
 
@@ -67,6 +67,11 @@ class _Navigation extends State<Navigation> {
   void initState() {
     super.initState();
     selectedIndex = widget.initialIndex;
+  }
+
+  bool onNotificationPush(SearchModifiedNotification searchNotify) {
+    isSearchScreenModified = searchNotify.isModified;
+    return true;
   }
 
   /// Main widget containing app bar, page navigator, and bottom bar.
@@ -78,64 +83,68 @@ class _Navigation extends State<Navigation> {
     List<Destination> enabledDest = getDest(isParent);
     List<Widget> pages = enabledDest.map((x) => x.widget).toList();
 
-    return Scaffold(
-        body: PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            var nav = _navigatorKeys[selectedIndex]?.currentState;
-            if (nav != null && nav.canPop()) {
-              nav.pop(_navigatorKeys[selectedIndex]?.currentContext);
-            } else {
-              // Uncomment below line to enable back button to close the app
-              //SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
-            }
-          },
-          child: IndexedStack(
-            index: selectedIndex,
-            children: List.generate(pages.length, (index) {
-              _navigatorKeys[index] = enabledDest[index].navState;
-              _navLabels[index] = enabledDest[index].label;
-              return Navigator(
-                key: enabledDest[index].navState,
-                onGenerateRoute: (settings) {
-                  return MaterialPageRoute(
-                    builder: (context) => pages[index],
-                  );
-                },
-              );
-            }),
-          ),
-        ),
-        bottomNavigationBar: NavigationBar(
-            backgroundColor: colorGreen,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (int index) {
-              if (selectedIndex == index) {
-                var nav = _navigatorKeys[index]?.currentState;
-                if (nav != null) {
-                    if (_navLabels[index] == "Search" &&
-                        searchState.currentState?.canBeReset() == true) {
-                      searchState.currentState?.reset();
-                    }
-                  if (nav.canPop()) {
-                    nav.pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => pages[index]),
-                        (_) => false);
-                  }
+    return NotificationListener(
+        onNotification: onNotificationPush,
+        child: Scaffold(
+            body: PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, result) {
+                var nav = _navigatorKeys[selectedIndex]?.currentState;
+                if (nav != null && nav.canPop()) {
+                  nav.pop(_navigatorKeys[selectedIndex]?.currentContext);
+                } else {
+                  // Uncomment below line to enable back button to close the app
+                  //SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
                 }
-              } else {
-                setState(() {
-                  selectedIndex = index;
-                });
-              }
-            },
-            destinations: getDest(isParent)
-                .map((x) => NavigationDestination(
-                    selectedIcon: Icon(x.selectedIcon, color: colorGreenDark),
-                    icon: Icon(x.icon, color: colorWhite),
-                    label: x.label))
-                .toList()));
+              },
+              child: IndexedStack(
+                index: selectedIndex,
+                children: List.generate(pages.length, (index) {
+                  _navigatorKeys[index] = enabledDest[index].navState;
+                  _navLabels[index] = enabledDest[index].label;
+                  return Navigator(
+                    key: enabledDest[index].navState,
+                    onGenerateRoute: (settings) {
+                      return MaterialPageRoute(
+                        builder: (context) => pages[index],
+                      );
+                    },
+                  );
+                }),
+              ),
+            ),
+            bottomNavigationBar: NavigationBar(
+                backgroundColor: colorGreen,
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (int index) {
+                  if (selectedIndex == index) {
+                    var nav = _navigatorKeys[index]?.currentState;
+                    if (nav == null) {
+                      return;
+                    }
+
+                    bool shouldResetSearch =
+                        _navLabels[index] == "Search" && isSearchScreenModified;
+
+                    if (nav.canPop() || shouldResetSearch) {
+                      nav.pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => pages[index]),
+                          (_) => false);
+                    }
+                  } else {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  }
+                },
+                destinations: getDest(isParent)
+                    .map((x) => NavigationDestination(
+                        selectedIcon:
+                            Icon(x.selectedIcon, color: colorGreenDark),
+                        icon: Icon(x.icon, color: colorWhite),
+                        label: x.label))
+                    .toList())));
   }
 }
 
@@ -181,7 +190,7 @@ List<Destination> dest = [
       pageType: PageCategory.parent),
   Destination(
       label: "Search",
-      widget: SearchScreen(key: searchState),
+      widget: SearchScreen(),
       icon: Icons.search_outlined,
       selectedIcon: Icons.search_rounded),
   Destination(
