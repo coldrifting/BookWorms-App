@@ -53,6 +53,8 @@ class _SplashScreenState extends State<SplashScreen> {
           SharedPreferences preferences = await SharedPreferences.getInstance();
           await preferences.remove('recentBookIds');
           if (mounted) {
+            // Hide the soft keyboard on login success
+            FocusManager.instance.primaryFocus?.unfocus();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const WelcomeScreen()),

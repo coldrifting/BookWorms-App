@@ -15,11 +15,11 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<SearchScreen> createState() => SearchScreenState();
 }
 
 /// The state of the [SearchScreen].
-class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
+class SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInAdvancedSearch = false; 
   var _currentQuery = "";
   var _searchResults = [];
@@ -36,6 +36,16 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   final _selectedRating = List.filled(6, false);
   final _selectedGenres = List.filled(6, false);
   final _selectedTopics = List.filled(6, false);
+
+  bool canBeReset() {
+    return _currentQuery != "" || _isInAdvancedSearch;
+  }
+
+  void reset() {
+    _textEditingcontroller.clear();
+    _onSearchQueryChanged("");
+    _tabController.index = 0;
+  }
 
   @override
   void initState() {

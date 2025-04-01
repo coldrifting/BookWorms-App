@@ -14,8 +14,12 @@ import 'package:bookworms_app/screens/search/search_screen.dart';
 
 void main() => runApp(const BookWorms());
 
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+// Store nav keys for sub navigation
+final Map<int, GlobalKey<NavigatorState>> navKeys = {};
+
+final GlobalKey<SearchScreenState> searchState = GlobalKey<SearchScreenState>();
 
 /// Bookworms is a virtual book search solution for children's books.
 /// It allows for the saving of books to bookshelves, the tracking of
@@ -26,19 +30,18 @@ class BookWorms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppState>(
-      create: (context) => AppState(),
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        title: 'BookWorms',
-        theme: appTheme,
-        home: const SplashScreen(),
-        scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
-          PointerDeviceKind.touch,
-          PointerDeviceKind.mouse,
-          PointerDeviceKind.stylus,
-          PointerDeviceKind.trackpad,})
-      )
-    );
+        create: (context) => AppState(),
+        child: MaterialApp(
+            navigatorKey: navigatorKey,
+            title: 'BookWorms',
+            theme: appTheme,
+            home: const SplashScreen(),
+            scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+              PointerDeviceKind.stylus,
+              PointerDeviceKind.trackpad,
+            })));
   }
 }
 
@@ -46,6 +49,7 @@ class BookWorms extends StatelessWidget {
 /// "Home", "Bookshelves", "Search", "Progress", and "Profile" screens.
 class Navigation extends StatefulWidget {
   final int initialIndex;
+
   const Navigation({super.key, this.initialIndex = 0});
 
   @override
@@ -55,6 +59,9 @@ class Navigation extends StatefulWidget {
 /// The state of the [Navigation].
 class _Navigation extends State<Navigation> {
   late int selectedIndex;
+
+  final Map<int, GlobalKey<NavigatorState>> _navigatorKeys = {};
+  final Map<int, String> _navLabels = {};
 
   @override
   void initState() {
@@ -67,87 +74,131 @@ class _Navigation extends State<Navigation> {
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
-  
-    List<Widget> pages = [
-      const HomeScreen(),
-      if (isParent) const BookshelvesScreen(),
-      const SearchScreen(),
-      if (isParent) const ProgressScreen(),
-      if (!isParent) ClassroomScreen(),
-      const ProfileScreen(),
-    ];
+
+    List<Destination> enabledDest = getDest(isParent);
+    List<Widget> pages = enabledDest.map((x) => x.widget).toList();
 
     return Scaffold(
-      body: IndexedStack(
-        index: selectedIndex,
-        children: List.generate(pages.length, (index) {
-          return Navigator(
-            onGenerateRoute: (settings) {
-              return MaterialPageRoute(
-                builder: (context) => pages[index],
+        body: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            var nav = _navigatorKeys[selectedIndex]?.currentState;
+            if (nav != null && nav.canPop()) {
+              nav.pop(_navigatorKeys[selectedIndex]?.currentContext);
+            } else {
+              // Uncomment below line to enable back button to close the app
+              //SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+            }
+          },
+          child: IndexedStack(
+            index: selectedIndex,
+            children: List.generate(pages.length, (index) {
+              _navigatorKeys[index] = enabledDest[index].navState;
+              _navLabels[index] = enabledDest[index].label;
+              return Navigator(
+                key: enabledDest[index].navState,
+                onGenerateRoute: (settings) {
+                  return MaterialPageRoute(
+                    builder: (context) => pages[index],
+                  );
+                },
               );
+            }),
+          ),
+        ),
+        bottomNavigationBar: NavigationBar(
+            backgroundColor: colorGreen,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (int index) {
+              if (selectedIndex == index) {
+                var nav = _navigatorKeys[index]?.currentState;
+                if (nav != null) {
+                    if (_navLabels[index] == "Search" &&
+                        searchState.currentState?.canBeReset() == true) {
+                      searchState.currentState?.reset();
+                    }
+                  if (nav.canPop()) {
+                    nav.pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => pages[index]),
+                        (_) => false);
+                  }
+                }
+              } else {
+                setState(() {
+                  selectedIndex = index;
+                });
+              }
             },
-          );
-        }),
-      ),
-      bottomNavigationBar: navigationBar(isParent)
-    );
-  }
-
-  /// Bottom global navigation bar.
-  /// Contains "Home", "Bookshelves", "Search", "Progress", and "Profile" tabs.
-  Widget navigationBar(bool isParent) {
-    return NavigationBar(
-      backgroundColor: colorGreen,
-      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-      selectedIndex: selectedIndex,
-      onDestinationSelected: (int index) {
-        if (selectedIndex == index) {
-          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => Navigation(initialIndex: index)),
-            (route) => false,
-          );
-        } else {
-          setState(() {
-            selectedIndex = index;
-          });
-        }
-      },
-      destinations: <NavigationDestination>[
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.home), 
-          icon: Icon(Icons.home_outlined, color: colorWhite), 
-          label: "Home"
-        ),
-        if (isParent) 
-          const NavigationDestination(
-            selectedIcon: Icon(Icons.collections_bookmark_rounded), 
-            icon: Icon(Icons.collections_bookmark_outlined, color: colorWhite), 
-            label: "Bookshelf"
-          ),
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.search_rounded), 
-          icon: Icon(Icons.search_outlined, color: colorWhite), 
-          label: "Search"
-        ),
-        if (isParent) 
-          const NavigationDestination(
-            selectedIcon: Icon(Icons.show_chart), 
-            icon: Icon(Icons.show_chart, color: colorWhite), 
-            label: "Progress"
-          ),
-        if (!isParent)
-          const NavigationDestination(
-            selectedIcon: Icon(Icons.school), 
-            icon: Icon(Icons.school_outlined, color: colorWhite), 
-            label: "Classroom"
-          ),
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.account_circle_rounded), 
-          icon: Icon(Icons.account_circle_outlined, color: colorWhite), 
-          label: "Profile"
-        ),
-      ],
-    );
+            destinations: getDest(isParent)
+                .map((x) => NavigationDestination(
+                    selectedIcon: Icon(x.selectedIcon, color: colorGreenDark),
+                    icon: Icon(x.icon, color: colorWhite),
+                    label: x.label))
+                .toList()));
   }
 }
+
+class Destination {
+  String label;
+  IconData icon;
+  IconData selectedIcon;
+  Widget widget;
+  GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
+  PageCategory pageType;
+
+  Destination(
+      {required this.label,
+      required this.icon,
+      required this.selectedIcon,
+      required this.widget,
+      this.pageType = PageCategory.both});
+}
+
+enum PageCategory { both, parent, teacher }
+
+List<Destination> getDest(bool isParent) {
+  PageCategory category = isParent ? PageCategory.parent : PageCategory.teacher;
+
+  var list = dest.where((x) {
+    return x.pageType == PageCategory.both || x.pageType == category;
+  }).toList();
+
+  return list;
+}
+
+List<Destination> dest = [
+  Destination(
+      label: "Home",
+      widget: const HomeScreen(),
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home),
+  Destination(
+      label: "Bookshelf",
+      widget: const BookshelvesScreen(),
+      icon: Icons.collections_bookmark_outlined,
+      selectedIcon: Icons.collections_bookmark_rounded,
+      pageType: PageCategory.parent),
+  Destination(
+      label: "Search",
+      widget: SearchScreen(key: searchState),
+      icon: Icons.search_outlined,
+      selectedIcon: Icons.search_rounded),
+  Destination(
+      label: "Progress",
+      widget: const ProgressScreen(),
+      icon: Icons.show_chart,
+      selectedIcon: Icons.show_chart,
+      pageType: PageCategory.parent),
+  Destination(
+      label: "Classroom",
+      widget: const ClassroomScreen(),
+      icon: Icons.school_outlined,
+      selectedIcon: Icons.school,
+      pageType: PageCategory.teacher),
+  Destination(
+      label: "Profile",
+      widget: const ProfileScreen(),
+      icon: Icons.account_circle_outlined,
+      selectedIcon: Icons.account_circle_rounded)
+];
