@@ -2,12 +2,6 @@ import 'package:bookworms_app/models/goals/goal.dart';
 
 
 class ChildGoal extends Goal {
-  // final int? duration;
-  // final int? targetNumBooks;
-  // final int? numBooks;
-  // final String? className;
-  // final String? classCode;
-
   ChildGoal({
     required super.goalId, 
     required super.goalType,
@@ -17,13 +11,6 @@ class ChildGoal extends Goal {
     required super.endDate,
     required super.target,
     required super.progress
-
-
-    // this.duration, 
-    // this.targetNumBooks, 
-    // this.numBooks, 
-    // this.className, 
-    // this.classCode, 
   });
 
   factory ChildGoal.fromJson(Map<String, dynamic> json) {
@@ -36,11 +23,6 @@ class ChildGoal extends Goal {
       endDate: json['endDate'],
       target: json['target'],
       progress: json['progress'],
-      // duration: json['duration'],
-      // targetNumBooks: json['targetNumBooks'],
-      // numBooks: json['numBooks'],
-      // className: json['className'],
-      // classCode: json['classCode'],
     );
   }
 }

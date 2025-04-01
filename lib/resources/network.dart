@@ -219,8 +219,9 @@ Uri deleteClassroomGoalUri(String goalId) {
 }
 
 // ***** Child Goals *****
+
 Uri getChildGoalsUri(String childId) {
-  return Uri.parse("$serverBaseUri/children/$childId/goals");
+  return Uri.parse("$serverBaseUri/children/$childId/goals/all");
 }
 
 Uri addChildGoalUri(String childId) {
@@ -231,16 +232,16 @@ Uri getChildGoalDetailsUri(String childId, String goalId) {
   return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/details");
 }
 
+Uri logChildGoalProgressUri(String childId, String goalId, int progress) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/log?progress=$progress");
+}
+
 Uri editChildGoalUri(String childId, String goalId) {
   return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/edit");
 }
 
 Uri deleteChildGoalUri(String childId, String goalId) {
   return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/delete");
-}
-
-Uri updateChildGoalProgressUri(String childId, String goalId) {
-  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/updateProgress");
 }
 
 // ***** Other *****

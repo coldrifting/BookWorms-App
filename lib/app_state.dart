@@ -370,7 +370,9 @@ class AppState extends ChangeNotifier {
   // ***** Classroom Goals - Teacher *****
 
   ClassroomGoalsService classroomGoalsService = ClassroomGoalsService();
-  List<dynamic>? get goals => isParent ? [] : classroom!.classroomGoals;
+  List<dynamic>? get goals => isParent 
+    ? children[selectedChildID].goals 
+    : classroom!.classroomGoals;
 
   Future<List<ClassroomGoal>> getClassroomGoals() async {
     return await classroomGoalsService.getClassroomGoals();
@@ -414,6 +416,12 @@ class AppState extends ChangeNotifier {
     classroom!.classroomGoals.removeWhere((g) => g.goalId == goalId);
     notifyListeners();
   }
+
+  // ***** Child Goals *****
+
+  // Future<void> getChildGoals(String childId) {
+
+  // }
 
 
   // ***** Account *****
