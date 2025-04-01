@@ -26,7 +26,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Container(
-          decoration: _gradient(),
+          decoration: splashGradient(),
           child: SafeArea(
             child: Scaffold(
                 backgroundColor: Colors.transparent,
@@ -86,20 +86,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 )),
           ),
         ),
-      ),
-    );
-  }
-
-  /// A green linear gradient decoration.
-  BoxDecoration _gradient() {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment(0.8, 1),
-        colors: <Color>[
-          colorGreenGradTop,
-          colorGreenDark!,
-        ],
       ),
     );
   }
