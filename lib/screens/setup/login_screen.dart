@@ -84,6 +84,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void attemptLogin() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final username = _usernameController.text;
+      final password = _passwordController.text;
+      login(username, password);
+    }
+  }
+
   Widget _loginWidget(TextTheme textTheme) {
     return Column(
       children: [
@@ -113,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   obscureText: true,
                   controller: _passwordController,
+                  onFieldSubmitted: (value) => attemptLogin(),
                   decoration: const InputDecoration(labelText: 'Password'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -131,13 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 addVerticalSpace(loginError.isEmpty ? 32 : 16),
                 LoginRegisterWidget(
-                    onSignIn: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        final username = _usernameController.text;
-                        final password = _passwordController.text;
-                        login(username, password);
-                      }
-                    },
+                    onSignIn: attemptLogin,
                     onSignUp: () {
                       Navigator.pushReplacement(
                         context,
