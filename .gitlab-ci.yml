@@ -1,0 +1,103 @@
+stages:
+  - build
+  - deploy
+  - prepare
+  - release
+
+build_job:
+  rules:
+      # Don't let tags created by this pipeline trigger pipelines of their own
+      - if: $CI_COMMIT_MESSAGE =~ /trigger-deploy/ && ($CI_COMMIT_TAG == null || $CI_COMMIT_TAG == "")
+  stage: build
+  image: ghcr.io/cirruslabs/flutter:stable
+  script:
+    - flutter build web
+  artifacts:
+    paths:
+      - build/web
+    expire_in: 1 hour
+  resource_group: common
+
+deploy_job:
+  rules:
+      - if: $CI_COMMIT_MESSAGE =~ /trigger-deploy/ && ($CI_COMMIT_TAG == null || $CI_COMMIT_TAG == "")
+  stage: deploy
+  image: alpine:latest
+  variables:
+    GIT_STRATEGY: none
+    DEPLOYMENT_DIR: /var/www/app/
+  dependencies:
+    - build_job
+  before_script:
+    - |
+      # Install open-ssh client
+      apk add --no-cache openssh-client
+      # Start ssh-agent
+      eval $(ssh-agent -s)
+      # Add the private key to ssh-agent
+      echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -q -
+  script:
+    - echo "Copying build artifacts to EC2 instance"
+    # Replace the build artifacts in the EC2 instance. No need to restart the server; they're just static files
+    - |
+      ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST <<- EOF
+        cd \$(dirname "$DEPLOYMENT_DIR") || {
+          echo "ERROR: Failed to change to parent directory of deployment directory"
+          exit 1
+        }
+        find \$(basename "$DEPLOYMENT_DIR") -mindepth 1 -delete || {
+          echo "ERROR: Failed to clean deployment directory"
+          exit 1
+        }
+      EOF
+    - scp -r -C build/web/* $EC2_USER@$EC2_HOST:$DEPLOYMENT_DIR
+  resource_group: common
+
+construct_tag_job:
+  rules:
+      - if: $CI_COMMIT_MESSAGE =~ /trigger-deploy/ && ($CI_COMMIT_TAG == null || $CI_COMMIT_TAG == "")
+  stage: prepare
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache git
+  script:
+    |
+    START_DATE="2025-01-09"
+    CURRENT_DATE=$(date +%Y-%m-%d)
+    SECONDS_DIFF=$(( $(date -d "$CURRENT_DATE" +%s) - $(date -d "$START_DATE" +%s) ))
+    WEEK_NUMBER=$(( SECONDS_DIFF / 604800 + 1 ))
+    MARCH_10TH="2025-03-10"
+    MARCH_17TH="2025-03-17"
+    if [ $(date -d "$CURRENT_DATE" +%s) -ge $(date -d "$MARCH_10TH" +%s) ] && [ $(date -d "$CURRENT_DATE" +%s) -lt $(date -d "$MARCH_17TH" +%s) ]; then
+        WEEK_NUMBER="9A"
+    elif [ $(date -d "$CURRENT_DATE" +%s) -ge $(date -d "$MARCH_17TH" +%s) ]; then
+        WEEK_NUMBER=$(( WEEK_NUMBER + 1 ))
+    fi
+    LATEST_TAG=$(git tag -l "v0.$WEEK_NUMBER.*" | sort -V | tail -n 1)
+    if [ -z "$LATEST_TAG" ]; then
+        HOTFIX_NUMBER=0
+    else
+        HOTFIX_NUMBER=$(( ${LATEST_TAG##*.} + 1 ))
+    fi
+    RELEASE_TAG="0.$WEEK_NUMBER.$HOTFIX_NUMBER"
+    echo "TAG=$RELEASE_TAG" >> variables.env
+  artifacts:
+    reports:
+      dotenv: variables.env
+  resource_group: common
+
+release_job:
+  rules:
+      - if: $CI_COMMIT_MESSAGE =~ /trigger-deploy/ && ($CI_COMMIT_TAG == null || $CI_COMMIT_TAG == "")
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  dependencies:
+    - construct_tag_job
+  script:
+    - echo "Creating GitLab release with tag v$TAG"
+  release:
+    name: "Release $TAG"
+    description: "Created using the release CLI"
+    tag_name: "v$TAG"
+    ref: "$CI_COMMIT_SHA"
+  resource_group: common
