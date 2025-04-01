@@ -102,10 +102,11 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 builder: (BuildContext context) {
                   return AlertWidget(
                     title: "Unsaved Changes", 
-                    message: "Are you sure you want to continue?", 
-                    confirmText: "Discard Changes", 
-                    confirmColor: colorRed!,
-                    cancelText: "Keep Editing", 
+                    message: "Are you sure you want to continue?",
+                    confirmText: "Discard Changes",
+                    cancelText: "Keep Editing",
+                    confirmColor: colorRed,
+                    cancelColor: colorGreen,
                     action: () {
                       if (mounted) {
                         navState.pop();
@@ -250,7 +251,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         }
                       } : null,
                     child: Text(
-                      'Save',
+                      'Save Changes',
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
