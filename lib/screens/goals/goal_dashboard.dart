@@ -238,7 +238,9 @@ class _GoalDashboardState extends State<GoalDashboard> {
       percentCompleted = goal.progress;
     } else {
       final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
-      percentCompleted = ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt();
+      percentCompleted = goalDetails.studentsTotal != 0
+          ? ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt()
+          : 0;
     }
 
     final selectedDate = DateTime(date.year, date.month, date.day);
