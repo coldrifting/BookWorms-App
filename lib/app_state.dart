@@ -165,6 +165,7 @@ class AppState extends ChangeNotifier {
     if (childId != null) {
       guid = children[childId].id;
     }
+
     List<BookSummary> bookDetails = await bookshelvesService.getRecommendedAuthorsBookshelf(guid);
     Bookshelf bookshelf = Bookshelf(books: bookDetails, type: BookshelfType.recommended, name: "Recommended Authors");
     _setBookImages([bookshelf]);

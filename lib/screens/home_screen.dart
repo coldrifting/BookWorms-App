@@ -152,9 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           // Display recommended bookshelves.
           _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
-          addVerticalSpace(24),
           _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
-          addVerticalSpace(24),
     
           // Display custom bookshelves.
           if (bookshelves.isNotEmpty)
@@ -211,11 +209,16 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return SizedBox.shrink(); // Show nothing on error.
+        } else if (snapshot.hasError || snapshot.data!.books.isEmpty) {
+          return SizedBox.shrink();
         } else {
           existsRecommended = true;
-          return BookshelfWidget(bookshelf: snapshot.data!);
+          return Column(
+            children: [
+              BookshelfWidget(bookshelf: snapshot.data!),
+              addVerticalSpace(24)
+            ],
+          );
         }
       }
     );
