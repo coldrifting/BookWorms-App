@@ -112,7 +112,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
         if (displayedGoals.isEmpty) ...[
           addVerticalSpace(16),
           Center(
-            child: Text("No Goals to be Shown", style: TextStyle(color: colorGrey)),
+            child: Text("No Goals to be Shown", style: TextStyle(color: colorGreyDark)),
           )
         ]
       ],
