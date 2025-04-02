@@ -517,38 +517,64 @@ class _EditChildScreenState extends State<EditChildScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
       ),
-      onPressed: () => showDialog(
-        context: context,
-        builder: (BuildContext context) { 
-          return AlertWidget(
-            title: "Delete Child Profile", 
-            message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
-            confirmText: "Delete", 
-            confirmColor: colorRed,
-            cancelText: "Cancel", 
-            action: () {
-              Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: colorRed,
-                  content: Row(
-                    children: [
-                      Text(
-                        'Removed ${widget.child.name} from children',
-                        style: textTheme.titleSmallWhite
+      onPressed: () {
+        if (Provider.of<AppState>(context, listen: false).children.length > 1) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) { 
+              return AlertWidget(
+                title: "Delete Child Profile", 
+                message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
+                confirmText: "Delete", 
+                confirmColor: colorRed,
+                cancelText: "Cancel", 
+                action: () {
+                  Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: colorRed,
+                      content: Row(
+                        children: [
+                          Text(
+                            'Removed ${widget.child.name} from children',
+                            style: textTheme.titleSmallWhite
+                          ),
+                          Spacer(),
+                          Icon(Icons.close_rounded, color: colorWhite)
+                        ],
                       ),
-                      Spacer(),
-                      Icon(Icons.close_rounded, color: colorWhite)
-                    ],
-                  ),
-                  duration: Duration(seconds: 2),
-                ),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  navState.pop(true);
+                }
               );
-              navState.pop(true);
             }
           );
         }
-      ),
+        else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Center(
+                  child: Text('Delete Child Profile')
+                ),
+                content: const Text('You cannot delete all child profiles from your account.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: colorGreen),
+                    ),
+                  ),
+                ],
+              );
+            }
+          );
+        }
+      },
       child: Text(
         'Delete Child',
         style: textTheme.titleSmallWhite,
