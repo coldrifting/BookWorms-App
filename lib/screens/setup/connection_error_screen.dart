@@ -1,6 +1,7 @@
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/screens/setup/splash_screen.dart';
+import 'package:bookworms_app/services/auth_storage.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
@@ -32,6 +33,7 @@ class _ConnectionErrorScreen extends State<ConnectionErrorScreen> {
                     popOnCancel: false,
                     popOnConfirm: false,
                     action: () {
+                      deleteToken();
                       pushScreen(context, const SplashScreen(), replace: true);
                     },
                     cancelAction: () {

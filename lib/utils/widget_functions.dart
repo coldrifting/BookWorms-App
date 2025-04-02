@@ -51,154 +51,189 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
 }
 
 // Alert modal for adding a new classroom goal.
-  dynamic addGoalAlert(TextTheme textTheme, BuildContext context, [void Function()? callback]) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    var isParent = appState.isParent;
-    
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        TextEditingController titleController = TextEditingController();
-        TextEditingController dateController = TextEditingController();
-        final formKey = GlobalKey<FormState>();
-        
-        String selectedMetric = "Completion";
-        DateTime? pickedDate;
+Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Function()? callback]) {
+  AppState appState = Provider.of<AppState>(context, listen: false);
+  var isParent = appState.isParent;
+  var isNumBooksMetric = true;
+  
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      TextEditingController titleController = TextEditingController();
+      TextEditingController startDateController = TextEditingController(text: _convertDateToStringUI(DateTime.now()));
+      TextEditingController dueDateController = TextEditingController(text: _convertDateToStringUI(DateTime.now().add(Duration(days: 1))));
+      final formKey = GlobalKey<FormState>();
+      
+      String selectedMetric = "Completion";
+      DateTime? pickedDate;
 
-        return StatefulBuilder(
-          builder: (context, setState) {
-
-            // On click, pulls up the date picker.
-            Future<void> selectDate() async {
-              pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2025),
-                lastDate: DateTime(2026)
-              );
-
-              setState(() {
-                dateController.text = pickedDate != null 
-                  ? "${pickedDate!.month}/${pickedDate!.day}/${pickedDate!.year}"
-                  : "No selected date";
-              });
-            }
-
-            return Form(
-              key: formKey,
-              child: AlertDialog(
-                title: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text("Add Class Goal"),
-                        addHorizontalSpace(32),
-                        InkWell(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Icon(Icons.cancel, size: 32, color: colorGreyDark),
-                        ),
-                        addHorizontalSpace(4),
-                        InkWell(
-                          onTap: () async {
-                            if (!isParent) {
-                              if (formKey.currentState?.validate() ?? false) {
-                                DateTime today = DateTime.now();
-                                Goal newGoal = Goal(
-                                  goalType: "Classroom",
-                                  goalMetric: selectedMetric,
-                                  title: titleController.text,
-                                  startDate: "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}", // TODO
-                                  endDate: "${pickedDate!.year}-${pickedDate!.month.toString().padLeft(2, '0')}-${pickedDate!.day.toString().padLeft(2, '0')}",
-                                  target: 0 //TODO
-                                );
-
-                                Result result = await appState.addClassroomGoal(newGoal);
-                                setState(() {
-                                  if (callback != null) {
-                                    callback();
-                                  }
-                                });
-                                resultAlert(context, result);
-                              }
-                            }
-                          },
-                          child: Icon(Icons.check_circle_rounded, size: 32, color: colorGreen),
-                        ),
-                      ],
-                    ),
-                    Divider(color: colorGrey)
-                  ],
-                ),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Goal Title.
-                    TextFormField(
-                      controller: titleController,
-                      decoration: InputDecoration(
-                        labelText: "Goal Title",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please input a goal title';
-                        }
-                        return null;
-                      },
-                    ),
-                    addVerticalSpace(16),
-                    // End Date.
-                    TextFormField(
-                      controller: dateController,
-                      readOnly: true,
-                      onTap: selectDate,
-                      decoration: InputDecoration(
-                        labelText: "Select Due Date",
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      validator: (value) {
-                        if (value == null || value == "No selected date") {
-                          return 'Please input a due date';
-                        }
-                        return null;
-                      },
-                    ),
-                    addVerticalSpace(16),
-                    // Metric Type.
-                    DropdownButtonFormField<String>(
-                      onChanged: (value) {
-                        setState(() {
-                          selectedMetric = value!;
-                        });
-                      },
-                      items: ["Completion", "Number of Books"]
-                        .map((metric) => DropdownMenuItem(
-                          value: metric,
-                          child: Text(metric, style: textTheme.bodyLarge),
-                        ))
-                        .toList(),
-                      decoration: InputDecoration(
-                        labelText: "Metric Type",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please select a metric';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
+      return StatefulBuilder(
+        builder: (context, setState) {
+          // Function to select a date.
+          Future<void> selectDate(TextEditingController controller) async {
+            pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2025),
+              lastDate: DateTime(2026),
             );
+            setState(() {
+              controller.text = pickedDate != null 
+                ? "${pickedDate!.month}/${pickedDate!.day}/${pickedDate!.year}"
+                : "No selected date";
+            });
           }
-        );
-      }
-    );
-  }
 
+          return Form(
+            key: formKey,
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Column(
+                children: [
+                  Icon(Icons.school, color: colorGreen),
+                  addHorizontalSpace(8),
+                  Text("Add Classroom Goal", style: textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold)),
+                  Divider(color: colorGrey)
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Goal Title.
+                  TextFormField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      labelText: "Goal Title",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: Icon(Icons.star, color: colorYellow),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please input a goal title';
+                      }
+                      return null;
+                    },
+                  ),
+                  addVerticalSpace(16),
+                  Row(
+                    children: [
+                      // Start Date.
+                      Expanded(
+                        child: TextFormField(
+                          controller: startDateController,
+                          //initialValue: _convertDateToString(DateTime.now()),
+                          readOnly: true,
+                          onTap: () => selectDate(startDateController),
+                          decoration: InputDecoration(
+                            labelText: "Start Date",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            prefixIcon: Icon(Icons.calendar_today, color: Colors.green),
+                          ),
+                          validator: (value) {
+                            if (value == null || value == "No selected date") {
+                              return 'Please input a due date';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      addHorizontalSpace(4),
+                      // End Date.
+                      Expanded(
+                        child: TextFormField(
+                          controller: dueDateController,
+                          //initialValue: _convertDateToString(DateTime.now().add(Duration(days: 1))),
+                          readOnly: true,
+                          onTap: () => selectDate(dueDateController),
+                          decoration: InputDecoration(
+                            labelText: "Due Date",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            prefixIcon: Icon(Icons.calendar_today, color: Colors.green),
+                          ),
+                          validator: (value) {
+                            if (value == null || value == "No selected date") {
+                              return 'Please input a due date';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  addVerticalSpace(16),
+                  // Metric Type.
+                  ToggleButtons(
+                        isSelected: [!isNumBooksMetric, isNumBooksMetric],
+                        onPressed: (index) {
+                          setState(() {
+                            isNumBooksMetric = index == 1;
+                            selectedMetric = isNumBooksMetric ? "Number of Books" : "Completion";
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text("Reading Progress"),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text("Books Read"),
+                          ),
+                        ],
+                      ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("Cancel", style: TextStyle(color: colorRed)),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (!isParent) {
+                      if (formKey.currentState?.validate() ?? false) {
+                        Goal newGoal = Goal(
+                          goalType: "Classroom",
+                          goalMetric: selectedMetric,
+                          title: titleController.text,
+                          startDate: _convertDateToString(DateTime.now()),
+                          endDate: _convertDateToString(pickedDate!),
+                          target: 0,
+                        );
+
+                        Result result = await appState.addClassroomGoal(newGoal);
+                        setState(() {
+                          if (callback != null) {
+                            callback();
+                          }
+                        });
+                        resultAlert(context, result);
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorGreen,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text("Save Goal", style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
+          );
+        }
+      );
+    }
+  );
+}
+
+String _convertDateToString(DateTime date) {
+  return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+}
+
+String _convertDateToStringUI(DateTime date) {
+  return "${date.month}/${date.day}/${date.year}";
+}
 
 dynamic resultAlert(BuildContext context, Result result) {
   if (context.mounted) {
