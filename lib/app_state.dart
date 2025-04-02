@@ -193,6 +193,25 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  Future<bool> addChildBookshelfWithBook(int childId, Bookshelf bookshelf) async {
+    String guid = children[childId].id;
+    try {
+      var success = await bookshelvesService.addBookshelf(guid, bookshelf.name);
+      if (success) {
+        var success2 = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, bookshelf.books[0].id);
+        if (success2) {
+          (_account as Parent).children[childId].bookshelves.add(bookshelf);
+          _setBookImages([bookshelf]);
+          notifyListeners();
+          return success2;
+        }
+      }
+    } catch (_) {
+      return false;
+    }
+    return false;
+  }
+
   void renameChildBookshelf(int childId, Bookshelf bookshelf, String newName) async {
     String guid = children[childId].id;
     var isSuccess = await bookshelvesService.renameBookshelfService(guid, bookshelf.name, newName);
@@ -316,6 +335,23 @@ class AppState extends ChangeNotifier {
     if (isSuccess) {
       classroom!.bookshelves.add(bookshelf);
       notifyListeners();
+    }
+  }
+
+  Future<bool> createClassroomBookshelfWithBook(Bookshelf bookshelf) async {
+    try {
+      var success = await classroomService.createClassroomBookshelf(bookshelf);
+      classroom!.bookshelves.add(bookshelf);
+      if (success) {
+        var success2 = await classroomService.insertBookIntoClassroomBookshelf(
+            bookshelf, bookshelf.books[0]);
+        notifyListeners();
+        return success2;
+      }
+      return false;
+    }
+    catch (_) {
+      return false;
     }
   }
 

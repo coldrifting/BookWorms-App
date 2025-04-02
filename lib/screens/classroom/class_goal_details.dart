@@ -146,7 +146,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
                 color: colorWhite,
                 child: Column(
                   children: [
-                    _studentItem(textTheme, goalDetails.studentGoalDetails![index - 1]),
+                    _studentItem(textTheme, goal, goalDetails.studentGoalDetails![index - 1]),
                     if (goalDetails.studentGoalDetails!.length != index) Divider(color: colorGreyLight)
                   ],
                 ),
@@ -158,7 +158,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
     );
   }
 
-  Widget _studentItem(TextTheme textTheme, StudentGoalDetails studentGoalDetails) {
+  Widget _studentItem(TextTheme textTheme, ClassroomGoal goal, StudentGoalDetails studentGoalDetails) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -174,10 +174,22 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
           addHorizontalSpace(16),
           Text(studentGoalDetails.name, style: textTheme.titleMedium),
           Spacer(),
-          if (studentGoalDetails.progress == 100)
-            Text("COMPLETE", style: TextStyle(color: colorGreen, fontWeight: FontWeight.bold))
-          else 
-            Text("${studentGoalDetails.progress}%", style: TextStyle(color: colorRed, fontWeight: FontWeight.bold))
+          if (goal.goalMetric == "BooksRead")
+            Text(
+              "${studentGoalDetails.progress}/${goal.target} books read", 
+              style: TextStyle(
+                color: goal.target <= studentGoalDetails.progress ? colorGreen : colorRed, 
+                fontWeight: FontWeight.bold
+              )
+            ),
+          if (goal.goalMetric == "Completion")
+            Text(
+              "${studentGoalDetails.progress}%", 
+              style: TextStyle(
+                color: studentGoalDetails.progress == 100 ? colorGreen : colorRed, 
+                fontWeight: FontWeight.bold
+              )
+            )
         ],
       ),
     );

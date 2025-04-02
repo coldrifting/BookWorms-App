@@ -2,6 +2,8 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
+import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/services/book/book_difficulty_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
@@ -24,11 +26,8 @@ class BookDetailsScreen extends StatefulWidget {
   final BookSummary summaryData; // Overview book data
   final BookDetails detailsData; // More specific book data
 
-  const BookDetailsScreen({
-    super.key, 
-    required this.summaryData, 
-    required this.detailsData
-  });
+  const BookDetailsScreen(
+      {super.key, required this.summaryData, required this.detailsData});
 
   @override
   State<BookDetailsScreen> createState() => _BookDetailsScreenState();
@@ -44,7 +43,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   late BookDetails bookDetails;
   late CachedNetworkImage image;
 
-  var _isExpanded = false; // Denotes if the description/book information is expanded.
+  var _isExpanded =
+      false; // Denotes if the description/book information is expanded.
 
   @override
   void initState() {
@@ -58,21 +58,27 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     image = CachedNetworkImage(
       imageUrl: bookSummary.imageUrl!,
       placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-      errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
+      errorWidget: (context, url, error) =>
+          Image.asset("assets/images/book_cover_unavailable.jpg"),
     );
   }
 
   // Set the offset of the scroll controller.
   void _setScrollOffset() {
-    final RenderBox? imageRenderBox = _imageKey.currentContext?.findRenderObject() as RenderBox?;
-    final RenderBox? parentRenderBox = _parentKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? imageRenderBox =
+        _imageKey.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? parentRenderBox =
+        _parentKey.currentContext?.findRenderObject() as RenderBox?;
 
-    if (imageRenderBox != null && parentRenderBox != null && imageRenderBox.hasSize && parentRenderBox.hasSize) {
+    if (imageRenderBox != null &&
+        parentRenderBox != null &&
+        imageRenderBox.hasSize &&
+        parentRenderBox.hasSize) {
       double imageWidth = imageRenderBox.size.width;
       double imageHeight = imageRenderBox.size.height;
 
       double aspectRatio = imageWidth / imageHeight;
-      double newImageWidth = parentRenderBox.size.width; 
+      double newImageWidth = parentRenderBox.size.width;
       double newImageHeight = newImageWidth / aspectRatio;
 
       // Calculate the new scroll offset
@@ -81,12 +87,15 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     }
   }
 
-
   /// The entire book details page, containing book image, details, action buttons,
   /// and reviews.
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+
+    // A reference to a Nav state is needed since modal popups are not
+    // technically contained within the proper nested navigation context
+    NavigatorState navState = Navigator.of(context);
 
     return Scaffold(
       key: _parentKey,
@@ -94,12 +103,10 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
         title: Text(bookSummary.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite,
-            overflow: TextOverflow.ellipsis
-          )
-        ),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: colorWhite,
+                overflow: TextOverflow.ellipsis)),
         backgroundColor: colorGreen,
         leading: IconButton(
           color: colorWhite,
@@ -110,38 +117,37 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         ),
       ),
       // Book details content
-      body: ListView(
-        controller: _scrollController, 
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: CachedNetworkImage(
-                key: _imageKey,
-                imageUrl: bookSummary.imageUrl!,
-                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
-              ),
+      body: ListView(controller: _scrollController, children: [
+        SizedBox(
+          width: double.infinity,
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: CachedNetworkImage(
+              key: _imageKey,
+              imageUrl: bookSummary.imageUrl!,
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) =>
+                  Image.asset("assets/images/book_cover_unavailable.jpg"),
             ),
           ),
-          _bookDetails(textTheme),
-          Container(
-            color: const Color.fromARGB(255, 239, 239, 239),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  addVerticalSpace(5),
-                  _actionButtons(textTheme, bookSummary),
-                  addVerticalSpace(15),
-                  _reviewList(textTheme),
-                ],
-              ),
+        ),
+        _bookDetails(textTheme),
+        Container(
+          color: const Color.fromARGB(255, 239, 239, 239),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                addVerticalSpace(5),
+                _actionButtons(textTheme, bookSummary, navState),
+                addVerticalSpace(15),
+                _reviewList(textTheme),
+              ],
             ),
           ),
-        ]
-      ),
+        ),
+      ]),
     );
   }
 
@@ -149,7 +155,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   /// difficulty, and description.
   Widget _bookDetails(TextTheme textTheme) {
     var difficulty = bookSummary.level ?? "N/A";
-    var rating = bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
+    var rating =
+        bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
 
     // Toggles the expansion of the description/book information.
     void toggleExpansion() {
@@ -177,8 +184,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 fontSize: 18),
             textAlign: TextAlign.center,
             bookSummary.authors.isNotEmpty
-              ? bookSummary.authors.map((author) => author).join('\n')
-              : "Unknown Author(s)",
+                ? bookSummary.authors.map((author) => author).join('\n')
+                : "Unknown Author(s)",
           ),
           // Book difficulty and rating
           Padding(
@@ -211,7 +218,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           RichText(
             // If not expanded, 5 lines are shown at most with ellipsis present.
             maxLines: _isExpanded ? null : 5,
-            overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+            overflow:
+                _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             text: TextSpan(
               style: textTheme.bodyLarge,
               children: <TextSpan>[
@@ -263,14 +271,15 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   /// Buttons for saving a book to a bookshelf, locating a near library, and
   /// rating the book difficulty.
-  Widget _actionButtons(TextTheme textTheme, BookSummary book) {
+  Widget _actionButtons(
+      TextTheme textTheme, BookSummary book, NavigatorState navState) {
     AppState appState = Provider.of<AppState>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton.icon(
           icon: const Icon(Icons.bookmark),
-          onPressed: (() => {_saveToBookshelfModal(textTheme)}),
+          onPressed: (() => {_saveToBookshelfModal(textTheme, book, navState)}),
           label: const Text("Save"),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
@@ -298,7 +307,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
-  void _saveToBookshelfModal(TextTheme textTheme) {
+  void _saveToBookshelfModal(
+      TextTheme textTheme, BookSummary book, NavigatorState navState) {
     AppState appState = Provider.of<AppState>(context, listen: false);
     List<Bookshelf> bookshelves = appState.bookshelves;
 
@@ -309,60 +319,112 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
           child: Column(
             children: [
-              Text("Save to Bookshelf", style: textTheme.headlineSmall),
-              addVerticalSpace(16),
-              Expanded (
-                child: ListView.builder(
-                  itemCount: bookshelves.length,
-                  itemBuilder: (context, index) {
-                    Bookshelf bookshelf = bookshelves[index];
-                    return Column(
-                      children: [
-                        InkWell(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                color: bookshelf.type.color[200],
-                                border: Border.all(color: bookshelf.type.color[700]!),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  child: SizedBox(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Save to Bookshelf", style: textTheme.headlineSmall)
+                ],
+              ),
+              addVerticalSpace(8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: Size(200, 38),
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                          iconSize: 26,
+                          foregroundColor: colorWhite,
+                          backgroundColor: colorGreen),
+                      onPressed: () async {
+                        await _showCreateBookshelfDialog(book);
+                        navState.pop();
+                      },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(Icons.add),
+                            addHorizontalSpace(8),
+                            Text("Save to New Bookshelf")
+                          ]))
+                ],
+              ),
+              addVerticalSpace(10),
+              Expanded(
+                  child: ListView.builder(
+                itemCount: bookshelves.length,
+                itemBuilder: (context, index) {
+                  Bookshelf bookshelf = bookshelves[index];
+                  return Column(
+                    children: [
+                      InkWell(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: bookshelf.type.color[200],
+                            border:
+                                Border.all(color: bookshelf.type.color[700]!),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                child: SizedBox(
                                     height: 75,
                                     width: 75,
-                                    child: BookshelfImageLayoutWidget(bookshelf: bookshelf)
-                                  ),
-                                ),
-                                addHorizontalSpace(16),
-                                Text(bookshelf.name, style: textTheme.titleSmall, overflow: TextOverflow.ellipsis),
-                              ],
-                            ),
+                                    child: BookshelfImageLayoutWidget(
+                                        bookshelf: bookshelf)),
+                              ),
+                              addHorizontalSpace(16),
+                              Text(bookshelf.name,
+                                  style: textTheme.titleSmall,
+                                  overflow: TextOverflow.ellipsis),
+                            ],
                           ),
-                          onTap: () async {
-                            bool isSuccess;
-                            if (appState.isParent) {
-                              isSuccess = await appState.addBookToBookshelf(appState.selectedChildID, bookshelf, bookSummary);
-                            } else {
-                              isSuccess = await appState.addBookToClassroomBookshelf(bookshelf, bookSummary);
-                            }
-
-                            String resultMessage = isSuccess 
-                              ? "Saved book to ${bookshelf.name}." 
-                              : 'Already saved to ${bookshelf.name}.';
-                            resultAlert(context, Result(isSuccess: isSuccess, message: resultMessage, color: colorGreyDark));
-                          },
                         ),
-                        if (index != bookshelves.length - 1) ... [
-                          addVerticalSpace(4),
-                          Divider(),
-                          addVerticalSpace(4)
-                        ]
-                      ],
-                    );
-                  },
-                ),
-              ),
+                        onTap: () async {
+                          bool success;
+                          if (appState.isParent) {
+                            success = await appState.addBookToBookshelf(
+                                appState.selectedChildID,
+                                bookshelf,
+                                bookSummary);
+                          } else {
+                            success =
+                                await appState.addBookToClassroomBookshelf(
+                                    bookshelf, bookSummary);
+                          }
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor:
+                                    success ? colorGreenDark : colorGreyDark,
+                                content: Row(
+                                  children: [
+                                    Text(
+                                        success
+                                            ? 'Saved book to ${bookshelf.name}.'
+                                            : 'Already saved to ${bookshelf.name}.',
+                                        style: textTheme.titleSmallWhite),
+                                    Spacer(),
+                                    if (success)
+                                      Icon(Icons.check_circle_outline_rounded,
+                                          color: colorWhite)
+                                  ],
+                                ),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            navState.pop(context);
+                          }
+                        },
+                      ),
+                      addVerticalSpace(10),
+                    ],
+                  );
+                },
+              )),
             ],
           ),
         );
@@ -370,77 +432,76 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
-void _rateBookDifficultyDialog(TextTheme textTheme) {
-  AppState appState = Provider.of<AppState>(context, listen: false);
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Center(
-          child: Text(
-            'Rate Book Difficulty',
-            style: textTheme.titleLarge,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "How difficult was this book for ${appState.children[appState.selectedChildID].name}?",
-              textAlign: TextAlign.center,
+  void _rateBookDifficultyDialog(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              'Rate Book Difficulty',
+              style: textTheme.titleLarge,
             ),
-            addVerticalSpace(16),
-            _difficultyButton('Very Easy', 1, textTheme),
-            _difficultyButton('Easy', 2, textTheme),
-            _difficultyButton('Just Right', 3, textTheme),
-            _difficultyButton('Hard', 4, textTheme),
-            _difficultyButton('Very Hard', 5, textTheme),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-Widget _difficultyButton(String text, int index, TextTheme textTheme) {
-  AppState appState = Provider.of<AppState>(context, listen: false);
-  return Padding(
-    padding: const EdgeInsets.all(4.0),
-    child: SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () {
-          BookDifficultyService bookDifficultyService = BookDifficultyService();
-          bookDifficultyService.sendDifficulty(
-            bookSummary.id,
-            appState.children[appState.selectedChildID].id,
-            index
-          );
-          Navigator.of(context, rootNavigator: true).pop();
-        },
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
           ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "How difficult was this book for ${appState.children[appState.selectedChildID].name}?",
+                textAlign: TextAlign.center,
+              ),
+              addVerticalSpace(16),
+              _difficultyButton('Very Easy', 1, textTheme),
+              _difficultyButton('Easy', 2, textTheme),
+              _difficultyButton('Just Right', 3, textTheme),
+              _difficultyButton('Hard', 4, textTheme),
+              _difficultyButton('Very Hard', 5, textTheme),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _difficultyButton(String text, int index, TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () {
+            BookDifficultyService bookDifficultyService =
+                BookDifficultyService();
+            bookDifficultyService.sendDifficulty(bookSummary.id,
+                appState.children[appState.selectedChildID].id, index);
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+            ),
+          ),
+          child: Text(text, style: textTheme.bodyLarge),
         ),
-        child: Text(text, style: textTheme.bodyLarge),
       ),
-    ),
-  );
-}
+    );
+  }
 
   /// The list of review widgets corresponding to the given book.
   Widget _reviewList(TextTheme textTheme) {
-    var rating = bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
+    var rating =
+        bookSummary.rating == null ? "Unrated" : "${bookSummary.rating}★";
     // Generate the list of review widgets.
     var reviewCount = bookDetails.reviews.length;
     List<Widget> reviews = List.generate(
-      reviewCount,
-      (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 18.0),
-            child: ReviewWidget(review: bookDetails.reviews[index]),
-          ));
+        reviewCount,
+        (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 18.0),
+              child: ReviewWidget(review: bookDetails.reviews[index]),
+            ));
 
     return Column(
       // Replace with lazy loading.
@@ -461,17 +522,99 @@ Widget _difficultyButton(String text, int index, TextTheme textTheme) {
   }
 
   void _addReview() {
-    pushScreen(context, CreateReviewWidget(bookId: bookSummary.id, updateReviews: _updateReviews));
+    pushScreen(
+        context,
+        CreateReviewWidget(
+            bookId: bookSummary.id, updateReviews: _updateReviews));
   }
 
   Future<void> _updateReviews() async {
     BookSummaryService bookSummaryService = BookSummaryService();
-    double? updatedbookRating = (await bookSummaryService.getBookSummary(bookSummary.id)).rating;
+    double? updatedbookRating =
+        (await bookSummaryService.getBookSummary(bookSummary.id)).rating;
     BookDetailsService bookDetailsService = BookDetailsService();
-    List<UserReview> updatedBookReviews =  (await bookDetailsService.getBookDetails(bookSummary.id)).reviews;
+    List<UserReview> updatedBookReviews =
+        (await bookDetailsService.getBookDetails(bookSummary.id)).reviews;
     setState(() {
       bookSummary.rating = updatedbookRating;
       bookDetails.reviews = updatedBookReviews;
     });
+  }
+
+  Future<void> _showCreateBookshelfDialog(BookSummary bookToAdd) async {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    return showDialog(
+      context: context,
+      builder: (context) {
+        TextEditingController controller = TextEditingController();
+        return AlertDialog(
+          title: Text('Create New Bookshelf'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Bookshelf Name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(foregroundColor: colorGreyDark),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String name = controller.text.trim();
+                if (name.isNotEmpty) {
+                  var bookshelf = Bookshelf(
+                      type: appState.isParent
+                          ? BookshelfType.custom
+                          : BookshelfType.classroom,
+                      name: name,
+                      books: [bookToAdd]);
+                  var success = appState.isParent
+                      ? await appState.addChildBookshelfWithBook(
+                          appState.selectedChildID, bookshelf)
+                      : await appState
+                          .createClassroomBookshelfWithBook(bookshelf);
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor:
+                            success ? colorGreenDark : colorGreyDark,
+                        content: Row(
+                          children: [
+                            Text(
+                                success
+                                    ? 'Saved book to new Bookshelf ${bookshelf.name}.'
+                                    : 'Unable to create new bookshelf ${bookshelf.name}.',
+                                style: textTheme.titleSmallWhite),
+                            Spacer(),
+                            if (success)
+                              Icon(Icons.check_circle_outline_rounded,
+                                  color: colorWhite)
+                          ],
+                        ),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorGreen,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+              child: Text('Create', style: textTheme.titleSmallWhite),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
