@@ -3,7 +3,7 @@ import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
-import 'package:bookworms_app/screens/goals_screen.dart';
+import 'package:bookworms_app/screens/goals/goals_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';

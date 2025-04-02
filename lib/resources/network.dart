@@ -109,11 +109,11 @@ Uri bookshelvesDeleteUri(String childId, String bookshelfName) {
 }
 
 Uri bookshelvesRecommendAuthorsUri(String? childId) {
-  return Uri.parse("$serverBaseUri/recommend/sameauthors?${childId != null ? "childId=$childId" : ''}");
+  return Uri.parse("$serverBaseUri/recommend/sameauthors${childId != null ? "?childId=$childId" : ''}");
 }
 
 Uri bookshelvesRecommendDescriptionsUri(String? childId) {
-  return Uri.parse("$serverBaseUri/recommend/similardescriptions?childId=${childId != null ? "childId=$childId" : ''}");
+  return Uri.parse("$serverBaseUri/recommend/similardescriptions${childId != null ? "?childId=$childId" : ''}");
 }
 
 // ***** Search *****

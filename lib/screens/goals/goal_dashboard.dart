@@ -1,4 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child/child.dart';
+import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
@@ -8,14 +10,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ClassroomGoalDashboard extends StatefulWidget {
-  const ClassroomGoalDashboard({super.key});
+class GoalDashboard extends StatefulWidget {
+  const GoalDashboard({super.key});
 
   @override
-  State<ClassroomGoalDashboard> createState() => _ClassroomGoalDashboardState();
+  State<GoalDashboard> createState() => _GoalDashboardState();
 }
 
-class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
+class _GoalDashboardState extends State<GoalDashboard> {
   static const int _numPages = 13;
   static const int _initialCalendarIndex = 6;
 
@@ -38,8 +40,12 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     final textTheme = Theme.of(context).textTheme;
     final appState = Provider.of<AppState>(context);
 
-    final goalData = _getDayGoalsDetails(appState.classroom!.classroomGoals);
-    List<List<ClassroomGoal>> activeGoals = goalData[0];
+    final goals = appState.isParent 
+      ? appState.children[appState.selectedChildID].goals
+      : appState.classroom!.classroomGoals;
+
+    final goalData = _getDayGoalsDetails(goals);
+    var activeGoals = goalData[0];
     List<int> goalCounts = goalData[1];
 
     return Column(
@@ -89,15 +95,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
               return Padding(
                 padding: EdgeInsets.only(bottom: 12.0),
                 child: InkWell(
-                  onTap: () async {
-                    ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(selectedGoal.goalId!);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ClassGoalDetails(goal: detailedGoal)
-                      ),
-                    );
-                  },
+                  onTap: () => _navigateToDetailedGoalScreen(selectedGoal),
                   child: _goalItem(
                     textTheme, 
                     selectedGoal, 
@@ -113,8 +111,25 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     );
   }
 
+  void _navigateToDetailedGoalScreen(dynamic selectedGoal) async {
+    final appState = Provider.of<AppState>(context, listen: false);
+    if (!appState.isParent) {
+      ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(selectedGoal.goalId!);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ClassGoalDetails(goal: detailedGoal)
+        ),
+      );
+    } else {
+      Child selectedChild = appState.children[appState.selectedChildID];
+      ChildGoal detailedGoal = await appState.getChildGoalDetails(selectedChild, selectedGoal.goalId!);
+      // TODO: Navigate to child goal details screen.
+    }
+  }
+
   // Returns the list of currently-active goals and the count of goals due.
-  List<dynamic> _getDayGoalsDetails(List<ClassroomGoal> allGoals) {
+  List<dynamic> _getDayGoalsDetails(List<dynamic> allGoals) {
     final now = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     // Generate both the list of goals for each day and the goal counts.
@@ -122,11 +137,11 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
       final date = now.add(Duration(days: i - _initialCalendarIndex));
       
       // Initialize the list to hold goals for the current date and a counter for goals due.
-      List<ClassroomGoal> goalsForDate = [];
+      List<dynamic> goalsForDate = [];
       int goalsDue = 0;
 
       // Loop through all goals to filter the ones due for the current date.
-      for (ClassroomGoal goal in allGoals) {
+      for (dynamic goal in allGoals) {
         final start = DateTime.parse(goal.startDate);
         final end = DateTime.parse(goal.endDate);
         final startDate = DateTime(start.year, start.month, start.day);
@@ -151,13 +166,14 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     });
 
     // Separate out the lists of goals and goal counts.
-    final goalLists = goalData.map((data) => data['goalsForDate'] as List<ClassroomGoal>).toList();
+    final goalLists = goalData.map((data) => data['goalsForDate'] as List).toList();
     final goalCounts = goalData.map((data) => data['goalCount'] as int).toList();
     return [goalLists, goalCounts];
   }
 
   // "No goals to show" display.
   Widget _noGoalsWidget(TextTheme textTheme) {
+    final appState = Provider.of<AppState>(context);
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -178,7 +194,10 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("No class goals assigned today.\nAdd one now!", textAlign: TextAlign.center),
+            Text(
+              "No ${appState.isParent ? '' : 'class '}goals assigned today.\nAdd one now!", 
+              textAlign: TextAlign.center
+            ),
             addVerticalSpace(8),
             _addGoalButton(textTheme)
           ],
@@ -211,17 +230,21 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
     );
   }
 
-  Widget _goalItem(TextTheme textTheme, ClassroomGoal goal, DateTime date) {
+  Widget _goalItem(TextTheme textTheme, dynamic goal, DateTime date) {
     final appState = Provider.of<AppState>(context);
-    final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
+    final percentCompleted;
 
+    if (appState.isParent) {
+      percentCompleted = goal.progress;
+    } else {
+      final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
+      percentCompleted = ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt();
+    }
 
     final selectedDate = DateTime(date.year, date.month, date.day);
     final endParsed = DateTime.parse(goal.endDate);
     final endDate = DateTime(endParsed.year, endParsed.month, endParsed.day);
     int daysRemaining = endDate.difference(selectedDate).inDays;
-
-    final percentCompleted = ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt();
 
     return Container(
       decoration: BoxDecoration(
@@ -279,15 +302,7 @@ class _ClassroomGoalDashboardState extends State<ClassroomGoalDashboard> {
                         ),
                         addHorizontalSpace(16),
                         TextButton(
-                          onPressed: () async {
-                            ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId!);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ClassGoalDetails(goal: detailedGoal)
-                              ),
-                            );
-                          },
+                          onPressed: () => _navigateToDetailedGoalScreen(goal),
                           style: TextButton.styleFrom(
                             backgroundColor: colorGreyLight!.withAlpha(180),
                             foregroundColor: colorBlack,

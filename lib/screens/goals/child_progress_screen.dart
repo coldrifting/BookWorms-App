@@ -1,4 +1,4 @@
-import 'package:bookworms_app/screens/goals_screen.dart';
+import 'package:bookworms_app/screens/goals/goals_screen.dart';
 import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +35,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         backgroundColor: colorGreen,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(top: 16.0),
         child: Column(
           children: [
             InkWell(

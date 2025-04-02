@@ -1,6 +1,6 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/screens/classroom/classroom_goal_dashboard.dart';
+import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
     var isParent = appState.isParent;
     existsRecommended = false;
 
-    _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(isParent ? appState.selectedChildID : null);
-    _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(isParent ? appState.selectedChildID : null);
+    int? childId = isParent ? appState.selectedChildID : null;
+    _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(childId);
+    _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(childId);
   }
 
   @override
@@ -76,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          stops: [0, 0.33],
+          stops: [0, 0.4],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [colorGreenGradTop, colorWhite],
@@ -106,12 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           // Parent -- Child data.
-          if (!isParent && appState.classroom != null) ...[
-            ClassroomGoalDashboard(),
-          ],
-          if (isParent) ... [        
-            _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
-            addVerticalSpace(24),
+          if (isParent || (!isParent && appState.classroom != null)) ...[
+            GoalDashboard(),
           ],
         ],
       ),

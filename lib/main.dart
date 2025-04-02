@@ -7,7 +7,7 @@ import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
 import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
 import 'package:bookworms_app/screens/home_screen.dart';
 import 'package:bookworms_app/screens/profile/profile_screen.dart';
-import 'package:bookworms_app/screens/progress_screen.dart';
+import 'package:bookworms_app/screens/goals/child_progress_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
