@@ -24,7 +24,7 @@ class PingService {
         return true;
       }
       return false;
-    } on SocketException {
+    } catch(_) {
       return false;
     }
   }
