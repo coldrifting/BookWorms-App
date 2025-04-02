@@ -120,6 +120,9 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
         ),
         actions: [
           TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cancel", style: TextStyle(color: colorGrey))),
+          TextButton(
             onPressed: () {
               String childName = childNameController.text.isNotEmpty
                 ? childNameController.text
