@@ -63,6 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
     String? token = results[1] as String?;
     if (token == null) {
       goToWelcomeScreen(context);
+      return;
     }
 
     AppState appState = Provider.of<AppState>(context, listen: false);
@@ -73,6 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
       deleteToken();
       SharedPreferences preferences = await SharedPreferences.getInstance();
       await preferences.remove('recentBookIds');
+
       if (mounted) {
         goToWelcomeScreen(context);
       }
