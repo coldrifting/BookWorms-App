@@ -40,35 +40,35 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+          foregroundColor: colorWhite,
+          backgroundColor: colorGreen,
+          icon: const Icon(Icons.add),
+          label: Text("Add Child"),
+          onPressed: () {
+            _addChildDialog(context);
+          }),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 64.0),
-          const Text(
-            "Click to View Child",
+          const Padding(
+            padding: EdgeInsets.all(16),
+          child: Text(
+            "Tap to Edit Child Details",
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.bold
             ),
-          ),
-          const SizedBox(height: 32.0),
+          )),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                itemCount: children.length + 1,
-                itemBuilder: (context, index) {
-                  if (index != children.length) {
-                    return _childWidget(index, children[index]);
-                  } else if (index == children.length) {
-                    return _addChildWidget();
-                  }
-                  return null;
-                },
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
               ),
+              itemCount: children.length,
+              itemBuilder: (context, index) {
+                return _childWidget(index, children[index]);
+              },
             ),
           ),
         ],
@@ -102,33 +102,6 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
             fontWeight: FontWeight.bold
           ),
           overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
-
-  Widget _addChildWidget() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          onPressed: () {
-            _addChildDialog(context);
-          },
-          icon: const CircleAvatar(
-            maxRadius: 64,
-            child: Icon(Icons.add),
-          ),
-        ),
-        const SizedBox(height: 8.0),
-        const Text(
-          "Add Child",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),
         ),
       ],
     );
