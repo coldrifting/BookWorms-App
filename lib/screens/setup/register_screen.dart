@@ -72,17 +72,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       AppState appState = Provider.of<AppState>(context, listen: false);
       await appState.loadAccountDetails();
       if (mounted) {
-        if (isParent)
-        {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const AddFirstChild()),
-          );
+        if (isParent) {
+          pushScreen(context, const AddFirstChild(), replace: true);
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const Navigation()),
-          );
+          pushScreen(context, const Navigation(), replace: true);
         }
         appState.account.profilePictureIndex = UserIcons.getRandomIconIndex();
       }
@@ -241,10 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                   },
                   onSignIn: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    );
+                    pushScreen(context, const LoginScreen(), replace: true);
                   }, 
                   signIn: false
                 ),

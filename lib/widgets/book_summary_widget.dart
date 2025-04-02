@@ -104,15 +104,9 @@ class _BookSummaryWidgetState extends State<BookSummaryWidget> {
 
     if (mounted) {
       // Change the screen to the "book details" screen.
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookDetailsScreen(
+      pushScreen(context, BookDetailsScreen(
             summaryData: book,
-            detailsData: results,
-          )
-        )
-      );
+            detailsData: results));
     }
   }
 }

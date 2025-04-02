@@ -40,6 +40,19 @@ class ChildrenServices {
     }
   }
 
+  Future<List<Child>> removeChild(String childId) async {
+    final response = await client.sendRequest(
+        uri: childRemoveUri(childId),
+        method: "DELETE");
+
+    if (response.ok) {
+      return await fromResponseListChild(response);
+    }
+    else {
+      throw Exception('An error occurred when removing a child.');
+    }
+  }
+
   Future<Child> setAccountDetails(Child child, {String? newName, int? iconIndex, String? newDOB}) async {
     final response = await client.sendRequest(
         uri: childEditDetailsUri(child.id),
