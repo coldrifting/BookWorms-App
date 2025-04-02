@@ -103,7 +103,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         systemOverlayStyle: defaultOverlay(),
         title: Text(bookSummary.title,
             style: const TextStyle(
-                fontWeight: FontWeight.normal,
+                fontWeight: FontWeight.bold,
                 color: colorWhite,
                 overflow: TextOverflow.ellipsis)),
         backgroundColor: colorGreen,
@@ -314,8 +314,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Stack(children: [
-          Padding(
+          return Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
             child: Column(
               children: [
@@ -323,6 +322,31 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Save to Bookshelf", style: textTheme.headlineSmall)
+                  ],
+                ),
+                addVerticalSpace(8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: Size(200, 38),
+                      textStyle:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      iconSize: 26,
+                      foregroundColor: colorWhite,
+                      backgroundColor: colorGreen),
+                  onPressed: () async {
+                    await _showCreateBookshelfDialog(book);
+                    navState.pop();
+                  },
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(Icons.add),
+                        addHorizontalSpace(8),
+                        Text("Save to New Bookshelf")
+                      ]))
                   ],
                 ),
                 addVerticalSpace(16),
@@ -409,30 +433,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 )),
               ],
             ),
-          ),
-          Positioned(
-              right: 20,
-              bottom: 20,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: Size(200, 42),
-                      textStyle:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                      iconSize: 26,
-                      foregroundColor: colorWhite,
-                      backgroundColor: colorGreen),
-                  onPressed: () async {
-                    await _showCreateBookshelfDialog(book);
-                    navState.pop();
-                  },
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(Icons.add),
-                        addHorizontalSpace(8),
-                        Text("New Bookshelf")
-                      ]))),
-        ]);
+          );
       },
     );
   }
