@@ -76,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
                 OptionWidget(
                   name: "About",
-                  icon: Icons.settings,
+                  icon: Icons.info,
                   onTap: () => pushScreen(context, const AboutScreen()),
                 ),
                 addVerticalSpace(10),
