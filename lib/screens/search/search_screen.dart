@@ -15,11 +15,11 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<SearchScreen> createState() => SearchScreenState();
 }
 
 /// The state of the [SearchScreen].
-class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
+class SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInAdvancedSearch = false; 
   var _currentQuery = "";
   var _searchResults = [];
@@ -70,6 +70,15 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   void _notifyIfChanged() {
     // Notify main app of changes for proper reset
     SearchModifiedNotification(isModified: _currentQuery != "" || _isInAdvancedSearch).dispatch(context);
+  }
+
+  void reset() {
+    setState(() {
+      _currentQuery = "";
+      _textEditingcontroller.text = "";
+      _tabController.index = 0;
+      FocusManager.instance.primaryFocus?.unfocus();
+    });
   }
 
   /// Fetches the search results and the corresponding images.

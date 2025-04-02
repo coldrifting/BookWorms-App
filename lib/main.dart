@@ -1,5 +1,4 @@
 import 'package:bookworms_app/screens/setup/ping_screen.dart';
-import 'package:bookworms_app/screens/setup/splash_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +18,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // Store nav keys for sub navigation
 final Map<int, GlobalKey<NavigatorState>> navKeys = {};
+
+final GlobalKey<SearchScreenState> searchKey = GlobalKey<SearchScreenState>();
 
 /// Bookworms is a virtual book search solution for children's books.
 /// It allows for the saving of books to bookshelves, the tracking of
@@ -90,9 +91,10 @@ class _Navigation extends State<Navigation> {
           _navLabels[index] == "Search" && isSearchScreenModified;
 
       if (shouldResetSearch) {
-        // TODO
+        searchKey.currentState?.reset();
       }
-    } else {
+    }
+    else {
       setState(() {
         selectedIndex = index;
       });
@@ -198,7 +200,7 @@ List<Destination> dest = [
       pageType: PageCategory.parent),
   Destination(
       label: "Search",
-      widget: SearchScreen(),
+      widget: SearchScreen(key: searchKey),
       icon: Icons.search_outlined,
       selectedIcon: Icons.search_rounded),
   Destination(
