@@ -14,11 +14,10 @@ import 'package:bookworms_app/screens/setup/splash_screen.dart';
 
 void main() => runApp(const BookWorms());
 
+// Root navigator key
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// Store nav keys for sub navigation
-final Map<int, GlobalKey<NavigatorState>> navKeys = {};
-
+// Need a reference to search state to be able to reset it
 final GlobalKey<SearchScreenState> searchKey = GlobalKey<SearchScreenState>();
 
 /// Bookworms is a virtual book search solution for children's books.
@@ -63,7 +62,7 @@ class _Navigation extends State<Navigation> {
   bool isSearchScreenModified = false;
 
   final Map<int, GlobalKey<NavigatorState>> _navigatorKeys = {};
-  final Map<int, String> _navLabels = {};
+  int searchTabIndex = -1;
 
   @override
   void initState() {
@@ -87,10 +86,7 @@ class _Navigation extends State<Navigation> {
         nav.pop();
       }
 
-      bool shouldResetSearch =
-          _navLabels[index] == "Search" && isSearchScreenModified;
-
-      if (shouldResetSearch) {
+      if (index == searchTabIndex && isSearchScreenModified) {
         searchKey.currentState?.reset();
       }
     }
@@ -127,8 +123,10 @@ class _Navigation extends State<Navigation> {
               child: IndexedStack(
                 index: selectedIndex,
                 children: List.generate(pages.length, (index) {
+                  if (enabledDest[index].label == "Search") {
+                    searchTabIndex = index;
+                  }
                   _navigatorKeys[index] = enabledDest[index].navState;
-                  _navLabels[index] = enabledDest[index].label;
                   return Navigator(
                     key: enabledDest[index].navState,
                     onGenerateRoute: (settings) {
