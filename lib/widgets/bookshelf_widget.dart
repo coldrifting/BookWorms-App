@@ -55,12 +55,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
         onTap: () {
           if (mounted) {
             // Change the screen to the "bookshelf" screen.
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BookshelfScreen(bookshelf: bookshelf)
-              )
-            );
+            pushScreen(context, BookshelfScreen(bookshelf: bookshelf));
           }
         },
         child: Padding(
@@ -154,15 +149,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
 
     if (mounted) {
       // Change the screen to the "book details" screen.
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookDetailsScreen(
-            summaryData: book,
-            detailsData: results,
-          )
-        )
-      );
+      pushScreen(context, BookDetailsScreen(summaryData: book, detailsData: results));
     }
   }
 

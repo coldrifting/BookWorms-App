@@ -36,8 +36,16 @@ final Uri bookCoversBatchUri = getFullUri("/books/covers");
 
   // ***** Children *****
 
+Uri pingUri() {
+  return Uri.parse("$serverBaseUri/ping");
+}
+
 Uri childAddUri(String childName) {
   return Uri.parse("$serverBaseUri/children/add?childName=$childName");
+}
+
+Uri childRemoveUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/remove");
 }
 
 Uri childEditDetailsUri(String childId) {

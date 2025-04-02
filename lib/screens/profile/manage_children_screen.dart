@@ -83,12 +83,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
       children: <Widget>[
         IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditChildScreen(childID: childID, child: child)
-              )
-            );
+            pushScreen(context, EditChildScreen(childID: childID, child: child));
           },
           icon: CircleAvatar(
             maxRadius: 64,

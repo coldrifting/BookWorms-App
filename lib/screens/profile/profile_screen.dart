@@ -29,10 +29,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     deleteToken();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove('recentBookIds');
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-      (route) => false,
-    );
+    if (mounted) {
+      pushScreen(context, const WelcomeScreen(), replace: true, root: true);
+    }
   }
 
   @override

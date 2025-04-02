@@ -78,6 +78,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     AppState appState = Provider.of<AppState>(context, listen: false);
     bool isParent = appState.isParent;
 
+    // A reference to a Nav state is needed since modal popups are not
+    // technically contained within the proper nested navigation context
+    NavigatorState navState = Navigator.of(context);
+
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
@@ -100,23 +104,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 builder: (BuildContext context) {
                   return AlertWidget(
                     title: "Unsaved Changes", 
-                    message: "Are you sure you want to continue?", 
-                    confirmText: "Discard Changes", 
-                    confirmColor: colorRed!,
-                    cancelText: "Keep Editing", 
+                    message: "Are you sure you want to continue?",
+                    confirmText: "Discard Changes",
+                    cancelText: "Keep Editing",
+                    confirmColor: colorRed,
+                    cancelColor: colorGreen,
                     action: () {
                       if (mounted) {
-                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => Navigation(initialIndex: isParent ? 4 : 3)),
-                          (route) => false,
-                        );
+                        navState.pop();
                       }
                     }
                   );
                 }
               );
             } else {
-              Navigator.of(context).pop();
+              navState.pop();
             }
           },
         ),
@@ -168,10 +170,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             _initialLastName = _lastNameController.text;
                             _initialIconIndex = _selectedIconIndex;
                           });
+                          navState.pop();
                         }
                       } : null,
                     child: Text(
-                      'Save',
+                      'Save Changes',
                       style: TextStyle(
                         fontWeight: FontWeight.bold, 
                         fontSize: 16,
@@ -193,8 +196,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return AlertWidget(
                           title: "Delete Account", 
                           message: "Deleting your account cannot be undone. Are you sure you want to continue?", 
-                          confirmText: "Delete", 
-                          confirmColor: colorRed!,
+                          confirmText: "Delete",
+                          confirmColor: colorRed,
+                          cancelColor: colorGrey,
                           cancelText: "Cancel", 
                           action: _deleteAccount
                         );
@@ -221,10 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (status) {
       // Clear navigation stack and navigate to the welcome screen.
       if (mounted) {
-        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-          (route) => false,
-        );
+        pushScreen(context, const WelcomeScreen(), root: true, replace: true);
       }
     }
   }

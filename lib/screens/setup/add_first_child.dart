@@ -34,10 +34,7 @@ class _AddFirstChildState extends State<AddFirstChild> {
   void addChild(String childName) async {
     await Provider.of<AppState>(context, listen: false).addChild(childName);
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Navigation()),
-      );
+      pushScreen(context, const Navigation(), replace: true);
     }
   }
 

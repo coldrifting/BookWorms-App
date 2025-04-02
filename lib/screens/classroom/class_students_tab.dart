@@ -157,11 +157,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                 GestureDetector(
                   onTap: () {
                     if (mounted) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => StudentViewScreen(student: filteredStudents[index])),
-                      );
+                      pushScreen(context, StudentViewScreen(student: filteredStudents[index]));
                     }
                   },
                   // Student icon.

@@ -81,11 +81,14 @@ class AppState extends ChangeNotifier {
     setChildBookshelves(children.length - 1);
     setChildClassrooms(children.length - 1);
     newChild.profilePictureIndex = UserIcons.getRandomIconIndex();
+    await childrenServices.setAccountDetails(newChild, iconIndex: newChild.profilePictureIndex);
     notifyListeners();
   }
 
-  void removeChild(int childID) {
-    (_account as Parent).children.removeAt(childID);
+  Future<void> removeChild(String childId) async {
+    ChildrenServices childrenServices = ChildrenServices();
+    await childrenServices.removeChild(childId);
+    (_account as Parent).children.removeWhere((c) => c.id == childId);
     notifyListeners();
   }
 

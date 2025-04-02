@@ -17,13 +17,15 @@ Widget addHorizontalSpace(double width) {
   return SizedBox(width: width);
 }
 
-void pushScreen(context, screen) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => screen
-    )
-  );
+Future<void> pushScreen(context, screen, {replace = false, root = false}) {
+  MaterialPageRoute route = MaterialPageRoute(builder: (context) => screen);
+
+  if (replace) {
+    return Navigator.of(context, rootNavigator: root).pushReplacement(route);
+  }
+  else {
+    return Navigator.of(context, rootNavigator: root).push(route);
+  }
 }
 
 // Returns the first 'count' of authors stylistically.

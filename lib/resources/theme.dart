@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:bookworms_app/resources/colors.dart';
 
 final ThemeData appTheme = ThemeData(
-  colorScheme: ColorScheme.fromSeed(seedColor: colorGreen!),
+  colorScheme: ColorScheme.fromSeed(seedColor: colorGreen),
   useMaterial3: true,
   fontFamily: "Montserrat",
   textTheme: const TextTheme(

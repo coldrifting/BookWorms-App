@@ -262,12 +262,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
   void onBookClicked(BookSummary book) async {
     BookDetails results = await _bookDetailsService.getBookDetails(book.id);
     if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookDetailsScreen(summaryData: book, detailsData: results)
-        )
-      );
+      pushScreen(context, BookDetailsScreen(summaryData: book, detailsData: results));
     }
   }
 

@@ -61,10 +61,7 @@ class _CreateClassroomScreenState extends State<CreateClassroomScreen> {
                     await appState.createNewClassroom(classroomName);
 
                     if (context.mounted) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ClassroomScreen()),
-                      );
+                      pushScreen(context, ClassroomScreen(), replace: true);
                     }
                   }
                 },
