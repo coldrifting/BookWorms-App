@@ -325,14 +325,20 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> createClassroomBookshelfWithBook(Bookshelf bookshelf) async {
-    var success = await classroomService.createClassroomBookshelf(bookshelf);
-    classroom!.bookshelves.add(bookshelf);
-    if (success) {
-      var success2 = await classroomService.insertBookIntoClassroomBookshelf(bookshelf, bookshelf.books[0]);
-      notifyListeners();
-      return success2;
+    try {
+      var success = await classroomService.createClassroomBookshelf(bookshelf);
+      classroom!.bookshelves.add(bookshelf);
+      if (success) {
+        var success2 = await classroomService.insertBookIntoClassroomBookshelf(
+            bookshelf, bookshelf.books[0]);
+        notifyListeners();
+        return success2;
+      }
+      return false;
     }
-    return false;
+    catch (_) {
+      return false;
+    }
   }
 
   void deleteClassroomBookshelf(Bookshelf bookshelf) async {
