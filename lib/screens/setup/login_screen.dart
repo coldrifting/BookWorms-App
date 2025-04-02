@@ -61,10 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await appState.loadAccountSpecifics();
       if (mounted) {
         // Navigate to the home screen.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Navigation()),
-        );
+        pushScreen(context, const Navigation(), replace: true);
       }
     }
   }
@@ -82,6 +79,14 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void attemptLogin() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final username = _usernameController.text;
+      final password = _passwordController.text;
+      login(username, password);
+    }
   }
 
   Widget _loginWidget(TextTheme textTheme) {
@@ -113,6 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   obscureText: true,
                   controller: _passwordController,
+                  onFieldSubmitted: (value) => attemptLogin(),
                   decoration: const InputDecoration(labelText: 'Password'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -131,19 +137,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 addVerticalSpace(loginError.isEmpty ? 32 : 16),
                 LoginRegisterWidget(
-                    onSignIn: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        final username = _usernameController.text;
-                        final password = _passwordController.text;
-                        login(username, password);
-                      }
-                    },
+                    onSignIn: attemptLogin,
                     onSignUp: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterScreen()),
-                      );
+                      pushScreen(context, const RegisterScreen(), replace: true);
                     },
                     signIn: true),
               ],

@@ -16,11 +16,11 @@ class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<SearchScreen> createState() => SearchScreenState();
 }
 
 /// The state of the [SearchScreen].
-class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
+class SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInAdvancedSearch = false; 
   var _currentQuery = "";
   var _searchResults = [];
@@ -47,6 +47,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _scrollController = ScrollController();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
+    _notifyIfChanged();
   }
 
   @override
@@ -63,6 +64,21 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   void _onTabChanged() {
     setState(() {
       _isInAdvancedSearch = _tabController.index == 1;
+    });
+    _notifyIfChanged();
+  }
+
+  void _notifyIfChanged() {
+    // Notify main app of changes for proper reset
+    SearchModifiedNotification(isModified: _currentQuery != "" || _isInAdvancedSearch).dispatch(context);
+  }
+
+  void reset() {
+    setState(() {
+      _currentQuery = "";
+      _textEditingcontroller.text = "";
+      _tabController.index = 0;
+      FocusManager.instance.primaryFocus?.unfocus();
     });
   }
 
@@ -86,6 +102,8 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     if (_debounceTimer != null) {
       _debounceTimer!.cancel();
     }
+
+    _notifyIfChanged();
 
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
@@ -158,14 +176,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     }
 
     if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AdvancedSearchResultsScreen(
-            bookSummaries: bookSummaries
-          )
-        )
-      );   
+      pushScreen(context, AdvancedSearchResultsScreen(bookSummaries: bookSummaries));
     }
   }
 
@@ -541,4 +552,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       ]
     );
   }
+}
+
+class SearchModifiedNotification extends Notification {
+  final bool isModified;
+
+  const SearchModifiedNotification({required this.isModified});
 }

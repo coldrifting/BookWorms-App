@@ -2,8 +2,8 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
-import 'package:bookworms_app/screens/classroom/class_goals_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
+import 'package:bookworms_app/screens/goals/goals_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
@@ -51,56 +51,56 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   }
 
   Widget _classroomView(TextTheme textTheme) {
-  AppState appState = Provider.of<AppState>(context);
-  Classroom classroom = appState.classroom!;
+    AppState appState = Provider.of<AppState>(context);
+    Classroom classroom = appState.classroom!;
 
-  // Set the classroom icon.
-  selectedIconIndex = appState.classroom!.classIcon;
+    // Set the classroom icon.
+    selectedIconIndex = appState.classroom!.classIcon;
 
-  return DefaultTabController(
-    length: 3,
-    child: NestedScrollView(
-      headerSliverBuilder: (context, innerBoxIsScrolled) => [
-        // Classroom header.
-        SliverToBoxAdapter(child: _classroomHeader(textTheme, classroom)),
+    return DefaultTabController(
+      length: 3,
+      child: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          // Classroom header.
+          SliverToBoxAdapter(child: _classroomHeader(textTheme, classroom)),
 
-        // Pinned classroom header.
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-          delegate: _SliverDelegate(
-            child: _pinnedClassroomHeader(textTheme, classroom),
-          ),
-        ),
-
-        // Pinned TabBar.
-        SliverPersistentHeader(
-          pinned: true,
-          floating: false,
-          delegate: _SliverDelegate(
-            child: TabBar(
-              labelColor: colorGreen,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: colorGreen,
-              tabs: const [
-                Tab(icon: Icon(Icons.groups), text: "Students"),
-                Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
-                Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Bookshelves"),
-              ],
+          // Pinned classroom header.
+          SliverPersistentHeader(
+            pinned: true,
+            floating: false,
+            delegate: _SliverDelegate(
+              child: _pinnedClassroomHeader(textTheme, classroom),
             ),
           ),
-        ),
-      ],
-      body: TabBarView(
-        children: [
-          StudentsScreen(),
-          ClassGoalsScreen(),
-          ClassBookshelves(),
+
+          // Pinned TabBar.
+          SliverPersistentHeader(
+            pinned: true,
+            floating: false,
+            delegate: _SliverDelegate(
+              child: TabBar(
+                labelColor: colorGreen,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: colorGreen,
+                tabs: const [
+                  Tab(icon: Icon(Icons.groups), text: "Students"),
+                  Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
+                  Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Bookshelves"),
+                ],
+              ),
+            ),
+          ),
         ],
+        body: TabBarView(
+          children: [
+            StudentsScreen(),
+            GoalsScreen(),
+            ClassBookshelves(),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   /// Classroom information (icon, name, number of students).
   Widget _classroomHeader(TextTheme textTheme, Classroom classroom) {
@@ -294,7 +294,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: colorGreyDark!)),
+              child: Text('Cancel', style: TextStyle(color: colorGreyDark)),
             ),
             TextButton(
               onPressed: () async {

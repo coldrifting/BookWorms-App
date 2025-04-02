@@ -1,9 +1,7 @@
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/account/account.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/account/delete_account_service.dart';
@@ -76,7 +74,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
-    bool isParent = appState.isParent;
+
+    // A reference to a Nav state is needed since modal popups are not
+    // technically contained within the proper nested navigation context
+    NavigatorState navState = Navigator.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -100,23 +101,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 builder: (BuildContext context) {
                   return AlertWidget(
                     title: "Unsaved Changes", 
-                    message: "Are you sure you want to continue?", 
-                    confirmText: "Discard Changes", 
-                    confirmColor: colorRed!,
-                    cancelText: "Keep Editing", 
+                    message: "Are you sure you want to continue?",
+                    confirmText: "Discard Changes",
+                    cancelText: "Keep Editing",
+                    confirmColor: colorRed,
+                    cancelColor: colorGreen,
                     action: () {
                       if (mounted) {
-                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => Navigation(initialIndex: isParent ? 4 : 3)),
-                          (route) => false,
-                        );
+                        navState.pop();
                       }
                     }
                   );
                 }
               );
             } else {
-              Navigator.of(context).pop();
+              navState.pop();
             }
           },
         ),
@@ -168,10 +167,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             _initialLastName = _lastNameController.text;
                             _initialIconIndex = _selectedIconIndex;
                           });
+                          navState.pop();
                         }
                       } : null,
                     child: Text(
-                      'Save',
+                      'Save Changes',
                       style: TextStyle(
                         fontWeight: FontWeight.bold, 
                         fontSize: 16,
@@ -193,8 +193,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return AlertWidget(
                           title: "Delete Account", 
                           message: "Deleting your account cannot be undone. Are you sure you want to continue?", 
-                          confirmText: "Delete", 
-                          confirmColor: colorRed!,
+                          confirmText: "Delete",
+                          confirmColor: colorRed,
+                          cancelColor: colorGrey,
                           cancelText: "Cancel", 
                           action: _deleteAccount
                         );
@@ -221,10 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (status) {
       // Clear navigation stack and navigate to the welcome screen.
       if (mounted) {
-        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-          (route) => false,
-        );
+        pushScreen(context, const WelcomeScreen(), root: true, replace: true);
       }
     }
   }

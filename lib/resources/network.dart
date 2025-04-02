@@ -36,8 +36,16 @@ final Uri bookCoversBatchUri = getFullUri("/books/covers");
 
   // ***** Children *****
 
+Uri pingUri() {
+  return Uri.parse("$serverBaseUri/ping");
+}
+
 Uri childAddUri(String childName) {
   return Uri.parse("$serverBaseUri/children/add?childName=$childName");
+}
+
+Uri childRemoveUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/remove");
 }
 
 Uri childEditDetailsUri(String childId) {
@@ -108,12 +116,12 @@ Uri bookshelvesDeleteUri(String childId, String bookshelfName) {
   return Uri.parse("$serverBaseUri/children/$childId/shelves/$bookshelfName/delete");
 }
 
-Uri bookshelvesRecommendAuthorsUri(String childId) {
-  return Uri.parse("$serverBaseUri/recommend/sameauthors?childId=$childId");
+Uri bookshelvesRecommendAuthorsUri(String? childId) {
+  return Uri.parse("$serverBaseUri/recommend/sameauthors${childId != null ? "?childId=$childId" : ''}");
 }
 
-Uri bookshelvesRecommendDescriptionsUri(String childId) {
-  return Uri.parse("$serverBaseUri/recommend/similardescriptions?childId=$childId");
+Uri bookshelvesRecommendDescriptionsUri(String? childId) {
+  return Uri.parse("$serverBaseUri/recommend/similardescriptions${childId != null ? "?childId=$childId" : ''}");
 }
 
 // ***** Search *****
@@ -188,6 +196,10 @@ Uri removeBookFromClassroomBookshelfUri(String bookshelfName, String bookId) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/remove?bookId=$bookId");
 }
 
+Uri removeStudentFromClassroomUri(String childId) {
+  return Uri.parse("$serverBaseUri/homeroom/children/remove?childId=$childId");
+}
+
 Uri deleteClassroomBookshelfUri(String bookshelfName) {
   return Uri.parse("$serverBaseUri/homeroom/shelves/$bookshelfName/delete");
 }
@@ -195,19 +207,15 @@ Uri deleteClassroomBookshelfUri(String bookshelfName) {
 // ***** Classroom Goals *****
 
 Uri getClassroomGoalsUri() {
-  return Uri.parse("$serverBaseUri/homeroom/goals");
+  return Uri.parse("$serverBaseUri/homeroom/goals/all");
 }
 
 Uri addClassroomGoalUri() {
   return Uri.parse("$serverBaseUri/homeroom/goals/add");
 }
 
-Uri getClassroomGoalDetailsUri(String goalId) {
-  return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/details");
-}
-
-Uri getClassroomGoalStudentDetailsUri(String goalId) {
-  return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/details/all");
+Uri getClassroomGoalDetailsUri(String goalId, bool extended) {
+  return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/details?extended=$extended");
 }
 
 Uri editClassroomGoalUri(String goalId) {
@@ -216,6 +224,32 @@ Uri editClassroomGoalUri(String goalId) {
 
 Uri deleteClassroomGoalUri(String goalId) {
   return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/delete");
+}
+
+// ***** Child Goals *****
+
+Uri getChildGoalsUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/all");
+}
+
+Uri addChildGoalUri(String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/add");
+}
+
+Uri getChildGoalDetailsUri(String childId, String goalId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/details");
+}
+
+Uri logChildGoalProgressUri(String childId, String goalId, int progress) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/log?progress=$progress");
+}
+
+Uri editChildGoalUri(String childId, String goalId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/edit");
+}
+
+Uri deleteChildGoalUri(String childId, String goalId) {
+  return Uri.parse("$serverBaseUri/children/$childId/goals/$goalId/delete");
 }
 
 // ***** Other *****

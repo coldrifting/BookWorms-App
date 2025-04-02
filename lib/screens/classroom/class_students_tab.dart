@@ -8,6 +8,7 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StudentsScreen extends StatefulWidget {
   const StudentsScreen({super.key});
@@ -74,7 +75,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     backgroundColor: WidgetStatePropertyAll(colorGreyLight),
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                      side: BorderSide(color: colorGreyDark!, width: 2),
+                      side: BorderSide(color: colorGreyDark, width: 2),
                     )),
                     leading: Icon(Icons.search, color: colorGreyDark),
                   ),
@@ -108,8 +109,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
           ? _studentsGrid(textTheme)
           : const Center(
               child: Text(
+                "No students in the classroom.\nUse the invite button above!",
                 textAlign: TextAlign.center,
-                "No students in the classroom.\nUse the invite button above!"
+                style: TextStyle(color: colorGreyDark)
               ),
             ),
         ),
@@ -156,11 +158,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                 GestureDetector(
                   onTap: () {
                     if (mounted) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => StudentViewScreen(student: filteredStudents[index])),
-                      );
+                      pushScreen(context, StudentViewScreen(student: filteredStudents[index]));
                     }
                   },
                   // Student icon.
@@ -193,7 +191,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
         title: Center(
           child: Column(
             children: [
-              Icon(Icons.school, color: colorGreen!, size: 36),
+              Icon(Icons.school, color: colorGreen, size: 36),
               Text(
                 'Classroom Code',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
@@ -207,9 +205,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorGreen!.withAlpha(10),
+                color: colorGreen.withAlpha(10),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorGreen!, width: 2),
+                border: Border.all(color: colorGreen, width: 2),
               ),
               child: SelectableText(
                 classroomCode,
@@ -243,6 +241,41 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     Text('COPY', style: textTheme.titleSmall?.copyWith(color: Colors.white)),
                     addHorizontalSpace(4),
                     const Icon(Icons.copy, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          addVerticalSpace(12),
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: colorGreen,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              String subject = "${appState.classroom!.classroomName} Classroom Access Code";
+              String body = "Use the following code to join ${appState.account.lastName}'s Classroom in the BookWorms App: \r\n ${appState.classroom!.classCode}";
+
+              Navigator.pop(context);
+
+              // Open User Email App with code pre filled in
+             final Uri emailLaunchUri = Uri(
+               scheme: 'mailto',
+               path: '',
+               query: "subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(body)}"
+              );
+             launchUrl(emailLaunchUri);
+
+            },
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('EMAIL', style: textTheme.titleSmall?.copyWith(color: Colors.white)),
+                    addHorizontalSpace(4),
+                    const Icon(Icons.mail, color: Colors.white),
                   ],
                 ),
               ),

@@ -84,7 +84,8 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                         child: Text(bookshelf.name, style: textTheme.titleMedium, overflow: TextOverflow.ellipsis),
                       ),
                       Spacer(),
-                      if (bookshelf.type == BookshelfType.custom || !appState.isParent)
+                      if (bookshelf.type != BookshelfType.recommended || bookshelf.type == BookshelfType.custom
+                          || (!appState.isParent && bookshelf.type == BookshelfType.classroom))
                         _dropDownMenu(textTheme),
                     ],
                   ),
@@ -195,7 +196,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: colorGreyDark!)),
+              child: Text('Cancel', style: TextStyle(color: colorGreyDark)),
             ),
             TextButton(
               onPressed: () async {
@@ -261,25 +262,31 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
   void onBookClicked(BookSummary book) async {
     BookDetails results = await _bookDetailsService.getBookDetails(book.id);
     if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookDetailsScreen(summaryData: book, detailsData: results)
-        )
-      );
+      pushScreen(context, BookDetailsScreen(summaryData: book, detailsData: results));
     }
   }
 
   // Displays the book summary data and includes a slider functionality to delete books.
   Widget _bookshelfWidget(TextTheme textTheme, BookSummary book) {
     AppState appState = Provider.of<AppState>(context);
+    var isSlidable = bookshelf.type != BookshelfType.recommended || bookshelf.type == BookshelfType.custom
+      || (!appState.isParent && bookshelf.type == BookshelfType.classroom);
+
+    if (!isSlidable) {
+      return _bookContent(textTheme, book);
+    }
+
     return Slidable(
       key: UniqueKey(),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
           onDismissed: () { 
-            appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+              if (appState.isParent) {
+                appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+              } else {
+                appState.removeBookFromClassroomBookshelf(bookshelf, book);
+              }
             setState(() {
               bookshelf.books.removeWhere((b) => b.id == book.id);
             });
@@ -297,7 +304,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                 bookshelf.books.removeWhere((b) => b.id == book.id);
               });
             },
-            backgroundColor: colorRed!,
+            backgroundColor: colorRed,
             foregroundColor: colorWhite,
             borderRadius: BorderRadius.circular(4),
             icon: Icons.delete,
@@ -305,59 +312,63 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           ),
         ],
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorGreyLight,
-          border: Border.all(color: Colors.grey[200]!),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 150,
-                child: CachedNetworkImage(
-                  imageUrl: book.imageUrl!,
-                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
-                ),
+      child: _bookContent(textTheme, book)
+    );
+  }
+
+  Widget _bookContent(TextTheme textTheme, BookSummary book) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorGreyLight,
+        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 150,
+              child: CachedNetworkImage(
+                imageUrl: book.imageUrl!,
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Image.asset("assets/images/book_cover_unavailable.jpg"),
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    book.title
+                  ),
+                  Text(
+                    style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),
+                    printFirstAuthors(book.authors, 2),
+                  ),
+                  if (book.rating != null && book.level != null) ...[
                     Text(
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      book.title
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium, 
+                      "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
                     ),
+                  ]
+                  else if (book.rating != null || book.level != null) ...[
                     Text(
-                      style: const TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),
-                      printFirstAuthors(book.authors, 2),
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium, 
+                      book.rating == null ? "${book.level}" : "${book.rating}★"
                     ),
-                    if (book.rating != null && book.level != null) ...[
-                      Text(
-                        textAlign: TextAlign.center,
-                        style: textTheme.bodyMedium, 
-                        "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
-                      ),
-                    ]
-                    else if (book.rating != null || book.level != null) ...[
-                      Text(
-                        textAlign: TextAlign.center,
-                        style: textTheme.bodyMedium, 
-                        book.rating == null ? "${book.level}" : "${book.rating}★"
-                      ),
-                    ]
-                  ],
-                ),
+                  ]
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -28,12 +28,13 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NavigatorState navState = Navigator.of(context);
+
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          "",
+        title: Text("",
           style: TextStyle(
             fontWeight: FontWeight.normal,
             color: colorWhite,
@@ -44,9 +45,7 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
         leading: IconButton(
           color: colorWhite,
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => navState.pop(),
         ),
       ),
       body: Center(
@@ -70,16 +69,17 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
                 context: context,
                 builder: (BuildContext context) { 
                   return AlertWidget(
-                    title: "Remove Child from Class", 
-                    message: "Removing this child cannot be undone. Are you sure you want to continue?", 
+                    title: "Remove Student from Class", 
+                    message: "Removing this student cannot be undone. Are you sure you want to continue?", 
                     confirmText: "Remove", 
-                    confirmColor: colorRed!,
+                    confirmColor: colorRed,
+                    cancelColor: colorGreyDark,
                     cancelText: "Cancel", 
-                    action: _removeChild
+                    action: _removeStudent
                   );
                 }
               ),
-              child: Text('Remove Child', style: textTheme.titleSmallWhite),
+              child: Text('Remove Student', style: textTheme.titleSmallWhite),
             ),
           ],
         ),
@@ -88,8 +88,10 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
   }
 
   // Deletes the user's account and navigates to homescreen.
-  Future<void> _removeChild() async {
-    //AppState appState = Provider.of<AppState>(context, listen: false);
-    // TO DO
+  Future<void> _removeStudent() async {
+    NavigatorState navState = Navigator.of(context);
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    var result = await appState.deleteStudentFromClassroom(student.id);
+    if (result.isSuccess) navState.pop();
   }
 }

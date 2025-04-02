@@ -176,7 +176,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                   onPressed: (BuildContext context) {
                     _deleteBookshelf(textTheme, bookshelf);
                   },
-                  backgroundColor: colorRed!,
+                  backgroundColor: colorRed,
                   foregroundColor: colorWhite,
                   borderRadius: BorderRadius.circular(4),
                   icon: Icons.delete,
