@@ -110,8 +110,7 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
   Widget _reviewContent() {
     return TextFormField(
       decoration: InputDecoration(
-        labelText: 'Write your review here',
-        hintText: 'Describe what you liked or learned from the book!',
+        hintText: 'Leave a review',
         border: OutlineInputBorder(
           borderSide: BorderSide(color: colorGreen, width: 2.0),
         ),

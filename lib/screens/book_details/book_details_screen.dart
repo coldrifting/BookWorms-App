@@ -536,7 +536,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     List<Widget> reviews = List.generate(
         reviewCount,
         (index) => Padding(
-              padding: const EdgeInsets.only(bottom: 18.0),
+              padding: const EdgeInsets.only(bottom: 10.0),
               child: ReviewWidget(review: bookDetails.reviews[index]),
             ));
 
