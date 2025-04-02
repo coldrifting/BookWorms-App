@@ -174,10 +174,10 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
           addHorizontalSpace(16),
           Text(studentGoalDetails.name, style: textTheme.titleMedium),
           Spacer(),
-          if (true)// TODO: if (studentGoalDetails.progress)
+          if (studentGoalDetails.progress == 100)
             Text("COMPLETE", style: TextStyle(color: colorGreen, fontWeight: FontWeight.bold))
           else 
-            Text("INCOMPLETE", style: TextStyle(color: colorRed, fontWeight: FontWeight.bold))
+            Text("${studentGoalDetails.progress}%", style: TextStyle(color: colorRed, fontWeight: FontWeight.bold))
         ],
       ),
     );

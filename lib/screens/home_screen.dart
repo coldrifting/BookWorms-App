@@ -220,40 +220,4 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     );
   }
-
-  /// Displays the up-to-date progress of the currently-selected child.
-  /// Empty for now.
-  Widget _progressTracker(TextTheme textTheme, String selectedChild) {
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        color: colorWhite,
-        boxShadow: [
-          BoxShadow(
-            color: colorBlack.withValues(alpha: 0.2),
-            spreadRadius: 1,
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text("$selectedChild's Progress", style: textTheme.titleMedium),
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text("No progress to display", style: textTheme.bodyLarge),
-              ),
-            ),
-          ]
-        ),
-      ),
-    );
-  }
 }

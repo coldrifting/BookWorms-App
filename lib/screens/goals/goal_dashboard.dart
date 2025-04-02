@@ -232,7 +232,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
 
   Widget _goalItem(TextTheme textTheme, dynamic goal, DateTime date) {
     final appState = Provider.of<AppState>(context);
-    final percentCompleted;
+    final int percentCompleted;
 
     if (appState.isParent) {
       percentCompleted = goal.progress;
