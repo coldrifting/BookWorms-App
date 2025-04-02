@@ -8,6 +8,7 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StudentsScreen extends StatefulWidget {
   const StudentsScreen({super.key});
@@ -243,6 +244,41 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     Text('COPY', style: textTheme.titleSmall?.copyWith(color: Colors.white)),
                     addHorizontalSpace(4),
                     const Icon(Icons.copy, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          addVerticalSpace(12),
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: colorGreen,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              String subject = "${appState.classroom!.classroomName} Classroom Access Code";
+              String body = "Use the following code to join ${appState.account.lastName}'s Classroom in the BookWorms App: \r\n ${appState.classroom!.classCode}";
+
+              Navigator.pop(context);
+
+              // Open User Email App with code pre filled in
+             final Uri emailLaunchUri = Uri(
+               scheme: 'mailto',
+               path: '',
+               query: "subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(body)}"
+              );
+             launchUrl(emailLaunchUri);
+
+            },
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('EMAIL', style: textTheme.titleSmall?.copyWith(color: Colors.white)),
+                    addHorizontalSpace(4),
+                    const Icon(Icons.mail, color: Colors.white),
                   ],
                 ),
               ),
