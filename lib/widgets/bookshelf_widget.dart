@@ -1,17 +1,13 @@
-import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
-import 'package:provider/provider.dart';
 
 /// The [BookshelfWidget] displays an overview of a user's bookshelf. It
 /// includes a short display of book covers, the bookshelf title, and some
@@ -40,7 +36,6 @@ class _BookshelfWidget extends State<BookshelfWidget> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    AppState appState = Provider.of<AppState>(context);
     Bookshelf bookshelf = widget.bookshelf;
 
     return Container(
@@ -58,8 +53,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
       ),
       child: InkWell(
         onTap: () {
-          if (mounted && bookshelf.type == BookshelfType.custom ||
-          (!appState.isParent && bookshelf.type == BookshelfType.classroom)) {
+          if (mounted) {
             // Change the screen to the "bookshelf" screen.
             pushScreen(context, BookshelfScreen(bookshelf: bookshelf));
           }

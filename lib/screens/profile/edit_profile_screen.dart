@@ -1,7 +1,6 @@
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/account/account.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';

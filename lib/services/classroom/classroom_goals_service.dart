@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
+import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 import 'package:http/http.dart' as http;
@@ -23,14 +24,17 @@ class ClassroomGoalsService {
     }
   }
 
-  Future<ClassroomGoal> addClassroomGoal(String title, String endDate, int? targetNumBooks) async {
+  Future<ClassroomGoal> addClassroomGoal(Goal goal) async {
     final response = await client.sendRequest(
       uri: addClassroomGoalUri(),
       method: "POST",
       payload: {
-        "title": title,
-        "endDate": endDate,
-        if (targetNumBooks != null) "targetNumBooks": targetNumBooks,
+        "goalType": goal.goalType,
+        "goalMetric": goal.goalMetric,
+        "title": goal.title,
+        "startDate": goal.startDate,
+        "endDate": goal.endDate,
+        "target": goal.target
       }
     );
 
@@ -42,9 +46,9 @@ class ClassroomGoalsService {
     }
   }
 
-  Future<ClassroomGoal> getClassroomGoalStudentDetails(String goalId) async {
+  Future<ClassroomGoal> getClassroomGoalDetails(String goalId, bool extended) async {
     final response = await client.sendRequest(
-      uri: getClassroomGoalStudentDetailsUri(goalId),
+      uri: getClassroomGoalDetailsUri(goalId, extended),
       method: "GET"
     );
 
@@ -52,7 +56,7 @@ class ClassroomGoalsService {
       final data = jsonDecode(response.body);
       return ClassroomGoal.fromJson(json: data);
     } else {
-      throw Exception('An error occurred when getting the classroom student goal details.');
+      throw Exception('An error occurred when getting the classroom goal details.');
     }
   }
 

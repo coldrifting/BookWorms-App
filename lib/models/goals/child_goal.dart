@@ -1,23 +1,20 @@
-import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
 
-class ClassroomGoal extends Goal {
-  final ClassroomGoalDetails? classGoalDetails;
 
-  ClassroomGoal({
+class ChildGoal extends Goal {
+  ChildGoal({
     required super.goalId, 
     required super.goalType,
     required super.goalMetric,
     required super.title, 
     required super.startDate, 
-    required super.endDate, 
+    required super.endDate,
     required super.target,
-    required super.progress,
-    this.classGoalDetails
+    required super.progress
   });
 
-  factory ClassroomGoal.fromJson({required Map<String, dynamic> json}) {
-    return ClassroomGoal(
+  factory ChildGoal.fromJson(Map<String, dynamic> json) {
+    return ChildGoal(
       goalId: json['goalId'],
       goalType: json['goalType'],
       goalMetric: json['goalMetric'],
@@ -26,9 +23,6 @@ class ClassroomGoal extends Goal {
       endDate: json['endDate'],
       target: json['target'],
       progress: json['progress'],
-      classGoalDetails: json['classGoalDetails'] != null
-        ? ClassroomGoalDetails.fromJson(json: json['classGoalDetails'])
-        : null
     );
   }
 }

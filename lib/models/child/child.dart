@@ -1,5 +1,6 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/models/goals/child_goal.dart';
 
 class Child {
   final String id;
@@ -9,6 +10,7 @@ class Child {
   String? dob;
   List<Bookshelf> bookshelves = [];
   List<Classroom> classrooms = [];
+  List<ChildGoal> goals = [];
 
   Child({
     required this.id,

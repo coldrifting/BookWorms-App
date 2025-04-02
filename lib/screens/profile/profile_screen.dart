@@ -2,7 +2,6 @@ import 'package:bookworms_app/screens/profile/about_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/screens/profile/edit_profile_screen.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
@@ -35,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
 
@@ -77,14 +77,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 OptionWidget(
                   name: "About",
                   icon: Icons.settings,
-                  onTap: () {
-                    pushScreen(context, const AboutScreen());
-                  },
+                  onTap: () => pushScreen(context, const AboutScreen()),
                 ),
                 addVerticalSpace(10),
                 const Divider(),
                 addVerticalSpace(10),
-                _signOutWidget()
+                _signOutWidget(textTheme)
               ],
             ),
           ),
@@ -93,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _signOutWidget() {
+  Widget _signOutWidget(TextTheme textTheme) {
     return ElevatedButton(
       onPressed: signOut,
       style: ElevatedButton.styleFrom(
@@ -110,13 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Icon(size: 32, Icons.logout_outlined),
           addHorizontalSpace(8),
-          Text(
-            "Sign Out",
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold
-            )
-          ),
+          Text("Sign Out", style: textTheme.titleSmall),
         ],
       )
     );

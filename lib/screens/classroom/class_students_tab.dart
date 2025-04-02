@@ -109,8 +109,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
           ? _studentsGrid(textTheme)
           : const Center(
               child: Text(
+                "No students in the classroom.\nUse the invite button above!",
                 textAlign: TextAlign.center,
-                "No students in the classroom.\nUse the invite button above!"
+                style: TextStyle(color: colorGreyDark)
               ),
             ),
         ),

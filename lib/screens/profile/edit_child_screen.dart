@@ -1,3 +1,4 @@
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
@@ -415,7 +416,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   appContext: context,
                   length: 6,
                   controller: textEditingController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   animationType: AnimationType.fade,
                   enableActiveFill: false,
                   autoFocus: true,
@@ -448,29 +449,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
               ),
               onPressed: () async {
                 bool success = await appState.joinChildClassroom(widget.childID, textEditingController.text);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: success ? colorGreenDark : colorRed,
-                      content: Row(
-                        children: [
-                          Text(
-                            success ? 'Successfully joined class!' : 'An error occurred. Try again!', 
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const Spacer(),
-                          Icon(
-                            success ? Icons.check_circle_outline_rounded : Icons.error_outline, 
-                            color: Colors.white
-                          )
-                        ],
-                      ),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  Navigator.pop(context);
-                }
+                Result result = Result(isSuccess: success, message: "Successfully joined the class.");
+                resultAlert(context, result);
               },
               child: Text("Join", style: TextStyle(color: colorWhite)),
             ),
