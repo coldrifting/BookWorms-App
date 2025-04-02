@@ -24,9 +24,9 @@ class _ConnectionErrorScreen extends State<ConnectionErrorScreen> {
                 decoration: splashGradient(),
                 child: AlertWidget(
                     title: "Connection Error",
-                    message: "Unable to connect to the bookworms server.\r\n"
-                        "Current URL: $serverBaseUri \r\n"
-                        "If URL is valid, check console for CORS issues.",
+                    message: "Unable to connect to server\r\n"
+                        "URL: $serverBaseUri \r\n\r\n"
+                        "If URL appears valid, \r\ncheck console for CORS issues.",
                     confirmText: "Retry",
                     cancelText: "Exit",
                     popOnCancel: false,
