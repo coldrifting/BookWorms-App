@@ -26,7 +26,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
         title: const Text(
           "Manage Children", 
           style: TextStyle(
-            fontWeight: FontWeight.normal,
+            fontWeight: FontWeight.bold,
             color: colorWhite, 
             overflow: TextOverflow.ellipsis
           )
