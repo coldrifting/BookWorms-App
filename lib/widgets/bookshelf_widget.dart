@@ -74,7 +74,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                   color: colorWhite,
                   boxShadow: [
                     BoxShadow(
-                      color: colorGreyLight!,
+                      color: colorGreyLight,
                       blurRadius: 2,
                       offset: Offset(0, 3),
                     ),
@@ -126,7 +126,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                   color: colorWhite,
                   boxShadow: [
                     BoxShadow(
-                      color: colorGreyLight!,
+                      color: colorGreyLight,
                       blurRadius: 2,
                       offset: Offset(0, -2),
                     ),

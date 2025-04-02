@@ -195,7 +195,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: colorGreyDark!)),
+              child: Text('Cancel', style: TextStyle(color: colorGreyDark)),
             ),
             TextButton(
               onPressed: () async {
@@ -292,7 +292,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                 bookshelf.books.removeWhere((b) => b.id == book.id);
               });
             },
-            backgroundColor: colorRed!,
+            backgroundColor: colorRed,
             foregroundColor: colorWhite,
             borderRadius: BorderRadius.circular(4),
             icon: Icons.delete,

@@ -125,7 +125,7 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: !isSelected ? colorWhite : colorGreenGradTop,
-          border: Border.all(color: colorGreen!, width: isSelected ? 4 : 3),
+          border: Border.all(color: colorGreen, width: isSelected ? 4 : 3),
           borderRadius: BorderRadius.circular(16),
           boxShadow: !isSelected
               ? [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 4))]
@@ -507,11 +507,11 @@ class _ClassGoalsScreenState extends State<ClassGoalsScreen> {
     double percentCompleted = numStudentsCompleted / numTotalStudents;
     Color barColor;
     if (percentCompleted < 0.5) {
-      barColor = colorRed!;
+      barColor = colorRed;
     } else if (percentCompleted < 0.9) {
       barColor = colorYellow;
     } else {
-      barColor = colorGreen!;
+      barColor = colorGreen;
     }
 
     return LinearPercentIndicator(

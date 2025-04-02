@@ -1,4 +1,3 @@
-import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
@@ -7,7 +6,6 @@ import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:provider/provider.dart';
 
 class StudentViewScreen extends StatefulWidget {
   final Student student;
@@ -73,7 +71,7 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
                     title: "Remove Child from Class", 
                     message: "Removing this child cannot be undone. Are you sure you want to continue?", 
                     confirmText: "Remove", 
-                    confirmColor: colorRed!,
+                    confirmColor: colorRed,
                     cancelText: "Cancel", 
                     action: _removeChild
                   );
