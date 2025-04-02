@@ -1,6 +1,8 @@
-import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
@@ -59,11 +61,17 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
                   itemCount: Provider.of<AppState>(context).children.length,
                   itemBuilder: (context, index) {
                     Child child = Provider.of<AppState>(context).children[index];
-                    return ListTile(
+                    return Padding(
+                        padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
+                    child: ListTile(
                       leading: CircleAvatar(
                         child: UserIcons.getIcon(child.profilePictureIndex)
                       ),
-                      title: Text(child.name),
+                      title: Text(child.name, style: TextStyle(fontSize: 17.0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+                      selectedTileColor: colorGreen,
+                      textColor: colorGreenDark,
+                      selectedColor: colorWhite,
                       onTap: () {
                         Provider.of<AppState>(context, listen: false).setSelectedChild(index);
                         Navigator.pop(context);
@@ -74,6 +82,7 @@ class _ChangeChildWidgetState extends State<ChangeChildWidget> {
                         }
                       },
                       selected: index == Provider.of<AppState>(context).selectedChildID,
+                    )
                     );
                   },
                 ),
