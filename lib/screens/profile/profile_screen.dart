@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/profile/edit_profile_screen.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
@@ -103,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25),
         ),
-        side: BorderSide(color: colorGreyDark ?? colorBlack),
+        side: BorderSide(color: colorGreyDark),
         padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
       ),
       child: Row(

@@ -73,9 +73,9 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorGreen!.withAlpha(10),
+        color: colorGreen.withAlpha(10),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorGreen!, width: 2),
+        border: Border.all(color: colorGreen, width: 2),
       ),
       child: Column(
         children: [
@@ -113,13 +113,13 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
         labelText: 'Write your review here',
         hintText: 'Describe what you liked or learned from the book!',
         border: OutlineInputBorder(
-          borderSide: BorderSide(color: colorGreen!, width: 2.0),
+          borderSide: BorderSide(color: colorGreen, width: 2.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: colorGreen!, width: 2.0),
+          borderSide: BorderSide(color: colorGreen, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: colorGreen!, width: 2.0),
+          borderSide: BorderSide(color: colorGreen, width: 2.0),
         ),
       ),
       maxLines: 10,
