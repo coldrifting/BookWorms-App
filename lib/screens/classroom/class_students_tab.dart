@@ -75,7 +75,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
                     backgroundColor: WidgetStatePropertyAll(colorGreyLight),
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                      side: BorderSide(color: colorGreyDark!, width: 2),
+                      side: BorderSide(color: colorGreyDark, width: 2),
                     )),
                     leading: Icon(Icons.search, color: colorGreyDark),
                   ),
@@ -190,7 +190,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
         title: Center(
           child: Column(
             children: [
-              Icon(Icons.school, color: colorGreen!, size: 36),
+              Icon(Icons.school, color: colorGreen, size: 36),
               Text(
                 'Classroom Code',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
@@ -204,9 +204,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorGreen!.withAlpha(10),
+                color: colorGreen.withAlpha(10),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorGreen!, width: 2),
+                border: Border.all(color: colorGreen, width: 2),
               ),
               child: SelectableText(
                 classroomCode,

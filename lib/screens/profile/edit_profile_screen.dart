@@ -1,9 +1,7 @@
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/models/account/account.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/account/delete_account_service.dart';
@@ -76,7 +74,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
-    bool isParent = appState.isParent;
 
     // A reference to a Nav state is needed since modal popups are not
     // technically contained within the proper nested navigation context

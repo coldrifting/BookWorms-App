@@ -304,7 +304,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
                         TextButton(
                           onPressed: () => _navigateToDetailedGoalScreen(goal),
                           style: TextButton.styleFrom(
-                            backgroundColor: colorGreyLight!.withAlpha(180),
+                            backgroundColor: colorGreyLight.withAlpha(180),
                             foregroundColor: colorBlack,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -344,7 +344,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
           ),
         ],
         borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: isSelected ? colorGreen! : colorGreenGradTop, width: 3),
+        border: Border.all(color: isSelected ? colorGreen : colorGreenGradTop, width: 3),
         color: isSelected ? colorGreenGradTop : colorWhite,
       ),
       child: Center(

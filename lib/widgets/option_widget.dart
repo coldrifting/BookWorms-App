@@ -26,7 +26,7 @@ class OptionWidget extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6),
         ),
-        side: BorderSide(color: colorGreyDark ?? colorBlack),
+        side: BorderSide(color: colorGreyDark),
         padding: EdgeInsets.all(16.0),
       ),
       child: Row(

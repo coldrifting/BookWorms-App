@@ -73,7 +73,7 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
                     title: "Remove Student from Class", 
                     message: "Removing this student cannot be undone. Are you sure you want to continue?", 
                     confirmText: "Remove", 
-                    confirmColor: colorRed!,
+                    confirmColor: colorRed,
                     cancelText: "Cancel", 
                     action: _removeChild
                   );

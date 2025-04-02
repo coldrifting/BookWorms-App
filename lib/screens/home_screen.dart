@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
         stops: [0, 0.005, 0.005],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [colorGreen!, colorGreen!, colorGreenGradTop],
+        colors: [colorGreen, colorGreen, colorGreenGradTop],
       )
     ),
       child: Column(

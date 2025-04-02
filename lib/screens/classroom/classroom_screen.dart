@@ -294,7 +294,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: colorGreyDark!)),
+              child: Text('Cancel', style: TextStyle(color: colorGreyDark)),
             ),
             TextButton(
               onPressed: () async {

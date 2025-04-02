@@ -284,7 +284,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
           height: 175, 
           decoration: BoxDecoration(
             color: colorGreyLight,
-            border: Border.all(color: colorGreyDark ?? colorBlack),
+            border: Border.all(color: colorGreyDark),
             borderRadius: BorderRadius.circular(6),
           ),
           child: ListView.builder(
@@ -306,12 +306,12 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark!, width: 1.5),
+                            border: Border.all(color: colorGreyDark, width: 1.5),
                           ),
                           child: CircleAvatar(
                             maxRadius: 45, 
                             backgroundColor: colorGreyLight,
-                            child: Icon(size: 40, Icons.add, color: colorGreyDark!),
+                            child: Icon(size: 40, Icons.add, color: colorGreyDark),
                           ),
                         ),
                         SizedBox(
@@ -347,7 +347,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark!, width: 1.5),
+                            border: Border.all(color: colorGreyDark, width: 1.5),
                           ),
                           child: CircleAvatar(
                             backgroundColor: colorWhite,
@@ -398,7 +398,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
           title: Center(
             child: Column(
               children: [
-                Icon(Icons.school, color: colorGreen!, size: 36),
+                Icon(Icons.school, color: colorGreen, size: 36),
                 Text(
                   'Join Class',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
@@ -498,7 +498,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
             title: "Delete Child Profile", 
             message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
             confirmText: "Delete", 
-            confirmColor: colorRed!,
+            confirmColor: colorRed,
             cancelText: "Cancel", 
             action: () {
               Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
