@@ -363,27 +363,35 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                     style: textTheme.titleMedium
                   ),
                   addVerticalSpace(8),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ToggleButtons(
-                      onPressed: (int index) {
-                        setState(() {
-                          for (int i = 0; i < _selectedRating.length; i++) {
-                            if (i != index) {
-                              _selectedRating[i] = false;
-                            } else {
-                              _selectedRating[i] = !_selectedRating[i];
-                            }
-                          }
-                        });
-                      },
-                      isSelected: _selectedRating,
-                      children: ratings.map((level) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: level,
-                        );
-                      }).toList(),
+                  SizedBox(
+                    height: 50,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      physics: BouncingScrollPhysics(),
+                      children: [
+                        SizedBox(width: 10),
+                        ToggleButtons(
+                          onPressed: (int index) {
+                            setState(() {
+                              for (int i = 0; i < _selectedRating.length; i++) {
+                                if (i != index) {
+                                  _selectedRating[i] = false;
+                                } else {
+                                  _selectedRating[i] = !_selectedRating[i];
+                                }
+                              }
+                            });
+                          },
+                          isSelected: _selectedRating,
+                          children: ratings.map((level) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: level,
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(width: 10),
+                      ],
                     ),
                   ),
                 ],
@@ -394,25 +402,56 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                 children: [
                   Text(
                     'Genres',
-                    style: textTheme.titleMedium
+                    style: textTheme.titleMedium,
                   ),
                   addVerticalSpace(8),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ToggleButtons(
-                      onPressed: (int index) {
-                        setState(() {
-                          _selectedGenres[index] = !_selectedGenres[index];
-                        });
-                      },
-                      isSelected: _selectedGenres,
-                      children: genres.map((level) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: level,
-                        );
-                      }).toList(),
-                    ),
+                  Stack(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          physics: BouncingScrollPhysics(),
+                          children: [
+                            SizedBox(width: 12),
+                            ToggleButtons(
+                              onPressed: (int index) {
+                                setState(() {
+                                  _selectedGenres[index] = !_selectedGenres[index];
+                                });
+                              },
+                              isSelected: _selectedGenres,
+                              children: genres.map((level) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: level,
+                                );
+                              }).toList(),
+                            ),
+                            SizedBox(width: 12),
+                          ],
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  Colors.white.withAlpha(255),
+                                  Colors.white.withAlpha(0),
+                                  Colors.white.withAlpha(0),
+                                  Colors.white.withAlpha(255),
+                                ],
+                                stops: [0.0, 0.05, 0.95, 1.0],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -422,25 +461,56 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                 children: [
                   Text(
                     'Topics',
-                    style: textTheme.titleMedium
+                    style: textTheme.titleMedium,
                   ),
                   addVerticalSpace(8),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ToggleButtons(
-                      onPressed: (int index) {
-                        setState(() {
-                          _selectedTopics[index] = !_selectedTopics[index];
-                        });
-                      },
-                      isSelected: _selectedTopics,
-                      children: topics.map((level) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: level,
-                        );
-                      }).toList(),
-                    ),
+                  Stack(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          physics: BouncingScrollPhysics(),
+                          children: [
+                            SizedBox(width: 12),
+                            ToggleButtons(
+                              onPressed: (int index) {
+                                setState(() {
+                                  _selectedTopics[index] = !_selectedTopics[index];
+                                });
+                              },
+                              isSelected: _selectedTopics,
+                              children: topics.map((level) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: level,
+                                );
+                              }).toList(),
+                            ),
+                            SizedBox(width: 12),
+                          ],
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  Colors.white.withAlpha(255),
+                                  Colors.white.withAlpha(0),
+                                  Colors.white.withAlpha(0),
+                                  Colors.white.withAlpha(255),
+                                ],
+                                stops: [0.0, 0.05, 0.95, 1.0],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
