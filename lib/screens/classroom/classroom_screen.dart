@@ -1,6 +1,7 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/screens/classroom/class_announcements_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
@@ -58,7 +59,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     selectedIconIndex = appState.classroom!.classIcon;
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           // Classroom header.
@@ -85,7 +86,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 tabs: const [
                   Tab(icon: Icon(Icons.groups), text: "Students"),
                   Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
-                  Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Bookshelves"),
+                  Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Shelves"),
+                  Tab(icon: Icon(Icons.announcement_outlined), text: "Notify"),
                 ],
               ),
             ),
@@ -96,6 +98,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             StudentsScreen(),
             GoalsScreen(),
             ClassBookshelves(),
+            ClassAnnouncements(),
           ],
         ),
       ),
