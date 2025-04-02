@@ -314,126 +314,119 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-          return Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Save to Bookshelf", style: textTheme.headlineSmall)
-                  ],
-                ),
-                addVerticalSpace(8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: Size(200, 38),
-                      textStyle:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      iconSize: 26,
-                      foregroundColor: colorWhite,
-                      backgroundColor: colorGreen),
-                  onPressed: () async {
-                    await _showCreateBookshelfDialog(book);
-                    navState.pop();
-                  },
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(Icons.add),
-                        addHorizontalSpace(8),
-                        Text("Save to New Bookshelf")
-                      ]))
-                  ],
-                ),
-                addVerticalSpace(16),
-                Expanded(
-                    child: ListView.builder(
-                  itemCount: bookshelves.length,
-                  itemBuilder: (context, index) {
-                    Bookshelf bookshelf = bookshelves[index];
-                    return Column(
-                      children: [
-                        InkWell(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: bookshelf.type.color[200],
-                              border:
-                                  Border.all(color: bookshelf.type.color[700]!),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  child: SizedBox(
-                                      height: 75,
-                                      width: 75,
-                                      child: BookshelfImageLayoutWidget(
-                                          bookshelf: bookshelf)),
-                                ),
-                                addHorizontalSpace(16),
-                                Text(bookshelf.name,
-                                    style: textTheme.titleSmall,
-                                    overflow: TextOverflow.ellipsis),
-                              ],
-                            ),
+        return Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Save to Bookshelf", style: textTheme.headlineSmall)
+                ],
+              ),
+              addVerticalSpace(8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: Size(200, 38),
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                          iconSize: 26,
+                          foregroundColor: colorWhite,
+                          backgroundColor: colorGreen),
+                      onPressed: () async {
+                        await _showCreateBookshelfDialog(book);
+                        navState.pop();
+                      },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(Icons.add),
+                            addHorizontalSpace(8),
+                            Text("Save to New Bookshelf")
+                          ]))
+                ],
+              ),
+              addVerticalSpace(10),
+              Expanded(
+                  child: ListView.builder(
+                itemCount: bookshelves.length,
+                itemBuilder: (context, index) {
+                  Bookshelf bookshelf = bookshelves[index];
+                  return Column(
+                    children: [
+                      InkWell(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: bookshelf.type.color[200],
+                            border:
+                                Border.all(color: bookshelf.type.color[700]!),
+                            borderRadius: BorderRadius.circular(4),
                           ),
-                          onTap: () async {
-                            bool success;
-                            if (appState.isParent) {
-                              success = await appState.addBookToBookshelf(
-                                  appState.selectedChildID,
-                                  bookshelf,
-                                  bookSummary);
-                            } else {
-                              success =
-                                  await appState.addBookToClassroomBookshelf(
-                                      bookshelf, bookSummary);
-                            }
-
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor:
-                                      success ? colorGreenDark : colorGreyDark,
-                                  content: Row(
-                                    children: [
-                                      Text(
-                                          success
-                                              ? 'Saved book to ${bookshelf.name}.'
-                                              : 'Already saved to ${bookshelf.name}.',
-                                          style: textTheme.titleSmallWhite),
-                                      Spacer(),
-                                      if (success)
-                                        Icon(Icons.check_circle_outline_rounded,
-                                            color: colorWhite)
-                                    ],
-                                  ),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                              navState.pop(context);
-                            }
-                          },
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                child: SizedBox(
+                                    height: 75,
+                                    width: 75,
+                                    child: BookshelfImageLayoutWidget(
+                                        bookshelf: bookshelf)),
+                              ),
+                              addHorizontalSpace(16),
+                              Text(bookshelf.name,
+                                  style: textTheme.titleSmall,
+                                  overflow: TextOverflow.ellipsis),
+                            ],
+                          ),
                         ),
-                        if (index != bookshelves.length - 1) ...[
-                          addVerticalSpace(4),
-                          Divider(),
-                          addVerticalSpace(4)
-                        ],
-                        if (index == bookshelves.length - 1) ...[
-                          addVerticalSpace(10)
-                        ]
-                      ],
-                    );
-                  },
-                )),
-              ],
-            ),
-          );
+                        onTap: () async {
+                          bool success;
+                          if (appState.isParent) {
+                            success = await appState.addBookToBookshelf(
+                                appState.selectedChildID,
+                                bookshelf,
+                                bookSummary);
+                          } else {
+                            success =
+                                await appState.addBookToClassroomBookshelf(
+                                    bookshelf, bookSummary);
+                          }
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor:
+                                    success ? colorGreenDark : colorGreyDark,
+                                content: Row(
+                                  children: [
+                                    Text(
+                                        success
+                                            ? 'Saved book to ${bookshelf.name}.'
+                                            : 'Already saved to ${bookshelf.name}.',
+                                        style: textTheme.titleSmallWhite),
+                                    Spacer(),
+                                    if (success)
+                                      Icon(Icons.check_circle_outline_rounded,
+                                          color: colorWhite)
+                                  ],
+                                ),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            navState.pop(context);
+                          }
+                        },
+                      ),
+                      addVerticalSpace(10),
+                    ],
+                  );
+                },
+              )),
+            ],
+          ),
+        );
       },
     );
   }
