@@ -6,7 +6,7 @@ class Goal {
   final String startDate;
   final String endDate;
   final int target;
-  final int? progress;
+  int? progress;
 
   Goal({
     this.goalId,

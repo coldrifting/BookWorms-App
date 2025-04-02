@@ -1,7 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
-import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

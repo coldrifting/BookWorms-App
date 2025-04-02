@@ -5,12 +5,12 @@ import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
 import 'package:http/http.dart' as http;
 
-class ChildGoalServices {
+class ChildGoalService {
   final http.Client client;
 
-  ChildGoalServices({http.Client? client}) : client = client ?? http.Client();
+  ChildGoalService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<List<ChildGoal>> getClassroomGoals(String childId) async {
+  Future<List<ChildGoal>> getChildGoals(String childId) async {
     final response = await client.sendRequest(
       uri: getChildGoalsUri(childId),
       method: "GET"
@@ -90,14 +90,14 @@ class ChildGoalServices {
     }
   }
 
-  Future<void> deleteChildGoal(String childId, String goalId) async {
+  Future<bool> deleteChildGoal(String childId, String goalId) async {
     final response = await client.sendRequest(
       uri: deleteChildGoalUri(childId, goalId),
       method: "DELETE",
     );
 
     if (response.ok) {
-      return;
+      return true;
     } else {
       throw Exception('An error occurred when deleting the child\'s goal.');
     }

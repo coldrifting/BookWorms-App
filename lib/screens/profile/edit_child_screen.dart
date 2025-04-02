@@ -6,7 +6,6 @@ import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/message_format.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 

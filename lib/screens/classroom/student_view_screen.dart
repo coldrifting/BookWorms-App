@@ -91,6 +91,6 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
   Future<void> _removeChild() async {
     AppState appState = Provider.of<AppState>(context, listen: false);
     var isSuccess = await appState.deleteStudentFromClassroom(student.id);
-    
+    // TODO: Navigate to homescreen.
   }
 }

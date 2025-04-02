@@ -1,9 +1,11 @@
 import 'dart:collection';
 import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/services/account/child_goal_services.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_goals_service.dart';
@@ -419,9 +421,50 @@ class AppState extends ChangeNotifier {
 
   // ***** Child Goals *****
 
-  // Future<void> getChildGoals(String childId) {
+  ChildGoalService childGoalService = ChildGoalService();
 
-  // }
+  Future<void> getChildGoals(Child child) async {
+    List<ChildGoal> goals = await childGoalService.getChildGoals(child.id);
+    child.goals = goals;
+    notifyListeners();
+  }
+
+  Future<void> addChildGoal(Child child, Goal goal) async {
+    ChildGoal childGoal = await childGoalService.addChildGoal(goal, child.id);
+    child.goals.add(childGoal);
+    notifyListeners();
+  }
+
+  Future<ChildGoal> getChildGoalDetails(Child child, String goalId) async {
+    ChildGoal childGoal = await childGoalService.getChildGoalDetails(child.id, goalId);
+    return childGoal;
+  }
+
+  Future<bool> logChildGoalProgress(Child child, String goalId, int progress) async {
+    bool success = await childGoalService.logChildGoal(child.id, goalId, progress);
+    if (success) {
+      int index = child.goals.indexWhere((g) => g.goalId == goalId);
+      child.goals[index].progress = progress;
+      notifyListeners();
+    }
+    return success;
+  }
+
+  Future<void> editChildGoal(Child child, String goalId, String goalMetric) async {
+    ChildGoal childGoal = await childGoalService.editChildGoal(child.id, goalId, goalMetric);
+    int index = child.goals.indexWhere((g) => g.goalId == goalId);
+    child.goals[index] = childGoal;
+    notifyListeners();
+  }
+
+  Future<bool> deleteChildGoal(Child child, String goalId) async {
+    bool success = await childGoalService.deleteChildGoal(child.id, goalId);
+    if (success) {
+      child.goals.removeWhere((g) => g.goalId == goalId);
+      notifyListeners();
+    }
+    return success;
+  }
 
 
   // ***** Account *****
