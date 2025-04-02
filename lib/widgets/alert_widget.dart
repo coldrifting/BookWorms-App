@@ -36,9 +36,10 @@ class AlertWidget extends StatefulWidget {
 class _AlertWidgetState extends State<AlertWidget> {
   @override
   Widget build(BuildContext context) {
+    NavigatorState navState = Navigator.of(context);
     return AlertDialog(
-      title: Center(child: Text(widget.title)),
-      content: Text(widget.message),
+      title: Center(child: Text(widget.title, textAlign: TextAlign.center)),
+      content: Text(widget.message, textAlign: TextAlign.center,),
       actions: [
         TextButton(
           onPressed: () {
