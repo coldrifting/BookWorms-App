@@ -274,7 +274,11 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
           onDismissed: () { 
-            appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+              if (appState.isParent) {
+                appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+              } else {
+                appState.removeBookFromClassroomBookshelf(bookshelf, book);
+              }
             setState(() {
               bookshelf.books.removeWhere((b) => b.id == book.id);
             });
