@@ -339,6 +339,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                             child: Icon(size: 40, Icons.add, color: colorGreyDark),
                           ),
                         ),
+                        addVerticalSpace(8),
                         SizedBox(
                           width: 100,
                           height: 40,
@@ -385,7 +386,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           ),
                         ),
                       ),
-                      addVerticalSpace(4),
+                      addVerticalSpace(8),
                       SizedBox(
                         width: 100,
                         height: 40,
