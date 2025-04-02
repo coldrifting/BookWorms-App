@@ -1,4 +1,3 @@
-import 'package:bookworms_app/screens/setup/ping_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +10,7 @@ import 'package:bookworms_app/screens/progress_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
+import 'package:bookworms_app/screens/setup/splash_screen.dart';
 
 void main() => runApp(const BookWorms());
 
@@ -35,7 +35,7 @@ class BookWorms extends StatelessWidget {
             navigatorKey: navigatorKey,
             title: 'BookWorms',
             theme: appTheme,
-            home: const PingScreen(),
+            home: const SplashScreen(),
             scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
               PointerDeviceKind.touch,
               PointerDeviceKind.mouse,
