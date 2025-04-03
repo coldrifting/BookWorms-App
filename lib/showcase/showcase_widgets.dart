@@ -8,6 +8,7 @@ class BWShowcase extends StatefulWidget {
   final Widget child;
   final String? title;
   final String? description;
+  final EdgeInsets? targetPadding;
   final ShapeBorder targetShapeBorder;
   final BorderRadius? tooltipBorderRadius;
   final bool showArrow;
@@ -23,6 +24,7 @@ class BWShowcase extends StatefulWidget {
     required this.child,
     this.title,
     this.description,
+    this.targetPadding,
     this.targetShapeBorder = const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(8)),
     ),
@@ -50,6 +52,7 @@ class _BWShowcaseState extends State<BWShowcase> {
       description: widget.description,
       descTextStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       descriptionTextAlign: TextAlign.center,
+      targetPadding: widget.targetPadding ?? EdgeInsets.zero,
       targetShapeBorder: widget.targetShapeBorder,
       targetBorderRadius: widget.tooltipBorderRadius,
       onTargetClick: widget.toScreen == null ? null : () {
