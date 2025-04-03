@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
@@ -281,12 +282,13 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
-          onDismissed: () { 
-              if (appState.isParent) {
-                appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
-              } else {
-                appState.removeBookFromClassroomBookshelf(bookshelf, book);
-              }
+          onDismissed: () async {
+            Result result; 
+            if (appState.isParent) {
+              result = await appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+            } else {
+              result = await appState.removeBookFromClassroomBookshelf(bookshelf, book);
+            }
             setState(() {
               bookshelf.books.removeWhere((b) => b.id == book.id);
             });

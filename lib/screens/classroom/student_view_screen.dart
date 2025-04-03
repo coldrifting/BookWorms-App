@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/alert_widget.dart';
@@ -91,7 +92,8 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
   Future<void> _removeStudent() async {
     NavigatorState navState = Navigator.of(context);
     AppState appState = Provider.of<AppState>(context, listen: false);
-    var result = await appState.deleteStudentFromClassroom(student.id);
-    if (result.isSuccess) navState.pop();
+    Result result = await appState.deleteStudentFromClassroom(student.id);
+    navState.pop();
+    resultAlert(context, result);
   }
 }
