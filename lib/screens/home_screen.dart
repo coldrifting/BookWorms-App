@@ -4,6 +4,7 @@ import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
@@ -60,16 +61,32 @@ class _HomeScreenState extends State<HomeScreen> {
           style: const TextStyle(color: colorWhite)
         ),
         backgroundColor: colorGreen,
-        actions: isParent ? const [
-          ChangeChildWidget()
+        actions: isParent ? [
+          BWShowcase(
+              showcaseKey: navKeys[0],
+              description: "You can switch to a different child by tapping your child's profile picture.",
+              targetShapeBorder: CircleBorder(),
+              tooltipActions: ["Previous", "Next"],
+              child: ChangeChildWidget()
+          ),
         ] : [],
       ),
       body: SingleChildScrollView(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _displayGoalProgress(textTheme),
-              _displayBookshelves(textTheme),
+              BWShowcase(
+                showcaseKey: isParent ? navKeys[1] : navKeys[0],
+                description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
+                tooltipActions: [ "Previous", "Next"],
+                child: _displayGoalProgress(textTheme)
+              ),
+              BWShowcase(
+                showcaseKey: isParent ? navKeys[2] : navKeys[1],
+                description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
+                tooltipActions: [ "Previous", "Next"],
+                child: _displayBookshelves(textTheme)
+              ),
             ],
           ),
       ),

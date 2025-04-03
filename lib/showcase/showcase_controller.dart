@@ -27,7 +27,7 @@ class ShowcaseController {
       'navigation': 7 // 5 screens + beginning and ending cards
     },
     'teacher': {
-      'home': 3,
+      'home': 2,
       'search': 2,
       'classroom': 2,
       'profile': 2,
