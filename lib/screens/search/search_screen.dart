@@ -311,14 +311,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                         style: textTheme.titleMedium
                       ),
                       RawMaterialButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ReadingLevelInfoWidget(),
-                            ),
-                          );
-                        },
+                        onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(8.0),
                         constraints: BoxConstraints(

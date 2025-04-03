@@ -128,14 +128,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 children: [
                   Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
                   RawMaterialButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ReadingLevelInfoWidget(),
-                        ),
-                      );
-                    },
+                    onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(8.0),
                     constraints: BoxConstraints(
@@ -211,13 +204,16 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           setState(() {
                             _hasChanges = false;
                             appState.editChildProfileInfo(
-                              widget.childID, 
-                              newName: _childNameController.text, 
-                              profilePictureIndex: _selectedIconIndex,
-                              newDOB: _selectedDOB
+                                widget.childID,
+                                newName: _childNameController.text,
+                                profilePictureIndex: _selectedIconIndex,
+                                newDOB: _selectedDOB
                             );
-                            _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
-                            _initialName = appState.children[widget.childID].name;
+                            _initialIconIndex =
+                                appState.children[widget.childID]
+                                    .profilePictureIndex;
+                            _initialName =
+                                appState.children[widget.childID].name;
                           });
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -243,7 +239,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                             );
                           }
                           Navigator.of(context).pop();
-                          }
+                        }
                         } : null,
                     child: Text(
                       'Save Changes',
@@ -499,29 +495,34 @@ class _EditChildScreenState extends State<EditChildScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
       ),
-      onPressed: () async {
-        if (Provider.of<AppState>(context, listen: false).children.length > 1) {
-        bool result = await showConfirmDialog(
-            context,
-            "Delete Child Profile",
-            "Are you sure you want to delete the child profile of ${widget.child.name}?",
-            confirmText: "Delete",
-            confirmColor: colorRed);
+        onPressed: () async {
+          if (Provider
+              .of<AppState>(context, listen: false)
+              .children
+              .length > 1) {
+            bool result = await showConfirmDialog(
+                context,
+                "Delete Child Profile",
+                "Are you sure you want to delete the child profile of ${widget
+                    .child.name}?",
+                confirmText: "Delete",
+                confirmColor: colorRed);
 
-        if (result && mounted) {
-          Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: colorRed,
-              content: Row(
-                children: [
-                  Text('Removed ${widget.child.name} from children',
-                      style: textTheme.titleSmallWhite),
-                  Spacer(),
-                  Icon(Icons.close_rounded, color: colorWhite)
-                ],
-              ),
-              duration: Duration(seconds: 2),
+            if (result && mounted) {
+              Provider.of<AppState>(context, listen: false).removeChild(
+                  widget.child.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: colorRed,
+                  content: Row(
+                    children: [
+                      Text('Removed ${widget.child.name} from children',
+                          style: textTheme.titleSmallWhite),
+                      Spacer(),
+                      Icon(Icons.close_rounded, color: colorWhite)
+                    ],
+                  ),
+                  duration: Duration(seconds: 2),
             ),
           );
           navState.pop(true);

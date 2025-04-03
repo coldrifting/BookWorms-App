@@ -115,12 +115,9 @@ class _GoalDashboardState extends State<GoalDashboard> {
     final appState = Provider.of<AppState>(context, listen: false);
     if (!appState.isParent) {
       ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(selectedGoal.goalId!);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ClassGoalDetails(goal: detailedGoal)
-        ),
-      );
+      if (mounted) {
+        pushScreen(context, ClassGoalDetails(goal: detailedGoal));
+      }
     } else {
       Child selectedChild = appState.children[appState.selectedChildID];
       ChildGoal detailedGoal = await appState.getChildGoalDetails(selectedChild, selectedGoal.goalId!);

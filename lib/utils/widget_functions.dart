@@ -252,7 +252,9 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
                                     callback();
                                   }
                                 });
-                                resultAlert(context, result);
+                                if (context.mounted) {
+                                  resultAlert(context, result);
+                                }
                               }
                             }
                           },
