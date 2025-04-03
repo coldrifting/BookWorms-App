@@ -91,11 +91,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _signOutWidget(TextTheme textTheme) {
     return ElevatedButton(
       onPressed: signOut,
-      style: getCommonButtonStyle(primaryColor: colorRed),
+      style: getCommonButtonStyle(primaryColor: colorGreenDark),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(size: 32, Icons.logout_outlined),
+          Icon(size: 32, Icons.logout_outlined, color: colorWhite),
           addHorizontalSpace(8),
           Text("Sign Out", style: TextStyle(fontSize: 18)),
         ],
