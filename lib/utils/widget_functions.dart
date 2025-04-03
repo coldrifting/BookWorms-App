@@ -17,6 +17,140 @@ Widget addHorizontalSpace(double width) {
   return SizedBox(width: width);
 }
 
+Future<bool> showConfirmDialog(
+    BuildContext context,
+    String title,
+    String message,
+    {String confirmText = "Confirm",
+    String cancelText = "Cancel",
+    Color confirmColor = colorGreen,
+    Color cancelColor = colorGreyDark}) async {
+  var result = await showDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child: Text(title, textAlign: TextAlign.center)),
+          content: Text(message, textAlign: TextAlign.center),
+          actions: [
+              dialogButton(
+                  cancelText,
+                  () => Navigator.of(context, rootNavigator: true).pop(false),
+                  foregroundColor: cancelColor,
+                  isElevated: false),
+              dialogButton(
+                  confirmText,
+                  () => Navigator.of(context, rootNavigator: true).pop(true),
+                  foregroundColor: colorWhite,
+                  backgroundColor: confirmColor),
+          ],
+        );
+      });
+
+  return result == true;
+}
+
+// Null for cancel
+Future<String?> showTextEntryDialog(
+    BuildContext context, String title, String hint,
+    {String confirmText = "Confirm",
+    String cancelText = "Cancel",
+    Color confirmColor = colorGreen}) async {
+  var result = await showDialog<String>(
+      context: context,
+      useRootNavigator: true,
+      builder: (BuildContext context) {
+        String input = "";
+        TextEditingController textEditingController = TextEditingController();
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: Text(title),
+            content: TextField(
+              autofocus: true,
+              controller: textEditingController,
+              decoration: InputDecoration(
+                labelText: hint,
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                setState(() => input = value);
+              },
+            ),
+            actions: [
+              dialogButton(
+                  cancelText,
+                  () => Navigator.of(context, rootNavigator: true).pop(null),
+                  foregroundColor: colorGreyDark,
+                  isElevated: false),
+              dialogButton(
+                  confirmText,
+                  input.isEmpty ? null : () => Navigator.of(context, rootNavigator: true).pop(input),
+                  foregroundColor: colorWhite,
+                  backgroundColor: confirmColor),
+            ],
+          );
+        });
+      });
+
+  return result;
+}
+
+void confirmExitWithoutSaving(
+    BuildContext context,
+    NavigatorState navState,
+    bool hasChanges) async {
+  if (hasChanges) {
+    bool result = await showConfirmDialog(
+        context,
+        "Unsaved Changes",
+        "Are you sure you want to continue?",
+        confirmText: "Discard Changes",
+        confirmColor: colorRed);
+    if (result) {
+      navState.pop();
+    }
+  } else {
+    navState.pop();
+  }
+}
+
+Widget dialogButton(String label, Function()? onPressed,
+    {Color foregroundColor = colorWhite,
+    Color backgroundColor = colorGreen,
+    bool isElevated = true}) {
+  var text = Text(label);
+
+  if (isElevated) {
+    return ElevatedButton(
+        onPressed: onPressed,
+        style: getCommonButtonStyle(
+            primaryColor: onPressed != null ? backgroundColor : colorGreyDark,
+            secondaryColor: onPressed != null ? foregroundColor : colorWhite),
+        child: text);
+  }
+  return TextButton(
+      onPressed: onPressed,
+      style: getCommonButtonStyle(primaryColor: foregroundColor, isElevated: false),
+      child: text);
+}
+
+ButtonStyle getCommonButtonStyle({Color primaryColor = colorGreen, Color? secondaryColor = colorWhite, bool isElevated = true}) {
+  return ElevatedButton.styleFrom(
+          backgroundColor: isElevated ? primaryColor : Colors.transparent,
+          foregroundColor: isElevated ? secondaryColor : primaryColor,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)));
+}
+
+FloatingActionButton floatingActionButtonWithText(String label, IconData icon, Function() action) {
+  return FloatingActionButton.extended(
+        foregroundColor: colorWhite,
+        backgroundColor: colorGreen,
+        label: Text(label),
+        icon: Icon(icon),
+        onPressed: action);
+}
+
 Future<void> pushScreen(context, screen, {replace = false, root = false}) {
   MaterialPageRoute route = MaterialPageRoute(builder: (context) => screen);
 
@@ -118,7 +252,9 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
                                     callback();
                                   }
                                 });
-                                resultAlert(context, result);
+                                if (context.mounted) {
+                                  resultAlert(context, result);
+                                }
                               }
                             }
                           },

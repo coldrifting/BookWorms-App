@@ -1,3 +1,4 @@
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -40,12 +41,7 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Submit Your Book Review"),
-        systemOverlayStyle: defaultOverlay(),
-        foregroundColor: colorWhite,
-        backgroundColor: colorGreen,
-      ),
+      appBar: AppBarCustom("Submit Your Book Review"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

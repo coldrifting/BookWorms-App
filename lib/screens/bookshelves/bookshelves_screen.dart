@@ -1,6 +1,6 @@
 import 'package:bookworms_app/resources/constants.dart';
-import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -9,7 +9,6 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/change_child_widget.dart';
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
 /// user is able to add a new bookshelf here, or access their current bookshelves.
@@ -28,21 +27,19 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     AppState appState = Provider.of<AppState>(context);
     List<Bookshelf> bookshelves = appState.bookshelves;
 
+    String headerTitle = "${appState.isParent
+        ? "${appState.children[appState.selectedChildID].name}'s"
+        : "My"} Bookshelves";
+
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-              "${appState.children[appState.selectedChildID].name}'s Bookshelves",
-              style: const TextStyle(color: colorWhite)),
-          backgroundColor: colorGreen,
-          actions: const [ChangeChildWidget()]),
-      floatingActionButton: FloatingActionButton.extended(
-          foregroundColor: colorWhite,
-          backgroundColor: colorGreen,
-          icon: const Icon(Icons.add),
-          label: Text("Add Bookshelf"),
-          onPressed: () {
-            _createBookshelf(textTheme);
-          }),
+      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true),
+      floatingActionButton: floatingActionButtonWithText("Add Bookshelf", Icons.add, () async {
+        String? newBookshelfName = await showTextEntryDialog(context, "Create New Bookshelf", "Bookshelf Name");
+        if (newBookshelfName != null) {
+          appState.addChildBookshelf(appState.selectedChildID,
+              Bookshelf(type: BookshelfType.custom, name: newBookshelfName, books: []));
+        }
+      }),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView.builder(
@@ -76,83 +73,17 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     }
   }
 
-  // Dialog for creating a new bookshelf.
-  void _createBookshelf(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController controller = TextEditingController();
-        return AlertDialog(
-          title: Text('Create New Bookshelf'),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: 'Bookshelf Name',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(foregroundColor: colorGreyDark),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                String name = controller.text.trim();
-                if (name.isNotEmpty) {
-                  Navigator.pop(context, name);
-                  appState.addChildBookshelf(
-                      appState.selectedChildID,
-                      Bookshelf(
-                          type: BookshelfType.custom, name: name, books: []));
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorGreen,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              child: Text('Create', style: textTheme.titleSmallWhite),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   // Dialog to delete a bookshelf. Appears when sliding the Slider or clicking "Delete".
-  Future<void> _deleteBookshelf(TextTheme textTheme, Bookshelf bookshelf) {
+  Future<void> _deleteBookshelf(Bookshelf bookshelf) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
 
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Delete Bookshelf')),
-          content: Text(
-              'Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                appState.deleteChildBookshelf(
-                    appState.selectedChildID, bookshelf);
-                Navigator.of(context).pop();
-              },
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
+    bool? shouldDelete = await showConfirmDialog(context,
+        "Delete Bookshelf",
+        'Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"',
+        confirmColor: colorRed);
+    if (shouldDelete == true) {
+      appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+    }
   }
 
   /// A bookshelf includes the title, book cover(s), and author(s).
@@ -167,14 +98,13 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               motion: const ScrollMotion(),
               dismissible: DismissiblePane(
                 onDismissed: () {
-                  appState.deleteChildBookshelf(
-                      appState.selectedChildID, bookshelf);
+                  appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
                 },
               ),
               children: [
                 SlidableAction(
                   onPressed: (BuildContext context) {
-                    _deleteBookshelf(textTheme, bookshelf);
+                    _deleteBookshelf(bookshelf);
                   },
                   backgroundColor: colorRed,
                   foregroundColor: colorWhite,

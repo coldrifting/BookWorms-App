@@ -1,6 +1,7 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +9,6 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/change_child_widget.dart';
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the
@@ -45,18 +45,12 @@ class _HomeScreenState extends State<HomeScreen> {
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
 
+    String headerTitle = "${isParent
+        ? "${appState.children[appState.selectedChildID].name}'s"
+        : "My"} Dashboard";
+
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Dashboard",
-          style: const TextStyle(color: colorWhite)
-        ),
-        backgroundColor: colorGreen,
-        actions: isParent ? const [
-          ChangeChildWidget()
-        ] : [],
-      ),
+      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true),
       body: SingleChildScrollView(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

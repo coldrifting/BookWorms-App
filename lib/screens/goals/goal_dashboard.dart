@@ -115,12 +115,9 @@ class _GoalDashboardState extends State<GoalDashboard> {
     final appState = Provider.of<AppState>(context, listen: false);
     if (!appState.isParent) {
       ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(selectedGoal.goalId!);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ClassGoalDetails(goal: detailedGoal)
-        ),
-      );
+      if (mounted) {
+        pushScreen(context, ClassGoalDetails(goal: detailedGoal));
+      }
     } else {
       Child selectedChild = appState.children[appState.selectedChildID];
       ChildGoal detailedGoal = await appState.getChildGoalDetails(selectedChild, selectedGoal.goalId!);
@@ -238,7 +235,9 @@ class _GoalDashboardState extends State<GoalDashboard> {
       percentCompleted = goal.progress;
     } else {
       final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
-      percentCompleted = ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt();
+      percentCompleted = goalDetails.studentsTotal != 0
+          ? ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt()
+          : 0;
     }
 
     final selectedDate = DateTime(date.year, date.month, date.day);
