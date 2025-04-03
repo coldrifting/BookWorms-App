@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -9,8 +10,20 @@ class SetupBackdropWidget extends StatelessWidget {
     super.key,
   });
 
+
+
   @override
   Widget build(BuildContext context) {
+    // Since `MediaQueryData.viewInsets.bottom` is most times zero,
+  // and since `WidgetsBinding.instance.window` is deprecated.
+  var window = PlatformDispatcher.instance.views.first;
+
+  // Then since `EdgeInsets.fromWindowPadding` is deprecated.
+  final viewInsets = EdgeInsets.fromViewPadding(
+    window.viewInsets,
+    window.devicePixelRatio,
+  );
+
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -48,6 +61,10 @@ class SetupBackdropWidget extends StatelessWidget {
                   'assets/images/setup_curve_bottom.svg',
                 ),
               ),
+              // Move Button into view when soft keyboard is shown
+              SizedBox(
+                height: (viewInsets.bottom * 3),
+              )
             ],
           ),
         ),
