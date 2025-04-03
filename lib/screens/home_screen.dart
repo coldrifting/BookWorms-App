@@ -1,14 +1,14 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/bookshelf_widget.dart';
+import 'package:bookworms_app/widgets/change_child_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/widgets/bookshelf_widget.dart';
-import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/change_child_widget.dart';
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the
@@ -25,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<Bookshelf> _recommendedAuthorsBookshelf;
   late final Future<Bookshelf> _recommendedDescriptionsBookshelf;
   late bool existsRecommended;
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('home');
 
   @override
   void initState() {
@@ -37,6 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
     int? childId = isParent ? appState.selectedChildID : null;
     _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(childId);
     _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(childId);
+
+    // Start showcase when Home Screen loads
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => showcaseController.start()
+    );
   }
 
   @override

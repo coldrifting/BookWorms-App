@@ -101,6 +101,7 @@ class _BWShowcaseState extends State<BWShowcase> {
         type: TooltipDefaultActionType.previous,
         name: name,
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        backgroundColor: Colors.transparent,
         textStyle: TextStyle(color: Colors.white),
         onTap: () {
           if (fromScreen != null) showcaseController.navigate!.call(fromScreen);
@@ -114,6 +115,7 @@ class _BWShowcaseState extends State<BWShowcase> {
         type: TooltipDefaultActionType.skip,
         name: name,
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        backgroundColor: Colors.transparent,
         textStyle: TextStyle(color: Colors.white),
         onTap: showcaseController.dismiss
     );

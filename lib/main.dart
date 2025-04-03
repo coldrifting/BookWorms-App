@@ -1,16 +1,19 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
+import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
+import 'package:bookworms_app/screens/goals/child_progress_screen.dart';
+import 'package:bookworms_app/screens/home_screen.dart';
+import 'package:bookworms_app/screens/profile/profile_screen.dart';
+import 'package:bookworms_app/screens/search/search_screen.dart';
+import 'package:bookworms_app/screens/setup/splash_screen.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
-import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
-import 'package:bookworms_app/screens/home_screen.dart';
-import 'package:bookworms_app/screens/profile/profile_screen.dart';
-import 'package:bookworms_app/screens/goals/child_progress_screen.dart';
-import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/screens/search/search_screen.dart';
-import 'package:bookworms_app/screens/setup/splash_screen.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 void main() => runApp(const BookWorms());
 
@@ -30,17 +33,22 @@ class BookWorms extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppState>(
         create: (context) => AppState(),
-        child: MaterialApp(
-            navigatorKey: navigatorKey,
-            title: 'BookWorms',
-            theme: appTheme,
-            home: const SplashScreen(),
-            scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-              PointerDeviceKind.stylus,
-              PointerDeviceKind.trackpad,
-            })));
+        child: ShowCaseWidget(
+          builder: (context) {
+            ShowcaseController().setContext(context);
+            return MaterialApp(
+                navigatorKey: navigatorKey,
+                title: 'BookWorms',
+                theme: appTheme,
+                home: const SplashScreen(),
+                scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.stylus,
+                  PointerDeviceKind.trackpad,
+                }));
+          },
+        ));
   }
 }
 
@@ -58,6 +66,8 @@ class Navigation extends StatefulWidget {
 /// The state of the [Navigation].
 class _Navigation extends State<Navigation> {
   late int selectedIndex;
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('navigation');
 
   bool isSearchScreenModified = false;
 
@@ -102,6 +112,9 @@ class _Navigation extends State<Navigation> {
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
+    // This can safely be done here, since Navigation is the first widget to
+    //  be built once the user type is known
+    ShowcaseController().initialize(onBottomNavItemTapped);
 
     List<Destination> enabledDest = getDest(isParent);
     List<Widget> pages = enabledDest.map((x) => x.widget).toList();
@@ -120,22 +133,50 @@ class _Navigation extends State<Navigation> {
                   //SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
                 }
               },
-              child: IndexedStack(
-                index: selectedIndex,
-                children: List.generate(pages.length, (index) {
-                  if (enabledDest[index].label == "Search") {
-                    searchTabIndex = index;
-                  }
-                  _navigatorKeys[index] = enabledDest[index].navState;
-                  return Navigator(
-                    key: enabledDest[index].navState,
-                    onGenerateRoute: (settings) {
-                      return MaterialPageRoute(
-                        builder: (context) => pages[index],
+              child: Stack(
+                children: [
+                  IndexedStack(
+                    index: selectedIndex,
+                    children: List.generate(pages.length, (index) {
+                      if (enabledDest[index].label == "Search") {
+                        searchTabIndex = index;
+                      }
+                      _navigatorKeys[index] = enabledDest[index].navState;
+                      return Navigator(
+                        key: enabledDest[index].navState,
+                        onGenerateRoute: (settings) {
+                          return MaterialPageRoute(
+                            builder: (context) => pages[index],
+                          );
+                        },
                       );
-                    },
-                  );
-                }),
+                    }),
+                  ),
+
+                  // Invisible element for showing showcase welcome
+                  Positioned(
+                    top: 350,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BWShowcase(
+                              showcaseKey: navKeys[0],
+                              title: "Welcome to BookWorms!",
+                              description: "Let us show you around.\nYou can view this tutorial again\nat any time from the Profile page.",
+                              disableMovingAnimation: true,
+                              tooltipActions: ["Skip tutorial", "Get Started"],
+                              showArrow: false,
+                              child: SizedBox(
+                                  width: 0,
+                                  height: 0
+                              )
+                          )
+                        ]
+                    ),
+                  )
+                ]
               ),
             ),
             bottomNavigationBar: NavigationBar(
