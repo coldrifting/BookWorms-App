@@ -469,10 +469,13 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addChildGoal(Child child, Goal goal) async {
+  Future<Result> addChildGoal(Child child, Goal goal) async {
     ChildGoal childGoal = await childGoalService.addChildGoal(goal, child.id);
     child.goals.add(childGoal);
     notifyListeners();
+
+    String resultMessage = "Successfully created the new goal.";
+    return Result(isSuccess: true, message: resultMessage);
   }
 
   Future<ChildGoal> getChildGoalDetails(Child child, String goalId) async {

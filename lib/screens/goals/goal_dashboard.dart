@@ -91,7 +91,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
             itemCount: activeGoals[selectedCalendarIndex].length,
             itemBuilder: (context, index) {
               DateTime selectedDate = DateTime.now().add(Duration(days: selectedCalendarIndex - 6));
-              ClassroomGoal selectedGoal = activeGoals[selectedCalendarIndex][index];
+              dynamic selectedGoal = activeGoals[selectedCalendarIndex][index];
 
               return Padding(
                 padding: EdgeInsets.only(bottom: 12.0),

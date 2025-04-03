@@ -1,6 +1,7 @@
 // Alert modal for adding a new classroom goal.
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -52,7 +53,10 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                 children: [
                   Icon(Icons.school, color: colorGreen),
                   addHorizontalSpace(8),
-                  Text("Add Classroom Goal", style: textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold)),
+                  Text(
+                    isParent ? "Add Child Goal" : "Add Classroom Goal", 
+                    style: textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold)
+                  ),
                   Divider(color: colorGrey)
                 ],
               ),
@@ -177,24 +181,25 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                       },
                     ),
                   ],
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 32,
-                        child: Checkbox(
-                          value: isChecked, 
-                          activeColor: colorGreen,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isChecked = value!;
-                            });
-                          }
+                  if (!isParent)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 32,
+                          child: Checkbox(
+                            value: isChecked, 
+                            activeColor: colorGreen,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isChecked = value!;
+                              });
+                            }
+                          ),
                         ),
-                      ),
-                      Text("Class-Wide Goal", style: TextStyle(color: Colors.grey[800], fontSize: 14))
-                    ],
-                  )
+                        Text("Class-Wide Goal", style: TextStyle(color: Colors.grey[800], fontSize: 14))
+                      ],
+                    )
                 ],
               ),
               actions: [
@@ -204,25 +209,30 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    if (!isParent) {
-                      if (formKey.currentState?.validate() ?? false) {
-                        Goal newGoal = Goal(
-                          goalType: isChecked ? "ClassroomAggregate" : "Classroom",
-                          goalMetric: selectedMetric,
-                          title: titleController.text,
-                          startDate: convertDateToString(DateTime.now()),
-                          endDate: convertDateToString(pickedDate!),
-                          target: isNumBooksMetric ? int.parse(booksReadController.text) : 0,
-                        );
-
-                        Result result = await appState.addClassroomGoal(newGoal);
-                        setState(() {
-                          if (callback != null) {
-                            callback();
-                          }
-                        });
-                        resultAlert(context, result);
+                    if (formKey.currentState?.validate() ?? false) {
+                      Goal newGoal = Goal(
+                        goalType: isParent 
+                          ? "Child"
+                          : isChecked ? "ClassroomAggregate" : "Classroom",
+                        goalMetric: selectedMetric,
+                        title: titleController.text,
+                        startDate: convertDateToString(DateTime.now()),
+                        endDate: convertDateToString(pickedDate!),
+                        target: isNumBooksMetric ? int.parse(booksReadController.text) : 0,
+                      );
+                      Result result;
+                      if (!isParent) {
+                        result = await appState.addClassroomGoal(newGoal);
+                      } else {
+                        Child selectedChild = appState.children[appState.selectedChildID];
+                        result = await appState.addChildGoal(selectedChild, newGoal);
                       }
+                      setState(() {
+                        if (callback != null) {
+                          callback();
+                        }
+                      });
+                      resultAlert(context, result);
                     }
                   },
                   style: ElevatedButton.styleFrom(
