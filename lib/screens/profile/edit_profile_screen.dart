@@ -106,11 +106,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     cancelText: "Keep Editing",
                     confirmColor: colorRed,
                     cancelColor: colorGreen,
-                    action: () {
-                      if (mounted) {
-                        navState.pop();
-                      }
-                    }
+                    action: () => navState.pop(),
                   );
                 }
               );

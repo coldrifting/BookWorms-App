@@ -1,3 +1,4 @@
+import 'package:bookworms_app/models/Result.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,9 +36,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
         leading: IconButton(
           color: colorWhite,
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -45,9 +44,8 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
           backgroundColor: colorGreen,
           icon: const Icon(Icons.add),
           label: Text("Add Child"),
-          onPressed: () {
-            _addChildDialog(context);
-          }),
+          onPressed: () => _addChildDialog(context)
+          ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -82,9 +80,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          onPressed: () {
-            pushScreen(context, EditChildScreen(childID: childID, child: child));
-          },
+          onPressed: () => pushScreen(context, EditChildScreen(childID: childID, child: child)),
           icon: CircleAvatar(
             maxRadius: 64,
             child: SizedBox.expand(
@@ -123,12 +119,12 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text("Cancel", style: TextStyle(color: colorGrey))),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               String childName = childNameController.text.isNotEmpty
                 ? childNameController.text
                 : "New Child";
-              Provider.of<AppState>(context, listen: false).addChild(childName);
-              Navigator.of(context).pop();
+              Result result = await Provider.of<AppState>(context, listen: false).addChild(childName);
+              resultAlert(context, result);
             },
             child: const Text("Add")
           ),

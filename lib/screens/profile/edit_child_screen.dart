@@ -109,11 +109,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     cancelText: "Keep Editing",
                     confirmColor: colorRed,
                     cancelColor: colorGreen,
-                    action: () {
-                      if (mounted) {
-                        navState.pop();
-                      }
-                    }
+                    action: () => navState.pop(),     
                   );
                 }
               );
@@ -507,6 +503,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
   }
 
   Widget _deleteChildButton(TextTheme textTheme, NavigatorState navState) {
+    AppState appState = Provider.of<AppState>(context);
+
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: colorRed,
@@ -517,7 +515,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
         ),
       ),
       onPressed: () {
-        if (Provider.of<AppState>(context, listen: false).children.length > 1) {
+        if (appState.children.length > 1) {
           showDialog(
             context: context,
             builder: (BuildContext context) { 
@@ -527,25 +525,10 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 confirmText: "Delete", 
                 confirmColor: colorRed,
                 cancelText: "Cancel", 
-                action: () {
-                  Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: colorRed,
-                      content: Row(
-                        children: [
-                          Text(
-                            'Removed ${widget.child.name} from children',
-                            style: textTheme.titleSmallWhite
-                          ),
-                          Spacer(),
-                          Icon(Icons.close_rounded, color: colorWhite)
-                        ],
-                      ),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  navState.pop(true);
+                action: () async {
+                  navState.pop(context);
+                  Result result = await appState.removeChild(widget.child.id);
+                  resultAlert(context, result);
                 }
               );
             }
@@ -563,8 +546,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.pop(context, 'OK'),
-                    child: Text(
-                      'OK',
+                    child: Text('OK', 
                       style: TextStyle(color: colorGreen),
                     ),
                   ),
@@ -574,10 +556,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
           );
         }
       },
-      child: Text(
-        'Delete Child',
-        style: textTheme.titleSmallWhite,
-      ),
+      child: Text('Delete Child', style: textTheme.titleSmallWhite),
     );
   }
 
