@@ -53,10 +53,10 @@ class _BWShowcaseState extends State<BWShowcase> {
       targetShapeBorder: widget.targetShapeBorder,
       targetBorderRadius: widget.tooltipBorderRadius,
       onTargetClick: widget.toScreen == null ? null : () {
-        showcaseController.navigate.call(widget.toScreen!);
+        showcaseController.goToScreen(widget.toScreen!);
         showcaseController.next();
       },
-      onBarrierClick: showcaseController.jumpToEnd,
+      onBarrierClick: showcaseController.skipToEnd,
       disposeOnTap: widget.toScreen == null ? null : false,
       tooltipActions: widget.tooltipActions
           ?.map((name) =>
@@ -100,7 +100,7 @@ class _BWShowcaseState extends State<BWShowcase> {
         backgroundColor: colorGreen,
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
-          if (toScreen != null) showcaseController.navigate.call(toScreen);
+          if (toScreen != null) showcaseController.goToScreen(toScreen);
           showcaseController.next();
         }
     );
@@ -115,8 +115,8 @@ class _BWShowcaseState extends State<BWShowcase> {
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
           if (toScreen != null) {
-            int fromScreen = showcaseController.getScreenBefore(toScreen);
-            showcaseController.navigate.call(fromScreen);
+            int fromScreen = showcaseController.getPreviousScreenIndex(toScreen);
+            showcaseController.goToScreen(fromScreen);
           }
           showcaseController.previous();
         }

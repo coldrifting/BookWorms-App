@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     deleteToken();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove('recentBookIds');
+    showcaseController.reset();
     if (mounted) {
       pushScreen(context, const WelcomeScreen(), replace: true, root: true);
     }
@@ -108,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       name: "Help",
                       icon: Icons.help,
                       onTap:() {
-                        showcaseController.navigate(0);
+                        showcaseController.goToScreen(0);
                         showcaseController.start();
                       }
                   ),

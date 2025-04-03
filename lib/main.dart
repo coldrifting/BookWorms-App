@@ -35,9 +35,8 @@ class BookWorms extends StatelessWidget {
     return ChangeNotifierProvider<AppState>(
         create: (context) => AppState(),
         child: ShowCaseWidget(
-          builder: (context) {
-            ShowcaseController().setContext(context);
-            return MaterialApp(
+          builder: (context) =>
+            MaterialApp(
                 navigatorKey: navigatorKey,
                 title: 'BookWorms',
                 theme: appTheme,
@@ -47,9 +46,10 @@ class BookWorms extends StatelessWidget {
                   PointerDeviceKind.mouse,
                   PointerDeviceKind.stylus,
                   PointerDeviceKind.trackpad,
-                }));
-          },
-        ));
+                })
+            )
+        )
+    );
   }
 }
 
@@ -115,7 +115,7 @@ class _Navigation extends State<Navigation> {
     var isParent = appState.isParent;
     // This can safely be done here, since Navigation is the first widget to
     //  be built once the user type is known
-    ShowcaseController().initialize(onBottomNavItemTapped);
+    showcaseController.initialize(context, onBottomNavItemTapped);
 
     List<Destination> enabledDest = getDest(isParent);
     List<Widget> pages = enabledDest.map((x) => x.widget).toList();

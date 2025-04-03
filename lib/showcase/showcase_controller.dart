@@ -9,14 +9,87 @@ class ShowcaseController {
   factory ShowcaseController() => _instance;
   ShowcaseController._internal();
 
-  BuildContext? _rootContext;
-  bool initialized = false;
-  late bool _isParent;
-  final Map<String, List<GlobalKey>> _showcaseKeys = {};
-  late final List<GlobalKey> _showcaseKeysList;
-  late final ShowCaseWidgetState _showcase = ShowCaseWidget.of(_rootContext!);
+  ShowcaseState? _state;
+  bool get _isInitialized => _state != null;
+  ShowcaseState get _requireState {
+    if (_state == null) {
+      throw StateError("ShowcaseController must be initialized before use");
+    }
+    return _state!;
+  }
 
-  late Function(int) navigate;
+
+  void initialize(BuildContext context, Function(int) navFunction) {
+    // It's possible for initialize() to get invoked more than once,
+    //  due to rebuilds. This protects state from being overwritten.
+    if (_isInitialized) return;
+
+    final appState = Provider.of<AppState>(context, listen: false);
+    _state = ShowcaseState(
+        context: context,
+        isParent: appState.isParent,
+        navFunction: navFunction
+    );
+  }
+
+  void reset() {
+    if (_state != null) {
+      _state!.showcase.dismiss();
+      _state = null;
+    }
+  }
+
+
+  void start() {
+    if (!_isInitialized) {
+      throw StateError(
+          "ShowcaseController state must have been initialized before starting showcase");
+    }
+
+    _requireState.showcase.startShowCase(_requireState.showcaseKeysList);
+  }
+
+  void next() => _requireState.showcase.next();
+
+  void previous() => _requireState.showcase.previous();
+
+  void dismiss() => _requireState.showcase.dismiss();
+
+  void goToScreen(int index) => _requireState.navFunction(index);
+
+  void skipToEnd() {
+    _requireState.showcase.dismiss();
+    _requireState.showcase.startShowCase([_requireState.showcaseKeysList.last]);
+  }
+
+
+  List<GlobalKey> getKeysForScreen(String screenName) {
+    return _requireState.showcaseKeys[screenName] ?? [];
+  }
+
+  int getPreviousScreenIndex(int screenIndex) {
+    return ShowcaseState.backNavigations[_requireState.isParent? 'parent' : 'teacher']![screenIndex]!;
+  }
+}
+
+class ShowcaseState {
+  final BuildContext context;
+  final bool isParent;
+  final Function(int) navFunction;
+  final Map<String, List<GlobalKey>> showcaseKeys = {};
+  late final List<GlobalKey> showcaseKeysList;
+  late final ShowCaseWidgetState showcase;
+
+  ShowcaseState({
+    required this.context,
+    required this.isParent,
+    required this.navFunction
+  }) {
+    showcase = ShowCaseWidget.of(context);
+    _initializeKeys();
+    _initializeKeysList();
+  }
+
 
   static const Map<String, Map<String, int>> _elementsPerScreen = {
     'parent': {
@@ -36,7 +109,7 @@ class ShowcaseController {
     }
   };
 
-  static const Map<String, Map<int, int>> _backNavigations = {
+  static const Map<String, Map<int, int>> backNavigations = {
     'parent': {
       0: 0,
       1: 2,
@@ -53,66 +126,7 @@ class ShowcaseController {
   };
 
 
-  void setContext(BuildContext context) {
-    _rootContext = context;
-  }
-
-  void initialize(Function(int) navFunction) {
-    if (_rootContext == null) {
-      throw StateError(
-          "ShowcaseController context must be set before initializing state");
-    }
-
-    // It's possible for initialize() to get invoked more than once,
-    //  due to rebuilds. This protects state from being overwritten.
-    if (initialized) return;
-
-    initialized = true;
-    final appState = Provider.of<AppState>(_rootContext!, listen: false);
-    _isParent = appState.isParent;
-    navigate = navFunction;
-
-    // these two statements have to be in this order
-    _initializeKeys(_isParent);
-    _initializeKeysList(_isParent);
-  }
-
-  void start() {
-    if (!initialized) {
-      throw StateError(
-          "ShowcaseController state must have been initialized before starting showcase");
-    }
-
-    _showcase.startShowCase(_showcaseKeysList);
-  }
-
-  void next() {
-    _showcase.next();
-  }
-
-  void previous() {
-    _showcase.previous();
-  }
-
-  void dismiss() {
-    _showcase.dismiss();
-  }
-
-  void jumpToEnd() {
-    _showcase.dismiss();
-    _showcase.startShowCase([_showcaseKeysList.last]);
-  }
-  
-  List<GlobalKey> getKeysForScreen(String screenName) {
-    return _showcaseKeys[screenName] ?? [];
-  }
-
-  int getScreenBefore(int screen) {
-    return _backNavigations[_isParent? 'parent' : 'teacher']![screen]!;
-  }
-
-
-  void _initializeKeys(bool isParent) {
+  void _initializeKeys() {
     final numElements = isParent
         ? _elementsPerScreen['parent']!
         : _elementsPerScreen['teacher']!;
@@ -120,48 +134,48 @@ class ShowcaseController {
 
     // Initialize keys for each screen
     for (var screen in screens) {
-      _showcaseKeys[screen] = List.generate(
-        numElements[screen]!,
-        (_) => GlobalKey()
+      showcaseKeys[screen] = List.generate(
+          numElements[screen]!,
+              (_) => GlobalKey()
       );
     }
 
     // Initialize navigation keys
-    _showcaseKeys['navigation'] = List.generate(
+    showcaseKeys['navigation'] = List.generate(
         numElements['navigation']!,
-        (_) => GlobalKey()
+            (_) => GlobalKey()
     );
   }
 
-  void _initializeKeysList(bool isParent) {
-    List<GlobalKey> navKeys = _showcaseKeys['navigation']!;
-    _showcaseKeysList = (isParent
+  void _initializeKeysList() {
+    List<GlobalKey> navKeys = showcaseKeys['navigation']!;
+    showcaseKeysList = (isParent
         ? [
-            [navKeys[0]],
-            [navKeys[1]],
-            _showcaseKeys['home']!,
-            [navKeys[5]],
-            _showcaseKeys['profile']!,
-            [navKeys[3]],
-            _showcaseKeys['search']!,
-            [navKeys[2]],
-            _showcaseKeys['bookshelves']!,
-            [navKeys[4]],
-            _showcaseKeys['progress']!,
-            [navKeys[6]]
-          ]
-        : [
-            [navKeys[0]],
-            [navKeys[1]],
-            _showcaseKeys['home']!,
-            [navKeys[4]],
-            _showcaseKeys['profile']!,
-            [navKeys[2]],
-            _showcaseKeys['search']!,
-            [navKeys[3]],
-            _showcaseKeys['classroom']!,
-            [navKeys[5]]
-          ]
+          [navKeys[0]],
+          [navKeys[1]],
+          showcaseKeys['home']!,
+          [navKeys[5]],
+          showcaseKeys['profile']!,
+          [navKeys[3]],
+          showcaseKeys['search']!,
+          [navKeys[2]],
+          showcaseKeys['bookshelves']!,
+          [navKeys[4]],
+          showcaseKeys['progress']!,
+          [navKeys[6]]
+        ]
+            : [
+          [navKeys[0]],
+          [navKeys[1]],
+          showcaseKeys['home']!,
+          [navKeys[4]],
+          showcaseKeys['profile']!,
+          [navKeys[2]],
+          showcaseKeys['search']!,
+          [navKeys[3]],
+          showcaseKeys['classroom']!,
+          [navKeys[5]]
+        ]
     ).expand((element) => element).toList();
   }
 }
