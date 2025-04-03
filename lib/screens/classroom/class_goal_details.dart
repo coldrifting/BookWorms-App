@@ -176,7 +176,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
           Spacer(),
           if (goal.goalMetric == "BooksRead")
             Text(
-              "${studentGoalDetails.progress}/${goal.target} books read", 
+              "${studentGoalDetails.progress}/${goal.target} read", 
               style: TextStyle(
                 color: goal.target <= studentGoalDetails.progress ? colorGreen : colorRed, 
                 fontWeight: FontWeight.bold

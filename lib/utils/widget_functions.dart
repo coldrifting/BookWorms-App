@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 // Creates a SizedBox widget with specified height.
@@ -54,7 +55,7 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
 Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Function()? callback]) {
   AppState appState = Provider.of<AppState>(context, listen: false);
   var isParent = appState.isParent;
-  var isNumBooksMetric = true;
+  var isNumBooksMetric = false;
   
   return showDialog(
     context: context,
@@ -62,10 +63,11 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
       TextEditingController titleController = TextEditingController();
       TextEditingController startDateController = TextEditingController(text: _convertDateToStringUI(DateTime.now()));
       TextEditingController dueDateController = TextEditingController(text: _convertDateToStringUI(DateTime.now().add(Duration(days: 1))));
+      TextEditingController booksReadController = TextEditingController();
       final formKey = GlobalKey<FormState>();
       
       String selectedMetric = "Completion";
-      DateTime? pickedDate;
+      DateTime? pickedDate = DateTime.now().add(Duration(days: 1));
 
       return StatefulBuilder(
         builder: (context, setState) {
@@ -78,9 +80,9 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
               lastDate: DateTime(2026),
             );
             setState(() {
-              controller.text = pickedDate != null 
-                ? "${pickedDate!.month}/${pickedDate!.day}/${pickedDate!.year}"
-                : "No selected date";
+              if (pickedDate != null) {
+                controller.text = "${pickedDate!.month}/${pickedDate!.day}/${pickedDate!.year}";
+              }
             });
           }
 
@@ -121,7 +123,6 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                       Expanded(
                         child: TextFormField(
                           controller: startDateController,
-                          //initialValue: _convertDateToString(DateTime.now()),
                           readOnly: true,
                           onTap: () => selectDate(startDateController),
                           decoration: InputDecoration(
@@ -142,7 +143,6 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                       Expanded(
                         child: TextFormField(
                           controller: dueDateController,
-                          //initialValue: _convertDateToString(DateTime.now().add(Duration(days: 1))),
                           readOnly: true,
                           onTap: () => selectDate(dueDateController),
                           decoration: InputDecoration(
@@ -151,8 +151,14 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                             prefixIcon: Icon(Icons.calendar_today, color: Colors.green),
                           ),
                           validator: (value) {
-                            if (value == null || value == "No selected date") {
+                            if (value == null || value.isEmpty) {
                               return 'Please input a due date';
+                            }
+                            DateTime startDate = DateFormat("MM/dd/yyyy").parse(startDateController.text);
+                            DateTime dueDate = DateFormat("MM/dd/yyyy").parse(value);
+
+                            if (dueDate.isBefore(startDate)) {
+                              return 'Invalid due date';
                             }
                             return null;
                           },
@@ -162,26 +168,57 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                   ),
                   addVerticalSpace(16),
                   // Metric Type.
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text("Metric Type", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
+                  ),
+                  addVerticalSpace(4),
                   ToggleButtons(
-                        isSelected: [!isNumBooksMetric, isNumBooksMetric],
-                        onPressed: (index) {
-                          setState(() {
-                            isNumBooksMetric = index == 1;
-                            selectedMetric = isNumBooksMetric ? "Number of Books" : "Completion";
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(12),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text("Reading Progress"),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text("Books Read"),
-                          ),
-                        ],
+                    isSelected: [!isNumBooksMetric, isNumBooksMetric],
+                    onPressed: (index) {
+                      setState(() {
+                        isNumBooksMetric = index == 1;
+                        selectedMetric = isNumBooksMetric ? "BooksRead" : "Completion";
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    constraints: BoxConstraints(minWidth: 130, minHeight: 40),
+                    children: [
+                      Text("Completion", textAlign: TextAlign.center),
+                      Text("Number-Read", textAlign: TextAlign.center),
+                    ],
+                  ),
+                  addVerticalSpace(8),
+                  if (!isNumBooksMetric)
+                    Text(
+                      "ⓘ Measure progress by the portion of a book or task completed.", 
+                      style: TextStyle(color: Colors.grey[800], fontSize: 13),
+                      textAlign: TextAlign.center, 
+                    ),
+                  if (isNumBooksMetric) ...[
+                    Text(
+                      "ⓘ Track the total number of books, chapters, or minutes read.", 
+                      style: TextStyle(color: Colors.grey[800], fontSize: 13), 
+                      textAlign: TextAlign.center, 
+                    ),
+                    addVerticalSpace(8),
+                    TextFormField(
+                      controller: booksReadController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: "Number-Read Target",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        prefixIcon: Icon(Icons.insert_chart_outlined_rounded, color: Colors.purple),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please input a reading target';
+                        }
+                        return null;
+                      },
+                    ),
+                  ]
                 ],
               ),
               actions: [
@@ -199,7 +236,7 @@ Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Funct
                           title: titleController.text,
                           startDate: _convertDateToString(DateTime.now()),
                           endDate: _convertDateToString(pickedDate!),
-                          target: 0,
+                          target: isNumBooksMetric ? int.parse(booksReadController.text) : 0,
                         );
 
                         Result result = await appState.addClassroomGoal(newGoal);
