@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/constants.dart';
@@ -422,14 +423,16 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                         onTap: () async {
                           bool success;
                           if (appState.isParent) {
-                            success = await appState.addBookToBookshelf(
+                            Result result = await appState.addBookToBookshelf(
                                 appState.selectedChildID,
                                 bookshelf,
                                 bookSummary);
+                            success = result.isSuccess;
                           } else {
-                            success =
+                            Result result = 
                                 await appState.addBookToClassroomBookshelf(
                                     bookshelf, bookSummary);
+                            success = result.isSuccess;
                           }
 
                           if (context.mounted) {
@@ -610,11 +613,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           : BookshelfType.classroom,
                       name: name,
                       books: [bookToAdd]);
-                  var success = appState.isParent
+                  Result result = appState.isParent
                       ? await appState.addChildBookshelfWithBook(
                           appState.selectedChildID, bookshelf)
                       : await appState
                           .createClassroomBookshelfWithBook(bookshelf);
+                  bool success = result.isSuccess;
 
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(

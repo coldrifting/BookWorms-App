@@ -474,8 +474,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               ),
               onPressed: () async {
-                bool success = await appState.joinChildClassroom(widget.childID, textEditingController.text);
-                Result result = Result(isSuccess: success, message: "Successfully joined the class.");
+                Result result = await appState.joinChildClassroom(widget.childID, textEditingController.text);
                 resultAlert(context, result);
               },
               child: Text("Join", style: TextStyle(color: colorWhite)),

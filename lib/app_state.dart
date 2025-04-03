@@ -4,6 +4,7 @@ import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/services/account/child_goal_services.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
@@ -74,22 +75,32 @@ class AppState extends ChangeNotifier {
   List<Child> get children => (_account as Parent).children;
   int get selectedChildID => (_account as Parent).selectedChildID;
 
-  Future<void> addChild(String childName) async {
+  Future<Result> addChild(String childName) async {
     ChildrenServices childrenServices = ChildrenServices();
-    Child newChild = await childrenServices.addChild(childName);
-    (_account as Parent).children.add(newChild);
-    setChildBookshelves(children.length - 1);
-    setChildClassrooms(children.length - 1);
-    newChild.profilePictureIndex = UserIcons.getRandomIconIndex();
-    await childrenServices.setAccountDetails(newChild, iconIndex: newChild.profilePictureIndex);
-    notifyListeners();
+    try {
+      Child newChild = await childrenServices.addChild(childName);
+      (_account as Parent).children.add(newChild);
+      setChildBookshelves(children.length - 1);
+      setChildClassrooms(children.length - 1);
+      newChild.profilePictureIndex = UserIcons.getRandomIconIndex();
+      await childrenServices.setAccountDetails(newChild, iconIndex: newChild.profilePictureIndex);
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully added the child profile.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to add the child profile.");
+    }
   }
 
-  Future<void> removeChild(String childId) async {
+  Future<Result> removeChild(String childId) async {
     ChildrenServices childrenServices = ChildrenServices();
-    await childrenServices.removeChild(childId);
-    (_account as Parent).children.removeWhere((c) => c.id == childId);
-    notifyListeners();
+    try {
+      await childrenServices.removeChild(childId);
+      (_account as Parent).children.removeWhere((c) => c.id == childId);
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully deleted the child profile.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the child profile.");
+    }
   }
 
   void setSelectedChild(int childID) {
@@ -97,7 +108,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-   void editChildProfileInfo(int childId, {String? newName, int? profilePictureIndex, String? newDOB}) async {
+  void editChildProfileInfo(int childId, {String? newName, int? profilePictureIndex, String? newDOB}) async {
     Child child = (_account as Parent).children[childId];
     // If not included as parameters, set to currently-saved value.
     newName ??= child.name;
@@ -121,18 +132,23 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> joinChildClassroom(int childId, String classCode) async {
+  Future<Result> joinChildClassroom(int childId, String classCode) async {
     ChildrenServices childrenServices = ChildrenServices();
     String guid = children[childId].id;
-    Classroom? newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
 
-    if (newClassroom != null) {
-      (_account as Parent).children[childId].classrooms.add(newClassroom);
-      setChildBookshelves(childId); // Reset the child's bookshelves.
-      notifyListeners();
-      return true;
+    try {
+      Classroom? newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
+
+      if (newClassroom != null) {
+        (_account as Parent).children[childId].classrooms.add(newClassroom);
+        setChildBookshelves(childId); // Reset the child's bookshelves.
+        notifyListeners();
+        return Result(isSuccess: true, message: "Successfully joined the classroom.");
+      }
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to join the classroom.");
     }
-    return false;
+    return Result(isSuccess: false, message: "This classroom does not exist.");
   }
 
   // ***** Bookshelves *****
@@ -183,74 +199,83 @@ class AppState extends ChangeNotifier {
     return bookshelf;
   }
 
-  void addChildBookshelf(int childId, Bookshelf bookshelf) async {
+  Future<Result> addChildBookshelf(int childId, Bookshelf bookshelf) async {
     String guid = children[childId].id;
-    var isSuccess = await bookshelvesService.addBookshelf(guid, bookshelf.name);
-    if (isSuccess) {
+    try {
+      await bookshelvesService.addBookshelf(guid, bookshelf.name);
       (_account as Parent).children[childId].bookshelves.add(bookshelf);
       _setBookImages([bookshelf]);
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully added the new bookshelf.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to add the new bookshelf.");
     }
   }
 
-  Future<bool> addChildBookshelfWithBook(int childId, Bookshelf bookshelf) async {
+  Future<Result> addChildBookshelfWithBook(int childId, Bookshelf bookshelf) async {
     String guid = children[childId].id;
     try {
-      var success = await bookshelvesService.addBookshelf(guid, bookshelf.name);
-      if (success) {
-        var success2 = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, bookshelf.books[0].id);
-        if (success2) {
-          (_account as Parent).children[childId].bookshelves.add(bookshelf);
-          _setBookImages([bookshelf]);
-          notifyListeners();
-          return success2;
-        }
-      }
+      await bookshelvesService.addBookshelf(guid, bookshelf.name);
+      await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, bookshelf.books[0].id);
+      (_account as Parent).children[childId].bookshelves.add(bookshelf);
+      _setBookImages([bookshelf]);
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully added the book to the new bookshelf.");
     } catch (_) {
-      return false;
+      return Result(isSuccess: false, message: "Failed to add the new book to the bookshelf.");
     }
-    return false;
   }
 
-  void renameChildBookshelf(int childId, Bookshelf bookshelf, String newName) async {
+  Future<Result> renameChildBookshelf(int childId, Bookshelf bookshelf, String newName) async {
     String guid = children[childId].id;
-    var isSuccess = await bookshelvesService.renameBookshelfService(guid, bookshelf.name, newName);
-    
-    if (isSuccess) {
+    try {
+      await bookshelvesService.renameBookshelfService(guid, bookshelf.name, newName);
       for (var shelf in (_account as Parent).children[childId].bookshelves) {
         if (shelf.name == bookshelf.name) {
           bookshelf.name = newName;
+          notifyListeners();
           break;
         }
       }
-      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully renamed the bookshelf.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to rename the bookshelf.");
     }
   }
 
-  void deleteChildBookshelf(int childId, Bookshelf bookshelf) async {
+  Future<Result> deleteChildBookshelf(int childId, Bookshelf bookshelf) async {
     String guid = children[childId].id;
-    var isSuccess = await bookshelvesService.deleteBookshelf(guid, bookshelf.name);
-    if (isSuccess) {
+    try {
+      await bookshelvesService.deleteBookshelf(guid, bookshelf.name);
       (_account as Parent).children[childId].bookshelves.removeWhere((b) => b.name == bookshelf.name);
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully deleted the bookshelf.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the bookshelf.");
     }
   }
 
-  void removeBookFromBookshelf(int childId, Bookshelf bookshelf, String bookId) async {
+  Future<Result> removeBookFromBookshelf(int childId, Bookshelf bookshelf, String bookId) async {
     String guid = children[childId].id;
     int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
     
-    // Remove the book server-side.
-    var isSuccess = await bookshelvesService.removeBookFromBookshelf(guid, bookshelf.name, bookId);
-    
-    if (index != -1 && isSuccess) {
-      (_account as Parent).children[childId].bookshelves[index].books.removeWhere((b) => b.id == bookId);
-      _setBookImages([bookshelf]);
-      notifyListeners();
+    try {
+      // Remove the book server-side.
+      await bookshelvesService.removeBookFromBookshelf(guid, bookshelf.name, bookId);
+      
+      if (index != -1) {
+        (_account as Parent).children[childId].bookshelves[index].books.removeWhere((b) => b.id == bookId);
+        _setBookImages([bookshelf]);
+        notifyListeners();
+        return Result(isSuccess: true, message: "Successfully deleted the book.");
+      }
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the book.");
     }
+    return Result(isSuccess: false, message: "This book does not exist in ${bookshelf.name}.");
   }
 
-  Future<bool> addBookToBookshelf(int childId, Bookshelf bookshelf, BookSummary book) async {
+  Future<Result> addBookToBookshelf(int childId, Bookshelf bookshelf, BookSummary book) async {
     BookImagesService bookImagesService = BookImagesService();
 
     String guid = children[childId].id;
@@ -258,17 +283,20 @@ class AppState extends ChangeNotifier {
     
     if (!bookshelves[index].books.any((b) => b.id == book.id)) {
       // Add the book server-side.
-      var isSuccess = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
-      
-      if (index != -1 && isSuccess) {
-        (_account as Parent).children[childId].bookshelves[index].books.add(book);
-        var bookIds = await bookImagesService.getBookImages([book.id]);
-        book.imageUrl = bookIds[0];
-        notifyListeners();
-        return true;
+      try {
+        await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
+        if (index != -1) {
+          (_account as Parent).children[childId].bookshelves[index].books.add(book);
+          var bookIds = await bookImagesService.getBookImages([book.id]);
+          book.imageUrl = bookIds[0];
+          notifyListeners();
+        }
+        return Result(isSuccess: true, message: "Successfully added the book to the bookshelf.");
+      } catch (_) {
+        return Result(isSuccess: false, message: "Failed to add the book to the bookshelf.");
       }
     }
-    return false;
+    return Result(isSuccess: false, message: "This book is already in ${bookshelf.name}.", color: colorGreyDark);
   }
 
 
@@ -287,125 +315,153 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Classroom> createNewClassroom(String newClassroomName) async {
-    Classroom classroom = await classroomService.createClassroomDetails(newClassroomName);
-    (_account as Teacher).classroom = classroom;
-    notifyListeners();
-    return classroom;
+  Future<Result> createNewClassroom(String newClassroomName) async {
+    try {
+      Classroom classroom = await classroomService.createClassroomDetails(newClassroomName);
+      (_account as Teacher).classroom = classroom;
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully created the classroom.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to create the classroom.");
+    }
   }
 
-  void changeClassroomIcon(int newIcon) async {
-    var isSuccess = await classroomService.changeClassroomIcon(newIcon);
-    if (isSuccess) {
+  Future<Result> changeClassroomIcon(int newIcon) async {
+    try {
+      await classroomService.changeClassroomIcon(newIcon);
       classroom!.classIcon = newIcon;
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully changed the classroom icon.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to change the classroom icon.");
+    }
+    
+  }
+
+  Future<Result> deleteClassroom() async {
+    try {
+      await classroomService.deleteClassroom();
+      (_account as Teacher).classroom = null;
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully deleted the classroom.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the classroom.");
     }
   }
 
-  Future<bool> deleteClassroom() async {
-    var isSuccess = await classroomService.deleteClassroom();
-    (_account as Teacher).classroom = null;
-    notifyListeners();
-    return isSuccess;
-  }
-
-  void renameClassroom(String newName) async {
-    var isSuccess = await classroomService.changeClassroomName(newName);
-    if (isSuccess) {
+  Future<Result> renameClassroom(String newName) async {
+    try {
+      await classroomService.changeClassroomName(newName);
       classroom!.classroomName = newName;
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully renamed the classroom.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to rename the classroom.");
     }
   }
 
-  void renameClassroomBookshelf(String oldName, String newName) async {
-    var isSuccess = await classroomService.renameClassroomBookshelf(oldName, newName);
-    if (isSuccess) {
-      for (var bookshelf in classroom!.bookshelves) {
-        if (bookshelf.name == oldName) {
-          bookshelf.name = newName;
-          break;
-        }
-      }
-      notifyListeners();
-    }
-  }
-
-  void createClassroomBookshelf(Bookshelf bookshelf) async {
-    var isSuccess = await classroomService.createClassroomBookshelf(bookshelf);
-    if (isSuccess) {
-      classroom!.bookshelves.add(bookshelf);
-      notifyListeners();
-    }
-  }
-
-  Future<bool> createClassroomBookshelfWithBook(Bookshelf bookshelf) async {
+  Future<Result> renameClassroomBookshelf(String oldName, String newName) async {
     try {
-      var success = await classroomService.createClassroomBookshelf(bookshelf);
+      await classroomService.renameClassroomBookshelf(oldName, newName);
+        for (var bookshelf in classroom!.bookshelves) {
+          if (bookshelf.name == oldName) {
+            bookshelf.name = newName;
+            break;
+          }
+        }
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully renamed the bookshelf.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to rename the bookshelf.");
+    }
+  }
+
+  Future<Result> createClassroomBookshelf(Bookshelf bookshelf) async {
+    try {
+      await classroomService.createClassroomBookshelf(bookshelf);
       classroom!.bookshelves.add(bookshelf);
-      if (success) {
-        var success2 = await classroomService.insertBookIntoClassroomBookshelf(
-            bookshelf, bookshelf.books[0]);
-        notifyListeners();
-        return success2;
-      }
-      return false;
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully created the bookshelf.");
+    } catch (_) {
+      return Result(isSuccess: true, message: "Failed to create the bookshelf.");
+    }
+  }
+
+  Future<Result> createClassroomBookshelfWithBook(Bookshelf bookshelf) async {
+    try {
+      await classroomService.createClassroomBookshelf(bookshelf);
+      classroom!.bookshelves.add(bookshelf);
+      await classroomService.insertBookIntoClassroomBookshelf(bookshelf, bookshelf.books[0]);
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully added the book to the new bookshelf.");
     }
     catch (_) {
-      return false;
+      return Result(isSuccess: false, message: "Failed to add the book to the new bookshelf.");
     }
   }
 
-  void deleteClassroomBookshelf(Bookshelf bookshelf) async {
-    var isSuccess = await classroomService.deleteClassroomBookshelf(bookshelf);
-    if (isSuccess) {
+  Future<Result> deleteClassroomBookshelf(Bookshelf bookshelf) async {
+    try {
+      await classroomService.deleteClassroomBookshelf(bookshelf);
       classroom!.bookshelves.remove(bookshelf);
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully deleted the classroom bookshelf.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the classroom bookshelf.");
     }
   }
 
-  Future<bool> addBookToClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+  Future<Result> addBookToClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
     BookImagesService bookImagesService = BookImagesService();
 
     int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
-    
     if (!bookshelves[index].books.any((b) => b.id == book.id)) {
-      // Add the book server-side.
-      var isSuccess = await classroomService.insertBookIntoClassroomBookshelf(bookshelf, book);
-      
-      if (index != -1 && isSuccess) {
-        bookshelves[index].books.add(book);
-        var bookIds = await bookImagesService.getBookImages([book.id]);
-        book.imageUrl = bookIds[0];
-        notifyListeners();
-        return true;
+      try {
+        // Add the book server-side.
+        await classroomService.insertBookIntoClassroomBookshelf(bookshelf, book);
+        
+        if (index != -1) {
+          bookshelves[index].books.add(book);
+          var bookIds = await bookImagesService.getBookImages([book.id]);
+          book.imageUrl = bookIds[0];
+          notifyListeners();
+          return Result(isSuccess: true, message: "Successfully added the book to the bookshelf.");
+        }
+      } catch (_) {
+        return Result(isSuccess: false, message: "Failed to add the book to the bookshelf.");
       }
     }
-    return false;
+    return Result(isSuccess: false, message: "This book already exists in the bookshelf.", color: colorGreyDark);
   }
 
-  void removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+  Future<Result> removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
     int index = bookshelves.indexWhere((b) => b.name == bookshelf.name);
     
     // Remove the book server-side.
-    var isSuccess = await classroomService.removeBookFromClassroomBookshelf(bookshelf, book);
-    
-    if (index != -1 && isSuccess) {
-      bookshelves[index].books.removeWhere((b) => b.id == book.id);
-      _setBookImages([bookshelf]);
-      notifyListeners();
+    try {
+      await classroomService.removeBookFromClassroomBookshelf(bookshelf, book);
+      
+      if (index != -1) {
+        bookshelves[index].books.removeWhere((b) => b.id == book.id);
+        _setBookImages([bookshelf]);
+        notifyListeners();
+        return Result(isSuccess: true, message: "Successfully added the book to the bookshelf.");
+      }
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the book from the bookshelf.");
     }
+    return Result(isSuccess: false, message: "This book does not exist in the bookshelf.", color: colorGreyDark);
   }
 
   Future<Result> deleteStudentFromClassroom(String studentId) async {
-    var isSuccess = await classroomService.deleteStudentFromClassroom(studentId);
-    if (isSuccess) {
+    try {
+      await classroomService.deleteStudentFromClassroom(studentId);
       classroom!.students.removeWhere((s) => s.id == studentId);
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully deleted the student from the classroom.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the student from the classroom.");
     }
-    String resultMessage = isSuccess 
-      ? "Successfully deleted the student from the classroom." 
-      : errorMessage;
-    return Result(isSuccess: isSuccess, message: resultMessage);
   }
 
 
@@ -426,10 +482,9 @@ class AppState extends ChangeNotifier {
       (_account as Teacher).classroom!.classroomGoals.add(newGoal);
       notifyListeners();
       
-      String message = "Successfully added the classroom goal.";
-      return Result(isSuccess: true, message: message);
+      return Result(isSuccess: true, message: "Successfully added the classroom goal.");
     } catch (_) {
-      return Result(isSuccess: false, message: errorMessage);
+      return Result(isSuccess: false, message: "Failed to create the classroom goal");
     }
   }
 
@@ -453,10 +508,15 @@ class AppState extends ChangeNotifier {
     return goal;
   }
 
-  Future<void> deleteClassroomGoal(goalId) async {
-    await classroomGoalsService.deleteClassroomGoal(goalId);
-    classroom!.classroomGoals.removeWhere((g) => g.goalId == goalId);
-    notifyListeners();
+  Future<Result> deleteClassroomGoal(goalId) async {
+    try {
+      await classroomGoalsService.deleteClassroomGoal(goalId);
+      classroom!.classroomGoals.removeWhere((g) => g.goalId == goalId);
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully deleted the classroom.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the classroom.");
+    }
   }
 
   // ***** Child Goals *****
@@ -470,12 +530,14 @@ class AppState extends ChangeNotifier {
   }
 
   Future<Result> addChildGoal(Child child, Goal goal) async {
-    ChildGoal childGoal = await childGoalService.addChildGoal(goal, child.id);
-    child.goals.add(childGoal);
-    notifyListeners();
-
-    String resultMessage = "Successfully created the new goal.";
-    return Result(isSuccess: true, message: resultMessage);
+    try {
+      ChildGoal childGoal = await childGoalService.addChildGoal(goal, child.id);
+      child.goals.add(childGoal);
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully created the new goal.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to create the new goal.");
+    }
   }
 
   Future<ChildGoal> getChildGoalDetails(Child child, String goalId) async {
@@ -500,13 +562,15 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> deleteChildGoal(Child child, String goalId) async {
-    bool success = await childGoalService.deleteChildGoal(child.id, goalId);
-    if (success) {
+  Future<Result> deleteChildGoal(Child child, String goalId) async {
+    try {
+      await childGoalService.deleteChildGoal(child.id, goalId);
       child.goals.removeWhere((g) => g.goalId == goalId);
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully deleted the goal.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to delete the goal.");
     }
-    return success;
   }
 
 
