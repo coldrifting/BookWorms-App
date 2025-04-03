@@ -21,7 +21,7 @@ class ExtendedAppBar extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     
     return Container(
-      height: 180,
+      height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
         color: colorGreen,
@@ -46,7 +46,7 @@ class ExtendedAppBar extends StatelessWidget {
             height: 120,
             child: icon,
           ),
-          addVerticalSpace(4),
+          addVerticalSpace(10),
           Text(
             style: textTheme.titleLargeWhite,
             overflow: TextOverflow.ellipsis,

@@ -3,6 +3,7 @@ import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -111,21 +112,43 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           constraints: const BoxConstraints(minWidth: 0.0),
                           padding: const EdgeInsets.all(5.0),
                           shape: const CircleBorder(),
-                          child: const Icon(Icons.mode_edit_outline_sharp,
-                              size: 15),
+                          child: const Icon(Icons.mode_edit_outline_sharp, size: 15),
                         ),
                       ),
                     ],
                   ),
                   addHorizontalSpace(16),
                   Expanded(
-                      child: _textFieldWidget(
-                          textTheme, _childNameController, "Edit Name")),
+                    child: _textFieldWidget(textTheme, _childNameController, "Edit Name")
+                  ),
                 ],
               ),
               addVerticalSpace(16),
-              Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}",
-                  style: textTheme.titleMedium),
+              Row(
+                children: [
+                  Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+                  RawMaterialButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ReadingLevelInfoWidget(),
+                        ),
+                      );
+                    },
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8.0),
+                    constraints: BoxConstraints(
+                      maxWidth: 40,
+                    ),
+                    child: const Icon(
+                      Icons.help_outline,
+                      color: colorBlack,
+                      size: 20
+                    )
+                  ),
+                ],
+              ),
               addVerticalSpace(16),
               Row(
                 children: [
@@ -157,76 +180,76 @@ class _EditChildScreenState extends State<EditChildScreen> {
                       );
                       if (pickedDate != null) {
                         setState(() {
-                          _selectedDOB =
-                              DateFormat('yyyy-MM-dd').format(pickedDate);
+                          _selectedDOB = DateFormat('yyyy-MM-dd').format(pickedDate);
                           _checkForChanges();
                         });
                       }
                     },
-                    child: Text(_selectedDOB ?? "Set Date",
-                        style: textTheme.titleMedium),
+                    child: Text(_selectedDOB ?? "Set Date", style: textTheme.titleMedium),
                   )
                 ],
               ),
               addVerticalSpace(16),
               _classroomList(textTheme),
-              addVerticalSpace(32),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(100, 0),
-                    backgroundColor: _hasChanges ? colorGreen : colorGreyLight,
-                    foregroundColor: _hasChanges ? colorWhite : colorBlack,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+              addVerticalSpace(32),  
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 0),
+                      backgroundColor: _hasChanges ? colorGreen : colorGreyLight, 
+                      foregroundColor: _hasChanges ? colorWhite : colorBlack, 
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: _hasChanges
+                      ? () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          setState(() {
+                            _hasChanges = false;
+                            appState.editChildProfileInfo(
+                              widget.childID, 
+                              newName: _childNameController.text, 
+                              profilePictureIndex: _selectedIconIndex,
+                              newDOB: _selectedDOB
+                            );
+                            _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
+                            _initialName = appState.children[widget.childID].name;
+                          });
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: colorGreenDark,
+                                content: Row(
+                                  children: [
+                                    Text(
+                                      'Child Details Updated',
+                                      style: TextStyle(color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Spacer(),
+                                    Icon(
+                                        Icons.check_circle_outline_rounded,
+                                        color: Colors.white
+                                    )
+                                  ],
+                                ),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                          Navigator.of(context).pop();
+                          }
+                        } : null,
+                    child: Text(
+                      'Save Changes',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
-                  onPressed: _hasChanges
-                      ? () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            setState(() {
-                              _hasChanges = false;
-                              appState.editChildProfileInfo(widget.childID,
-                                  newName: _childNameController.text,
-                                  profilePictureIndex: _selectedIconIndex,
-                                  newDOB: _selectedDOB);
-                              _initialIconIndex = appState
-                                  .children[widget.childID].profilePictureIndex;
-                              _initialName =
-                                  appState.children[widget.childID].name;
-                            });
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: colorGreenDark,
-                                  content: Row(
-                                    children: [
-                                      Text(
-                                        'Child Details Updated',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const Spacer(),
-                                      Icon(Icons.check_circle_outline_rounded,
-                                          color: Colors.white)
-                                    ],
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            }
-                            Navigator.of(context).pop();
-                          }
-                        }
-                      : null,
-                  child: Text(
-                    'Save Changes',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ),
                 _deleteChildButton(textTheme, Navigator.of(context)),
               ]),
             ],
@@ -252,108 +275,107 @@ class _EditChildScreenState extends State<EditChildScreen> {
         ),
         addVerticalSpace(8),
         Container(
-          height: 175,
+          height: 175, 
           decoration: BoxDecoration(
             color: colorGreyLight,
             border: Border.all(color: colorGreyDark),
             borderRadius: BorderRadius.circular(6),
           ),
           child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: classrooms.length + 1,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: index == classrooms.length
-                      ? SizedBox(
-                          width: 100,
-                          child: GestureDetector(
-                            onTap: () {
-                              _joinClassDialog(textTheme);
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: colorGreyDark, width: 1.5),
-                                  ),
-                                  child: CircleAvatar(
-                                    maxRadius: 45,
-                                    backgroundColor: colorGreyLight,
-                                    child: Icon(
-                                        size: 40,
-                                        Icons.add,
-                                        color: colorGreyDark),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 100,
-                                  height: 40,
-                                  child: Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Text(
-                                      "Join Class",
-                                      style: textTheme.titleSmall,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+            scrollDirection: Axis.horizontal,
+            itemCount: classrooms.length + 1,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: index == classrooms.length 
+                ? SizedBox(
+                  width: 100,
+                  child: GestureDetector(
+                    onTap: () {
+                      _joinClassDialog(textTheme);
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: colorGreyDark, width: 1.5),
                           ),
-                        )
-                      : SizedBox(
-                          width: 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  // TODO
-                                },
-                                onLongPress: () {},
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: colorGreyDark, width: 1.5),
-                                  ),
-                                  child: CircleAvatar(
-                                    backgroundColor: colorWhite,
-                                    maxRadius: 45,
-                                    child: Icon(
-                                        size: 50,
-                                        Icons.school,
-                                        color: classroomColors[
-                                            classrooms[index].classIcon]),
-                                  ),
-                                ),
-                              ),
-                              addVerticalSpace(4),
-                              SizedBox(
-                                width: 100,
-                                height: 40,
-                                child: Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Text(
-                                    classrooms[index].classroomName,
-                                    style: textTheme.titleSmall,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          child: CircleAvatar(
+                            maxRadius: 45, 
+                            backgroundColor: colorGreyLight,
+                            child: Icon(size: 40, Icons.add, color: colorGreyDark),
                           ),
                         ),
-                );
-              }),
+                        addVerticalSpace(8),
+                        SizedBox(
+                          width: 100,
+                          height: 40,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              "Join Class",
+                              style: textTheme.titleSmall, 
+                              maxLines: 2, 
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                : SizedBox(
+                  width: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // TODO
+                        },
+                        onLongPress: (){
+
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: colorGreyDark, width: 1.5),
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: colorWhite,
+                            maxRadius: 45, 
+                            child: Icon(
+                              size: 50, 
+                              Icons.school,
+                              color: classroomColors[classrooms[index].classIcon]
+                            ),
+                          ),
+                        ),
+                      ),
+                      addVerticalSpace(8),
+                      SizedBox(
+                        width: 100,
+                        height: 40,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            classrooms[index].classroomName,
+                            style: textTheme.titleSmall, 
+                            maxLines: 2, 
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          ),
         ),
       ],
     );
@@ -402,8 +424,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   enableActiveFill: false,
                   autoFocus: true,
                   cursorColor: colorGreen,
-                  pastedTextStyle: TextStyle(
-                      color: colorGreenDark, fontWeight: FontWeight.bold),
+                  pastedTextStyle: TextStyle(color: colorGreenDark, fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                     shape: PinCodeFieldShape.box,
                     borderRadius: BorderRadius.circular(10),
@@ -448,8 +469,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
   }
 
   // Text form field input and title.
-  Widget _textFieldWidget(
-      TextTheme textTheme, TextEditingController controller, String title) {
+  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title) {
     return Column(
       children: [
         Align(
@@ -480,6 +500,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
         ),
       ),
       onPressed: () async {
+        if (Provider.of<AppState>(context, listen: false).children.length > 1) {
         bool result = await showConfirmDialog(
             context,
             "Delete Child Profile",
@@ -505,73 +526,81 @@ class _EditChildScreenState extends State<EditChildScreen> {
           );
           navState.pop(true);
         }
-      },
+        }
+        else {
+          await showConfirmDialog(context,
+              "Delete Child Profile",
+              'You cannot delete all child profiles from your account.',
+              confirmText: "OK");
+        }
+        },
       child: Text(
         'Delete Child',
-        style: textTheme.titleSmallWhite,
-      ),
+        style: textTheme.titleSmallWhite)
     );
   }
 
   /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeChildIconDialog(TextTheme textTheme) {
     return showDialog(
-      context: context,
+      context: context, 
       builder: (BuildContext context) => AlertDialog(
-        title: const Center(child: Text('Change Child Icon')),
-        content: _getIconList(),
-        actions: <Widget>[
-          dialogButton("Cancel",
-                  () => Navigator.of(context).pop(null),
-              foregroundColor: colorGreyDark,
-              isElevated: false)
-        ],
-      ),
+          title: const Center(child: Text('Change Child Icon')),
+          content: _getIconList(),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: Text(
+                'Cancel',
+                style: textTheme.titleSmall
+              ),
+            ),
+          ],
+        ),
     );
   }
 
   Widget _getIconList() {
     return SizedBox(
-      width: double.maxFinite,
-      height: 400,
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: 9,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              // Change selected color and exit popup.
-              setState(() {
-                _selectedIconIndex = index;
-                _checkForChanges();
-              });
-              Navigator.of(context).pop();
-            },
-            child: Material(
-              shape: CircleBorder(
-                side: BorderSide(
-                  color: _selectedIconIndex == index
-                      ? Colors.grey[400]!
-                      : Colors.grey[300]!,
+        width: double.maxFinite,
+        height: 400,
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: 9,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                // Change selected color and exit popup.
+                setState(() {
+                  _selectedIconIndex = index;
+                  _checkForChanges();
+                });
+                Navigator.of(context).pop();
+              },
+              child: Material(
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: _selectedIconIndex == index ? Colors.grey[400]! : Colors.grey[300]!,
+                  ),
+                ),
+                shadowColor: _selectedIconIndex == index ? Colors.black : Colors.transparent,
+                elevation: _selectedIconIndex == index ? 4 : 2,
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey[100],
+                  child: SizedBox.expand(
+                    child: FittedBox(
+                      child: UserIcons.getIcon(index)
+                    )
+                  ),
                 ),
               ),
-              shadowColor: _selectedIconIndex == index
-                  ? Colors.black
-                  : Colors.transparent,
-              elevation: _selectedIconIndex == index ? 4 : 2,
-              child: CircleAvatar(
-                backgroundColor: Colors.grey[100],
-                child: SizedBox.expand(
-                    child: FittedBox(child: UserIcons.getIcon(index))),
-              ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
     );
   }
 }
