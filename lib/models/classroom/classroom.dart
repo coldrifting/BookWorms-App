@@ -36,6 +36,6 @@ class Classroom {
             .toList(),
         announcements: (json['announcements'] as List)
             .map((announcementJson) => Announcement.fromJson(announcementJson))
-            .toList()..sort((a, b) => b.time.compareTo(a.time)));
+            .toList());
   }
 }

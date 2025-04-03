@@ -1,7 +1,7 @@
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -51,25 +51,7 @@ class _AdvancedSearchResultsScreenState extends State<AdvancedSearchResultsScree
     }
 
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          "Advanced Search",
-          style: const TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite,
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: AppBarCustom("Advanced Search"),
       body: mainContent 
     );
   } 

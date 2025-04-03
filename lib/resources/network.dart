@@ -226,6 +226,20 @@ Uri deleteClassroomGoalUri(String goalId) {
   return Uri.parse("$serverBaseUri/homeroom/goals/$goalId/delete");
 }
 
+// ***** Classroom Announcements - Teachers ****
+
+Uri addClassroomAnnouncementUri() {
+  return Uri.parse("$serverBaseUri/homeroom/announcements/add");
+}
+
+Uri editClassroomAnnouncementUri(String announcementId) {
+  return Uri.parse("$serverBaseUri/homeroom/announcements/$announcementId/edit");
+}
+
+Uri removeClassroomAnnouncementUri(String announcementId) {
+  return Uri.parse("$serverBaseUri/homeroom/announcements/$announcementId/delete");
+}
+
 // ***** Child Goals *****
 
 Uri getChildGoalsUri(String childId) {

@@ -2,8 +2,12 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/announcement.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/screens/classroom/class_announcements_edit_screen.dart';
+import 'package:bookworms_app/screens/classroom/class_announcements_view_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -19,26 +23,93 @@ class ClassAnnouncements extends StatefulWidget {
 class _ClassAnnouncementsState extends State<ClassAnnouncements> {
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     Classroom classroom = appState.classroom!;
 
-    return Padding(
+    return SingleChildScrollView(
+        child: Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
       child: Column(
         children: [
           addVerticalSpace(8),
-          for (Announcement announcement in classroom.announcements) ...[
-            _announcementListItem(context, textTheme, announcement),
+          _addClassAnnouncementButton(),
+          addVerticalSpace(12),
+          for (Announcement announcement in classroom.announcements.sortedBy((a) => a.time).reversed) ...[
+            Slidable(
+                key: UniqueKey(),
+                endActionPane: ActionPane(
+                  motion: const ScrollMotion(),
+                  dismissible: DismissiblePane(
+                    onDismissed: () async {
+                      await appState
+                          .deleteAnnouncement(announcement.announcementId);
+                    },
+                  ),
+                  children: [
+                    SlidableAction(
+                      autoClose: false,
+                      onPressed: (BuildContext context) async {
+                        bool result = await showConfirmDialog(
+                            context,
+                            "Delete Announcement",
+                            'Are you sure you wish to delete the announcement'
+                                ' titled:\r\n'
+                                '${announcement.title}?',
+                        confirmText: 'Delete',
+                        confirmColor: colorRed);
+                        if (result) {
+                          await appState
+                              .deleteAnnouncement(announcement.announcementId);
+                        }
+                        else {
+                          if (context.mounted) {
+                            Slidable.of(context)?.close();
+                          }
+                        }
+                      },
+                      backgroundColor: colorRed,
+                      foregroundColor: colorWhite,
+                      borderRadius: BorderRadius.circular(4),
+                      icon: Icons.delete,
+                      label: 'Delete',
+                    ),
+                  ],
+                ),
+                child: _announcementListItem(context, announcement)),
             addVerticalSpace(8)
           ],
         ],
       ),
+    )
     );
   }
 
-  Widget _announcementListItem(
-      BuildContext context, TextTheme textTheme, Announcement announcement) {
+    Widget _addClassAnnouncementButton() {
+    return FractionallySizedBox(
+      widthFactor: 0.55,
+      child: TextButton(
+        onPressed: () => pushScreen(context, ClassAnnouncementsEditScreen(Announcement(announcementId: "-1", title: "", body: "", time: DateTime.now()))),
+        style: TextButton.styleFrom(
+          backgroundColor: colorGreen,
+          foregroundColor: colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Add New Announcement"),
+            addHorizontalSpace(8),
+            Icon(Icons.announcement, color: colorWhite),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _announcementListItem(BuildContext context, Announcement announcement) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
         color: colorWhite,
@@ -46,10 +117,7 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
-        onTap: () {
-          // TODO
-          pushScreen(context, Text("TODO"));
-        },
+        onTap: () => pushScreen(context, ClassAnnouncementsView(announcement.announcementId)),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -76,7 +144,7 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
                   overflow: TextOverflow.ellipsis),
               addVerticalSpace(8),
               Text("Posted ${timeago.format(announcement.time.toLocal())}",
-                style: textTheme.bodySmall)
+                  style: textTheme.bodySmall)
             ],
           ),
         ),

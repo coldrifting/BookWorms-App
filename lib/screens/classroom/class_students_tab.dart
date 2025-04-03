@@ -225,8 +225,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
         actions: [
           TextButton(
             style: TextButton.styleFrom(
-              backgroundColor: colorGreen, 
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                foregroundColor: colorGreen,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
             ),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: classroomCode.replaceFirst(' ', '')));

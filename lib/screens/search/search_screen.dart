@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
@@ -193,16 +194,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     }
 
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          "Search",
-          style: const TextStyle(
-            color: colorWhite
-          )
-        ),
-        backgroundColor: colorGreen,
-      ),
+      appBar: AppBarCustom("Search", isLeafPage: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(

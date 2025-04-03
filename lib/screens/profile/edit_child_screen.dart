@@ -2,7 +2,7 @@ import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/widgets/alert_widget.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -65,9 +65,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
   // Used to check if a change to the account details has been made.
   void _checkForChanges() {
     setState(() {
-      _hasChanges = _childNameController.text.trim() != _initialName 
-        || _selectedIconIndex != _initialIconIndex
-        || _selectedDOB != _initialDOB;
+      _hasChanges = _childNameController.text.trim() != _initialName ||
+          _selectedIconIndex != _initialIconIndex ||
+          _selectedDOB != _initialDOB;
     });
   }
 
@@ -76,53 +76,11 @@ class _EditChildScreenState extends State<EditChildScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
 
-    // A reference to a Nav state is needed since modal popups are not
-    // technically contained within the proper nested navigation context
-    NavigatorState navState = Navigator.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: const Text(
-          "Edit Child", 
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Notify the user if there are unsaved changes.
-            if (_hasChanges) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertWidget(
-                    title: "Unsaved Changes", 
-                    message: "Are you sure you want to continue?",
-                    confirmText: "Discard Changes",
-                    cancelText: "Keep Editing",
-                    confirmColor: colorRed,
-                    cancelColor: colorGreen,
-                    action: () {
-                      if (mounted) {
-                        navState.pop();
-                      }
-                    }
-                  );
-                }
-              );
-            } else {
-              navState.pop();
-            }
-          },
-        ),
-      ),
-      body: Padding(
+      appBar: AppBarCustom("Edit Child", onBackBtnPressed: () async =>
+          confirmExitWithoutSaving(context, Navigator.of(context), _hasChanges)),
+      body: SingleChildScrollView(
+    child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
@@ -134,7 +92,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   Stack(
                     children: [
                       IconButton(
-                        onPressed: () =>_changeChildIconDialog(textTheme),
+                        onPressed: () => _changeChildIconDialog(textTheme),
                         icon: CircleAvatar(
                           maxRadius: 50,
                           child: SizedBox.expand(
@@ -153,19 +111,21 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           constraints: const BoxConstraints(minWidth: 0.0),
                           padding: const EdgeInsets.all(5.0),
                           shape: const CircleBorder(),
-                          child: const Icon(Icons.mode_edit_outline_sharp, size: 15),
+                          child: const Icon(Icons.mode_edit_outline_sharp,
+                              size: 15),
                         ),
                       ),
                     ],
                   ),
                   addHorizontalSpace(16),
                   Expanded(
-                    child: _textFieldWidget(textTheme, _childNameController, "Edit Name")
-                  ),
+                      child: _textFieldWidget(
+                          textTheme, _childNameController, "Edit Name")),
                 ],
               ),
               addVerticalSpace(16),
-              Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+              Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}",
+                  style: textTheme.titleMedium),
               addVerticalSpace(16),
               Row(
                 children: [
@@ -179,6 +139,17 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     ),
                     onPressed: () async {
                       final DateTime? pickedDate = await showDatePicker(
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              primaryColor: colorGreen,
+                              textButtonTheme: TextButtonThemeData(
+                                style: getCommonButtonStyle(primaryColor: colorGreen, isElevated: false)
+                              )
+                            ),
+                            child: child!
+                          );
+                        },
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime(1900),
@@ -186,83 +157,83 @@ class _EditChildScreenState extends State<EditChildScreen> {
                       );
                       if (pickedDate != null) {
                         setState(() {
-                          _selectedDOB = DateFormat('yyyy-MM-dd').format(pickedDate);
+                          _selectedDOB =
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
                           _checkForChanges();
                         });
                       }
                     },
-                    child: Text(_selectedDOB ?? "Set Date", style: textTheme.titleMedium),
+                    child: Text(_selectedDOB ?? "Set Date",
+                        style: textTheme.titleMedium),
                   )
                 ],
               ),
               addVerticalSpace(16),
               _classroomList(textTheme),
-              addVerticalSpace(32),  
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(100, 0),
-                      backgroundColor: _hasChanges ? colorGreen : colorGreyLight, 
-                      foregroundColor: _hasChanges ? colorWhite : colorBlack, 
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    onPressed: _hasChanges
-                      ? () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          setState(() {
-                            _hasChanges = false;
-                            appState.editChildProfileInfo(
-                              widget.childID, 
-                              newName: _childNameController.text, 
-                              profilePictureIndex: _selectedIconIndex,
-                              newDOB: _selectedDOB
-                            );
-                            _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
-                            _initialName = appState.children[widget.childID].name;
-                          });
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: colorGreenDark,
-                                content: Row(
-                                  children: [
-                                    Text(
-                                      'Child Details Updated',
-                                      style: TextStyle(color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const Spacer(),
-                                    Icon(
-                                        Icons.check_circle_outline_rounded,
-                                        color: Colors.white
-                                    )
-                                  ],
-                                ),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                          navState.pop();
-                        }
-                      } : null,
-                    child: Text(
-                      'Save Changes',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              addVerticalSpace(32),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(100, 0),
+                    backgroundColor: _hasChanges ? colorGreen : colorGreyLight,
+                    foregroundColor: _hasChanges ? colorWhite : colorBlack,
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  _deleteChildButton(textTheme, navState),
-                ]
-              ),
+                  onPressed: _hasChanges
+                      ? () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            setState(() {
+                              _hasChanges = false;
+                              appState.editChildProfileInfo(widget.childID,
+                                  newName: _childNameController.text,
+                                  profilePictureIndex: _selectedIconIndex,
+                                  newDOB: _selectedDOB);
+                              _initialIconIndex = appState
+                                  .children[widget.childID].profilePictureIndex;
+                              _initialName =
+                                  appState.children[widget.childID].name;
+                            });
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: colorGreenDark,
+                                  content: Row(
+                                    children: [
+                                      Text(
+                                        'Child Details Updated',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const Spacer(),
+                                      Icon(Icons.check_circle_outline_rounded,
+                                          color: Colors.white)
+                                    ],
+                                  ),
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                            Navigator.of(context).pop();
+                          }
+                        }
+                      : null,
+                  child: Text(
+                    'Save Changes',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                _deleteChildButton(textTheme, Navigator.of(context)),
+              ]),
             ],
           ),
         ),
       ),
+      )
     );
   }
 
@@ -281,106 +252,108 @@ class _EditChildScreenState extends State<EditChildScreen> {
         ),
         addVerticalSpace(8),
         Container(
-          height: 175, 
+          height: 175,
           decoration: BoxDecoration(
             color: colorGreyLight,
             border: Border.all(color: colorGreyDark),
             borderRadius: BorderRadius.circular(6),
           ),
           child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: classrooms.length + 1,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: index == classrooms.length 
-                ? SizedBox(
-                  width: 100,
-                  child: GestureDetector(
-                    onTap: () {
-                      _joinClassDialog(textTheme);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark, width: 1.5),
-                          ),
-                          child: CircleAvatar(
-                            maxRadius: 45, 
-                            backgroundColor: colorGreyLight,
-                            child: Icon(size: 40, Icons.add, color: colorGreyDark),
-                          ),
-                        ),
-                        SizedBox(
+              scrollDirection: Axis.horizontal,
+              itemCount: classrooms.length + 1,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: index == classrooms.length
+                      ? SizedBox(
                           width: 100,
-                          height: 40,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              "Join Class",
-                              style: textTheme.titleSmall, 
-                              maxLines: 2, 
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
+                          child: GestureDetector(
+                            onTap: () {
+                              _joinClassDialog(textTheme);
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: colorGreyDark, width: 1.5),
+                                  ),
+                                  child: CircleAvatar(
+                                    maxRadius: 45,
+                                    backgroundColor: colorGreyLight,
+                                    child: Icon(
+                                        size: 40,
+                                        Icons.add,
+                                        color: colorGreyDark),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 100,
+                                  height: 40,
+                                  child: Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      "Join Class",
+                                      style: textTheme.titleSmall,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                : SizedBox(
-                  width: 100,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // TODO
-                        },
-                        onLongPress: (){
-
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark, width: 1.5),
+                        )
+                      : SizedBox(
+                          width: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  // TODO
+                                },
+                                onLongPress: () {},
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: colorGreyDark, width: 1.5),
+                                  ),
+                                  child: CircleAvatar(
+                                    backgroundColor: colorWhite,
+                                    maxRadius: 45,
+                                    child: Icon(
+                                        size: 50,
+                                        Icons.school,
+                                        color: classroomColors[
+                                            classrooms[index].classIcon]),
+                                  ),
+                                ),
+                              ),
+                              addVerticalSpace(4),
+                              SizedBox(
+                                width: 100,
+                                height: 40,
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Text(
+                                    classrooms[index].classroomName,
+                                    style: textTheme.titleSmall,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: CircleAvatar(
-                            backgroundColor: colorWhite,
-                            maxRadius: 45, 
-                            child: Icon(
-                              size: 50, 
-                              Icons.school,
-                              color: classroomColors[classrooms[index].classIcon]
-                            ),
-                          ),
                         ),
-                      ),
-                      addVerticalSpace(4),
-                      SizedBox(
-                        width: 100,
-                        height: 40,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            classrooms[index].classroomName,
-                            style: textTheme.titleSmall, 
-                            maxLines: 2, 
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          ),
+                );
+              }),
         ),
       ],
     );
@@ -391,17 +364,25 @@ class _EditChildScreenState extends State<EditChildScreen> {
     TextEditingController textEditingController = TextEditingController();
 
     return showDialog(
-      context: context,
-      builder: (BuildContext context) {
+        context: context,
+        builder: (BuildContext context)
+    {
+      String input = "";
+
+      return StatefulBuilder(builder: (context, setState) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Center(
             child: Column(
               children: [
                 Icon(Icons.school, color: colorGreen, size: 36),
                 Text(
                   'Join Class',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: colorGreen),
                 ),
               ],
             ),
@@ -421,7 +402,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   enableActiveFill: false,
                   autoFocus: true,
                   cursorColor: colorGreen,
-                  pastedTextStyle: TextStyle(color: colorGreenDark, fontWeight: FontWeight.bold),
+                  pastedTextStyle: TextStyle(
+                      color: colorGreenDark, fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                     shape: PinCodeFieldShape.box,
                     borderRadius: BorderRadius.circular(10),
@@ -431,37 +413,43 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     activeColor: colorGreen,
                     selectedColor: colorGreen,
                   ),
+                  onChanged: (value) {
+                    setState(() => input = value);
+                  },
                 ),
                 Text("Need help? Ask your teacher!")
               ],
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text("Cancel", style: TextStyle(color: colorGrey)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorGreen,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              onPressed: () async {
-                bool success = await appState.joinChildClassroom(widget.childID, textEditingController.text);
-                Result result = Result(isSuccess: success, message: "Successfully joined the class.");
-                resultAlert(context, result);
-              },
-              child: Text("Join", style: TextStyle(color: colorWhite)),
-            ),
+            dialogButton(
+                "Cancel",
+                () => Navigator.of(context).pop(),
+                foregroundColor: colorGreyDark,
+                isElevated: false),
+            dialogButton(
+                "Join",
+                input.length != 6 ? null : () async {
+                bool success = await appState.joinChildClassroom(
+                    widget.childID, input);
+                Result result = Result(
+                    isSuccess: success,
+                    message: success
+                        ? "Successfully joined the class."
+                        : "Unable to join the class");
+                if (context.mounted) {
+                  resultAlert(context, result);
+                }
+              })
           ],
         );
-      }
-    );
+      });
+    });
   }
 
   // Text form field input and title.
-  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title) {
+  Widget _textFieldWidget(
+      TextTheme textTheme, TextEditingController controller, String title) {
     return Column(
       children: [
         Align(
@@ -491,38 +479,33 @@ class _EditChildScreenState extends State<EditChildScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
       ),
-      onPressed: () => showDialog(
-        context: context,
-        builder: (BuildContext context) { 
-          return AlertWidget(
-            title: "Delete Child Profile", 
-            message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
-            confirmText: "Delete", 
-            confirmColor: colorRed,
-            cancelText: "Cancel", 
-            action: () {
-              Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: colorRed,
-                  content: Row(
-                    children: [
-                      Text(
-                        'Removed ${widget.child.name} from children',
-                        style: textTheme.titleSmallWhite
-                      ),
-                      Spacer(),
-                      Icon(Icons.close_rounded, color: colorWhite)
-                    ],
-                  ),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-              navState.pop(true);
-            }
+      onPressed: () async {
+        bool result = await showConfirmDialog(
+            context,
+            "Delete Child Profile",
+            "Are you sure you want to delete the child profile of ${widget.child.name}?",
+            confirmText: "Delete",
+            confirmColor: colorRed);
+
+        if (result && mounted) {
+          Provider.of<AppState>(context, listen: false).removeChild(widget.child.id);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: colorRed,
+              content: Row(
+                children: [
+                  Text('Removed ${widget.child.name} from children',
+                      style: textTheme.titleSmallWhite),
+                  Spacer(),
+                  Icon(Icons.close_rounded, color: colorWhite)
+                ],
+              ),
+              duration: Duration(seconds: 2),
+            ),
           );
+          navState.pop(true);
         }
-      ),
+      },
       child: Text(
         'Delete Child',
         style: textTheme.titleSmallWhite,
@@ -533,64 +516,62 @@ class _EditChildScreenState extends State<EditChildScreen> {
   /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeChildIconDialog(TextTheme textTheme) {
     return showDialog(
-      context: context, 
+      context: context,
       builder: (BuildContext context) => AlertDialog(
-          title: const Center(child: Text('Change Child Icon')),
-          content: _getIconList(),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: Text(
-                'Cancel',
-                style: textTheme.titleSmall
-              ),
-            ),
-          ],
-        ),
+        title: const Center(child: Text('Change Child Icon')),
+        content: _getIconList(),
+        actions: <Widget>[
+          dialogButton("Cancel",
+                  () => Navigator.of(context).pop(null),
+              foregroundColor: colorGreyDark,
+              isElevated: false)
+        ],
+      ),
     );
   }
 
   Widget _getIconList() {
     return SizedBox(
-        width: double.maxFinite,
-        height: 400,
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          itemCount: 9,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                // Change selected color and exit popup.
-                setState(() {
-                  _selectedIconIndex = index;
-                  _checkForChanges();
-                });
-                Navigator.of(context).pop();
-              },
-              child: Material(
-                shape: CircleBorder(
-                  side: BorderSide(
-                    color: _selectedIconIndex == index ? Colors.grey[400]! : Colors.grey[300]!,
-                  ),
-                ),
-                shadowColor: _selectedIconIndex == index ? Colors.black : Colors.transparent,
-                elevation: _selectedIconIndex == index ? 4 : 2,
-                child: CircleAvatar(
-                  backgroundColor: Colors.grey[100],
-                  child: SizedBox.expand(
-                    child: FittedBox(
-                      child: UserIcons.getIcon(index)
-                    )
-                  ),
+      width: double.maxFinite,
+      height: 400,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: 9,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              // Change selected color and exit popup.
+              setState(() {
+                _selectedIconIndex = index;
+                _checkForChanges();
+              });
+              Navigator.of(context).pop();
+            },
+            child: Material(
+              shape: CircleBorder(
+                side: BorderSide(
+                  color: _selectedIconIndex == index
+                      ? Colors.grey[400]!
+                      : Colors.grey[300]!,
                 ),
               ),
-            );
-          },
-        ),
+              shadowColor: _selectedIconIndex == index
+                  ? Colors.black
+                  : Colors.transparent,
+              elevation: _selectedIconIndex == index ? 4 : 2,
+              child: CircleAvatar(
+                backgroundColor: Colors.grey[100],
+                child: SizedBox.expand(
+                    child: FittedBox(child: UserIcons.getIcon(index))),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
