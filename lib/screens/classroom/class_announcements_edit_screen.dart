@@ -22,6 +22,7 @@ class _ClassAnnouncementsEditScreenState
     extends State<ClassAnnouncementsEditScreen> {
 
   bool _hasChanges = false;
+  bool _isValid = false;
 
   late String _announcementId;
   late String _initialAnnouncementTitle;
@@ -36,6 +37,8 @@ class _ClassAnnouncementsEditScreenState
       _hasChanges =
           _titleTextController.text.trim() != _initialAnnouncementTitle ||
           _bodyTextController.text.trim() != _initialAnnouncementBody;
+
+      _isValid = _titleTextController.text.trim() != "" && _bodyTextController.text.trim() != "";
     });
   }
 
@@ -66,6 +69,8 @@ class _ClassAnnouncementsEditScreenState
     String headerTitle = _announcementId == "-1"
         ? "New Announcement"
         : "Edit Announcement";
+
+    bool isNewAnnouncement = _announcementId == "-1";
 
     return Scaffold(
         appBar: AppBarCustom(headerTitle,
@@ -133,28 +138,7 @@ class _ClassAnnouncementsEditScreenState
                     ),
                     addVerticalSpace(8),
                     ElevatedButton(
-                        onPressed: () async {
-                          if (_titleTextController.text.trim() == "" ||
-                              _bodyTextController.text.trim() == "") {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: colorGrey,
-                                content: Row(
-                                  children: [
-                                    Text("Title and Body must not be empty"),
-                                    Spacer(),
-                                    Icon(Icons.close_rounded, color: colorWhite)
-                                  ],
-                                ),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-
-                            return;
-                          }
-
-                          bool isNewAnnouncement = _announcementId == "-1";
-
+                        onPressed: !_isValid ? null : () async {
                           var result = isNewAnnouncement
                               ? await appState.addAnnouncement(
                                   _titleTextController.text.trim(),
@@ -193,7 +177,7 @@ class _ClassAnnouncementsEditScreenState
                             iconSize: 26,
                             foregroundColor: colorWhite,
                             backgroundColor: colorGreen),
-                        child: Text("Save Changes"))
+                        child: Text(isNewAnnouncement ? "Post Announcement" : "Update Announcement"))
                   ],
                 ))));
   }
