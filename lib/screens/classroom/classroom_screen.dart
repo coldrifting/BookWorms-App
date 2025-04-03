@@ -80,6 +80,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             floating: false,
             delegate: _SliverDelegate(
               child: TabBar(
+                labelStyle: textTheme.labelLarge,
                 labelColor: colorGreen,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: colorGreen,
@@ -87,7 +88,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   Tab(icon: Icon(Icons.groups), text: "Students"),
                   Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
                   Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Shelves"),
-                  Tab(icon: Icon(Icons.announcement_outlined), text: "Notify"),
+                  Tab(icon: Icon(Icons.announcement_outlined), text: "Announce"),
                 ],
               ),
             ),
