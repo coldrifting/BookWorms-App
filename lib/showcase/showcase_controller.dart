@@ -10,11 +10,12 @@ class ShowcaseController {
   ShowcaseController._internal();
 
   BuildContext? _rootContext;
-  Function(int)? navigate;
-  final Map<String, List<GlobalKey>> showcaseKeys = {};
-  List<GlobalKey> showcaseKeysList = [];
-
+  late bool _isParent;
+  final Map<String, List<GlobalKey>> _showcaseKeys = {};
+  List<GlobalKey> _showcaseKeysList = [];
   late final ShowCaseWidgetState _showcase = ShowCaseWidget.of(_rootContext!);
+
+  late Function(int) navigate;
 
   static const Map<String, Map<String, int>> _elementsPerScreen = {
     'parent': {
@@ -30,7 +31,23 @@ class ShowcaseController {
       'search': 2,
       'classroom': 2,
       'profile': 2,
-      'navigation': 7 // Same as parents, but #2 is unused. Easier to set up keys that way
+      'navigation': 6 // 4 screens + beginning and ending cards
+    }
+  };
+
+  static const Map<String, Map<int, int>> _backNavigations = {
+    'parent': {
+      0: 0,
+      1: 2,
+      2: 4,
+      3: 1,
+      4: 0
+    },
+    'teacher': {
+      0: 0,
+      1: 3,
+      2: 1,
+      3: 0
     }
   };
 
@@ -46,20 +63,21 @@ class ShowcaseController {
     }
 
     final appState = Provider.of<AppState>(_rootContext!, listen: false);
+    _isParent = appState.isParent;
     navigate = navFunction;
 
     // these two statements have to be in this order
-    _initializeKeys(appState.isParent);
-    _initializeKeysList(appState.isParent);
+    _initializeKeys(_isParent);
+    _initializeKeysList(_isParent);
   }
 
   void start() {
-    if (showcaseKeysList == []) {
+    if (_showcaseKeysList == []) {
       throw StateError(
           "ShowcaseController state must have been initialized before starting showcase");
     }
 
-    _showcase.startShowCase(showcaseKeysList);
+    _showcase.startShowCase(_showcaseKeysList);
   }
 
   void next() {
@@ -75,7 +93,11 @@ class ShowcaseController {
   }
 
   List<GlobalKey> getKeysForScreen(String screenName) {
-    return showcaseKeys[screenName] ?? [];
+    return _showcaseKeys[screenName] ?? [];
+  }
+
+  int getScreenBefore(int screen) {
+    return _backNavigations[_isParent? 'parent' : 'teacher']![screen]!;
   }
 
 
@@ -87,47 +109,47 @@ class ShowcaseController {
 
     // Initialize keys for each screen
     for (var screen in screens) {
-      showcaseKeys[screen] = List.generate(
+      _showcaseKeys[screen] = List.generate(
         numElements[screen]!,
         (_) => GlobalKey()
       );
     }
 
     // Initialize navigation keys
-    showcaseKeys['navigation'] = List.generate(
+    _showcaseKeys['navigation'] = List.generate(
         numElements['navigation']!,
         (_) => GlobalKey()
     );
   }
 
   void _initializeKeysList(bool isParent) {
-    List<GlobalKey> navKeys = showcaseKeys['navigation']!;
-    showcaseKeysList = (isParent
+    List<GlobalKey> navKeys = _showcaseKeys['navigation']!;
+    _showcaseKeysList = (isParent
         ? [
             [navKeys[0]],
             [navKeys[1]],
-            showcaseKeys['home']!,
+            _showcaseKeys['home']!,
             [navKeys[5]],
-            showcaseKeys['profile']!,
+            _showcaseKeys['profile']!,
             [navKeys[3]],
-            showcaseKeys['search']!,
+            _showcaseKeys['search']!,
             [navKeys[2]],
-            showcaseKeys['bookshelves']!,
+            _showcaseKeys['bookshelves']!,
             [navKeys[4]],
-            showcaseKeys['progress']!,
+            _showcaseKeys['progress']!,
             [navKeys[6]]
           ]
         : [
             [navKeys[0]],
             [navKeys[1]],
-            showcaseKeys['home']!,
-            [navKeys[5]],
-            showcaseKeys['profile']!,
-            [navKeys[3]],
-            showcaseKeys['search']!,
+            _showcaseKeys['home']!,
             [navKeys[4]],
-            showcaseKeys['classroom']!,
-            [navKeys[6]]
+            _showcaseKeys['profile']!,
+            [navKeys[2]],
+            _showcaseKeys['search']!,
+            [navKeys[3]],
+            _showcaseKeys['classroom']!,
+            [navKeys[5]]
           ]
     ).expand((element) => element).toList();
   }

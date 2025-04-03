@@ -10,6 +10,7 @@ import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:bookworms_app/screens/setup/splash_screen.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -184,7 +185,10 @@ class _Navigation extends State<Navigation> {
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                 selectedIndex: selectedIndex,
                 onDestinationSelected: onBottomNavItemTapped,
-                destinations: getDestWidgets(isParent))));
+                destinations: getDestWidgets(isParent, navKeys)
+            )
+        )
+    );
   }
 }
 
@@ -192,6 +196,7 @@ class Destination {
   String label;
   IconData icon;
   IconData selectedIcon;
+  String showcaseDescription;
   Widget widget;
   GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
   PageCategory pageType;
@@ -200,6 +205,7 @@ class Destination {
       {required this.label,
       required this.icon,
       required this.selectedIcon,
+      required this.showcaseDescription,
       required this.widget,
       this.pageType = PageCategory.both});
 }
@@ -216,13 +222,22 @@ List<Destination> getDest(bool isParent) {
   return list;
 }
 
-List<Widget> getDestWidgets(bool isParent) {
+List<Widget> getDestWidgets(bool isParent, List<GlobalKey> navKeys) {
   return getDest(isParent)
-      .map((x) => NavigationDestination(
-          selectedIcon: Icon(x.selectedIcon, color: colorGreenDark),
-          icon: Icon(x.icon, color: colorWhite),
-          label: x.label))
-      .toList();
+      .mapIndexed((index, dest) =>
+        BWShowcase(
+          showcaseKey: navKeys[index + 1],
+          description: dest.showcaseDescription,
+          toScreen: index,
+          tooltipActions: dest.label == "Home" ? ["Next"] : ["Previous", "Next"],
+          tooltipAlignment: dest.label == "Home" ? MainAxisAlignment.end : null,
+          child: NavigationDestination(
+              selectedIcon: Icon(dest.selectedIcon, color: colorGreenDark),
+              icon: Icon(dest.icon, color: colorWhite),
+              label: dest.label
+          ),
+        )
+      ).toList();
 }
 
 List<Destination> dest = [
@@ -230,33 +245,39 @@ List<Destination> dest = [
       label: "Home",
       widget: const HomeScreen(),
       icon: Icons.home_outlined,
+      showcaseDescription: "Visit the Home screen to see upcoming goals, a progress summary, and more.",
       selectedIcon: Icons.home),
   Destination(
       label: "Bookshelf",
       widget: const BookshelvesScreen(),
       icon: Icons.collections_bookmark_outlined,
       selectedIcon: Icons.collections_bookmark_rounded,
+      showcaseDescription: "You can manage custom book lists on the Bookshelves screen.",
       pageType: PageCategory.parent),
   Destination(
       label: "Search",
       widget: SearchScreen(key: searchKey),
       icon: Icons.search_outlined,
+      showcaseDescription: "Find a wide variety of books using the Search screen.",
       selectedIcon: Icons.search_rounded),
   Destination(
       label: "Progress",
       widget: const ProgressScreen(),
       icon: Icons.show_chart,
       selectedIcon: Icons.show_chart,
+      showcaseDescription: "Visit the Progress screen to track your child's goals and progress.",
       pageType: PageCategory.parent),
   Destination(
       label: "Classroom",
       widget: const ClassroomScreen(),
       icon: Icons.school_outlined,
       selectedIcon: Icons.school,
+      showcaseDescription: "Visit the Classroom screen to manage your classroom's bookshelves, goals, and more.",
       pageType: PageCategory.teacher),
   Destination(
       label: "Profile",
       widget: const ProfileScreen(),
       icon: Icons.account_circle_outlined,
+      showcaseDescription: "Customize and manage your account from the Profile screen.",
       selectedIcon: Icons.account_circle_rounded)
 ];

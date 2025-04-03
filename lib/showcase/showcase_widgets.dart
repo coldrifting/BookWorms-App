@@ -12,8 +12,8 @@ class BWShowcase extends StatefulWidget {
   final bool showArrow;
   final bool? disableMovingAnimation;
   final List<String>? tooltipActions;
+  final MainAxisAlignment? tooltipAlignment;
   final int? toScreen;
-  final int? fromScreen;
 
   const BWShowcase({
     super.key,
@@ -28,8 +28,8 @@ class BWShowcase extends StatefulWidget {
     this.showArrow = true,
     this.disableMovingAnimation = false,
     this.tooltipActions,
-    this.toScreen,
-    this.fromScreen
+    this.tooltipAlignment,
+    this.toScreen
   });
 
   @override
@@ -49,15 +49,20 @@ class _BWShowcaseState extends State<BWShowcase> {
       descriptionTextAlign: TextAlign.center,
       targetShapeBorder: widget.targetShapeBorder,
       targetBorderRadius: widget.tooltipBorderRadius,
+      onTargetClick: widget.toScreen == null ? null : () {
+        showcaseController.navigate.call(widget.toScreen!);
+        showcaseController.next();
+      },
+      disposeOnTap: widget.toScreen == null ? null : false,
       tooltipActions: widget.tooltipActions
           ?.map((name) =>
-              _actionButtonFromName(name, widget.toScreen, widget.fromScreen))
+              _actionButtonFromName(name, widget.toScreen))
           .toList(),
       tooltipPadding: const EdgeInsets.all(25),
       tooltipActionConfig: widget.tooltipActions == null
         ? null
-        : const TooltipActionConfig(
-            alignment: MainAxisAlignment.spaceBetween,
+        : TooltipActionConfig(
+            alignment: widget.tooltipAlignment ?? MainAxisAlignment.spaceBetween,
             position: TooltipActionPosition.outside,
             gapBetweenContentAndAction: 10
           ),
@@ -67,15 +72,14 @@ class _BWShowcaseState extends State<BWShowcase> {
     );
   }
 
-  TooltipActionButton _actionButtonFromName(
-      String name, int? toScreen, int? fromScreen) {
+  TooltipActionButton _actionButtonFromName(String name, int? toScreen) {
     switch (name) {
       case "Next":
       case "Get Started":
         return _nextButton(name, toScreen);
       case "Previous":
       case "Back":
-        return _prevButton(name, fromScreen);
+        return _prevButton(name, toScreen);
       case "Skip tutorial":
         return _dismissButton(name);
       default:
@@ -90,13 +94,13 @@ class _BWShowcaseState extends State<BWShowcase> {
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
         textStyle: TextStyle(color: Colors.white),
         onTap: () {
-          if (toScreen != null) showcaseController.navigate!.call(toScreen);
+          if (toScreen != null) showcaseController.navigate.call(toScreen);
           showcaseController.next();
         }
     );
   }
 
-  TooltipActionButton _prevButton(String name, int? fromScreen) {
+  TooltipActionButton _prevButton(String name, int? toScreen) {
     return TooltipActionButton(
         type: TooltipDefaultActionType.previous,
         name: name,
@@ -104,7 +108,10 @@ class _BWShowcaseState extends State<BWShowcase> {
         backgroundColor: Colors.transparent,
         textStyle: TextStyle(color: Colors.white),
         onTap: () {
-          if (fromScreen != null) showcaseController.navigate!.call(fromScreen);
+          if (toScreen != null) {
+            int fromScreen = showcaseController.getScreenBefore(toScreen);
+            showcaseController.navigate.call(fromScreen);
+          }
           showcaseController.previous();
         }
     );
