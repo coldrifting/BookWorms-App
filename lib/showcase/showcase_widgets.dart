@@ -1,3 +1,4 @@
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -13,6 +14,7 @@ class BWShowcase extends StatefulWidget {
   final bool? disableMovingAnimation;
   final List<String>? tooltipActions;
   final MainAxisAlignment? tooltipAlignment;
+  final TooltipPosition? tooltipPosition;
   final int? toScreen;
 
   const BWShowcase({
@@ -29,6 +31,7 @@ class BWShowcase extends StatefulWidget {
     this.disableMovingAnimation = false,
     this.tooltipActions,
     this.tooltipAlignment,
+    this.tooltipPosition,
     this.toScreen
   });
 
@@ -53,6 +56,7 @@ class _BWShowcaseState extends State<BWShowcase> {
         showcaseController.navigate.call(widget.toScreen!);
         showcaseController.next();
       },
+      onBarrierClick: showcaseController.jumpToEnd,
       disposeOnTap: widget.toScreen == null ? null : false,
       tooltipActions: widget.tooltipActions
           ?.map((name) =>
@@ -66,6 +70,7 @@ class _BWShowcaseState extends State<BWShowcase> {
             position: TooltipActionPosition.outside,
             gapBetweenContentAndAction: 10
           ),
+      tooltipPosition: widget.tooltipPosition,
       disableMovingAnimation: widget.disableMovingAnimation,
       showArrow: widget.showArrow,
       child: widget.child,
@@ -91,8 +96,9 @@ class _BWShowcaseState extends State<BWShowcase> {
     return TooltipActionButton(
         type: TooltipDefaultActionType.next,
         name: name,
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-        textStyle: TextStyle(color: Colors.white),
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+        backgroundColor: colorGreen,
+        textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
           if (toScreen != null) showcaseController.navigate.call(toScreen);
           showcaseController.next();
@@ -104,9 +110,9 @@ class _BWShowcaseState extends State<BWShowcase> {
     return TooltipActionButton(
         type: TooltipDefaultActionType.previous,
         name: name,
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
         backgroundColor: Colors.transparent,
-        textStyle: TextStyle(color: Colors.white),
+        textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
           if (toScreen != null) {
             int fromScreen = showcaseController.getScreenBefore(toScreen);
@@ -121,9 +127,9 @@ class _BWShowcaseState extends State<BWShowcase> {
     return TooltipActionButton(
         type: TooltipDefaultActionType.skip,
         name: name,
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
         backgroundColor: Colors.transparent,
-        textStyle: TextStyle(color: Colors.white),
+        textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: showcaseController.dismiss
     );
   }

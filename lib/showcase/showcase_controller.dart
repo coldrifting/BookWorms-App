@@ -10,9 +10,10 @@ class ShowcaseController {
   ShowcaseController._internal();
 
   BuildContext? _rootContext;
+  bool initialized = false;
   late bool _isParent;
   final Map<String, List<GlobalKey>> _showcaseKeys = {};
-  List<GlobalKey> _showcaseKeysList = [];
+  late final List<GlobalKey> _showcaseKeysList;
   late final ShowCaseWidgetState _showcase = ShowCaseWidget.of(_rootContext!);
 
   late Function(int) navigate;
@@ -23,7 +24,7 @@ class ShowcaseController {
       'bookshelves': 2,
       'search': 2,
       'progress': 2,
-      'profile': 2,
+      'profile': 3,
       'navigation': 7 // 5 screens + beginning and ending cards
     },
     'teacher': {
@@ -62,6 +63,11 @@ class ShowcaseController {
           "ShowcaseController context must be set before initializing state");
     }
 
+    // It's possible for initialize() to get invoked more than once,
+    //  due to rebuilds. This protects state from being overwritten.
+    if (initialized) return;
+
+    initialized = true;
     final appState = Provider.of<AppState>(_rootContext!, listen: false);
     _isParent = appState.isParent;
     navigate = navFunction;
@@ -72,7 +78,7 @@ class ShowcaseController {
   }
 
   void start() {
-    if (_showcaseKeysList == []) {
+    if (!initialized) {
       throw StateError(
           "ShowcaseController state must have been initialized before starting showcase");
     }
@@ -92,6 +98,11 @@ class ShowcaseController {
     _showcase.dismiss();
   }
 
+  void jumpToEnd() {
+    _showcase.dismiss();
+    _showcase.startShowCase([_showcaseKeysList.last]);
+  }
+  
   List<GlobalKey> getKeysForScreen(String screenName) {
     return _showcaseKeys[screenName] ?? [];
   }

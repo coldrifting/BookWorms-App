@@ -176,6 +176,29 @@ class _Navigation extends State<Navigation> {
                           )
                         ]
                     ),
+                  ),
+
+                  // Invisible element for showing showcase conclusion
+                  Positioned(
+                    top: 350,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BWShowcase(
+                              showcaseKey: navKeys.last,
+                              title: "You're all ready!",
+                              description: "You can view this tutorial again\nat any time from the Profile page.",
+                              disableMovingAnimation: true,
+                              showArrow: false,
+                              child: SizedBox(
+                                  width: 0,
+                                  height: 0
+                              )
+                          )
+                        ]
+                    ),
                   )
                 ]
               ),
