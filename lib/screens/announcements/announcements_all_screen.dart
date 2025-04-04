@@ -23,7 +23,7 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
     AppState appState = Provider.of<AppState>(context);
 
     List<Announcement> announcements = (appState.isParent
-        ? appState.children[appState.selectedChildID].announcements
+        ? appState.children[appState.selectedChildID].classrooms.expand((a) => a.announcements)
         : appState.classroom!.announcements)
         .sortedBy((a) => a.time).reversed.toList();
 

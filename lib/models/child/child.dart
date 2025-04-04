@@ -12,7 +12,6 @@ class Child {
   List<Bookshelf> bookshelves = [];
   List<Classroom> classrooms = [];
   List<ChildGoal> goals = [];
-  List<Announcement> announcements = [];
 
   Child({
     required this.id,
