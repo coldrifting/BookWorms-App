@@ -1,25 +1,25 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/announcement.dart';
 import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/screens/classroom/class_announcements_edit_screen.dart';
+import 'package:bookworms_app/screens/announcements/announcements_modify_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class ClassAnnouncementsView extends StatefulWidget {
+class AnnouncementsEntryScreen extends StatefulWidget {
   final String announcementId;
 
-  const ClassAnnouncementsView(this.announcementId, {super.key});
+  const AnnouncementsEntryScreen(this.announcementId, {super.key});
 
   // ClassAnnouncements
 
   @override
-  State<ClassAnnouncementsView> createState() => _ClassAnnouncementsViewState();
+  State<AnnouncementsEntryScreen> createState() => _AnnouncementsEntryScreenState();
 }
 
-class _ClassAnnouncementsViewState extends State<ClassAnnouncementsView> {
+class _AnnouncementsEntryScreenState extends State<AnnouncementsEntryScreen> {
   @override
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
@@ -32,8 +32,7 @@ class _ClassAnnouncementsViewState extends State<ClassAnnouncementsView> {
         : floatingActionButtonWithText(
             "Edit Announcement",
             Icons.edit,
-            () => pushScreen(context,
-                ClassAnnouncementsEditScreen(announcement!)));
+            () => pushScreen(context, AnnouncementsModifyScreen(announcement!)));
 
     Widget body = announcement == null
         ? Text("Could not load announcement")

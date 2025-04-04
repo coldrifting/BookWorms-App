@@ -2,8 +2,8 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/announcement.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/screens/classroom/class_announcements_edit_screen.dart';
-import 'package:bookworms_app/screens/classroom/class_announcements_view_screen.dart';
+import 'package:bookworms_app/screens/announcements/announcements_modify_screen.dart';
+import 'package:bookworms_app/screens/announcements/announcements_entry_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +11,16 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class ClassAnnouncements extends StatefulWidget {
-  const ClassAnnouncements({super.key});
+class AnnouncementsAllScreen extends StatefulWidget {
+  const AnnouncementsAllScreen({super.key});
 
   // ClassAnnouncements
 
   @override
-  State<ClassAnnouncements> createState() => _ClassAnnouncementsState();
+  State<AnnouncementsAllScreen> createState() => _AnnouncementsAllScreenState();
 }
 
-class _ClassAnnouncementsState extends State<ClassAnnouncements> {
+class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
   @override
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
@@ -88,7 +88,7 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
     return FractionallySizedBox(
       widthFactor: 0.55,
       child: TextButton(
-        onPressed: () => pushScreen(context, ClassAnnouncementsEditScreen(Announcement(announcementId: "-1", title: "", body: "", time: DateTime.now()))),
+        onPressed: () => pushScreen(context, AnnouncementsModifyScreen(Announcement(announcementId: "-1", title: "", body: "", time: DateTime.now()))),
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,
@@ -117,7 +117,7 @@ class _ClassAnnouncementsState extends State<ClassAnnouncements> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
-        onTap: () => pushScreen(context, ClassAnnouncementsView(announcement.announcementId)),
+        onTap: () => pushScreen(context, AnnouncementsEntryScreen(announcement.announcementId)),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(

@@ -2,7 +2,7 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
-import 'package:bookworms_app/screens/classroom/class_announcements_tab.dart';
+import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
@@ -95,7 +95,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             StudentsScreen(),
             GoalsScreen(),
             ClassBookshelves(),
-            ClassAnnouncements(),
+            AnnouncementsAllScreen(),
           ],
         ),
       ),
