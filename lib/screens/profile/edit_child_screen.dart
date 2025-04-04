@@ -512,24 +512,12 @@ class _EditChildScreenState extends State<EditChildScreen> {
           }
         }
         else {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Center(
-                  child: Text('Delete Child Profile')
-                ),
-                content: const Text('You cannot delete all child profiles from your account.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, 'OK'),
-                    child: Text('OK', style: TextStyle(color: colorGreen),
-                    ),
-                  ),
-                ],
-              );
-            }
-          );
+          await showConfirmDialog(
+              context,
+              "Delete Child Profile",
+              "You cannot delete all child profiles from your account.",
+              confirmText: "Okay",
+              showCancelButton: false);
         }
       },
       child: Text(
