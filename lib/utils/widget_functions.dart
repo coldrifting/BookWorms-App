@@ -188,7 +188,7 @@ String convertDateToStringUI(DateTime date) {
   return "${date.month}/${date.day}/${date.year}";
 }
 
-dynamic resultAlert(BuildContext context, Result result) {
+dynamic resultAlert(BuildContext context, Result result, [bool pop=true]) {
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -210,6 +210,8 @@ dynamic resultAlert(BuildContext context, Result result) {
         duration: const Duration(seconds: 2),
       ),
     );
-    Navigator.pop(context);
+    if (pop) {
+      Navigator.pop(context);
+    }
   }
 }
