@@ -274,7 +274,7 @@ List<Destination> dest = [
       showcaseDescription: "First: See upcoming goals, a progress summary, and more on the Home screen\n(Try it!)",
       selectedIcon: Icons.home),
   Destination(
-      label: "Bookshelf",
+      label: "Bookshelves",
       widget: const BookshelvesScreen(),
       icon: Icons.collections_bookmark_outlined,
       selectedIcon: Icons.collections_bookmark_rounded,
