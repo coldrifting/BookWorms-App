@@ -11,6 +11,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   final bool isLeafPage;
   final bool isChildSwitcherEnabled;
   final Function()? onBackBtnPressed;
+  final Widget? rightAction;
 
   const AppBarCustom(
       this.title, {
@@ -18,6 +19,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
         this.onBackBtnPressed,
         this.isChildSwitcherEnabled = false,
         this.centerTitle = false,
+        this.rightAction,
         super.key});
 
   @override
@@ -51,7 +53,9 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
               Navigator.of(context).pop();
             }
           })
-          : SizedBox.shrink()
+          : rightAction != null && appState.isParent
+            ? rightAction!
+            : SizedBox.shrink()
     ]);
   }
 

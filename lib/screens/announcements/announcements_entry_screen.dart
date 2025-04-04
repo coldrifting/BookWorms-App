@@ -24,23 +24,31 @@ class _AnnouncementsEntryScreenState extends State<AnnouncementsEntryScreen> {
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
 
-    Announcement? announcement = appState.classroom?.announcements
-        .firstWhere((a) => a.announcementId == widget.announcementId);
+    Announcement? announcement = (appState.isParent
+        ? appState.children[appState.selectedChildID].classrooms.expand((c) => c.announcements)
+        : appState.classroom?.announcements)
+        ?.where((a) => a.announcementId == widget.announcementId).firstOrNull;
+
+    // Guard against bad state if child changes while viewing an announcement
+    if (announcement == null) {
+      Navigator.of(context).pop();
+      return SizedBox();
+    }
+
+    if (appState.isParent) {
+      appState.markAnnouncementAsRead(announcement);
+    }
 
     FloatingActionButton? fab = appState.isParent
         ? null
         : floatingActionButtonWithText(
             "Edit Announcement",
             Icons.edit,
-            () => pushScreen(context, AnnouncementsModifyScreen(announcement!)));
-
-    Widget body = announcement == null
-        ? Text("Could not load announcement")
-        : announcementViewPageBody(announcement);
+            () => pushScreen(context, AnnouncementsModifyScreen(announcement)));
 
     return Scaffold(
         appBar: AppBarCustom("Announcement Details"),
-        body: body,
+        body: announcementViewPageBody(announcement),
         floatingActionButton: fab);
   }
 }

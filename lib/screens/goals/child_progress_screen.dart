@@ -1,4 +1,6 @@
+import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +29,26 @@ class _ProgressScreenState extends State<ProgressScreen> {
     AppState appState = Provider.of<AppState>(context);
     Child selectedChild = appState.children[appState.selectedChildID];
 
+    bool showAnnouncementBadge = selectedChild.classrooms.expand((c) => c.announcements).any((a) => a.isRead == false);
+
+    var announcementButton = IconButton(
+      onPressed: () {
+        pushScreen(context, AnnouncementsAllScreen());
+      },
+      color: colorWhite,
+      icon:
+
+      Badge(
+        isLabelVisible: showAnnouncementBadge,
+        label: null,
+        smallSize: 12,
+        backgroundColor: colorRed,
+        child: const Icon(Icons.notifications),
+      )
+    );
+
     return Scaffold(
-      appBar: AppBarCustom("${selectedChild.name}'s Progress", isLeafPage: false),
+      appBar: AppBarCustom("${selectedChild.name}'s Progress", isLeafPage: false, rightAction: announcementButton),
       body: Padding(
         padding: const EdgeInsets.only(top: 16.0),
         child: Column(
@@ -79,7 +99,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             TabBar(
               tabs: const [
                 Tab(text: "Overall Progress"),
-                Tab(text: "Goal Progress"),
+                Tab(text: "Goal Progress")
               ],
               unselectedLabelColor: colorGrey,
             ),
@@ -87,7 +107,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               child: TabBarView(
                 children: [
                   Center(child: Text("Overall Progress")),
-                  Center(child: GoalsScreen()),
+                  Center(child: GoalsScreen())
                 ],
               ),
             ),

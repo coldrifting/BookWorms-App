@@ -4,6 +4,7 @@ import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/announcements/announcements_modify_screen.dart';
 import 'package:bookworms_app/screens/announcements/announcements_entry_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -27,7 +28,7 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
         : appState.classroom!.announcements)
         .sortedBy((a) => a.time).reversed.toList();
 
-    return SingleChildScrollView(
+    SingleChildScrollView body = SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
       child: Column(
@@ -37,9 +38,16 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
             _addClassAnnouncementButton(),
             addVerticalSpace(12),
           ],
+          if (announcements.isEmpty)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("No Announcements Found", style: TextStyle(fontSize: 16))
+              ],
+            ),
           for (Announcement announcement in announcements) ... [
             if (appState.isParent)
-              _announcementListItem(context, announcement)
+              _announcementListItem(context, announcement, appState.isParent)
             else
               _announcementListItemSlidable(context, announcement, appState.deleteAnnouncement),
             addVerticalSpace(8)
@@ -48,9 +56,13 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
       ),
     )
     );
+
+    return appState.isParent
+        ? Scaffold(appBar: AppBarCustom("All Announcements"), body: body)
+        : body;
   }
 
-    Widget _addClassAnnouncementButton() {
+  Widget _addClassAnnouncementButton() {
     return FractionallySizedBox(
       widthFactor: 0.55,
       child: TextButton(
@@ -114,10 +126,10 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
             ),
           ],
         ),
-        child: _announcementListItem(context, announcement));
+        child: _announcementListItem(context, announcement, false));
   }
 
-  Widget _announcementListItem(BuildContext context, Announcement announcement) {
+  Widget _announcementListItem(BuildContext context, Announcement announcement, bool isParent) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
@@ -152,8 +164,16 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis),
               addVerticalSpace(8),
-              Text("Posted ${timeago.format(announcement.time.toLocal())}",
-                  style: textTheme.bodySmall)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Posted ${timeago.format(announcement.time.toLocal())}",
+                      style: textTheme.bodySmall),
+
+                  if (isParent && !announcement.isRead)
+                    Text("Unread", style: textTheme.bodySmall!.copyWith(color: colorRed))
+                ],
+              )
             ],
           ),
         ),

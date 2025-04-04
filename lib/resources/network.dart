@@ -240,6 +240,10 @@ Uri removeClassroomAnnouncementUri(String announcementId) {
   return Uri.parse("$serverBaseUri/homeroom/announcements/$announcementId/delete");
 }
 
+Uri markAnnouncementReadUri(String announcementId, String childId) {
+  return Uri.parse("$serverBaseUri/children/$childId/classrooms/announcements/$announcementId/read");
+}
+
 // ***** Child Goals *****
 
 Uri getChildGoalsUri(String childId) {

@@ -696,4 +696,18 @@ class AppState extends ChangeNotifier {
     }
     return result;
   }
+
+  Future<bool> markAnnouncementAsRead(Announcement announcement) async {
+    String childId = (account as Parent).children[selectedChildID].id;
+    Announcement announce = (account as Parent).children[selectedChildID].classrooms
+        .expand((a) => a.announcements)
+        .firstWhere((a) => a.announcementId == announcement.announcementId);
+
+    bool result = await classroomService.markAnnouncementRead(announcement.announcementId, childId);
+    if (result) {
+      announce.isRead = true;
+      notifyListeners();
+    }
+    return result;
+  }
 }
