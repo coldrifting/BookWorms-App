@@ -138,7 +138,7 @@ class _AnnouncementsModifyScreenState
                     ),
                     addVerticalSpace(8),
                     ElevatedButton(
-                        onPressed: !_isValid ? null : () async {
+                        onPressed: !_isValid || !_hasChanges ? null : () async {
                           var result = isNewAnnouncement
                               ? await appState.addAnnouncement(
                                   _titleTextController.text.trim(),
