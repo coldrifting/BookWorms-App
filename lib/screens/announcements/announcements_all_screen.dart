@@ -23,10 +23,20 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
 
+    Map<String, String> announcementToClassNameMap = {};
+
     List<Announcement> announcements = (appState.isParent
         ? appState.children[appState.selectedChildID].classrooms.expand((a) => a.announcements)
         : appState.classroom!.announcements)
         .sortedBy((a) => a.time).reversed.toList();
+
+    if (appState.isParent) {
+      for (var classroom in appState.children[appState.selectedChildID].classrooms) {
+        for (var announcement in classroom.announcements) {
+          announcementToClassNameMap[announcement.announcementId] = classroom.classroomName;
+        }
+      }
+    }
 
     SingleChildScrollView body = SingleChildScrollView(
         child: Padding(
@@ -47,7 +57,7 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
             ),
           for (Announcement announcement in announcements) ... [
             if (appState.isParent)
-              _announcementListItem(context, announcement, appState.isParent)
+              _announcementListItem(context, announcement, appState.isParent, announcementToClassNameMap)
             else
               _announcementListItemSlidable(context, announcement, appState.deleteAnnouncement),
             addVerticalSpace(8)
@@ -129,7 +139,7 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
         child: _announcementListItem(context, announcement, false));
   }
 
-  Widget _announcementListItem(BuildContext context, Announcement announcement, bool isParent) {
+  Widget _announcementListItem(BuildContext context, Announcement announcement, bool isParent, [Map<String, String>? announcementToClassNameMap]) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
@@ -158,6 +168,9 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
                       size: 24, color: colorGreyDark),
                 ],
               ),
+              if (announcementToClassNameMap != null)
+                Text(announcementToClassNameMap[announcement.announcementId] ?? "",
+                style: TextStyle(color: colorGreenDark, fontStyle: FontStyle.italic),),
               addVerticalSpace(8),
               Text(announcement.body,
                   style: textTheme.bodyMedium,
