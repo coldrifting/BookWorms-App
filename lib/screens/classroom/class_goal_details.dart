@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/models/goals/student_goal_details.dart';
@@ -162,7 +163,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
           Spacer(),
           if (goal.goalMetric == "BooksRead")
             Text(
-              "${studentGoalDetails.progress}/${goal.target} books read", 
+              "${studentGoalDetails.progress}/${goal.target} read", 
               style: TextStyle(
                 color: goal.target <= studentGoalDetails.progress ? colorGreen : colorRed, 
                 fontWeight: FontWeight.bold
@@ -244,8 +245,14 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                await appState.deleteClassroomGoal(goal.goalId);
+                Result result;
+                if (appState.isParent) {
+                  result = await appState.deleteChildGoal(appState.children[appState.selectedChildID], goal.goalId!);
+                } else {
+                  result = await appState.deleteClassroomGoal(goal.goalId);
+                }
                 // TODO: Navigate out
+                resultAlert(context, result);
               },
               child: Text('Delete', style: TextStyle(color: colorRed)),
             ),

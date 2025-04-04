@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/classroom/class_announcements_tab.dart';
@@ -273,9 +274,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop();
-                await appState.deleteClassroom();
-                setState(() {});
+                Result result = await appState.deleteClassroom();
+                resultAlert(context, result);
               },
               child: const Text('Delete'),
             ),
@@ -313,8 +313,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             TextButton(
               onPressed: () async {
                 if (controller.text.trim().isNotEmpty) {
-                  Navigator.of(context).pop();
-                  Provider.of<AppState>(context, listen: false).renameClassroom(controller.text.trim());
+                  Result result = await Provider.of<AppState>(context, listen: false).renameClassroom(controller.text.trim());
+                  resultAlert(context, result);
                 }
               },
               style: TextButton.styleFrom(
@@ -363,13 +363,15 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         itemCount: classroomColors.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: () {
+            onTap: () async {
               // Change selected color and exit popup.
-              setState(() {
-                appState.changeClassroomIcon(index);
-                selectedIconIndex = index;
-              });
-              Navigator.of(context).pop();
+              Result result = await appState.changeClassroomIcon(index);
+              if (result.isSuccess) {
+                setState(() {
+                  selectedIconIndex = index;
+                });
+              }
+              resultAlert(context, result);
             },
             child: Material(
               shape: CircleBorder(

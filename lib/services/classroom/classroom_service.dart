@@ -40,110 +40,88 @@ class ClassroomService {
     }
   }
 
-  Future<bool> changeClassroomIcon(int newIcon) async {
+  Future<void> changeClassroomIcon(int newIcon) async {
     final response = await client.sendRequest(
       uri: changeClassroomIconUri(newIcon),
       method: "PUT");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when deleting the classroom.');
     }
   }
 
-  Future<bool> changeClassroomName(String newName) async {
+  Future<void> changeClassroomName(String newName) async {
     final response = await client.sendRequest(
       uri: renameClassroomUri(newName),
       method: "PUT");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when renaming the classroom.');
     }
   }
 
-  Future<bool> deleteClassroom() async {
+  Future<void> deleteClassroom() async {
     final response = await client.sendRequest(
       uri: deleteClassroomUri(),
       method: "DELETE");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when deleting the classroom.');
     }
   }
 
-  Future<bool> createClassroomBookshelf(Bookshelf bookshelf) async {
+  Future<void> createClassroomBookshelf(Bookshelf bookshelf) async {
     final response = await client.sendRequest(
       uri: createClassroomBookshelfUri(bookshelf.name),
       method: "POST");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when creating a new bookshelf.');
     }
   }
 
-  Future<bool> deleteClassroomBookshelf(Bookshelf bookshelf) async {
+  Future<void> deleteClassroomBookshelf(Bookshelf bookshelf) async {
     final response = await client.sendRequest(
       uri: deleteClassroomBookshelfUri(bookshelf.name),
       method: "DELETE");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when deleting the classroom bookshelf.');
     }
   }
 
-  Future<bool> renameClassroomBookshelf(String oldName, String newName) async {
+  Future<void> renameClassroomBookshelf(String oldName, String newName) async {
     final response = await client.sendRequest(
       uri: renameClassroomBookshelfUri(oldName, newName),
       method: "POST");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when renaming the classroom bookshelf.');
     }
   }
 
-  Future<bool> insertBookIntoClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
-    final response = await client.sendRequest(
+  Future<void> insertBookIntoClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+    await client.sendRequest(
       uri: insertIntoClassroomBookshelfUri(bookshelf.name, book.id),
       method: "PUT");
-
-    if (response.ok) {
-      return true;
-    } else {
-      throw Exception('An error occurred when adding the book to the bookshelf.');
-    }
   }
 
-  Future<bool> deleteStudentFromClassroom(String childId) async {
+  Future<void> deleteStudentFromClassroom(String childId) async {
     final response = await client.sendRequest(
       uri: removeStudentFromClassroomUri(childId),
       method: "DELETE");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when deleting the child from the classroom.');
     }
   }
 
-  Future<bool> removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+  Future<void> removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
     final response = await client.sendRequest(
       uri: removeBookFromClassroomBookshelfUri(bookshelf.name, book.id),
       method: "DELETE");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when remove the book from the bookshelf.');
     }
   }

@@ -1,8 +1,8 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/constants.dart';
-import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/services/book/book_difficulty_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
@@ -365,36 +365,14 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                                   : BookshelfType.classroom,
                               name: newBookshelfName,
                               books: [book]);
-                          var success = appState.isParent
+                          Result result = appState.isParent
                               ? await appState.addChildBookshelfWithBook(
                               appState.selectedChildID, bookshelf)
                               : await appState
                               .createClassroomBookshelfWithBook(bookshelf);
 
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor:
-                                success ? colorGreenDark : colorGreyDark,
-                                content: Row(
-                                  children: [
-                                    Text(
-                                        success
-                                            ? 'Saved book to new Bookshelf ${bookshelf
-                                            .name}.'
-                                            : 'Unable to create new bookshelf ${bookshelf
-                                            .name}.',
-                                        style: textTheme.titleSmallWhite),
-                                    Spacer(),
-                                    if (success)
-                                      Icon(Icons.check_circle_outline_rounded,
-                                          color: colorWhite)
-                                  ],
-                                ),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            Navigator.pop(context);
+                            resultAlert(context, result);
                           }
                         }
                       },
@@ -440,40 +418,18 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           ),
                         ),
                         onTap: () async {
-                          bool success;
+                          Result result;
                           if (appState.isParent) {
-                            success = await appState.addBookToBookshelf(
+                            result = await appState.addBookToBookshelf(
                                 appState.selectedChildID,
                                 bookshelf,
                                 bookSummary);
                           } else {
-                            success =
-                                await appState.addBookToClassroomBookshelf(
-                                    bookshelf, bookSummary);
+                            result = await appState.addBookToClassroomBookshelf(bookshelf, bookSummary);
                           }
 
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor:
-                                    success ? colorGreenDark : colorGreyDark,
-                                content: Row(
-                                  children: [
-                                    Text(
-                                        success
-                                            ? 'Saved book to ${bookshelf.name}.'
-                                            : 'Already saved to ${bookshelf.name}.',
-                                        style: textTheme.titleSmallWhite),
-                                    Spacer(),
-                                    if (success)
-                                      Icon(Icons.check_circle_outline_rounded,
-                                          color: colorWhite)
-                                  ],
-                                ),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            navState.pop(context);
+                            resultAlert(context, result);
                           }
                         },
                       ),

@@ -71,9 +71,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
-          onPressed: () {
-            pushScreen(context, EditChildScreen(childID: childID, child: child));
-          },
+          onPressed: () => pushScreen(context, EditChildScreen(childID: childID, child: child)),
           icon: CircleAvatar(
             maxRadius: 64,
             child: SizedBox.expand(
