@@ -4,7 +4,6 @@ import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
-import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
@@ -53,24 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
 
+    String headerTitle = "${isParent
+        ? "${appState.children[appState.selectedChildID].name}'s"
+        : "My"} Dashboard";
+
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Dashboard",
-          style: const TextStyle(color: colorWhite)
-        ),
-        backgroundColor: colorGreen,
-        actions: isParent ? [
-          BWShowcase(
-              showcaseKey: navKeys[0],
-              description: "You can switch to a different child by tapping your child's profile picture.",
-              targetShapeBorder: CircleBorder(),
-              tooltipActions: ["Previous", "Next"],
-              child: ChangeChildWidget()
-          ),
-        ] : [],
-      ),
+      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true),
       body: SingleChildScrollView(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

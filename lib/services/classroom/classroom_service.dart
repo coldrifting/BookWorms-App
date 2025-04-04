@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/classroom/announcement.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/utils/http_helpers.dart';
@@ -145,5 +146,50 @@ class ClassroomService {
     } else {
       throw Exception('An error occurred when remove the book from the bookshelf.');
     }
+  }
+
+  Future<Announcement?> addAnnouncement(String title, String body) async {
+    final response = await client.sendRequest(
+        uri: addClassroomAnnouncementUri(),
+        method: "POST",
+        payload: {
+          "title": title,
+          "body": body
+        });
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Announcement.fromJson(data);
+    }
+
+    return null;
+  }
+
+  Future<bool> editAnnouncement(String announcementId, String title, String body) async {
+    final response = await client.sendRequest(
+        uri: editClassroomAnnouncementUri(announcementId),
+        method: "PUT",
+        payload: {
+          "title": title,
+          "body": body
+        });
+
+    if (response.ok) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> deleteAnnouncement(String announcementId) async {
+    final response = await client.sendRequest(
+        uri: removeClassroomAnnouncementUri(announcementId),
+        method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    }
+
+    return false;
   }
 }

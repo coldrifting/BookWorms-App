@@ -7,7 +7,7 @@ import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/change_child_widget.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -47,27 +47,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
     List<BookSummary> books = bookshelf.books;
 
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          "${appState.isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Bookshelves", 
-          style: TextStyle(
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () { Navigator.of(context).pop(); },
-        ),
-        actions: [
-          appState.isParent ? ChangeChildWidget(
-            onChildChanged: () { Navigator.of(context).pop(); },
-          ) : SizedBox.shrink()
-        ],
-      ),
+      appBar: AppBarCustom("Bookshelf Details", isChildSwitcherEnabled: true),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView.builder(
@@ -86,7 +66,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                       Spacer(),
                       if (bookshelf.type != BookshelfType.recommended || bookshelf.type == BookshelfType.custom
                           || (!appState.isParent && bookshelf.type == BookshelfType.classroom))
-                        _dropDownMenu(textTheme),
+                        _dropDownMenu(textTheme, appState),
                     ],
                   ),
                 ],
@@ -108,7 +88,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
     );
   }
 
-  Widget _dropDownMenu(TextTheme textTheme) {
+  Widget _dropDownMenu(TextTheme textTheme, AppState appState) {
     return MenuAnchor(
       controller: _menuController,
       builder: (BuildContext context, MenuController controller, Widget? child) {
@@ -173,78 +153,51 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
     );
   }
 
-  Future<void> _showEditBookshelfNameDialog(TextTheme textTheme) {
-    TextEditingController controller = TextEditingController();
+  void _showEditBookshelfNameDialog(TextTheme textTheme) async {
+    String? newBookshelfName = await showTextEntryDialog(
+        context,
+        "Rename Bookshelf",
+        "Enter a new bookshelf name",
+        confirmText: "Rename");
 
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Rename Bookshelf')),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  hintText: "Enter a new bookshelf name",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: colorGreyDark)),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (controller.text.trim().isNotEmpty) {
-                  Navigator.of(context).pop();
-                  Provider.of<AppState>(context, listen: false).renameClassroomBookshelf(bookshelf.name, controller.text.trim());
-                }
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: colorGreen,
-                foregroundColor: colorWhite
-              ),
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
+    if (newBookshelfName != null) {
+      _renameBookshelf(newBookshelfName);
+    }
   }
 
-  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Delete Bookshelf')),
-          content: const Text(
-            textAlign: TextAlign.center,
-            'Are you sure you want to permanently delete this bookshelf?'
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deleteBookshelf();
-              },
-              child: Text('Delete', style: TextStyle(color: colorRed)),
-            ),
-          ],
-        );
-      },
-    );
+  void _showDeleteConfirmationDialog(TextTheme textTheme) async {
+    bool? shouldDeleteBookshelf = await showConfirmDialog(
+        context,
+        "Delete Bookshelf",
+        "Are you sure you want to permanently delete this bookshelf?",
+        confirmText: "Delete",
+        confirmColor: colorRed);
+
+    if (shouldDeleteBookshelf) {
+      _deleteBookshelf();
+    }
+  }
+
+  void _renameBookshelf(String newName) {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    if (appState.isParent) {
+      setState(() {
+        appState.renameChildBookshelf(appState.selectedChildID, bookshelf, newName);
+      });
+
+      // Not sure why this hack is needed to keep things in sync, but it seems to work
+      // Currently books seem to sync between tabs for classroom shelves,
+      // but they don't stay in sync for children bookshelf's
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          setState(() {
+            bookshelf.name = newName;
+          });
+        }
+      });
+    } else {
+      appState.renameClassroomBookshelf(bookshelf.name, newName);
+    }
   }
 
   /// Deleting a bookshelf navigates to the bookshelf screen and removes the bookshelf.

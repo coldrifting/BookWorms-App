@@ -31,7 +31,7 @@ class OptionWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(size: 48, icon),
+          Icon(size: 48, icon, color: colorBlack),
           addHorizontalSpace(16),
           Text(
             name,
