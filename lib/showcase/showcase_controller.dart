@@ -103,7 +103,7 @@ class ShowcaseState {
     'teacher': {
       'home': 2,
       'search': 2,
-      'classroom': 2,
+      'classroom': 1,
       'profile': 2,
       'navigation': 6 // 4 screens + beginning and ending cards
     }

@@ -1,8 +1,11 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class CreateClassroomScreen extends StatefulWidget {
   const CreateClassroomScreen({super.key});
@@ -14,6 +17,9 @@ class CreateClassroomScreen extends StatefulWidget {
 class _CreateClassroomScreenState extends State<CreateClassroomScreen> {
   final TextEditingController _textEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('classroom');
 
   @override
   void dispose() {
@@ -34,38 +40,54 @@ class _CreateClassroomScreenState extends State<CreateClassroomScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Center(
-                child: Text(
-                  "Create a Classroom",
-                  style: textTheme.headlineSmall,
-                ),
-              ),
-              addVerticalSpace(16),
-              TextFormField(
-                controller: _textEditingController,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter classroom name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a classroom name';
-                  }
-                  return null;
-                },
-              ),
-              addVerticalSpace(16),
-              TextButton(
-                onPressed: () async {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    final classroomName = _textEditingController.text;
-                    await appState.createNewClassroom(classroomName);
+              BWShowcase(
+                showcaseKey: navKeys[0],
+                title: "Start an amazing classroom here!",
+                description:
+                "Classrooms have many exciting features. "
+                    "You can create class lists, set class goals and reading assignments, "
+                    "and even send notifications to parents of students in your class.\n"
+                    "Create one after the tutorial to get started!",
+                targetPadding: EdgeInsets.all(16),
+                tooltipPosition: TooltipPosition.top,
+                tooltipActions: ["Previous", "Next"],
+                child: Column(
+                  children: [
+                    Center(
+                      child: Text(
+                        "Create a Classroom",
+                        style: textTheme.headlineSmall,
+                      ),
+                    ),
+                    addVerticalSpace(16),
+                    TextFormField(
+                      controller: _textEditingController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter classroom name'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a classroom name';
+                        }
+                        return null;
+                      },
+                    ),
+                    addVerticalSpace(16),
+                    TextButton(
+                      onPressed: () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          final classroomName = _textEditingController.text;
+                          await appState.createNewClassroom(classroomName);
 
-                    if (context.mounted) {
-                      pushScreen(context, ClassroomScreen(), replace: true);
-                    }
-                  }
-                },
-                child: const Text('CREATE'),
+                            if (context.mounted) {
+                              pushScreen(context, ClassroomScreen(), replace: true);
+                            }
+                          }
+                        },
+                        child: const Text('CREATE'),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
