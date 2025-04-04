@@ -167,7 +167,7 @@ class _Navigation extends State<Navigation> {
                               title: "Welcome to BookWorms!",
                               description: "Let us show you around.\nYou can view this tutorial again\nat any time from the Profile page.",
                               disableMovingAnimation: true,
-                              tooltipActions: ["Skip Tutorial", "Get Started"],
+                              tooltipActions: TooltipActionSet.start,
                               showArrow: false,
                               child: SizedBox(
                                   width: 0,
@@ -190,6 +190,7 @@ class _Navigation extends State<Navigation> {
                               showcaseKey: navKeys.last,
                               title: "You're all ready!",
                               description: "You can view this tutorial again\nat any time from the Profile page.",
+                              tooltipActions: TooltipActionSet.none,
                               disableMovingAnimation: true,
                               showArrow: false,
                               child: SizedBox(
@@ -252,8 +253,9 @@ List<Widget> getDestWidgets(bool isParent, List<GlobalKey> navKeys) {
           showcaseKey: navKeys[index + 1],
           description: dest.showcaseDescription,
           toScreen: index,
-          tooltipActions: dest.label == "Home" ? [] : ["Previous"],
-          tooltipAlignment: dest.label == "Home" ? MainAxisAlignment.start : null,
+          tooltipActions: dest.label == "Home"
+              ? TooltipActionSet.noPrev
+              : TooltipActionSet.basic,
           tooltipBorderRadius: BorderRadius.circular(6),
           child: NavigationDestination(
               selectedIcon: Icon(dest.selectedIcon, color: colorGreenDark),
@@ -269,7 +271,7 @@ List<Destination> dest = [
       label: "Home",
       widget: const HomeScreen(),
       icon: Icons.home_outlined,
-      showcaseDescription: "First: See upcoming goals, a progress summary, and more on the Home screen\n(Click me!)",
+      showcaseDescription: "First: See upcoming goals, a progress summary, and more on the Home screen\n(Try it!)",
       selectedIcon: Icons.home),
   Destination(
       label: "Bookshelf",

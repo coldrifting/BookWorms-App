@@ -66,13 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
               BWShowcase(
                 showcaseKey: isParent ? navKeys[1] : navKeys[0],
                 description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
-                tooltipActions: [ "Previous", "Next"],
                 child: _displayGoalProgress(textTheme)
               ),
               BWShowcase(
                 showcaseKey: isParent ? navKeys[2] : navKeys[1],
                 description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
-                tooltipActions: [ "Previous", "Next"],
                 child: _displayBookshelves(textTheme)
               ),
             ],

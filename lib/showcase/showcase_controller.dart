@@ -57,11 +57,6 @@ class ShowcaseController {
 
   void goToScreen(int index) => _requireState.navFunction(index);
 
-  void skipToEnd() {
-    _requireState.showcase.dismiss();
-    _requireState.showcase.startShowCase([_requireState.showcaseKeysList.last]);
-  }
-
 
   List<GlobalKey> getKeysForScreen(String screenName) {
     return _requireState.showcaseKeys[screenName] ?? [];

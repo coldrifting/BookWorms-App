@@ -86,14 +86,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   showcaseKey: navKeys[0],
                   description: "[Description of Overall Progress]",
                   targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  tooltipActions: ["Previous", "Next"],
                   child: Tab(text: "Overall Progress")
                 ),
                 BWShowcase(
                   showcaseKey: navKeys[1],
                   description: "Switch to \"Goal Progress\" to make and track goals for your child",
                   targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  tooltipActions: ["Previous", "Next"],
                   child: Tab(text: "Goal Progress")
                 ),
               ],

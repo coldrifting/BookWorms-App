@@ -43,7 +43,6 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         description: "You can even add your own custom bookshelves!",
         targetPadding: EdgeInsets.all(6),
         tooltipBorderRadius: BorderRadius.circular(16),
-        tooltipActions: ["Previous", "Next"],
         child: floatingActionButtonWithText("Add Bookshelf", Icons.add, () async {
           String? newBookshelfName = await showTextEntryDialog(context, "Create New Bookshelf", "Bookshelf Name");
           if (newBookshelfName != null) {
@@ -69,7 +68,6 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                           "Bookshelves are your way to make custom book lists. "
                           "You get \"Completed\" and \"In Progress\" automatically. "
                           "Bookshelves from your child's classroom(s) will also appear on this screen.",
-                        tooltipActions: ["Previous", "Next"],
                         tooltipBorderRadius: BorderRadius.circular(6),
                         child: InkWell(
                           onTap: () {

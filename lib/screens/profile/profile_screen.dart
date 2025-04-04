@@ -66,7 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   showcaseKey: navKeys[0],
                   description: "Edit your account details",
                   tooltipBorderRadius: BorderRadius.circular(6),
-                  tooltipActions: ["Previous", "Next"],
                   child: OptionWidget(
                       name: "Edit Profile",
                       icon: Icons.account_circle,
@@ -80,7 +79,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     showcaseKey: navKeys[1],
                     description: "Manage your children, including adding them to classrooms",
                     tooltipBorderRadius: BorderRadius.circular(6),
-                    tooltipActions: ["Previous", "Next"],
                     child: OptionWidget(
                         name: "Manage Children",
                         icon: Icons.groups_rounded,
@@ -100,7 +98,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   showcaseKey: isParent ? navKeys[2] : navKeys[1],
                   description: "View this tutorial again",
                   tooltipBorderRadius: BorderRadius.circular(6),
-                  tooltipActions: ["Previous", "Next"],
                   tooltipPosition: TooltipPosition.top,
                   child: OptionWidget(
                       name: "Tutorial",

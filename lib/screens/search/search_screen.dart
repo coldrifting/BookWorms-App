@@ -278,14 +278,12 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                   showcaseKey: navKeys[0],
                   description: "Your recently searched books will appear under this tab",
                   targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  tooltipActions: ["Previous", "Next"],
                   child: Tab(text: "Recents")
               ),
               BWShowcase(
                   showcaseKey: navKeys[1],
                   description: "Switch to this tab to access more search options",
                   targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  tooltipActions: ["Previous", "Next"],
                   child: Tab(text: "Advanced Search")
               ),
             ],

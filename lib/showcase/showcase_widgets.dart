@@ -13,7 +13,7 @@ class BWShowcase extends StatefulWidget {
   final BorderRadius? tooltipBorderRadius;
   final bool showArrow;
   final bool? disableMovingAnimation;
-  final List<String>? tooltipActions;
+  final TooltipActionSet tooltipActions;
   final MainAxisAlignment? tooltipAlignment;
   final TooltipPosition? tooltipPosition;
   final int? toScreen;
@@ -31,7 +31,7 @@ class BWShowcase extends StatefulWidget {
     this.tooltipBorderRadius,
     this.showArrow = true,
     this.disableMovingAnimation = false,
-    this.tooltipActions,
+    this.tooltipActions = TooltipActionSet.basic,
     this.tooltipAlignment,
     this.tooltipPosition,
     this.toScreen
@@ -59,20 +59,15 @@ class _BWShowcaseState extends State<BWShowcase> {
         showcaseController.goToScreen(widget.toScreen!);
         showcaseController.next();
       },
-      onBarrierClick: showcaseController.skipToEnd,
+      onBarrierClick: showcaseController.next,
       disposeOnTap: widget.toScreen == null ? null : false,
-      tooltipActions: widget.tooltipActions
-          ?.map((name) =>
-              _actionButtonFromName(name, widget.toScreen))
-          .toList(),
+      tooltipActions: _getActionButtons(widget.tooltipActions, widget.toScreen),
       tooltipPadding: const EdgeInsets.all(25),
-      tooltipActionConfig: widget.tooltipActions == null
-        ? null
-        : TooltipActionConfig(
-            alignment: widget.tooltipAlignment ?? MainAxisAlignment.spaceBetween,
-            position: TooltipActionPosition.outside,
-            gapBetweenContentAndAction: 10
-          ),
+      tooltipActionConfig: TooltipActionConfig(
+          alignment: widget.tooltipAlignment ?? MainAxisAlignment.spaceBetween,
+          position: TooltipActionPosition.outside,
+          gapBetweenContentAndAction: 6
+        ),
       tooltipPosition: widget.tooltipPosition,
       disableMovingAnimation: widget.disableMovingAnimation,
       showArrow: widget.showArrow,
@@ -80,26 +75,80 @@ class _BWShowcaseState extends State<BWShowcase> {
     );
   }
 
-  TooltipActionButton _actionButtonFromName(String name, int? toScreen) {
-    switch (name) {
-      case "Next":
-      case "Get Started":
-        return _nextButton(name, toScreen);
-      case "Previous":
-      case "Back":
-        return _prevButton(name, toScreen);
-      case "Skip Tutorial":
-        return _dismissButton(name);
-      default:
-        return _nextButton(name, toScreen);
+
+  List<TooltipActionButton> _getActionButtons(TooltipActionSet actionSet, int? toScreen) {
+    switch (actionSet) {
+      case TooltipActionSet.start:
+        return [
+          _skipButton(),
+          _startButton()
+        ];
+      case TooltipActionSet.basic:
+        return [
+          _dismissButton(),
+          _spacerButton(),
+          _spacerButton(),
+          _prevButton(toScreen),
+          _nextButton(toScreen)
+        ];
+      case TooltipActionSet.noPrev:
+        return [
+          _dismissButton(),
+          _nextButton(toScreen)
+        ];
+      case TooltipActionSet.none:
+        return [];
     }
   }
 
-  TooltipActionButton _nextButton(String name, int? toScreen) {
+  TooltipActionButton _startButton() {
     return TooltipActionButton(
         type: TooltipDefaultActionType.next,
-        name: name,
+        name: "Get Started",
+        tailIcon: ActionButtonIcon(
+            icon: Icon(
+                Icons.chevron_right,
+                color: Colors.white,
+                size: 16
+            )
+        ),
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+        backgroundColor: colorGreen,
+        textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        onTap: showcaseController.next
+    );
+  }
+
+  TooltipActionButton _skipButton() {
+    return TooltipActionButton(
+        type: TooltipDefaultActionType.next,
+        name: "Skip Tutorial",
+        tailIcon: ActionButtonIcon(
+            icon: Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 16
+            )
+        ),
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+        backgroundColor: Colors.transparent,
+        textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        onTap: showcaseController.dismiss
+    );
+  }
+
+  TooltipActionButton _nextButton(int? toScreen) {
+    return TooltipActionButton(
+        type: TooltipDefaultActionType.next,
+        name: "",
+        tailIcon: ActionButtonIcon(
+            icon: Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+              size: 24
+            )
+        ),
+        padding: const EdgeInsets.fromLTRB(0, 5, 4, 5),
         backgroundColor: colorGreen,
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
@@ -109,12 +158,19 @@ class _BWShowcaseState extends State<BWShowcase> {
     );
   }
 
-  TooltipActionButton _prevButton(String name, int? toScreen) {
+  TooltipActionButton _prevButton(int? toScreen) {
     return TooltipActionButton(
         type: TooltipDefaultActionType.previous,
-        name: name,
-        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-        backgroundColor: Colors.transparent,
+        name: "",
+        tailIcon: ActionButtonIcon(
+            icon: Icon(
+                Icons.chevron_left,
+                color: Colors.white,
+                size: 24
+            )
+        ),
+        padding: const EdgeInsets.fromLTRB(0, 5, 4, 5),
+        backgroundColor: colorGreen,
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
           if (toScreen != null) {
@@ -126,15 +182,39 @@ class _BWShowcaseState extends State<BWShowcase> {
     );
   }
 
-  TooltipActionButton _dismissButton(String name) {
+  TooltipActionButton _spacerButton() {
+    return TooltipActionButton(
+        type: TooltipDefaultActionType.next,
+        name: "Spacer",
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+        backgroundColor: Colors.transparent,
+        textStyle: TextStyle(color: Colors.transparent),
+        onTap: () {}
+    );
+  }
+
+  TooltipActionButton _dismissButton() {
     return TooltipActionButton(
         type: TooltipDefaultActionType.skip,
-        name: name,
-        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+        name: "",
+        tailIcon: ActionButtonIcon(
+            icon: Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 24
+            )
+        ),
+        padding: const EdgeInsets.fromLTRB(0, 5, 4, 5),
         backgroundColor: Colors.transparent,
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: showcaseController.dismiss
     );
   }
+}
 
+enum TooltipActionSet {
+  start,
+  basic,
+  noPrev,
+  none
 }

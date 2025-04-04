@@ -50,7 +50,6 @@ class _CreateClassroomScreenState extends State<CreateClassroomScreen> {
                     "Create one after the tutorial to get started!",
                 targetPadding: EdgeInsets.all(16),
                 tooltipPosition: TooltipPosition.top,
-                tooltipActions: ["Previous", "Next"],
                 child: Column(
                   children: [
                     Center(

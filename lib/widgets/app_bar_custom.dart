@@ -55,7 +55,6 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                   showcaseKey: homePageShowcaseKey!,
                   description: "You can switch to a different child by tapping your child's profile picture",
                   targetShapeBorder: CircleBorder(),
-                  tooltipActions: ["Previous", "Next"],
                   child: ChangeChildWidget(
                       onChildChanged: () {
                         while (Navigator.of(context).canPop()) {
