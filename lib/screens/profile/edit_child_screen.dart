@@ -184,7 +184,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
               ),
               addVerticalSpace(16),
               if (appState.children.length > widget.childID 
-                && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) > 0)
+                && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) >= 0)
                 _classroomList(textTheme),
               addVerticalSpace(32),  
               Row(
