@@ -373,29 +373,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                               .createClassroomBookshelfWithBook(bookshelf);
 
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor:
-                                result.isSuccess ? colorGreenDark : colorGreyDark,
-                                content: Row(
-                                  children: [
-                                    Text(
-                                        result.isSuccess
-                                            ? 'Saved book to new Bookshelf ${bookshelf
-                                            .name}.'
-                                            : 'Unable to create new bookshelf ${bookshelf
-                                            .name}.',
-                                        style: textTheme.titleSmallWhite),
-                                    Spacer(),
-                                    if (result.isSuccess)
-                                      Icon(Icons.check_circle_outline_rounded,
-                                          color: colorWhite)
-                                  ],
-                                ),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            Navigator.pop(context);
+                            resultAlert(context, result);
                           }
                         }
                       },
@@ -441,42 +419,18 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           ),
                         ),
                         onTap: () async {
-                          bool success;
+                          Result result;
                           if (appState.isParent) {
-                            Result result = await appState.addBookToBookshelf(
+                            result = await appState.addBookToBookshelf(
                                 appState.selectedChildID,
                                 bookshelf,
                                 bookSummary);
-                            success = result.isSuccess;
                           } else {
-                            Result result = 
-                                await appState.addBookToClassroomBookshelf(
-                                    bookshelf, bookSummary);
-                            success = result.isSuccess;
+                            result = await appState.addBookToClassroomBookshelf(bookshelf, bookSummary);
                           }
 
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor:
-                                    success ? colorGreenDark : colorGreyDark,
-                                content: Row(
-                                  children: [
-                                    Text(
-                                        success
-                                            ? 'Saved book to ${bookshelf.name}.'
-                                            : 'Already saved to ${bookshelf.name}.',
-                                        style: textTheme.titleSmallWhite),
-                                    Spacer(),
-                                    if (success)
-                                      Icon(Icons.check_circle_outline_rounded,
-                                          color: colorWhite)
-                                  ],
-                                ),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            navState.pop(context);
+                            resultAlert(context, result);
                           }
                         },
                       ),

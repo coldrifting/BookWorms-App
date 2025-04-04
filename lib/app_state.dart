@@ -381,7 +381,7 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return Result(isSuccess: true, message: "Successfully created the bookshelf.");
     } catch (_) {
-      return Result(isSuccess: true, message: "Failed to create the bookshelf.");
+      return Result(isSuccess: false, message: "Failed to create the bookshelf.");
     }
   }
 
@@ -443,7 +443,7 @@ class AppState extends ChangeNotifier {
         bookshelves[index].books.removeWhere((b) => b.id == book.id);
         _setBookImages([bookshelf]);
         notifyListeners();
-        return Result(isSuccess: true, message: "Successfully added the book to the bookshelf.");
+        return Result(isSuccess: true, message: "Successfully deleted the book from the bookshelf.");
       }
     } catch (_) {
       return Result(isSuccess: false, message: "Failed to delete the book from the bookshelf.");

@@ -192,7 +192,7 @@ dynamic resultAlert(BuildContext context, Result result) {
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: result.isSuccess ? colorGreenDark : colorRed,
+        backgroundColor: result.color ?? (result.isSuccess ? colorGreenDark : colorRed),
         content: Row(
           children: [
             Text(

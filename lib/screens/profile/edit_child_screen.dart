@@ -183,7 +183,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 ],
               ),
               addVerticalSpace(16),
-              _classroomList(textTheme),
+              if (appState.children.length > widget.childID 
+                && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) > 0)
+                _classroomList(textTheme),
               addVerticalSpace(32),  
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -481,8 +483,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
   }
 
   Widget _deleteChildButton(TextTheme textTheme, NavigatorState navState) {
-    AppState appState = Provider.of<AppState>(context);
-
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: colorRed,
@@ -492,47 +492,50 @@ class _EditChildScreenState extends State<EditChildScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
       ),
-        onPressed: () async {
-          if (Provider
-              .of<AppState>(context, listen: false)
-              .children
-              .length > 1) {
-            bool result = await showConfirmDialog(
-                context,
-                "Delete Child Profile",
-                "Are you sure you want to delete the child profile of ${widget
-                    .child.name}?",
-                confirmText: "Delete",
-                confirmColor: colorRed);
+      onPressed: () async {
+        AppState appState = Provider.of<AppState>(context, listen: false);
 
-            if (result && mounted) {
-              Provider.of<AppState>(context, listen: false).removeChild(
-                  widget.child.id);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: colorRed,
-                  content: Row(
-                    children: [
-                      Text('Removed ${widget.child.name} from children',
-                          style: textTheme.titleSmallWhite),
-                      Spacer(),
-                      Icon(Icons.close_rounded, color: colorWhite)
-                    ],
-                  ),
-                  duration: Duration(seconds: 2),
-            ),
-          );
-          navState.pop(true);
-        }
+        if (appState.children.length > 1) {
+          bool dialogResult = await showConfirmDialog(
+              context,
+              "Delete Child Profile",
+              "Are you sure you want to delete the child profile of ${widget
+                  .child.name}?",
+              confirmText: "Delete",
+              confirmColor: colorRed);
+
+          if (dialogResult && mounted) {
+            Result result = await appState.removeChild(widget.child.id);
+            if (mounted) {
+              resultAlert(context, result);
+            }
+          }
         }
         else {
-          await showConfirmDialog(context,
-              "Delete Child Profile",
-              'You cannot delete all child profiles from your account.',
-              confirmText: "OK");
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Center(
+                  child: Text('Delete Child Profile')
+                ),
+                content: const Text('You cannot delete all child profiles from your account.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'OK'),
+                    child: Text('OK', style: TextStyle(color: colorGreen),
+                    ),
+                  ),
+                ],
+              );
+            }
+          );
         }
       },
-      child: Text('Delete Child', style: textTheme.titleSmallWhite),
+      child: Text(
+        'Delete Child',
+        style: textTheme.titleSmallWhite,
+      ),
     );
   }
 

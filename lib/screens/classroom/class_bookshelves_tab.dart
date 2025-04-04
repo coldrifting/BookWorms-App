@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/colors.dart';
@@ -85,18 +86,11 @@ class _ClassBookshelvesState extends State<ClassBookshelves> {
               child: Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 String name = controller.text.trim();
                 if (name.isNotEmpty) {
-                  Navigator.pop(context, name);
-                  if (appState.isParent) {
-                    appState.addChildBookshelf(
-                      appState.selectedChildID, 
-                      Bookshelf(type: BookshelfType.custom, name: name, books: [])
-                    );
-                  } else {
-                    appState.createClassroomBookshelf(Bookshelf(type: BookshelfType.classroom, name: name, books: []));
-                  }
+                  Result result = await appState.createClassroomBookshelf(Bookshelf(type: BookshelfType.classroom, name: name, books: []));
+                  resultAlert(context, result);
                 }
               },
               style: ElevatedButton.styleFrom(

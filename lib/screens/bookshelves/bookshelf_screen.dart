@@ -179,36 +179,46 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
     }
   }
 
-  void _renameBookshelf(String newName) {
+  void _renameBookshelf(String newName) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
+    Result result;
     if (appState.isParent) {
-      setState(() {
-        appState.renameChildBookshelf(appState.selectedChildID, bookshelf, newName);
-      });
+      result = await appState.renameChildBookshelf(appState.selectedChildID, bookshelf, newName);
 
+      setState(() {
+        bookshelf.name = newName;
+      });
       // Not sure why this hack is needed to keep things in sync, but it seems to work
       // Currently books seem to sync between tabs for classroom shelves,
-      // but they don't stay in sync for children bookshelf's
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) {
-          setState(() {
-            bookshelf.name = newName;
-          });
-        }
-      });
+      // but they don't stay in sync for children bookshelves.
+      // Future.delayed(const Duration(milliseconds: 100), () {
+      //   if (mounted) {
+      //     setState(() {
+      //       bookshelf.name = newName;
+      //     });
+      //   }
+      // });
     } else {
-      appState.renameClassroomBookshelf(bookshelf.name, newName);
+      result = await appState.renameClassroomBookshelf(bookshelf.name, newName);
+    }
+
+    if (mounted) {
+      resultAlert(context, result);
     }
   }
 
   /// Deleting a bookshelf navigates to the bookshelf screen and removes the bookshelf.
-  void _deleteBookshelf() {
+  void _deleteBookshelf() async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    Navigator.of(context).pop();
+    Result result;
     if (appState.isParent) {
-      appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
+      result = await appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
     } else {
-      appState.deleteClassroomBookshelf(bookshelf);
+      result = await appState.deleteClassroomBookshelf(bookshelf);
+    }
+
+    if (mounted) {
+      resultAlert(context, result);
     }
   }
 
@@ -245,19 +255,22 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
             setState(() {
               bookshelf.books.removeWhere((b) => b.id == book.id);
             });
+            resultAlert(context, result);
           },
         ),
         children: [
           SlidableAction(
-            onPressed: (BuildContext context) { 
+            onPressed: (BuildContext context) async { 
+              Result result;
               if (appState.isParent) {
-                appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
+                result = await appState.removeBookFromBookshelf(appState.selectedChildID, bookshelf, book.id);
               } else {
-                appState.removeBookFromClassroomBookshelf(bookshelf, book);
+                result = await appState.removeBookFromClassroomBookshelf(bookshelf, book);
               }
               setState(() {
                 bookshelf.books.removeWhere((b) => b.id == book.id);
               });
+              resultAlert(context, result);
             },
             backgroundColor: colorRed,
             foregroundColor: colorWhite,
