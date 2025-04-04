@@ -1,4 +1,5 @@
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/classroom/announcement.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/goals/child_goal.dart';
 
@@ -11,6 +12,7 @@ class Child {
   List<Bookshelf> bookshelves = [];
   List<Classroom> classrooms = [];
   List<ChildGoal> goals = [];
+  List<Announcement> announcements = [];
 
   Child({
     required this.id,
