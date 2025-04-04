@@ -23,7 +23,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
   late dynamic futureGoals = [];
   late dynamic displayedGoals;
   late String selectedGoalsTitle = "Active";
-  late bool isChildGoal;
 
   // Groups the goals into their respective lists (past / active / future goals).
   void _organizeGoals() {
@@ -45,7 +44,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
         activeGoals.add(goal);
       }
     }
-    isChildGoal = goals is! List<ClassroomGoal>;
     displayedGoals = activeGoals;
   }
 
@@ -207,7 +205,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
       ),
       child: InkWell(
         onTap: () {
-          if (!isChildGoal) { _navigateToGoalDetails(context, appState, goal); }
+          if (!appState.isParent) { _navigateToGoalDetails(context, appState, goal); }
         },
         child: Padding(
           padding: const EdgeInsets.all(12.0),

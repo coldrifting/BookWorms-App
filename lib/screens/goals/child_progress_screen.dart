@@ -6,11 +6,11 @@ import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/resources/colors.dart';
 
 /// The [ProgressScreen] contains information about the selected child's
@@ -84,7 +84,24 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ],
               ),
             ),
-            Text(style: textTheme.bodyLarge, "Reading Level: A"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(style: textTheme.bodyLarge, "Reading Level: ${selectedChild.readingLevel}"),
+                RawMaterialButton(
+                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
+                  shape: const CircleBorder(),
+                  constraints: BoxConstraints(
+                    maxWidth: 40,
+                  ),
+                  child: const Icon(
+                    Icons.help_outline,
+                    color: colorBlack,
+                    size: 20
+                  )
+                ),
+              ],
+            ),
             const Divider(),
             // Overall progress and Goal progress tabs.
             _tabBar(),
