@@ -1,12 +1,14 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child/child.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
-import 'package:bookworms_app/resources/colors.dart';
 
 /// The [ProgressScreen] contains information about the selected child's
 /// progress toward their set custom goals.
@@ -19,6 +21,8 @@ class ProgressScreen extends StatefulWidget {
 
 /// The state of the [ProgressScreen].
 class _ProgressScreenState extends State<ProgressScreen> {
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('progress');
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +81,21 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Column(
           children: [
             TabBar(
-              tabs: const [
-                Tab(text: "Overall Progress"),
-                Tab(text: "Goal Progress"),
+              tabs: [
+                BWShowcase(
+                  showcaseKey: navKeys[0],
+                  description: "[Description of Overall Progress]",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  tooltipActions: ["Previous", "Next"],
+                  child: Tab(text: "Overall Progress")
+                ),
+                BWShowcase(
+                  showcaseKey: navKeys[1],
+                  description: "Switch to \"Goal Progress\" to make and track goals for your child",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  tooltipActions: ["Previous", "Next"],
+                  child: Tab(text: "Goal Progress")
+                ),
               ],
               unselectedLabelColor: colorGrey,
             ),
