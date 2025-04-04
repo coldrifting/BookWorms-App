@@ -1,14 +1,16 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
 
 /// The [BookshelvesScreen] contains a user's curated/personal bookshelves. The
 /// user is able to add a new bookshelf here, or access their current bookshelves.
@@ -21,6 +23,9 @@ class BookshelvesScreen extends StatefulWidget {
 
 /// The state of [BookshelvesScreen].
 class _BookshelvesScreenState extends State<BookshelvesScreen> {
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('bookshelves');
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -33,13 +38,19 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
 
     return Scaffold(
       appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true),
-      floatingActionButton: floatingActionButtonWithText("Add Bookshelf", Icons.add, () async {
-        String? newBookshelfName = await showTextEntryDialog(context, "Create New Bookshelf", "Bookshelf Name");
-        if (newBookshelfName != null) {
-          appState.addChildBookshelf(appState.selectedChildID,
-              Bookshelf(type: BookshelfType.custom, name: newBookshelfName, books: []));
-        }
-      }),
+      floatingActionButton: BWShowcase(
+        showcaseKey: navKeys[1],
+        description: "You can even add your own custom bookshelves!",
+        targetPadding: EdgeInsets.all(6),
+        tooltipBorderRadius: BorderRadius.circular(16),
+        child: floatingActionButtonWithText("Add Bookshelf", Icons.add, () async {
+          String? newBookshelfName = await showTextEntryDialog(context, "Create New Bookshelf", "Bookshelf Name");
+          if (newBookshelfName != null) {
+            appState.addChildBookshelf(appState.selectedChildID,
+                Bookshelf(type: BookshelfType.custom, name: newBookshelfName, books: []));
+          }
+        }),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView.builder(
@@ -49,12 +60,27 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
               return Column(
                 children: [
                   addVerticalSpace(16),
-                  InkWell(
-                      onTap: () {
-                        onBookClicked(index);
-                      },
-                      child: _bookshelfWidget(textTheme, index)),
-                  addVerticalSpace(bottomPadding)
+                  index == 1
+                    ? BWShowcase(
+                        showcaseKey: navKeys[0],
+                        title: "This is a Bookshelf",
+                        description:
+                          "Bookshelves are your way to make custom book lists. "
+                          "You get \"Completed\" and \"In Progress\" automatically. "
+                          "Bookshelves from your child's classroom(s) will also appear on this screen.",
+                        tooltipBorderRadius: BorderRadius.circular(6),
+                        child: InkWell(
+                          onTap: () {
+                            onBookClicked(index);
+                          },
+                          child: _bookshelfWidget(textTheme, index)),
+                    )
+                    : InkWell(
+                        onTap: () {
+                          onBookClicked(index);
+                        },
+                        child: _bookshelfWidget(textTheme, index)),
+                    addVerticalSpace(bottomPadding)
                 ],
               );
             }),
