@@ -167,7 +167,7 @@ class _Navigation extends State<Navigation> {
                               title: "Welcome to BookWorms!",
                               description: "Let us show you around.\nYou can view this tutorial again\nat any time from the Profile page.",
                               disableMovingAnimation: true,
-                              tooltipActions: ["Skip tutorial", "Get Started"],
+                              tooltipActions: ["Skip Tutorial", "Get Started"],
                               showArrow: false,
                               child: SizedBox(
                                   width: 0,
@@ -254,6 +254,7 @@ List<Widget> getDestWidgets(bool isParent, List<GlobalKey> navKeys) {
           toScreen: index,
           tooltipActions: dest.label == "Home" ? [] : ["Previous"],
           tooltipAlignment: dest.label == "Home" ? MainAxisAlignment.start : null,
+          tooltipBorderRadius: BorderRadius.circular(6),
           child: NavigationDestination(
               selectedIcon: Icon(dest.selectedIcon, color: colorGreenDark),
               icon: Icon(dest.icon, color: colorWhite),

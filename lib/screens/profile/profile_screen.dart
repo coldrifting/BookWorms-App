@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   tooltipActions: ["Previous", "Next"],
                   tooltipPosition: TooltipPosition.top,
                   child: OptionWidget(
-                      name: "Help",
+                      name: "Tutorial",
                       icon: Icons.help,
                       onTap:() {
                         showcaseController.goToScreen(0);

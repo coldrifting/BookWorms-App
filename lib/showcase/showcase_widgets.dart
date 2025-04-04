@@ -88,7 +88,7 @@ class _BWShowcaseState extends State<BWShowcase> {
       case "Previous":
       case "Back":
         return _prevButton(name, toScreen);
-      case "Skip tutorial":
+      case "Skip Tutorial":
         return _dismissButton(name);
       default:
         return _nextButton(name, toScreen);
