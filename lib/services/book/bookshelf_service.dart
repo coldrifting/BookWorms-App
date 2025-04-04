@@ -10,26 +10,22 @@ class BookshelfService {
 
   BookshelfService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<bool> addBookshelf(String guid, String bookshelfName) async {
+  Future<void> addBookshelf(String guid, String bookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesAddUri(guid, bookshelfName),
         method: "POST");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when creating a new bookshelf.');
     }
   }
 
-  Future<bool> deleteBookshelf(String guid, String bookshelfName) async {
+  Future<void> deleteBookshelf(String guid, String bookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesDeleteUri(guid, bookshelfName),
         method: "DELETE");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when trying to delete the bookshelf.');
     }
   }
@@ -87,38 +83,32 @@ class BookshelfService {
     }
   }
 
-  Future<bool> renameBookshelfService(String guid, String oldBookshelfName, String newBookshelfName) async {
+  Future<void> renameBookshelfService(String guid, String oldBookshelfName, String newBookshelfName) async {
     final response = await client.sendRequest(
         uri: bookshelvesRenameUri(guid, oldBookshelfName, newBookshelfName),
         method: "POST");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when creating a new bookshelf.');
     }
   }
 
-  Future<bool> removeBookFromBookshelf(String guid, String bookshelfName, String bookId) async {
+  Future<void> removeBookFromBookshelf(String guid, String bookshelfName, String bookId) async {
     final response = await client.sendRequest(
         uri: bookshelvesRemoveUri(guid, bookshelfName, bookId),
         method: "DELETE");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when trying to remove a book from the bookshelf.');
     }
   }
 
-  Future<bool> addBookToBookshelf(String guid, String bookshelfName, String bookId) async {
+  Future<void> addBookToBookshelf(String guid, String bookshelfName, String bookId) async {
     final response = await client.sendRequest(
         uri: bookshelvesInsertUri(guid, bookshelfName, bookId),
         method: "PUT");
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when trying to add a book to the bookshelf.');
     }
   }

@@ -69,7 +69,7 @@ class ChildGoalService {
     if (response.ok) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('An error occurred when logging the child\' progress.');
+      throw Exception('An error occurred when logging the child\'s progress.');
     }
   }
 
@@ -90,15 +90,13 @@ class ChildGoalService {
     }
   }
 
-  Future<bool> deleteChildGoal(String childId, String goalId) async {
+  Future<void> deleteChildGoal(String childId, String goalId) async {
     final response = await client.sendRequest(
       uri: deleteChildGoalUri(childId, goalId),
       method: "DELETE",
     );
 
-    if (response.ok) {
-      return true;
-    } else {
+    if (!response.ok) {
       throw Exception('An error occurred when deleting the child\'s goal.');
     }
   }

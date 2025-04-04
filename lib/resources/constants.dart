@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Server result error message.
-String errorMessage = "An error occurred. Please try again!";
-
 // Bookshelf type to define the bookshelf color.
 enum BookshelfType {
   completed("Completed", Colors.green),
