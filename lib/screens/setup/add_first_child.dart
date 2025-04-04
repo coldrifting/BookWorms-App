@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 
@@ -42,7 +41,6 @@ class _AddFirstChildState extends State<AddFirstChild> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: SetupBackdropWidget(
@@ -86,22 +84,12 @@ class _AddFirstChildState extends State<AddFirstChild> {
           addVerticalSpace(32),
           FractionallySizedBox(
             widthFactor: 1,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  final childName = _childNameController.text;
-                  addChild(childName);
-                }
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: colorGreen,
-                foregroundColor: colorWhite,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              child: Text("Save and Continue"),
-            ),
+            child: dialogButton("Save and Continue", () {
+              if (_formKey.currentState?.validate() ?? false) {
+                final childName = _childNameController.text;
+                addChild(childName);
+              }
+            })
           ),
         ],
       ),

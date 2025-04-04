@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/models/classroom/announcement.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
@@ -230,13 +231,9 @@ class AppState extends ChangeNotifier {
     String guid = children[childId].id;
     try {
       await bookshelvesService.renameBookshelfService(guid, bookshelf.name, newName);
-      for (var shelf in (_account as Parent).children[childId].bookshelves) {
-        if (shelf.name == bookshelf.name) {
-          bookshelf.name = newName;
+      (_account as Parent).children[childId].bookshelves
+          .firstWhere((b) => b.name == bookshelf.name && b.type == BookshelfType.custom).name = newName;
           notifyListeners();
-          break;
-        }
-      }
       return Result(isSuccess: true, message: "Successfully renamed the bookshelf.");
     } catch (_) {
       return Result(isSuccess: false, message: "Failed to rename the bookshelf.");
@@ -247,7 +244,8 @@ class AppState extends ChangeNotifier {
     String guid = children[childId].id;
     try {
       await bookshelvesService.deleteBookshelf(guid, bookshelf.name);
-      (_account as Parent).children[childId].bookshelves.removeWhere((b) => b.name == bookshelf.name);
+      (_account as Parent).children[childId].bookshelves
+          .removeWhere((b) => b.name == bookshelf.name && b.type == BookshelfType.custom);
       notifyListeners();
       return Result(isSuccess: true, message: "Successfully deleted the bookshelf.");
     } catch (_) {
@@ -662,5 +660,40 @@ class AppState extends ChangeNotifier {
         }
       }
     }
+  }
+
+  Future<bool> addAnnouncement(String title, String body) async {
+    Announcement? result = await classroomService.addAnnouncement(title, body);
+    if (result != null) {
+      classroom!.announcements.add(result);
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> editAnnouncement(String announcementId, String title, String body) async {
+    bool result = await classroomService.editAnnouncement(announcementId, title, body);
+    if (result) {
+      Announcement announcement = classroom!.announcements
+          .firstWhere((a) => a.announcementId == announcementId);
+
+      announcement.title = title;
+      announcement.body = body;
+
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<bool> deleteAnnouncement(String announcementId) async {
+    bool result = await classroomService.deleteAnnouncement(announcementId);
+    if (result) {
+      classroom!.announcements
+          .removeWhere((a) => a.announcementId == announcementId);
+
+      notifyListeners();
+    }
+    return result;
   }
 }

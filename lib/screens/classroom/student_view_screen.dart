@@ -2,7 +2,7 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/widgets/alert_widget.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
@@ -29,33 +29,15 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    NavigatorState navState = Navigator.of(context);
-
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text("",
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite,
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => navState.pop(),
-        ),
-      ),
+      appBar: AppBarCustom(""),
       body: Center(
         child: Column(
           children: [
             ExtendedAppBar(
-              name: student.name,
-              icon: UserIcons.getIcon(student.profilePictureIndex)
-            ),
+                name: student.name,
+                icon: UserIcons.getIcon(student.profilePictureIndex)),
             addVerticalSpace(16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -66,20 +48,18 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
-              onPressed: () => showDialog(
-                context: context,
-                builder: (BuildContext context) { 
-                  return AlertWidget(
-                    title: "Remove Student from Class", 
-                    message: "Removing this student cannot be undone. Are you sure you want to continue?", 
-                    confirmText: "Remove", 
-                    confirmColor: colorRed,
-                    cancelColor: colorGreyDark,
-                    cancelText: "Cancel", 
-                    action: _removeStudent
-                  );
+              onPressed: () async {
+                bool result = await showConfirmDialog(
+                    context,
+                    "Remove Student from Class",
+                    "Removing this student cannot be undone. Are you sure you want to continue?",
+                    confirmText: "Remove",
+                    confirmColor: colorRed);
+
+                if (result) {
+                  _removeStudent();
                 }
-              ),
+              },
               child: Text('Remove Student', style: textTheme.titleSmallWhite),
             ),
           ],

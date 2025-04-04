@@ -1,4 +1,5 @@
 import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,30 +23,21 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
     List<Child> children = Provider.of<AppState>(context).children;
     
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: const Text(
-          "Manage Children", 
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
+      appBar: AppBarCustom("Manage Children"),
       floatingActionButton: FloatingActionButton.extended(
           foregroundColor: colorWhite,
           backgroundColor: colorGreen,
           icon: const Icon(Icons.add),
           label: Text("Add Child"),
-          onPressed: () => _addChildDialog(context)
-          ),
+          onPressed: () async {
+            String? newChildName = await showTextEntryDialog(
+                context,
+                "Add New Child",
+                "New Child's Name");
+            if (newChildName != null && context.mounted) {
+              Provider.of<AppState>(context, listen: false).addChild(newChildName);
+            }
+          }),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -102,35 +94,4 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
       ],
     );
   }
-
-  void _addChildDialog(BuildContext context) {
-    TextEditingController childNameController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Add Child"),
-        content: TextField(
-          controller: childNameController,
-          decoration: const InputDecoration(hintText: "Child's Name"),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel", style: TextStyle(color: colorGrey))),
-          TextButton(
-            onPressed: () async {
-              String childName = childNameController.text.isNotEmpty
-                ? childNameController.text
-                : "New Child";
-              Result result = await Provider.of<AppState>(context, listen: false).addChild(childName);
-              resultAlert(context, result);
-            },
-            child: const Text("Add")
-          ),
-        ],
-      ),
-    );
-  }
-
 }

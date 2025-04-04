@@ -2,7 +2,7 @@ import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/widgets/alert_widget.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -66,9 +66,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
   // Used to check if a change to the account details has been made.
   void _checkForChanges() {
     setState(() {
-      _hasChanges = _childNameController.text.trim() != _initialName 
-        || _selectedIconIndex != _initialIconIndex
-        || _selectedDOB != _initialDOB;
+      _hasChanges = _childNameController.text.trim() != _initialName ||
+          _selectedIconIndex != _initialIconIndex ||
+          _selectedDOB != _initialDOB;
     });
   }
 
@@ -77,49 +77,11 @@ class _EditChildScreenState extends State<EditChildScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
 
-    // A reference to a Nav state is needed since modal popups are not
-    // technically contained within the proper nested navigation context
-    NavigatorState navState = Navigator.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: const Text(
-          "Edit Child", 
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Notify the user if there are unsaved changes.
-            if (_hasChanges) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertWidget(
-                    title: "Unsaved Changes", 
-                    message: "Are you sure you want to continue?",
-                    confirmText: "Discard Changes",
-                    cancelText: "Keep Editing",
-                    confirmColor: colorRed,
-                    cancelColor: colorGreen,
-                    action: () => navState.pop(),     
-                  );
-                }
-              );
-            } else {
-              navState.pop();
-            }
-          },
-        ),
-      ),
-      body: Padding(
+      appBar: AppBarCustom("Edit Child", onBackBtnPressed: () async =>
+          confirmExitWithoutSaving(context, Navigator.of(context), _hasChanges)),
+      body: SingleChildScrollView(
+    child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
@@ -131,7 +93,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   Stack(
                     children: [
                       IconButton(
-                        onPressed: () =>_changeChildIconDialog(textTheme),
+                        onPressed: () => _changeChildIconDialog(textTheme),
                         icon: CircleAvatar(
                           maxRadius: 50,
                           child: SizedBox.expand(
@@ -166,14 +128,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 children: [
                   Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
                   RawMaterialButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ReadingLevelInfoWidget(),
-                        ),
-                      );
-                    },
+                    onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(8.0),
                     constraints: BoxConstraints(
@@ -200,6 +155,17 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     ),
                     onPressed: () async {
                       final DateTime? pickedDate = await showDatePicker(
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              primaryColor: colorGreen,
+                              textButtonTheme: TextButtonThemeData(
+                                style: getCommonButtonStyle(primaryColor: colorGreen, isElevated: false)
+                              )
+                            ),
+                            child: child!
+                          );
+                        },
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime(1900),
@@ -238,13 +204,16 @@ class _EditChildScreenState extends State<EditChildScreen> {
                           setState(() {
                             _hasChanges = false;
                             appState.editChildProfileInfo(
-                              widget.childID, 
-                              newName: _childNameController.text, 
-                              profilePictureIndex: _selectedIconIndex,
-                              newDOB: _selectedDOB
+                                widget.childID,
+                                newName: _childNameController.text,
+                                profilePictureIndex: _selectedIconIndex,
+                                newDOB: _selectedDOB
                             );
-                            _initialIconIndex = appState.children[widget.childID].profilePictureIndex;
-                            _initialName = appState.children[widget.childID].name;
+                            _initialIconIndex =
+                                appState.children[widget.childID]
+                                    .profilePictureIndex;
+                            _initialName =
+                                appState.children[widget.childID].name;
                           });
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -269,21 +238,21 @@ class _EditChildScreenState extends State<EditChildScreen> {
                               ),
                             );
                           }
-                          navState.pop();
+                          Navigator.of(context).pop();
                         }
-                      } : null,
+                        } : null,
                     child: Text(
                       'Save Changes',
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
-                  _deleteChildButton(textTheme, navState),
-                ]
-              ),
+                _deleteChildButton(textTheme, Navigator.of(context)),
+              ]),
             ],
           ),
         ),
       ),
+      )
     );
   }
 
@@ -413,17 +382,25 @@ class _EditChildScreenState extends State<EditChildScreen> {
     TextEditingController textEditingController = TextEditingController();
 
     return showDialog(
-      context: context,
-      builder: (BuildContext context) {
+        context: context,
+        builder: (BuildContext context)
+    {
+      String input = "";
+
+      return StatefulBuilder(builder: (context, setState) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Center(
             child: Column(
               children: [
                 Icon(Icons.school, color: colorGreen, size: 36),
                 Text(
                   'Join Class',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: colorGreen),
                 ),
               ],
             ),
@@ -453,32 +430,33 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     activeColor: colorGreen,
                     selectedColor: colorGreen,
                   ),
+                  onChanged: (value) {
+                    setState(() => input = value);
+                  },
                 ),
                 Text("Need help? Ask your teacher!")
               ],
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text("Cancel", style: TextStyle(color: colorGrey)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorGreen,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              onPressed: () async {
-                Result result = await appState.joinChildClassroom(widget.childID, textEditingController.text);
-                resultAlert(context, result);
-              },
-              child: Text("Join", style: TextStyle(color: colorWhite)),
-            ),
+            dialogButton(
+                "Cancel",
+                () => Navigator.of(context).pop(),
+                foregroundColor: colorGreyDark,
+                isElevated: false),
+            dialogButton(
+                "Join",
+                input.length != 6 ? null : () async {
+                Result result = await appState.joinChildClassroom(
+                    widget.childID, input);
+                if (context.mounted) {
+                  resultAlert(context, result);
+                }
+              })
           ],
         );
-      }
-    );
+      });
+    });
   }
 
   // Text form field input and title.
@@ -514,46 +492,44 @@ class _EditChildScreenState extends State<EditChildScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
       ),
-      onPressed: () {
-        if (appState.children.length > 1) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) { 
-              return AlertWidget(
-                title: "Delete Child Profile", 
-                message: "Are you sure you want to delete the child profile of ${widget.child.name}?", 
-                confirmText: "Delete", 
-                confirmColor: colorRed,
-                cancelText: "Cancel", 
-                action: () async {
-                  navState.pop(context);
-                  Result result = await appState.removeChild(widget.child.id);
-                  resultAlert(context, result);
-                }
-              );
-            }
+        onPressed: () async {
+          if (Provider
+              .of<AppState>(context, listen: false)
+              .children
+              .length > 1) {
+            bool result = await showConfirmDialog(
+                context,
+                "Delete Child Profile",
+                "Are you sure you want to delete the child profile of ${widget
+                    .child.name}?",
+                confirmText: "Delete",
+                confirmColor: colorRed);
+
+            if (result && mounted) {
+              Provider.of<AppState>(context, listen: false).removeChild(
+                  widget.child.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: colorRed,
+                  content: Row(
+                    children: [
+                      Text('Removed ${widget.child.name} from children',
+                          style: textTheme.titleSmallWhite),
+                      Spacer(),
+                      Icon(Icons.close_rounded, color: colorWhite)
+                    ],
+                  ),
+                  duration: Duration(seconds: 2),
+            ),
           );
+          navState.pop(true);
+        }
         }
         else {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Center(
-                  child: Text('Delete Child Profile')
-                ),
-                content: const Text('You cannot delete all child profiles from your account.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, 'OK'),
-                    child: Text('OK', 
-                      style: TextStyle(color: colorGreen),
-                    ),
-                  ),
-                ],
-              );
-            }
-          );
+          await showConfirmDialog(context,
+              "Delete Child Profile",
+              'You cannot delete all child profiles from your account.',
+              confirmText: "OK");
         }
       },
       child: Text('Delete Child', style: textTheme.titleSmallWhite),

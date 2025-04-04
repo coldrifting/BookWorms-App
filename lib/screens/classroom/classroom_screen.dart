@@ -1,9 +1,11 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/screens/classroom/class_announcements_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
 import 'package:bookworms_app/resources/colors.dart';
@@ -32,18 +34,12 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     AppState appState = Provider.of<AppState>(context);
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          appState.classroom != null
+    String headerTitle = appState.classroom != null
             ? "My Classroom"
-            : "Create Classroom", 
-          style: TextStyle(color: colorWhite)
-        ),
-        backgroundColor: colorGreen,
-        automaticallyImplyLeading: false,
-      ),
+            : "Create Classroom";
+
+    return Scaffold(
+      appBar: AppBarCustom(headerTitle, isLeafPage: false),
       body: appState.classroom != null 
         ? _classroomView(textTheme) 
         : CreateClassroomScreen()
@@ -58,7 +54,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     selectedIconIndex = appState.classroom!.classIcon;
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           // Classroom header.
@@ -79,13 +75,15 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             floating: false,
             delegate: _SliverDelegate(
               child: TabBar(
+                labelStyle: textTheme.labelLarge,
                 labelColor: colorGreen,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: colorGreen,
                 tabs: const [
                   Tab(icon: Icon(Icons.groups), text: "Students"),
                   Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
-                  Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Bookshelves"),
+                  Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Shelves"),
+                  Tab(icon: Icon(Icons.announcement_outlined), text: "Announce"),
                 ],
               ),
             ),
@@ -96,6 +94,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             StudentsScreen(),
             GoalsScreen(),
             ClassBookshelves(),
+            ClassAnnouncements(),
           ],
         ),
       ),
@@ -185,7 +184,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   /// The drop down menu for displaying the option to delete the classroom.
   Widget _dropDownMenu(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
     return MenuAnchor(
+      alignmentOffset: Offset(-125,0),
       controller: _menuController,
       builder: (BuildContext context, MenuController controller, Widget? child) {
         return IconButton(
@@ -200,6 +201,32 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         );
       },
       menuChildren: [
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+            appState.setClassroomDetails();
+          },
+          child: Row(
+            children: [
+              Icon(Icons.refresh, color: colorGreen, size: 20),
+              addHorizontalSpace(8),
+              Text('Refresh', style: textTheme.labelLarge?.copyWith(color: colorGreen)),
+            ],
+          ),
+        ),
+        MenuItemButton(
+          onPressed: () {
+            _menuController.close();
+            _showEditClassNameDialog(textTheme);
+          },
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 20),
+              addHorizontalSpace(8),
+              Text('Rename Classroom', style: textTheme.labelLarge),
+            ],
+          ),
+        ),
         MenuItemButton(
           onPressed: () {
             _menuController.close();
@@ -218,20 +245,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               ),
             ],
           ),
-        ),
-        MenuItemButton(
-          onPressed: () {
-            _menuController.close();
-            _showEditClassNameDialog(textTheme);
-          },
-          child: Row(
-            children: [
-              Icon(Icons.edit, size: 20),
-              addHorizontalSpace(8),
-              Text('Edit Name', style: textTheme.labelLarge),
-            ],
-          ),
-        ),
+        )
       ],
       style: MenuStyle(
         backgroundColor: WidgetStateProperty.all(Colors.white),

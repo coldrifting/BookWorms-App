@@ -1,4 +1,4 @@
-import 'package:bookworms_app/widgets/alert_widget.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bookworms_app/app_state.dart';
@@ -75,47 +75,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context, listen: false);
 
-    // A reference to a Nav state is needed since modal popups are not
-    // technically contained within the proper nested navigation context
-    NavigatorState navState = Navigator.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: const Text(
-          "Edit Profile", 
-          style: TextStyle(
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Notify the user if there are unsaved changes.
-            if (_hasChanges) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertWidget(
-                    title: "Unsaved Changes", 
-                    message: "Are you sure you want to continue?",
-                    confirmText: "Discard Changes",
-                    cancelText: "Keep Editing",
-                    confirmColor: colorRed,
-                    cancelColor: colorGreen,
-                    action: () => navState.pop(),
-                  );
-                }
-              );
-            } else {
-              navState.pop();
-            }
-          },
-        ),
-      ),
+      appBar: AppBarCustom("Edit Profile", onBackBtnPressed: () async =>
+          confirmExitWithoutSaving(context, Navigator.of(context), _hasChanges)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -163,7 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             _initialLastName = _lastNameController.text;
                             _initialIconIndex = _selectedIconIndex;
                           });
-                          navState.pop();
+                          Navigator.of(context).pop();
                         }
                       } : null,
                     child: Text(
@@ -183,20 +145,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (BuildContext context) { 
-                        return AlertWidget(
-                          title: "Delete Account", 
-                          message: "Deleting your account cannot be undone. Are you sure you want to continue?", 
+                    onPressed: () async {
+                      bool result = await showConfirmDialog(
+                          context,
+                          "Delete Account",
+                          "Deleting your account cannot be undone. Are you sure you want to continue?",
                           confirmText: "Delete",
-                          confirmColor: colorRed,
-                          cancelColor: colorGrey,
-                          cancelText: "Cancel", 
-                          action: _deleteAccount
-                        );
+                          confirmColor: colorRed);
+
+                      if (result) {
+                        _deleteAccount();
                       }
-                    ),
+                    },
                     child: Text('Delete Account', style: textTheme.titleSmallWhite),
                   ),
                 ],
@@ -290,7 +250,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: Text('Cancel', style: textTheme.titleSmall),
+              style: getCommonButtonStyle(primaryColor: colorGreyDark, isElevated: false),
+              child: Text('Cancel'),
             ),
           ],
         ),

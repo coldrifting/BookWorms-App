@@ -1,4 +1,5 @@
 import 'package:bookworms_app/screens/profile/about_screen.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,14 +39,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
 
+    String headerTitle = "${isParent ? "Parent" : "Teacher"} Profile";
+
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text("${isParent ? "Parent" : "Teacher"} Profile",
-            style: const TextStyle(color: colorWhite)),
-        centerTitle: true,
-        backgroundColor: colorGreen,
-      ),
+      appBar: AppBarCustom(headerTitle, isLeafPage: false, centerTitle: true),
       body: Column(
         children: [
           ExtendedAppBar(
@@ -94,21 +91,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _signOutWidget(TextTheme textTheme) {
     return ElevatedButton(
       onPressed: signOut,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: colorBlack,
-        backgroundColor: colorWhite,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
-        side: BorderSide(color: colorGreyDark),
-        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-      ),
+      style: getCommonButtonStyle(primaryColor: colorGreenDark),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(size: 32, Icons.logout_outlined),
+          Icon(size: 32, Icons.logout_outlined, color: colorWhite),
           addHorizontalSpace(8),
-          Text("Sign Out", style: textTheme.titleSmall),
+          Text("Sign Out", style: TextStyle(fontSize: 18)),
         ],
       )
     );

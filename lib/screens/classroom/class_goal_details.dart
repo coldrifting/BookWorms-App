@@ -6,6 +6,7 @@ import 'package:bookworms_app/models/goals/student_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -42,22 +43,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
     int daysRemaining = endDate.difference(dateNow).inDays;
 
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(goal.title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: colorWhite,
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
+      appBar: AppBarCustom(goal.title),
       body: Container(
         color: colorGreyLight,
         child: ListView.builder(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
@@ -194,16 +195,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     }
 
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(
-          "Search",
-          style: const TextStyle(
-            color: colorWhite
-          )
-        ),
-        backgroundColor: colorGreen,
-      ),
+      appBar: AppBarCustom("Search", isLeafPage: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
@@ -319,14 +311,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                         style: textTheme.titleMedium
                       ),
                       RawMaterialButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ReadingLevelInfoWidget(),
-                            ),
-                          );
-                        },
+                        onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(8.0),
                         constraints: BoxConstraints(

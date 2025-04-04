@@ -7,6 +7,7 @@ import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/services/book/book_difficulty_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
@@ -101,22 +102,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     return Scaffold(
       key: _parentKey,
       // Book details app bar
-      appBar: AppBar(
-        systemOverlayStyle: defaultOverlay(),
-        title: Text(bookSummary.title,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: colorWhite,
-                overflow: TextOverflow.ellipsis)),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: AppBarCustom(bookSummary.title),
       // Book details content
       body: ListView(controller: _scrollController, children: [
         SizedBox(
@@ -199,14 +185,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   "Level $difficulty",
                 ),
                 RawMaterialButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ReadingLevelInfoWidget(),
-                      ),
-                    );
-                  },
+                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(4.0),
                   constraints: BoxConstraints(
@@ -370,14 +349,55 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size(200, 38),
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                          textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           iconSize: 26,
                           foregroundColor: colorWhite,
                           backgroundColor: colorGreen),
                       onPressed: () async {
-                        await _showCreateBookshelfDialog(book);
-                        navState.pop();
+                        String? newBookshelfName = await showTextEntryDialog(
+                            context,
+                            "Create New Bookshelf",
+                            "New Bookshelf Name",
+                            confirmText: "Add");
+                        if (newBookshelfName != null) {
+                          var bookshelf = Bookshelf(
+                              type: appState.isParent
+                                  ? BookshelfType.custom
+                                  : BookshelfType.classroom,
+                              name: newBookshelfName,
+                              books: [book]);
+                          Result result = appState.isParent
+                              ? await appState.addChildBookshelfWithBook(
+                              appState.selectedChildID, bookshelf)
+                              : await appState
+                              .createClassroomBookshelfWithBook(bookshelf);
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor:
+                                result.isSuccess ? colorGreenDark : colorGreyDark,
+                                content: Row(
+                                  children: [
+                                    Text(
+                                        result.isSuccess
+                                            ? 'Saved book to new Bookshelf ${bookshelf
+                                            .name}.'
+                                            : 'Unable to create new bookshelf ${bookshelf
+                                            .name}.',
+                                        style: textTheme.titleSmallWhite),
+                                    Spacer(),
+                                    if (result.isSuccess)
+                                      Icon(Icons.check_circle_outline_rounded,
+                                          color: colorWhite)
+                                  ],
+                                ),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          }
+                        }
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -579,83 +599,5 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       bookSummary.rating = updatedbookRating;
       bookDetails.reviews = updatedBookReviews;
     });
-  }
-
-  Future<void> _showCreateBookshelfDialog(BookSummary bookToAdd) async {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    return showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController controller = TextEditingController();
-        return AlertDialog(
-          title: Text('Create New Bookshelf'),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: 'Bookshelf Name',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(foregroundColor: colorGreyDark),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                String name = controller.text.trim();
-                if (name.isNotEmpty) {
-                  var bookshelf = Bookshelf(
-                      type: appState.isParent
-                          ? BookshelfType.custom
-                          : BookshelfType.classroom,
-                      name: name,
-                      books: [bookToAdd]);
-                  Result result = appState.isParent
-                      ? await appState.addChildBookshelfWithBook(
-                          appState.selectedChildID, bookshelf)
-                      : await appState
-                          .createClassroomBookshelfWithBook(bookshelf);
-                  bool success = result.isSuccess;
-
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor:
-                            success ? colorGreenDark : colorGreyDark,
-                        content: Row(
-                          children: [
-                            Text(
-                                success
-                                    ? 'Saved book to new Bookshelf ${bookshelf.name}.'
-                                    : 'Unable to create new bookshelf ${bookshelf.name}.',
-                                style: textTheme.titleSmallWhite),
-                            Spacer(),
-                            if (success)
-                              Icon(Icons.check_circle_outline_rounded,
-                                  color: colorWhite)
-                          ],
-                        ),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                    Navigator.pop(context);
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorGreen,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              child: Text('Create', style: textTheme.titleSmallWhite),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
