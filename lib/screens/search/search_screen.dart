@@ -1,16 +1,20 @@
 import 'dart:async';
+
+import 'package:bookworms_app/models/book/book_summary.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
-import 'package:bookworms_app/widgets/app_bar_custom.dart';
-import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
-import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_search_service.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
+import 'package:flutter/material.dart';
+
 
 /// The [SearchScreen] consists of a search bar and a sub-widget (either browse, recents, or results).
 class SearchScreen extends StatefulWidget {
@@ -38,6 +42,9 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
   final _selectedRating = List.filled(6, false);
   final _selectedGenres = List.filled(6, false);
   final _selectedTopics = List.filled(6, false);
+
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('search');
 
   @override
   void initState() {
@@ -266,9 +273,19 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
         children: [
           TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(text: "Recents"),
-              Tab(text: "Advanced Search"),
+            tabs: [
+              BWShowcase(
+                  showcaseKey: navKeys[0],
+                  description: "Your recently searched books will appear under this tab",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Tab(text: "Recents")
+              ),
+              BWShowcase(
+                  showcaseKey: navKeys[1],
+                  description: "Switch to this tab to access more search options",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Tab(text: "Advanced Search")
+              ),
             ],
             unselectedLabelColor: colorGrey,
           ),

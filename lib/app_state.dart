@@ -710,4 +710,20 @@ class AppState extends ChangeNotifier {
     }
     return result;
   }
+
+
+  // ***** Showcase *****
+
+  Future<bool> isFirstLaunch() async {
+    final String isFirstLaunchKey = 'is_first_launch_$username';
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    bool isFirstLaunch = preferences.getBool(isFirstLaunchKey) ?? true;
+
+    if (isFirstLaunch) {
+      await preferences.setBool(isFirstLaunchKey, false);
+    }
+
+    return isFirstLaunch;
+  }
+
 }

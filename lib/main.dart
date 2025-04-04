@@ -1,16 +1,20 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
+import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
+import 'package:bookworms_app/screens/goals/child_progress_screen.dart';
+import 'package:bookworms_app/screens/home_screen.dart';
+import 'package:bookworms_app/screens/profile/profile_screen.dart';
+import 'package:bookworms_app/screens/search/search_screen.dart';
+import 'package:bookworms_app/screens/setup/splash_screen.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
-import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
-import 'package:bookworms_app/screens/home_screen.dart';
-import 'package:bookworms_app/screens/profile/profile_screen.dart';
-import 'package:bookworms_app/screens/goals/child_progress_screen.dart';
-import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/resources/theme.dart';
-import 'package:bookworms_app/screens/search/search_screen.dart';
-import 'package:bookworms_app/screens/setup/splash_screen.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 void main() => runApp(const BookWorms());
 
@@ -30,17 +34,22 @@ class BookWorms extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppState>(
         create: (context) => AppState(),
-        child: MaterialApp(
-            navigatorKey: navigatorKey,
-            title: 'BookWorms',
-            theme: appTheme,
-            home: const SplashScreen(),
-            scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-              PointerDeviceKind.stylus,
-              PointerDeviceKind.trackpad,
-            })));
+        child: ShowCaseWidget(
+          builder: (context) =>
+            MaterialApp(
+                navigatorKey: navigatorKey,
+                title: 'BookWorms',
+                theme: appTheme,
+                home: const SplashScreen(),
+                scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.stylus,
+                  PointerDeviceKind.trackpad,
+                })
+            )
+        )
+    );
   }
 }
 
@@ -58,6 +67,8 @@ class Navigation extends StatefulWidget {
 /// The state of the [Navigation].
 class _Navigation extends State<Navigation> {
   late int selectedIndex;
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('navigation');
 
   bool isSearchScreenModified = false;
 
@@ -102,6 +113,9 @@ class _Navigation extends State<Navigation> {
   Widget build(BuildContext context) {
     var appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
+    // This can safely be done here, since Navigation is the first widget to
+    //  be built once the user type is known
+    showcaseController.initialize(context, onBottomNavItemTapped);
 
     List<Destination> enabledDest = getDest(isParent);
     List<Widget> pages = enabledDest.map((x) => x.widget).toList();
@@ -120,22 +134,74 @@ class _Navigation extends State<Navigation> {
                   //SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
                 }
               },
-              child: IndexedStack(
-                index: selectedIndex,
-                children: List.generate(pages.length, (index) {
-                  if (enabledDest[index].label == "Search") {
-                    searchTabIndex = index;
-                  }
-                  _navigatorKeys[index] = enabledDest[index].navState;
-                  return Navigator(
-                    key: enabledDest[index].navState,
-                    onGenerateRoute: (settings) {
-                      return MaterialPageRoute(
-                        builder: (context) => pages[index],
+              child: Stack(
+                children: [
+                  IndexedStack(
+                    index: selectedIndex,
+                    children: List.generate(pages.length, (index) {
+                      if (enabledDest[index].label == "Search") {
+                        searchTabIndex = index;
+                      }
+                      _navigatorKeys[index] = enabledDest[index].navState;
+                      return Navigator(
+                        key: enabledDest[index].navState,
+                        onGenerateRoute: (settings) {
+                          return MaterialPageRoute(
+                            builder: (context) => pages[index],
+                          );
+                        },
                       );
-                    },
-                  );
-                }),
+                    }),
+                  ),
+
+                  // Invisible element for showing showcase welcome
+                  Positioned(
+                    top: 350,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BWShowcase(
+                              showcaseKey: navKeys[0],
+                              title: "Welcome to BookWorms!",
+                              description: "Let us show you around.\nYou can view this tutorial again\nat any time from the Profile page.",
+                              disableMovingAnimation: true,
+                              tooltipActions: TooltipActionSet.start,
+                              showArrow: false,
+                              child: SizedBox(
+                                  width: 0,
+                                  height: 0
+                              )
+                          )
+                        ]
+                    ),
+                  ),
+
+                  // Invisible element for showing showcase conclusion
+                  Positioned(
+                    top: 350,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BWShowcase(
+                              showcaseKey: navKeys.last,
+                              title: "You're all ready!",
+                              description: "You can view this tutorial again\nat any time from the Profile page.",
+                              tooltipActions: TooltipActionSet.none,
+                              disableMovingAnimation: true,
+                              showArrow: false,
+                              child: SizedBox(
+                                  width: 0,
+                                  height: 0
+                              )
+                          )
+                        ]
+                    ),
+                  )
+                ]
               ),
             ),
             bottomNavigationBar: NavigationBar(
@@ -143,7 +209,10 @@ class _Navigation extends State<Navigation> {
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                 selectedIndex: selectedIndex,
                 onDestinationSelected: onBottomNavItemTapped,
-                destinations: getDestWidgets(isParent))));
+                destinations: getDestWidgets(isParent, navKeys)
+            )
+        )
+    );
   }
 }
 
@@ -151,6 +220,7 @@ class Destination {
   String label;
   IconData icon;
   IconData selectedIcon;
+  String showcaseDescription;
   Widget widget;
   GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
   PageCategory pageType;
@@ -159,6 +229,7 @@ class Destination {
       {required this.label,
       required this.icon,
       required this.selectedIcon,
+      required this.showcaseDescription,
       required this.widget,
       this.pageType = PageCategory.both});
 }
@@ -175,13 +246,24 @@ List<Destination> getDest(bool isParent) {
   return list;
 }
 
-List<Widget> getDestWidgets(bool isParent) {
+List<Widget> getDestWidgets(bool isParent, List<GlobalKey> navKeys) {
   return getDest(isParent)
-      .map((x) => NavigationDestination(
-          selectedIcon: Icon(x.selectedIcon, color: colorGreenDark),
-          icon: Icon(x.icon, color: colorWhite),
-          label: x.label))
-      .toList();
+      .mapIndexed((index, dest) =>
+        BWShowcase(
+          showcaseKey: navKeys[index + 1],
+          description: dest.showcaseDescription,
+          toScreen: index,
+          tooltipActions: dest.label == "Home"
+              ? TooltipActionSet.noPrev
+              : TooltipActionSet.basic,
+          tooltipBorderRadius: BorderRadius.circular(6),
+          child: NavigationDestination(
+              selectedIcon: Icon(dest.selectedIcon, color: colorGreenDark),
+              icon: Icon(dest.icon, color: colorWhite),
+              label: dest.label
+          ),
+        )
+      ).toList();
 }
 
 List<Destination> dest = [
@@ -189,33 +271,39 @@ List<Destination> dest = [
       label: "Home",
       widget: const HomeScreen(),
       icon: Icons.home_outlined,
+      showcaseDescription: "First: See upcoming goals, a progress summary, and more on the Home screen\n(Try it!)",
       selectedIcon: Icons.home),
   Destination(
       label: "Bookshelf",
       widget: const BookshelvesScreen(),
       icon: Icons.collections_bookmark_outlined,
       selectedIcon: Icons.collections_bookmark_rounded,
+      showcaseDescription: "Next up: Manage custom book lists on the Bookshelves screen",
       pageType: PageCategory.parent),
   Destination(
       label: "Search",
       widget: SearchScreen(key: searchKey),
       icon: Icons.search_outlined,
+      showcaseDescription: "Next up: Find a wide variety of books on the Search screen",
       selectedIcon: Icons.search_rounded),
   Destination(
       label: "Progress",
       widget: const ProgressScreen(),
       icon: Icons.show_chart,
       selectedIcon: Icons.show_chart,
+      showcaseDescription: "Next up: Track your child's goals and progress on the Progress screen",
       pageType: PageCategory.parent),
   Destination(
       label: "Classroom",
       widget: const ClassroomScreen(),
       icon: Icons.school_outlined,
       selectedIcon: Icons.school,
+      showcaseDescription: "Next up: Manage your classroom's bookshelves, goals, and more on the Classroom screen",
       pageType: PageCategory.teacher),
   Destination(
       label: "Profile",
       widget: const ProfileScreen(),
       icon: Icons.account_circle_outlined,
+      showcaseDescription: "Next up: Customize and manage your account on the Profile screen",
       selectedIcon: Icons.account_circle_rounded)
 ];

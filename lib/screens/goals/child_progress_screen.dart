@@ -1,5 +1,8 @@
 import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
@@ -21,6 +24,8 @@ class ProgressScreen extends StatefulWidget {
 
 /// The state of the [ProgressScreen].
 class _ProgressScreenState extends State<ProgressScreen> {
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('progress');
 
   @override
   Widget build(BuildContext context) {
@@ -97,9 +102,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Column(
           children: [
             TabBar(
-              tabs: const [
-                Tab(text: "Overall Progress"),
-                Tab(text: "Goal Progress")
+              tabs: [
+                BWShowcase(
+                  showcaseKey: navKeys[0],
+                  description: "[Description of Overall Progress]",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Tab(text: "Overall Progress")
+                ),
+                BWShowcase(
+                  showcaseKey: navKeys[1],
+                  description: "Switch to \"Goal Progress\" to make and track goals for your child",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Tab(text: "Goal Progress")
+                ),
               ],
               unselectedLabelColor: colorGrey,
             ),

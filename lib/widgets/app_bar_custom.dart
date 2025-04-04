@@ -1,5 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
 import 'package:flutter/material.dart';
@@ -10,14 +11,16 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   final bool centerTitle;
   final bool isLeafPage;
   final bool isChildSwitcherEnabled;
+  final GlobalKey? homePageShowcaseKey;
   final Function()? onBackBtnPressed;
   final Widget? rightAction;
 
   const AppBarCustom(
       this.title, {
-    this.isLeafPage = true,
+        this.isLeafPage = true,
         this.onBackBtnPressed,
         this.isChildSwitcherEnabled = false,
+        this.homePageShowcaseKey,
         this.centerTitle = false,
         this.rightAction,
         super.key});
@@ -48,11 +51,24 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
             : null,
     actions: [
       isChildSwitcherEnabled && appState.isParent
-          ? ChangeChildWidget(onChildChanged: () {
-            while (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            }
-          })
+          ? homePageShowcaseKey != null
+              ? BWShowcase(
+                  showcaseKey: homePageShowcaseKey!,
+                  description: "You can switch to a different child by tapping your child's profile picture",
+                  targetShapeBorder: CircleBorder(),
+                  child: ChangeChildWidget(
+                      onChildChanged: () {
+                        while (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                      })
+                )
+              : ChangeChildWidget(
+                    onChildChanged: () {
+                      while (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      }
+                    })
           : rightAction != null && appState.isParent
             ? rightAction!
             : SizedBox.shrink()
