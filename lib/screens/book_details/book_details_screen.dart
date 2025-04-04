@@ -3,7 +3,6 @@ import 'package:bookworms_app/models/Result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/constants.dart';
-import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/services/book/book_difficulty_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
