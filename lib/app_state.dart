@@ -13,6 +13,7 @@ import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_goals_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_service.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bookworms_app/models/account/account.dart';
@@ -136,6 +137,10 @@ class AppState extends ChangeNotifier {
   Future<Result> joinChildClassroom(int childId, String classCode) async {
     ChildrenServices childrenServices = ChildrenServices();
     String guid = children[childId].id;
+
+    if (children[childId].classrooms.firstWhereOrNull((c) => c.classCode.toLowerCase() == classCode.toLowerCase()) != null) {
+      return Result(isSuccess: false, message: "Already a part of this class");
+    }
 
     try {
       Classroom? newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
