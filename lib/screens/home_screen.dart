@@ -41,10 +41,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(childId);
     _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(childId);
 
-    // Start showcase when Home Screen loads
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => showcaseController.start()
-    );
+    // Start showcase when Home Screen loads,
+    //  but only if this is the first time launching the app
+    appState.isFirstLaunch().then((isFirstLaunch) {
+      if (isFirstLaunch) {
+        WidgetsBinding.instance.addPostFrameCallback(
+                (_) => showcaseController.start()
+        );
+      }
+    });
   }
 
   @override
