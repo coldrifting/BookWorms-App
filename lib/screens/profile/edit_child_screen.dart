@@ -387,7 +387,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
         context: context,
         builder: (BuildContext context)
     {
-      String input = "";
 
       return StatefulBuilder(builder: (context, setState) {
         return AlertDialog(
@@ -432,9 +431,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     activeColor: colorGreen,
                     selectedColor: colorGreen,
                   ),
-                  onChanged: (value) {
-                    setState(() => input = value);
-                  },
                 ),
                 Text("Need help? Ask your teacher!")
               ],
@@ -448,9 +444,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 isElevated: false),
             dialogButton(
                 "Join",
-                input.length != 6 ? null : () async {
+                textEditingController.value.text.length != 6 ? null : () async {
                 Result result = await appState.joinChildClassroom(
-                    widget.childID, input);
+                    widget.childID, textEditingController.value.text);
                 if (context.mounted) {
                   resultAlert(context, result);
                 }
