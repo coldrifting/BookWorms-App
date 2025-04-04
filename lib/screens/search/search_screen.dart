@@ -4,19 +4,17 @@ import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
-import 'package:bookworms_app/widgets/app_bar_custom.dart';
-import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
-import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/services/book/book_images_service.dart';
 import 'package:bookworms_app/services/book/book_search_service.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
+
 
 /// The [SearchScreen] consists of a search bar and a sub-widget (either browse, recents, or results).
 class SearchScreen extends StatefulWidget {

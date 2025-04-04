@@ -4,9 +4,10 @@ import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
-import 'package:bookworms_app/widgets/change_child_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
         : "My"} Dashboard";
 
     return Scaffold(
-      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true),
+      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true, homePageShowcaseKey: navKeys[0]),
       body: SingleChildScrollView(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
