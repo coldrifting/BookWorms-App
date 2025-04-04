@@ -170,4 +170,16 @@ class ClassroomService {
 
     return false;
   }
+
+  Future<bool> markAnnouncementRead(String announcementId, String childId) async {
+    final response = await client.sendRequest(
+        uri: markAnnouncementReadUri(announcementId, childId),
+        method: "PUT");
+
+    if (response.ok) {
+      return true;
+    }
+
+    return false;
+  }
 }

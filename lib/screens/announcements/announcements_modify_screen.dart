@@ -6,20 +6,20 @@ import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ClassAnnouncementsEditScreen extends StatefulWidget {
+class AnnouncementsModifyScreen extends StatefulWidget {
   final Announcement announcement;
 
-  const ClassAnnouncementsEditScreen(this.announcement, {super.key});
+  const AnnouncementsModifyScreen(this.announcement, {super.key});
 
   // ClassAnnouncements
 
   @override
-  State<ClassAnnouncementsEditScreen> createState() =>
-      _ClassAnnouncementsEditScreenState();
+  State<AnnouncementsModifyScreen> createState() =>
+      _AnnouncementsModifyScreenState();
 }
 
-class _ClassAnnouncementsEditScreenState
-    extends State<ClassAnnouncementsEditScreen> {
+class _AnnouncementsModifyScreenState
+    extends State<AnnouncementsModifyScreen> {
 
   bool _hasChanges = false;
   bool _isValid = false;
@@ -138,7 +138,7 @@ class _ClassAnnouncementsEditScreenState
                     ),
                     addVerticalSpace(8),
                     ElevatedButton(
-                        onPressed: !_isValid ? null : () async {
+                        onPressed: !_isValid || !_hasChanges ? null : () async {
                           var result = isNewAnnouncement
                               ? await appState.addAnnouncement(
                                   _titleTextController.text.trim(),

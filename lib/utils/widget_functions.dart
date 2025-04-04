@@ -20,26 +20,29 @@ Future<bool> showConfirmDialog(
     {String confirmText = "Confirm",
     String cancelText = "Cancel",
     Color confirmColor = colorGreen,
-    Color cancelColor = colorGreyDark}) async {
+    Color cancelColor = colorGreyDark,
+    bool showCancelButton = true}) async {
   var result = await showDialog<bool>(
       context: context,
       useRootNavigator: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Center(child: Text(title, textAlign: TextAlign.center)),
-          content: Text(message, textAlign: TextAlign.center),
-          actions: [
-              dialogButton(
-                  cancelText,
-                  () => Navigator.of(context, rootNavigator: true).pop(false),
-                  foregroundColor: cancelColor,
-                  isElevated: false),
+        var confirmButton =
               dialogButton(
                   confirmText,
                   () => Navigator.of(context, rootNavigator: true).pop(true),
                   foregroundColor: colorWhite,
-                  backgroundColor: confirmColor),
-          ],
+                  backgroundColor: confirmColor);
+
+        var cancelButton = dialogButton(
+                  cancelText,
+                  () => Navigator.of(context, rootNavigator: true).pop(false),
+                  foregroundColor: cancelColor,
+                  isElevated: false);
+
+        return AlertDialog(
+          title: Center(child: Text(title, textAlign: TextAlign.center)),
+          content: Text(message, textAlign: TextAlign.center),
+          actions: showCancelButton ? [cancelButton, confirmButton] : [confirmButton]
         );
       });
 

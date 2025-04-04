@@ -13,6 +13,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   final bool isChildSwitcherEnabled;
   final GlobalKey? homePageShowcaseKey;
   final Function()? onBackBtnPressed;
+  final Widget? rightAction;
 
   const AppBarCustom(
       this.title, {
@@ -21,8 +22,8 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
         this.isChildSwitcherEnabled = false,
         this.homePageShowcaseKey,
         this.centerTitle = false,
-        super.key
-      });
+        this.rightAction,
+        super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,9 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                         Navigator.of(context).pop();
                       }
                     })
-          : SizedBox.shrink()
+          : rightAction != null && appState.isParent
+            ? rightAction!
+            : SizedBox.shrink()
     ]);
   }
 
