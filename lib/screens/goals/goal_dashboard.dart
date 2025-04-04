@@ -208,7 +208,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
     return FractionallySizedBox(
       widthFactor: 0.5,
       child: TextButton(
-        onPressed: () => addGoalAlert(textTheme, context),
+        onPressed: () => addGoalAlert(context),
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,

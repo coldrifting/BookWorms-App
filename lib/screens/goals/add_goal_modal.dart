@@ -8,19 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-Future<void> addGoalAlert(TextTheme textTheme, BuildContext context, [void Function()? callback]) {
+Future<void> addGoalAlert(BuildContext context, [void Function()? callback]) {
   return showDialog(
     context: context,
-    barrierDismissible: false,  // Prevents accidental dismissal
-    builder: (context) => AddGoalDialog(textTheme: textTheme, callback: callback),
+    barrierDismissible: false,
+    builder: (context) => AddGoalDialog(callback: callback),
   );
 }
 
 class AddGoalDialog extends StatefulWidget {
-  final TextTheme textTheme;
   final void Function()? callback;
 
-  const AddGoalDialog({super.key, required this.textTheme, this.callback});
+  const AddGoalDialog({super.key, this.callback});
 
   @override
   State<AddGoalDialog> createState() => _AddGoalDialogState();
@@ -41,8 +40,8 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   void initState() {
     super.initState();
     titleController = TextEditingController();
-    startDateController = TextEditingController(text: convertDateToStringUI(DateTime.now()));
-    dueDateController = TextEditingController(text: convertDateToStringUI(DateTime.now().add(Duration(days: 1))));
+    startDateController = TextEditingController(text: convertDateToString(DateTime.now()));
+    dueDateController = TextEditingController(text: convertDateToString(DateTime.now().add(Duration(days: 1))));
     booksReadController = TextEditingController();
     pickedDate = DateTime.now().add(Duration(days: 1));
   }
@@ -74,6 +73,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   @override
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context, listen: false);
+    final TextTheme textTheme = Theme.of(context).textTheme;
     var isParent = appState.isParent;
 
     return GestureDetector(
@@ -85,7 +85,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
             Icon(Icons.school, color: colorGreen),
             Text(
               "Add Classroom Goal",
-              style: widget.textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold),
+              style: textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold),
             ),
             Divider(color: colorGrey),
           ],
@@ -136,7 +136,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                   ],
                 ),
                 addVerticalSpace(16),
-                Text("Metric Type", style: widget.textTheme.titleMedium!.copyWith(color: colorGreyDark)),
+                Text("Metric Type", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
                 ToggleButtons(
                   isSelected: [!isNumBooksMetric, isNumBooksMetric],
                   onPressed: (index) {
@@ -201,12 +201,12 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
               if (formKey.currentState?.validate() ?? false) {
                 Goal newGoal = Goal(
                   goalType: isParent 
-                          ? "Child"
-                          : isChecked ? "ClassroomAggregate" : "Classroom",
+                    ? "Child"
+                    : isChecked ? "ClassroomAggregate" : "Classroom",
                   goalMetric: selectedMetric,
                   title: titleController.text,
-                  startDate: convertDateToString(DateTime.now()),
-                  endDate: convertDateToString(pickedDate!),
+                  startDate: convertStringToDateString(startDateController.text),
+                  endDate: convertStringToDateString(dueDateController.text),
                   target: isNumBooksMetric ? int.parse(booksReadController.text) : 0,
                 );
                 Result result;
@@ -228,7 +228,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
               backgroundColor: colorGreen,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: Text("Save Goal", style: TextStyle(color: Colors.white)),
+            child: Text("Add Goal", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
