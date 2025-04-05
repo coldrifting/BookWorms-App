@@ -1,3 +1,6 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child/child.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
@@ -8,10 +11,6 @@ import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
-import 'package:bookworms_app/resources/colors.dart';
 
 /// The [ProgressScreen] contains information about the selected child's
 /// progress toward their set custom goals.
