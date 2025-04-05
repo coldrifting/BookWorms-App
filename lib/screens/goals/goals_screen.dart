@@ -1,12 +1,13 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
 import 'package:bookworms_app/screens/goals/add_goal_modal.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/completion_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class GoalsScreen extends StatefulWidget {
@@ -222,7 +223,25 @@ class _GoalsScreenState extends State<GoalsScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Icon(Icons.arrow_forward_rounded, size: 24, color: colorGreyDark),
+                  if (!appState.isParent)
+                    Icon(Icons.arrow_forward_rounded, size: 24, color: colorGreyDark),
+                  if (appState.isParent)
+                    TextButton.icon(
+                      onPressed: () {}, 
+                       style: TextButton.styleFrom(
+                        backgroundColor: colorGreyLight,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      label: Row(
+                        children: [
+                          Text("Log", style: TextStyle(color: colorGreyDark)),
+                          addHorizontalSpace(4),
+                          Icon(Icons.edit, color: colorGreyDark)
+                        ],
+                      )
+                    )
                 ],
               ),
               addVerticalSpace(8),
@@ -234,64 +253,43 @@ class _GoalsScreenState extends State<GoalsScreen> {
     );
   }
 
-  Widget _goalDetails(dynamic goal) {
+  Widget _classGoalDetails(dynamic goal) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    AppState appState = Provider.of<AppState>(context);
-
     DateTime endDate = DateTime.parse(goal.endDate);
 
     return Column(
       children: [
-        if (!appState.isParent) ... [
-          Text(
-            "Completed by ${goal.classGoalDetails.studentsCompleted}/${goal.classGoalDetails.studentsTotal} students", 
-            style: textTheme.bodyMedium
-          ),
-          addVerticalSpace(8),
-          _completionBarWidget(goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
-          addVerticalSpace(12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (goal.goalMetric == "Completion") ...[
-                    Text("Average Time", style: textTheme.bodyMedium),
-                    Text(goal.progress.toString(), // TODO
-                      //? "${goal.progress.toString().substring(3)} min." 
-                      //: "--", 
-                      style: textTheme.labelLarge
-                    ),
-                  ],
-                  if (goal.goalMetric == "BooksRead") ...[
-                    Text("Avg. Books Read", style: textTheme.bodyMedium),
-                    Text(
-                      goal.progress.toString(), 
-                      style: textTheme.labelLarge
-                    ),
-                  ]
-                ],
-              ),
-              if (goal.goalMetric == "NumBooks") ...[
-                SizedBox(
-                  height: 40,
-                  child: VerticalDivider(
-                    color: Colors.black,
-                    thickness: 1,
-                    width: 20,
+        Text(
+          "Completed by ${goal.classGoalDetails.studentsCompleted}/${goal.classGoalDetails.studentsTotal} students", 
+          style: textTheme.bodyMedium
+        ),
+        addVerticalSpace(8),
+        completionBarWidget(goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
+        addVerticalSpace(12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (goal.goalMetric == "Completion") ...[
+                  Text("Average Time", style: textTheme.bodyMedium),
+                  Text(goal.progress.toString(), // TODO
+                    //? "${goal.progress.toString().substring(3)} min." 
+                    //: "--", 
+                    style: textTheme.labelLarge
                   ),
-                ),
-                Column(
-                  children: [
-                    Text("Target Books", style: textTheme.bodyMedium),
-                    Text(
-                      "${goal.target}",
-                      style: textTheme.labelLarge
-                    ),
-                  ],
-                ),
+                ],
+                if (goal.goalMetric == "BooksRead") ...[
+                  Text("Avg. Books Read", style: textTheme.bodyMedium),
+                  Text(
+                    goal.progress.toString(), 
+                    style: textTheme.labelLarge
+                  ),
+                ]
               ],
+            ),
+            if (goal.goalMetric == "NumBooks") ...[
               SizedBox(
                 height: 40,
                 child: VerticalDivider(
@@ -301,18 +299,109 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 ),
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Due Date", style: textTheme.bodyMedium),
+                  Text("Target Books", style: textTheme.bodyMedium),
                   Text(
-                    "${endDate.month}/${endDate.day}/${endDate.year}", 
+                    "${goal.target}",
                     style: textTheme.labelLarge
                   ),
                 ],
               ),
             ],
-          ),
+            SizedBox(
+              height: 40,
+              child: VerticalDivider(
+                color: Colors.black,
+                thickness: 1,
+                width: 20,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Due Date", style: textTheme.bodyMedium),
+                Text(
+                  "${endDate.month}/${endDate.day}/${endDate.year}", 
+                  style: textTheme.labelLarge
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _childGoalDetails(dynamic goal) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    goal = goal as ChildGoal;
+    DateTime startDate = DateTime.parse(goal.startDate);
+    DateTime endDate = DateTime.parse(goal.endDate);
+    int progress = goal.progress;
+    if (goal.goalMetric == "Completion") {
+      progress = splitNumber(progress)[1];
+    }
+
+    return Column(
+      children: [
+        if (goal.goalMetric == "BooksRead") ... [
+          Text("Progress: $progress/${goal.target} read", style: textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+          addVerticalSpace(8),
+          completionBarWidget(goal.progress, goal.target),
         ],
+        if (goal.goalMetric == "Completion") ...[
+          Text("Progress: $progress%", style: textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+          addVerticalSpace(8),
+          completionBarWidget(progress, 100),
+        ],
+        addVerticalSpace(12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Start Date", style: textTheme.bodyMedium),
+                Text(convertDateToString(startDate), style: textTheme.labelLarge),
+              ],
+            ),
+            if (goal.goalMetric == "NumBooks") ...[
+              SizedBox(
+                height: 40,
+                child: VerticalDivider(
+                  color: Colors.black,
+                  thickness: 1,
+                  width: 20,
+                ),
+              ),
+              Column(
+                children: [
+                  Text("Target Books", style: textTheme.bodyMedium),
+                  Text(
+                    "${goal.target}",
+                    style: textTheme.labelLarge
+                  ),
+                ],
+              ),
+            ],
+            SizedBox(
+              height: 40,
+              child: VerticalDivider(
+                color: Colors.black,
+                thickness: 1,
+                width: 20,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("Due Date", style: textTheme.bodyMedium),
+                Text(convertDateToString(endDate), style: textTheme.labelLarge),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -361,27 +450,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
     );
   }
 
-  // Calculates the percentage of time between the start date, now, and the end date.
-  Widget _completionBarWidget(int numStudentsCompleted, int numTotalStudents) {
-    double percentCompleted = numTotalStudents == 0 ? 0.0 : numStudentsCompleted / numTotalStudents;
-    Color barColor;
-    if (percentCompleted < 0.5) {
-      barColor = colorRed;
-    } else if (percentCompleted < 0.9) {
-      barColor = colorYellow;
-    } else {
-      barColor = colorGreen;
-    }
-
-    return LinearPercentIndicator(
-      lineHeight: 8.0,
-      percent: percentCompleted,
-      progressColor: barColor,
-      barRadius: const Radius.circular(4),
-      backgroundColor: Colors.grey[300],
-    );
-  }
-
   // Navigates from classroom goal screen to goal detail screen (displays all students' completion status).
   Future<void> _navigateToGoalDetails(BuildContext context, AppState appState, ClassroomGoal goal) async {
     ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId!);
@@ -394,11 +462,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
   }
 
   // Gets the function callback related to the specific goal (active/past or future).
-  Widget Function(dynamic) _getGoalDetailsCallback(dynamic goal, String title) {
+  Widget Function(dynamic goal) _getGoalDetailsCallback(dynamic goal, String title) {
     if (title.contains("Upcoming")) {
       return _futureGoalDetails;
+    } else if (goal.goalType == "Classroom") {
+      return _classGoalDetails;
     } else {
-      return _goalDetails;
+      return _childGoalDetails;
     }
   }
 }

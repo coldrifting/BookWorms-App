@@ -68,6 +68,7 @@ class AppState extends ChangeNotifier {
       for (var i = 0; i < children.length; i++) {
         setChildBookshelves(i);
         setChildClassrooms(i);
+        setChildGoals(i);
       }
     } else {
       setClassroomDetails();
@@ -526,7 +527,8 @@ class AppState extends ChangeNotifier {
 
   ChildGoalService childGoalService = ChildGoalService();
 
-  Future<void> getChildGoals(Child child) async {
+  Future<void> setChildGoals(int childId) async {
+    Child child = children[childId];
     List<ChildGoal> goals = await childGoalService.getChildGoals(child.id);
     child.goals = goals;
     notifyListeners();

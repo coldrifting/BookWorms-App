@@ -78,7 +78,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           textAlign: TextAlign.center,
                           selectedChild.name
                         ),
-                        const Icon(size: 35, Icons.arrow_drop_down_sharp),
                       ],
                     ),
                   ),

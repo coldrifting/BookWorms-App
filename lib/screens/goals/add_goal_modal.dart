@@ -208,6 +208,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                   startDate: convertStringToDateString(startDateController.text),
                   endDate: convertStringToDateString(dueDateController.text),
                   target: isNumBooksMetric ? int.parse(booksReadController.text) : 0,
+                  progress: 0
                 );
                 Result result;
                 if (!isParent) {
