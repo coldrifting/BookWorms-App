@@ -1,6 +1,4 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
@@ -119,10 +117,6 @@ class _GoalDashboardState extends State<GoalDashboard> {
       if (mounted) {
         pushScreen(context, ClassGoalDetails(goal: detailedGoal));
       }
-    } else {
-      Child selectedChild = appState.children[appState.selectedChildID];
-      ChildGoal detailedGoal = await appState.getChildGoalDetails(selectedChild, selectedGoal.goalId!);
-      // TODO: Navigate to child goal details screen.
     }
   }
 
