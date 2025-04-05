@@ -13,7 +13,9 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spell_checker/flutter_spell_checker.dart';
 
 
 /// The [SearchScreen] consists of a search bar and a sub-widget (either browse, recents, or results).
@@ -28,6 +30,7 @@ class SearchScreen extends StatefulWidget {
 class SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   var _isInAdvancedSearch = false; 
   var _currentQuery = "";
+  var _currentQueryCorrected = [];
   var _searchResults = [];
   Timer? _debounceTimer;
 
@@ -84,6 +87,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
   void reset() {
     setState(() {
       _currentQuery = "";
+      _currentQueryCorrected.clear();
       _textEditingcontroller.text = "";
       _tabController.index = 0;
       FocusManager.instance.primaryFocus?.unfocus();
@@ -118,6 +122,9 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
       if (query.isNotEmpty) {
         List<BookSummary> results = await _search(query);
 
+        // Check the query for typos (any found will be suggested to user)
+        _spellcheckQuery(query);
+
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         setState(() {
           _searchResults = results;
@@ -137,6 +144,26 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
         });
       }
     });
+  }
+
+  /// Sets state according to the results of spellchecking the given query.
+  void _spellcheckQuery(String query) async {
+    final spellCheckResult = await FlutterSpellChecker.checkSpelling(query);
+    if (spellCheckResult.isNotEmpty) {
+      final corrections = {
+        for (var correction in spellCheckResult)
+          correction.word : correction.replacements[0]
+      };
+      _currentQueryCorrected = [
+        for (var word in _currentQuery.split(" "))
+          {
+            "word": corrections[word] ?? word,
+            "corrected": corrections[word] != null
+          }
+      ];
+    } else {
+      _currentQueryCorrected.clear();
+    }
   }
 
   /// Fetches the advanced search results and the corresponding images.
@@ -209,6 +236,13 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
           children: [
             addVerticalSpace(8),
             _searchBar(),
+            if (_currentQueryCorrected.isNotEmpty)
+              Column(
+                children: [
+                  addVerticalSpace(8),
+                  _didYouMean(),
+                ],
+              ),
             addVerticalSpace(8),
             Expanded(child: mainContent),
           ],
@@ -239,6 +273,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     _textEditingcontroller.clear();
+                    _currentQueryCorrected.clear();
                     _onSearchQueryChanged("");
                   },
                 ),
@@ -246,6 +281,50 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
           ),
         ),
       ],
+    );
+  }
+
+  /// The "did you mean" sub-widget is shown if typos are detected
+  Widget _didYouMean() {
+    final tapGestureRecognizer = TapGestureRecognizer()..onTap = () {
+      _notifyIfChanged();
+      setState(() {
+        var corrected = _currentQueryCorrected.map((element) => element["word"]).join(" ");
+        _textEditingcontroller.text = corrected;
+        _currentQueryCorrected.clear();
+        _onSearchQueryChanged(corrected);
+      });
+    };
+
+    return Center(
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w300,
+            color: colorBlack
+          ),
+          children: <TextSpan>[
+            TextSpan(text: "Did you mean: "),
+            TextSpan(
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.indigoAccent
+              ),
+              children: [
+                for (var element in _currentQueryCorrected)
+                  TextSpan(
+                    text: element["word"] + " ",
+                    recognizer: tapGestureRecognizer,
+                    style: element["corrected"]
+                      ? const TextStyle(fontStyle: FontStyle.italic)
+                      : null
+                  )
+              ]
+            )
+          ]
+        )
+      )
     );
   }
 
