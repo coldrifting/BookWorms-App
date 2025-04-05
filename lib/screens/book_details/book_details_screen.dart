@@ -327,7 +327,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       TextTheme textTheme, BookSummary book, NavigatorState navState) {
     AppState appState = Provider.of<AppState>(context, listen: false);
     List<Bookshelf> bookshelves = appState.bookshelves
-        .where((shelf) => shelf.type != BookshelfType.classroom)
+        .where((shelf) => !appState.isParent || shelf.type != BookshelfType.classroom)
         .toList();
 
     showModalBottomSheet(
