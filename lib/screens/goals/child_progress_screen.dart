@@ -1,5 +1,6 @@
 import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
+import 'package:bookworms_app/screens/goals/progress_overview_screen.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
@@ -138,7 +139,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  Center(child: Text("Overall Progress")),
+                  Center(child: ProgressOverviewScreen()),
                   Center(child: GoalsScreen())
                 ],
               ),
