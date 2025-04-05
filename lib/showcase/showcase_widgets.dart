@@ -59,7 +59,7 @@ class _BWShowcaseState extends State<BWShowcase> {
         showcaseController.goToScreen(widget.toScreen!);
         showcaseController.next();
       },
-      onBarrierClick: showcaseController.next,
+      disableBarrierInteraction: widget.toScreen != null && widget.toScreen != 0,
       disposeOnTap: widget.toScreen == null ? null : false,
       tooltipActions: _getActionButtons(widget.tooltipActions, widget.toScreen),
       tooltipPadding: const EdgeInsets.all(25),
