@@ -124,6 +124,10 @@ Uri bookshelvesRecommendDescriptionsUri(String? childId) {
   return Uri.parse("$serverBaseUri/recommend/similardescriptions${childId != null ? "?childId=$childId" : ''}");
 }
 
+Uri bookshelvesPositivelyReviewedUri(String? childId) {
+  return Uri.parse("$serverBaseUri/recommend/positivelyreviewed${childId != null ? "?childId=$childId" : ''}");
+}
+
 // ***** Search *****
 
 Uri searchQueryUri(String query) {
