@@ -3,12 +3,14 @@ class Announcement {
   String title;
   String body;
   DateTime time;
+  bool isRead;
 
   Announcement({
     required this.announcementId,
     required this.title,
     required this.body,
-    required this.time
+    required this.time,
+    this.isRead = false
   });
 
   // Decodes the JSON to create a Classroom object.
@@ -17,7 +19,8 @@ class Announcement {
       announcementId: json['announcementId'],
       title: json['title'],
       body: json['body'],
-      time: DateTime.parse(json['time'])
+      time: DateTime.parse(json['time']),
+      isRead: json['isRead'] ?? false
     );
   }
 }

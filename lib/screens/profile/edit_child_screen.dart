@@ -184,7 +184,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
               ),
               addVerticalSpace(16),
               if (appState.children.length > widget.childID 
-                && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) > 0)
+                && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) >= 0)
                 _classroomList(textTheme),
               addVerticalSpace(32),  
               Row(
@@ -387,7 +387,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
         context: context,
         builder: (BuildContext context)
     {
-      String input = "";
 
       return StatefulBuilder(builder: (context, setState) {
         return AlertDialog(
@@ -432,9 +431,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     activeColor: colorGreen,
                     selectedColor: colorGreen,
                   ),
-                  onChanged: (value) {
-                    setState(() => input = value);
-                  },
                 ),
                 Text("Need help? Ask your teacher!")
               ],
@@ -448,9 +444,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 isElevated: false),
             dialogButton(
                 "Join",
-                input.length != 6 ? null : () async {
+                textEditingController.value.text.length != 6 ? null : () async {
                 Result result = await appState.joinChildClassroom(
-                    widget.childID, input);
+                    widget.childID, textEditingController.value.text);
                 if (context.mounted) {
                   resultAlert(context, result);
                 }
@@ -512,24 +508,12 @@ class _EditChildScreenState extends State<EditChildScreen> {
           }
         }
         else {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Center(
-                  child: Text('Delete Child Profile')
-                ),
-                content: const Text('You cannot delete all child profiles from your account.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, 'OK'),
-                    child: Text('OK', style: TextStyle(color: colorGreen),
-                    ),
-                  ),
-                ],
-              );
-            }
-          );
+          await showConfirmDialog(
+              context,
+              "Delete Child Profile",
+              "You cannot delete all child profiles from your account.",
+              confirmText: "Okay",
+              showCancelButton: false);
         }
       },
       child: Text(

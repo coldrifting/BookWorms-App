@@ -1,47 +1,54 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/announcement.dart';
 import 'package:bookworms_app/resources/colors.dart';
-import 'package:bookworms_app/screens/classroom/class_announcements_edit_screen.dart';
+import 'package:bookworms_app/screens/announcements/announcements_modify_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class ClassAnnouncementsView extends StatefulWidget {
+class AnnouncementsEntryScreen extends StatefulWidget {
   final String announcementId;
 
-  const ClassAnnouncementsView(this.announcementId, {super.key});
+  const AnnouncementsEntryScreen(this.announcementId, {super.key});
 
   // ClassAnnouncements
 
   @override
-  State<ClassAnnouncementsView> createState() => _ClassAnnouncementsViewState();
+  State<AnnouncementsEntryScreen> createState() => _AnnouncementsEntryScreenState();
 }
 
-class _ClassAnnouncementsViewState extends State<ClassAnnouncementsView> {
+class _AnnouncementsEntryScreenState extends State<AnnouncementsEntryScreen> {
   @override
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
 
-    Announcement? announcement = appState.classroom?.announcements
-        .firstWhere((a) => a.announcementId == widget.announcementId);
+    Announcement? announcement = (appState.isParent
+        ? appState.children[appState.selectedChildID].classrooms.expand((c) => c.announcements)
+        : appState.classroom?.announcements)
+        ?.where((a) => a.announcementId == widget.announcementId).firstOrNull;
+
+    // Guard against bad state if child changes while viewing an announcement
+    if (announcement == null) {
+      Navigator.of(context).pop();
+      return SizedBox();
+    }
+
+    if (appState.isParent) {
+      appState.markAnnouncementAsRead(announcement);
+    }
 
     FloatingActionButton? fab = appState.isParent
         ? null
         : floatingActionButtonWithText(
             "Edit Announcement",
             Icons.edit,
-            () => pushScreen(context,
-                ClassAnnouncementsEditScreen(announcement!)));
-
-    Widget body = announcement == null
-        ? Text("Could not load announcement")
-        : announcementViewPageBody(announcement);
+            () => pushScreen(context, AnnouncementsModifyScreen(announcement)));
 
     return Scaffold(
         appBar: AppBarCustom("Announcement Details"),
-        body: body,
+        body: announcementViewPageBody(announcement),
         floatingActionButton: fab);
   }
 }

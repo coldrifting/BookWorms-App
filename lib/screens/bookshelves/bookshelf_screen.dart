@@ -274,7 +274,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
               });
               resultAlert(context, result);
             },
-            backgroundColor: colorGreen,
+            backgroundColor: colorRed,
             foregroundColor: colorWhite,
             borderRadius: BorderRadius.circular(4),
             icon: Icons.delete,

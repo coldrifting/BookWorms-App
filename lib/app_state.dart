@@ -13,6 +13,7 @@ import 'package:bookworms_app/services/book/bookshelf_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_goals_service.dart';
 import 'package:bookworms_app/services/classroom/classroom_service.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bookworms_app/models/account/account.dart';
@@ -136,6 +137,10 @@ class AppState extends ChangeNotifier {
   Future<Result> joinChildClassroom(int childId, String classCode) async {
     ChildrenServices childrenServices = ChildrenServices();
     String guid = children[childId].id;
+
+    if (children[childId].classrooms.firstWhereOrNull((c) => c.classCode.toLowerCase() == classCode.toLowerCase()) != null) {
+      return Result(isSuccess: false, message: "Already a part of this class");
+    }
 
     try {
       Classroom? newClassroom = await childrenServices.joinChildClassroom(guid, classCode);
@@ -692,6 +697,20 @@ class AppState extends ChangeNotifier {
       classroom!.announcements
           .removeWhere((a) => a.announcementId == announcementId);
 
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<bool> markAnnouncementAsRead(Announcement announcement) async {
+    String childId = (account as Parent).children[selectedChildID].id;
+    Announcement announce = (account as Parent).children[selectedChildID].classrooms
+        .expand((a) => a.announcements)
+        .firstWhere((a) => a.announcementId == announcement.announcementId);
+
+    bool result = await classroomService.markAnnouncementRead(announcement.announcementId, childId);
+    if (result) {
+      announce.isRead = true;
       notifyListeners();
     }
     return result;
