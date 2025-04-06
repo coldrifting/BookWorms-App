@@ -12,13 +12,14 @@ class Classroom {
   int classIcon;
   List<ClassroomGoal> classroomGoals = [];
 
-  Classroom(
-      {required this.classCode,
-      required this.students,
-      required this.classroomName,
-      required this.classIcon,
-      required this.bookshelves,
-      required this.announcements});
+  Classroom({
+    required this.classCode,
+    required this.students,
+    required this.classroomName,
+    required this.classIcon,
+    required this.bookshelves,
+    required this.announcements
+  });
 
   // Decodes the JSON to create a Classroom object.
   factory Classroom.fromJson(Map<String, dynamic> json) {

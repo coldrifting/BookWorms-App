@@ -41,7 +41,7 @@ class _LineGraphState extends State<LineGraph> {
 
   Widget _xAxisLabel() {
     return Text(
-      'Days',
+      graphIndex == 0 ? 'Days' : 'Months',
       style: TextStyle(
         color: colorGrey,
         fontSize: 14,

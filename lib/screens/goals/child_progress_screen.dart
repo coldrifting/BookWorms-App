@@ -55,93 +55,136 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
     return Scaffold(
       appBar: AppBarCustom("${selectedChild.name}'s Progress", isLeafPage: false, rightAction: announcementButton),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () => showChildSelection(selectedChild),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: UserIcons.getIcon(selectedChild.profilePictureIndex),
-                  ),
-                  Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          style: textTheme.headlineMedium,
-                          textAlign: TextAlign.center,
-                          selectedChild.name
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+      body: DefaultTabController(
+        length: 2,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            // Icon Header.
+            SliverToBoxAdapter(
+              child: _header()
+            ),
+
+            // Pinned icon header (name and reading level).
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverDelegate(
+                child: _pinnedHeader(textTheme, selectedChild)
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(style: textTheme.bodyLarge, "Reading Level: ${selectedChild.readingLevel}"),
-                RawMaterialButton(
-                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
-                  shape: const CircleBorder(),
-                  constraints: BoxConstraints(
-                    maxWidth: 40,
-                  ),
-                  child: const Icon(
-                    Icons.help_outline,
-                    color: colorBlack,
-                    size: 20
-                  )
+
+            // Tab bar.
+            SliverPersistentHeader(
+              pinned: true,
+              floating: false,
+              delegate: _SliverDelegate(
+                child: TabBar(
+                  labelStyle: textTheme.labelLarge,
+                  labelColor: colorGreen,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: colorGreen,
+                  tabs: [
+                    BWShowcase(
+                      showcaseKey: navKeys[0],
+                      description: "[Description of Overall Progress]",
+                      targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Tab(text: "Overall Progress")
+                    ),
+                    BWShowcase(
+                      showcaseKey: navKeys[1],
+                      description: "Switch to \"Goal Progress\" to make and track goals for your child",
+                      targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Tab(text: "Goal Progress")
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-            const Divider(),
-            // Overall progress and Goal progress tabs.
-            _tabBar(),
-          ],
+          ], 
+          body: TabBarView(
+            children: [
+              ProgressOverviewScreen(),
+              GoalsScreen()
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Tab bar for switching between overall progress and goal progress.
-  Widget _tabBar() {
-    return Expanded(
-      child: DefaultTabController(
-        length: 2,
+  Widget _pinnedHeader(TextTheme textTheme, Child selectedChild) {
+    return Column(
+      children: [
+        addVerticalSpace(4),
+        Text(
+          style: textTheme.headlineMedium,
+          textAlign: TextAlign.center,
+          selectedChild.name
+        ),
+        SizedBox(
+          width: 200,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Centered reading level text
+              Text(
+                "Reading Level: ${selectedChild.readingLevel}",
+                style: textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+          
+              // Right-side question mark button
+              Positioned(
+                right: -5,
+                child: RawMaterialButton(
+                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
+                  shape: const CircleBorder(),
+                  constraints: const BoxConstraints.tightFor(width: 30, height: 30),
+                  padding: EdgeInsets.zero,
+                  child: const Icon(
+                    Icons.help_outline,
+                    color: colorBlack,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _header() {
+    AppState appState = Provider.of<AppState>(context);
+    Child selectedChild = appState.children[appState.selectedChildID];
+    
+    return Container(
+      color: colorWhite,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           children: [
-            TabBar(
-              tabs: [
-                BWShowcase(
-                  showcaseKey: navKeys[0],
-                  description: "[Description of Overall Progress]",
-                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  child: Tab(text: "Overall Progress")
-                ),
-                BWShowcase(
-                  showcaseKey: navKeys[1],
-                  description: "Switch to \"Goal Progress\" to make and track goals for your child",
-                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  child: Tab(text: "Goal Progress")
+            addVerticalSpace(16),
+            Row(
+              children: [
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 115,
+                        height: 115,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: Border.all(color: colorGreyDark, width: 2)
+                        ),
+                        child: UserIcons.getIcon(selectedChild.profilePictureIndex, 100),
+                      ),
+                    ],
+                  ),
                 ),
               ],
-              unselectedLabelColor: colorGrey,
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  Center(child: ProgressOverviewScreen()),
-                  Center(child: GoalsScreen())
-                ],
-              ),
             ),
           ],
         ),
@@ -157,5 +200,33 @@ class _ProgressScreenState extends State<ProgressScreen> {
         return ChildSelectionListWidget();
       },
     );
+  }
+}
+
+// Custom SliverPersistentHeaderDelegate to manage the behavior and layout of the pinned 
+// classroom title and TabBar. It is responsible for building the widgets, defining their 
+// height, and ensuring that they remain pinned at the top of the screen.
+class _SliverDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _SliverDelegate({required this.child});
+
+  @override
+  double get minExtent => child is TabBar ? (child as TabBar).preferredSize.height : 80.0;
+  @override
+  double get maxExtent => child is TabBar ? (child as TabBar).preferredSize.height : 80.0;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Material(
+      color: colorWhite,
+      elevation: 1,
+      child: child,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverDelegate oldDelegate) {
+    return true;
   }
 }
