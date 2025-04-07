@@ -69,6 +69,19 @@ class BookshelfService {
     }
   }
 
+  Future<List<BookSummary>> getPositivelyReviewedBookshelf([String? guid]) async {
+    final response = await client.sendRequest(
+        uri: bookshelvesPositivelyReviewedUri(guid),
+        method: "GET");
+
+    if (response.ok) {
+      final data = jsonDecode(response.body) as List;
+      return data.map((entry) => BookSummary.fromJson(entry)).toList();
+    } else {
+      throw Exception("An error occurred when fetching the child's recommended bookshelf.");
+    }
+  }
+
   Future<List<Bookshelf>> getBookshelves(String guid) async {
     final response = await client.sendRequest(
         uri: bookshelvesUri(guid),

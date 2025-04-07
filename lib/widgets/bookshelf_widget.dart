@@ -200,7 +200,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                   Text(
                     textAlign: TextAlign.center,
                     style: textTheme.bodySmall, 
-                    "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
+                    "${book.rating != null ? "${book.rating}★" : ""}   ${book.level != null ? "level ${book.level}" : ""}"
                   ),
                 ]
                 else if (book.rating != null || book.level != null) ...[

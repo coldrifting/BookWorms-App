@@ -6,8 +6,8 @@ class UserIcons {
   static const numIcons = 9;
 
   /// Returns a user icon based on the [icon] identifier.
-  static Widget getIcon(int index) {
-    return CircleAvatar(backgroundImage: AssetImage("assets/images/worm-icon$index.png"));
+  static Widget getIcon(int index, [double? radius]) {
+    return CircleAvatar(backgroundImage: AssetImage("assets/images/worm-icon$index.png"), radius: radius);
   }
 
   /// Returns a random icon index.

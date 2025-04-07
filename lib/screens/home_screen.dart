@@ -23,8 +23,9 @@ class HomeScreen extends StatefulWidget {
 
 /// The state of the [HomeScreen].
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<Bookshelf> _recommendedAuthorsBookshelf;
+  late final Future<Bookshelf> _recommendedAuthorsBookshelf;
   late final Future<Bookshelf> _recommendedDescriptionsBookshelf;
+  late final Future<Bookshelf> _readAgainBookshelf;
   late bool existsRecommended;
   late final showcaseController = ShowcaseController();
   late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('home');
@@ -40,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int? childId = isParent ? appState.selectedChildID : null;
     _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(childId);
     _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(childId);
+    _readAgainBookshelf = appState.getPositivelyReviewedBookshelf(childId);
 
     // Start showcase when Home Screen loads,
     //  but only if this is the first time launching the app
@@ -168,6 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Display recommended bookshelves.
           _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
           _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+          _getRecommendedBookshelf(_readAgainBookshelf),
     
           // Display custom bookshelves.
           if (bookshelves.isNotEmpty)

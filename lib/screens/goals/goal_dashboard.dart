@@ -1,11 +1,9 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
-import 'package:bookworms_app/screens/goals/add_goal_modal.dart';
+import 'package:bookworms_app/screens/goals/goal_modal.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -119,10 +117,6 @@ class _GoalDashboardState extends State<GoalDashboard> {
       if (mounted) {
         pushScreen(context, ClassGoalDetails(goal: detailedGoal));
       }
-    } else {
-      Child selectedChild = appState.children[appState.selectedChildID];
-      ChildGoal detailedGoal = await appState.getChildGoalDetails(selectedChild, selectedGoal.goalId!);
-      // TODO: Navigate to child goal details screen.
     }
   }
 
@@ -208,7 +202,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
     return FractionallySizedBox(
       widthFactor: 0.5,
       child: TextButton(
-        onPressed: () => addGoalAlert(textTheme, context),
+        onPressed: () => goalAlert(context),
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,
@@ -233,7 +227,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
     final int percentCompleted;
 
     if (appState.isParent) {
-      percentCompleted = goal.progress;
+      percentCompleted = parseProgress(goal.progress)[1];
     } else {
       final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
       percentCompleted = goalDetails.studentsTotal != 0
@@ -302,7 +296,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
                         ),
                         addHorizontalSpace(16),
                         TextButton(
-                          onPressed: () => _navigateToDetailedGoalScreen(goal),
+                          onPressed: () => goalAlert(context, null, goal),
                           style: TextButton.styleFrom(
                             backgroundColor: colorGreyLight.withAlpha(180),
                             foregroundColor: colorBlack,
@@ -313,8 +307,9 @@ class _GoalDashboardState extends State<GoalDashboard> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("See More", style: textTheme.labelMedium),
-                              Icon(Icons.chevron_right, size: 16),
+                              Text("Log", style: textTheme.labelMedium),
+                              addHorizontalSpace(4),
+                              Icon(Icons.edit, size: 16),
                             ],
                           ),
                         )

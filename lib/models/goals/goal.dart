@@ -6,7 +6,7 @@ class Goal {
   final String startDate;
   final String endDate;
   final int target;
-  int? progress;
+  int progress;
 
   Goal({
     this.goalId,
@@ -16,7 +16,7 @@ class Goal {
     required this.startDate,
     required this.endDate,
     required this.target,
-    this.progress
+    required this.progress
   });
 
   factory Goal.fromJson(Map<String, dynamic> json) {
