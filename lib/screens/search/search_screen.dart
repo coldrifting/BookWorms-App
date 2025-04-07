@@ -482,7 +482,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                             );
                           }).toList(),
                         ),
-                        SizedBox(width: 10),
+                        addHorizontalSpace(10),
                       ],
                     ),
                   ),

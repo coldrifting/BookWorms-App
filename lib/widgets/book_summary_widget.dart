@@ -75,7 +75,7 @@ class _BookSummaryWidgetState extends State<BookSummaryWidget> {
                     Text(
                       textAlign: TextAlign.center,
                       style: textTheme.bodyMedium, 
-                      "${book.rating != null ? "${book.rating}★" : ""} ${book.level != null ? "${book.level}" : ""}"
+                      "${book.rating}★    level ${book.level}"
                     ),
                   ]
                   else if (book.rating != null || book.level != null) ...[

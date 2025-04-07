@@ -64,7 +64,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           // Pinned classroom header.
           SliverPersistentHeader(
             pinned: true,
-            floating: false,
             delegate: _SliverDelegate(
               child: _pinnedClassroomHeader(textTheme, classroom),
             ),
@@ -73,7 +72,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           // Pinned TabBar.
           SliverPersistentHeader(
             pinned: true,
-            floating: false,
             delegate: _SliverDelegate(
               child: TabBar(
                 labelStyle: textTheme.labelLarge,

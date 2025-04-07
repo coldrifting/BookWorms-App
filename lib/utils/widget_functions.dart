@@ -183,12 +183,17 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
   );
 }
 
-String convertDateToString(DateTime date) {
-  return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+String convertStringToDateString(String str) {
+  List<String> parsedDate = str.split('/');
+  return "${parsedDate[2]}-${parsedDate[0].padLeft(2, '0')}-${parsedDate[1].padLeft(2, '0')}";
 }
 
-String convertDateToStringUI(DateTime date) {
+String convertDateToString(DateTime date) {
   return "${date.month}/${date.day}/${date.year}";
+}
+
+DateTime convertStringToDate(String str) {
+  return DateTime.parse(convertStringToDateString(str));
 }
 
 dynamic resultAlert(BuildContext context, Result result, [bool pop=true]) {
@@ -217,4 +222,13 @@ dynamic resultAlert(BuildContext context, Result result, [bool pop=true]) {
       Navigator.pop(context);
     }
   }
+}
+
+dynamic parseProgress(int progress) {
+  String s = progress.toString();
+  if (s.length <= 3) {
+    return [0, progress];
+  }
+  int splitIndex = s.length - 3;
+  return [int.parse(s.substring(0, splitIndex)), int.parse(s.substring(splitIndex))];
 }

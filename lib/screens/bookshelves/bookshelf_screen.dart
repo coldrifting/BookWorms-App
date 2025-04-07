@@ -190,16 +190,6 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
       setState(() {
         bookshelf.name = newName;
       });
-      // Not sure why this hack is needed to keep things in sync, but it seems to work
-      // Currently books seem to sync between tabs for classroom shelves,
-      // but they don't stay in sync for children bookshelves.
-      // Future.delayed(const Duration(milliseconds: 100), () {
-      //   if (mounted) {
-      //     setState(() {
-      //       bookshelf.name = newName;
-      //     });
-      //   }
-      // });
     } else {
       result = await appState.renameClassroomBookshelf(bookshelf.name, newName);
     }
