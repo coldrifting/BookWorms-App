@@ -350,6 +350,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  flutter_spell_checker:
+    dependency: "direct main"
+    description:
+      name: flutter_spell_checker
+      sha256: "89d38063b773712bb95f55db026f462a8c61e71d2fb0b8e26df23457b8d1d85e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   flutter_sticky_header:
     dependency: "direct main"
     description:
