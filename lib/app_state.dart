@@ -550,21 +550,29 @@ class AppState extends ChangeNotifier {
     return childGoal;
   }
 
-  Future<bool> logChildGoalProgress(Child child, String goalId, int progress) async {
-    bool success = await childGoalService.logChildGoal(child.id, goalId, progress);
-    if (success) {
+  Future<Result> logChildGoalProgress(Child child, String goalId, int progress) async {
+    try {
+      await childGoalService.logChildGoal(child.id, goalId, progress);
       int index = child.goals.indexWhere((g) => g.goalId == goalId);
       child.goals[index].progress = progress;
       notifyListeners();
+      return Result(isSuccess: true, message: "Successfully logged the child's progress.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to log the child's progress.");
     }
-    return success;
+    
   }
 
-  Future<void> editChildGoal(Child child, String goalId, String goalMetric) async {
-    ChildGoal childGoal = await childGoalService.editChildGoal(child.id, goalId, goalMetric);
-    int index = child.goals.indexWhere((g) => g.goalId == goalId);
-    child.goals[index] = childGoal;
-    notifyListeners();
+  Future<Result> editChildGoal(Child child, String goalId, String title, String startDate, String dueDate) async {
+    try {
+      ChildGoal childGoal = await childGoalService.editChildGoal(child.id, goalId, title, startDate, dueDate);
+      int index = child.goals.indexWhere((g) => g.goalId == goalId);
+      child.goals[index] = childGoal;
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully edited the goal.");
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to edit the goal.");
+    }
   }
 
   Future<Result> deleteChildGoal(Child child, String goalId) async {

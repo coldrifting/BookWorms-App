@@ -3,7 +3,7 @@ import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
-import 'package:bookworms_app/screens/goals/add_goal_modal.dart';
+import 'package:bookworms_app/screens/goals/goal_modal.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -202,7 +202,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
     return FractionallySizedBox(
       widthFactor: 0.5,
       child: TextButton(
-        onPressed: () => addGoalAlert(context),
+        onPressed: () => goalAlert(context),
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
           foregroundColor: colorWhite,

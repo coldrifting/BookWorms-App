@@ -73,12 +73,14 @@ class ChildGoalService {
     }
   }
 
-  Future<ChildGoal> editChildGoal(String childId, String goalId, String goalMetric) async {
+  Future<ChildGoal> editChildGoal(String childId, String goalId, String title, String startDate, String dueDate) async {
     final response = await client.sendRequest(
-      uri: editClassroomGoalUri(goalId),
+      uri: editChildGoalUri(childId, goalId),
       method: "PUT",
       payload: {
-        "goalMetric": goalMetric
+        "title": title,
+        "startDate": startDate,
+        "endDate": dueDate
       }
     );
     

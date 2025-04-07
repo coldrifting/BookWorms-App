@@ -4,7 +4,7 @@ import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
-import 'package:bookworms_app/screens/goals/add_goal_modal.dart';
+import 'package:bookworms_app/screens/goals/goal_modal.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/completion_bar.dart';
 import 'package:flutter/material.dart';
@@ -174,7 +174,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
       widthFactor: 0.4,
       child: TextButton(
         onPressed: () { 
-          addGoalAlert(context, _organizeGoals);
+          goalAlert(context, _organizeGoals);
         },
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
@@ -225,27 +225,31 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   ),
                   if (!appState.isParent)
                     Icon(Icons.arrow_forward_rounded, size: 24, color: colorGreyDark),
-                  if (appState.isParent)
-                    TextButton.icon(
-                      onPressed: () {}, 
-                       style: TextButton.styleFrom(
-                        backgroundColor: colorGreyLight,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      label: Row(
-                        children: [
-                          Text("Log", style: TextStyle(color: colorGreyDark)),
-                          addHorizontalSpace(4),
-                          Icon(Icons.edit, color: colorGreyDark)
-                        ],
-                      )
-                    )
                 ],
               ),
               addVerticalSpace(8),
-              getGoalDetailsWidget(goal)
+              getGoalDetailsWidget(goal),
+              addVerticalSpace(8),
+              if (appState.isParent)
+                TextButton.icon(
+                  onPressed: () {
+                    goalAlert(context, _organizeGoals, goal);
+                  }, 
+                    style: TextButton.styleFrom(
+                    backgroundColor: colorGreyLight,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Edit", style: TextStyle(color: colorGreyDark)),
+                      addHorizontalSpace(6),
+                      Icon(Icons.edit, color: colorGreyDark)
+                    ],
+                  )
+                )
             ],
           ),
         ),
@@ -282,10 +286,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 ],
                 if (goal.goalMetric == "BooksRead") ...[
                   Text("Avg. Books Read", style: textTheme.bodyMedium),
-                  Text(
-                    goal.progress.toString(), 
-                    style: textTheme.labelLarge
-                  ),
+                  Text(goal.progress.toString(), style: textTheme.labelLarge),
                 ]
               ],
             ),
@@ -378,10 +379,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
               Column(
                 children: [
                   Text("Target Books", style: textTheme.bodyMedium),
-                  Text(
-                    "${goal.target}",
-                    style: textTheme.labelLarge
-                  ),
+                  Text("${goal.target}", style: textTheme.labelLarge),
                 ],
               ),
             ],

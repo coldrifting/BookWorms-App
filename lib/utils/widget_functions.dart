@@ -183,13 +183,17 @@ SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
   );
 }
 
-String convertStringToDateString(String string) {
-  List<String> parsedDate = string.split('/');
+String convertStringToDateString(String str) {
+  List<String> parsedDate = str.split('/');
   return "${parsedDate[2]}-${parsedDate[0].padLeft(2, '0')}-${parsedDate[1].padLeft(2, '0')}";
 }
 
 String convertDateToString(DateTime date) {
   return "${date.month}/${date.day}/${date.year}";
+}
+
+DateTime convertStringToDate(String str) {
+  return DateTime.parse(convertStringToDateString(str));
 }
 
 List<int> splitNumber(int n) {
