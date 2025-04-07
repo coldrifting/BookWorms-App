@@ -200,8 +200,21 @@ class AppState extends ChangeNotifier {
     if (childId != null) {
       guid = children[childId].id;
     }
+
     List<BookSummary> bookDetails = await bookshelvesService.getRecommendedDescriptionBookshelf(guid);
     Bookshelf bookshelf = Bookshelf(books: bookDetails, type: BookshelfType.recommended, name: "Recommended Books");
+    _setBookImages([bookshelf]);
+    return bookshelf;
+  }
+
+  Future<Bookshelf> getPositivelyReviewedBookshelf([int? childId]) async {
+    String? guid;
+    if (childId != null) {
+      guid = children[childId].id;
+    }
+
+    List<BookSummary> bookDetails = await bookshelvesService.getPositivelyReviewedBookshelf(guid);
+    Bookshelf bookshelf = Bookshelf(books: bookDetails, type: BookshelfType.recommended, name: "Read Again");
     _setBookImages([bookshelf]);
     return bookshelf;
   }
