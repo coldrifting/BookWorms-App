@@ -1,3 +1,6 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child/child.dart';
+import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
 import 'package:bookworms_app/screens/goals/progress_overview_screen.dart';
@@ -10,9 +13,6 @@ import 'package:bookworms_app/widgets/child_selection_list_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
 
 /// The [ProgressScreen] contains information about the selected child's
 /// progress toward their set custom goals.
@@ -99,7 +99,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ),
               ),
             ),
-          ], 
+          ],
           body: TabBarView(
             children: [
               ProgressOverviewScreen(),
@@ -131,7 +131,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 style: textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
-          
+
               // Right-side question mark button
               Positioned(
                 right: -5,
@@ -157,7 +157,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget _header() {
     AppState appState = Provider.of<AppState>(context);
     Child selectedChild = appState.children[appState.selectedChildID];
-    
+
     return Container(
       color: colorWhite,
       child: Padding(
@@ -203,8 +203,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 }
 
-// Custom SliverPersistentHeaderDelegate to manage the behavior and layout of the pinned 
-// classroom title and TabBar. It is responsible for building the widgets, defining their 
+// Custom SliverPersistentHeaderDelegate to manage the behavior and layout of the pinned
+// classroom title and TabBar. It is responsible for building the widgets, defining their
 // height, and ensuring that they remain pinned at the top of the screen.
 class _SliverDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;

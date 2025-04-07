@@ -37,7 +37,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
   late SearchService _bookSearchService;
   late BookImagesService _bookImagesService;
 
-  late TextEditingController _textEditingcontroller;
+  late TextEditingController _textEditingController;
   late ScrollController _scrollController;
   late TabController _tabController;
 
@@ -54,7 +54,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     super.initState();
     _bookSearchService = SearchService();
     _bookImagesService = BookImagesService();
-    _textEditingcontroller = TextEditingController();
+    _textEditingController = TextEditingController();
     _scrollController = ScrollController();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
@@ -64,7 +64,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    _textEditingcontroller.dispose();
+    _textEditingController.dispose();
     _scrollController.dispose();
     _tabController.dispose();
     super.dispose();
@@ -88,7 +88,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     setState(() {
       _currentQuery = "";
       _currentQueryCorrected.clear();
-      _textEditingcontroller.text = "";
+      _textEditingController.text = "";
       _tabController.index = 0;
       FocusManager.instance.primaryFocus?.unfocus();
     });
@@ -120,10 +120,10 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await _search(query);
-
         // Check the query for typos (any found will be suggested to user)
-        _spellcheckQuery(query);
+        await _spellcheckQuery(query);
+
+        List<BookSummary> results = await _search(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
         setState(() {
@@ -140,6 +140,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
         }
       } else {
         setState(() {
+          _currentQueryCorrected.clear();
           _searchResults = [];
         });
       }
@@ -147,7 +148,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
   }
 
   /// Sets state according to the results of spellchecking the given query.
-  void _spellcheckQuery(String query) async {
+  Future<void> _spellcheckQuery(String query) async {
     final spellCheckResult = await FlutterSpellChecker.checkSpelling(query);
     if (spellCheckResult.isNotEmpty) {
       final corrections = {
@@ -168,7 +169,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
 
   /// Fetches the advanced search results and the corresponding images.
   void _advancedSearch() async {
-    String? currentQuery = _textEditingcontroller.text.isEmpty ? null : _textEditingcontroller.text;
+    String? currentQuery = _textEditingController.text.isEmpty ? null : _textEditingController.text;
 
     RangeValues? selectedLevelRange = _selectedLevelRange.start == 0 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
 
@@ -259,7 +260,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
           child: SearchBar(
             leading: const Icon(Icons.search),
             hintText: "Find a book",
-            controller: _textEditingcontroller,
+            controller: _textEditingController,
             onChanged: !_isInAdvancedSearch ? _onSearchQueryChanged : null,
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
@@ -268,12 +269,11 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
             ),
             shadowColor: const WidgetStatePropertyAll(Colors.transparent),
             trailing: [
-              if (_textEditingcontroller.text.isNotEmpty)
+              if (_textEditingController.text.isNotEmpty)
                 IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    _textEditingcontroller.clear();
-                    _currentQueryCorrected.clear();
+                    _textEditingController.clear();
                     _onSearchQueryChanged("");
                   },
                 ),
@@ -290,7 +290,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
       _notifyIfChanged();
       setState(() {
         var corrected = _currentQueryCorrected.map((element) => element["word"]).join(" ");
-        _textEditingcontroller.text = corrected;
+        _textEditingController.text = corrected;
         _currentQueryCorrected.clear();
         _onSearchQueryChanged(corrected);
       });
