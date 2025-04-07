@@ -55,7 +55,9 @@ class _GoalModalState extends State<GoalModal> {
       : convertDateToString(DateTime.parse(widget.goal.endDate))
     );
     booksReadController = TextEditingController();
-    inputProgressController = TextEditingController(text: widget.goal.progress.toString());
+    if (widget.goal != null) {
+      inputProgressController = TextEditingController(text: widget.goal.progress.toString());
+    }
     pickedDate = DateTime.now().add(Duration(days: 1));
   }
 
@@ -110,7 +112,7 @@ class _GoalModalState extends State<GoalModal> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (goal.goalType != "Classroom" && goal.goalType != "ClassroomAggregate") ...[
+                if (goal == null || (goal.goalType != "Classroom" && goal.goalType != "ClassroomAggregate")) ...[
                   TextFormField(
                     controller: titleController,
                     decoration: InputDecoration(
@@ -193,7 +195,7 @@ class _GoalModalState extends State<GoalModal> {
                   ),
                 ],
                 addVerticalSpace(16),
-                if (!isParent)
+                if (!isParent && isNumBooksMetric)
                   Row(
                     children: [
                       Checkbox(

@@ -18,8 +18,6 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return SingleChildScrollView(
       child: Column(
         children: [
