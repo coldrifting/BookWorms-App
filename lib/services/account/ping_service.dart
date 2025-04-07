@@ -12,10 +12,7 @@ class PingService {
   Future<bool> ping() async {
     try {
       final response = await client
-          .sendRequest(uri: pingUri(), method: "GET")
-          .timeout(const Duration(seconds: 2), onTimeout: () {
-        return http.Response('Error Timeout', 408);
-      });
+          .sendRequest(uri: pingUri(), method: "GET");
 
       if (response.ok) {
         // Success
