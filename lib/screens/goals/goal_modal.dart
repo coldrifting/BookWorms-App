@@ -32,6 +32,8 @@ class _GoalModalState extends State<GoalModal> {
   late TextEditingController startDateController;
   late TextEditingController dueDateController;
   late TextEditingController booksReadController;
+  late TextEditingController inputProgressController;
+
   final formKey = GlobalKey<FormState>();
   bool isNumBooksMetric = false;
   bool isChecked = false;
@@ -53,6 +55,7 @@ class _GoalModalState extends State<GoalModal> {
       : convertDateToString(DateTime.parse(widget.goal.endDate))
     );
     booksReadController = TextEditingController();
+    inputProgressController = TextEditingController(text: widget.goal.progress.toString());
     pickedDate = DateTime.now().add(Duration(days: 1));
   }
 
@@ -202,7 +205,7 @@ class _GoalModalState extends State<GoalModal> {
                 ],
                 if (goal != null) ...[
                   Text("Input Progress", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
-                  CounterWidget(goal: goal)
+                  CounterWidget(goal: goal, controller: inputProgressController)
                 ]
               ],
             ),
@@ -247,7 +250,8 @@ class _GoalModalState extends State<GoalModal> {
                     goal.goalId, 
                     titleController.text, 
                     convertStringToDateString(startDateController.text),
-                    convertStringToDateString(dueDateController.text)
+                    convertStringToDateString(dueDateController.text),
+                    int.parse(inputProgressController.text)
                   );
                 }
                 resultAlert(context, result);

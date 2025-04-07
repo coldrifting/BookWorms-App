@@ -196,15 +196,6 @@ DateTime convertStringToDate(String str) {
   return DateTime.parse(convertStringToDateString(str));
 }
 
-List<int> splitNumber(int n) {
-  String s = n.toString();
-  if (s.length <= 3) {
-    return [0, n];
-  }
-  int splitIndex = s.length - 3;
-  return [int.parse(s.substring(0, splitIndex)), int.parse(s.substring(splitIndex))];
-}
-
 dynamic resultAlert(BuildContext context, Result result, [bool pop=true]) {
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -231,4 +222,13 @@ dynamic resultAlert(BuildContext context, Result result, [bool pop=true]) {
       Navigator.pop(context);
     }
   }
+}
+
+dynamic parseProgress(int progress) {
+  String s = progress.toString();
+  if (s.length <= 3) {
+    return [0, progress];
+  }
+  int splitIndex = s.length - 3;
+  return [int.parse(s.substring(0, splitIndex)), int.parse(s.substring(splitIndex))];
 }

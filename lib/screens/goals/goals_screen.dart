@@ -341,7 +341,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
     DateTime endDate = DateTime.parse(goal.endDate);
     int progress = goal.progress;
     if (goal.goalMetric == "Completion") {
-      progress = splitNumber(progress)[1];
+      progress = parseProgress(progress)[1];
     }
 
     return Column(

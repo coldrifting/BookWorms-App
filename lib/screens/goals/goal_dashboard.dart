@@ -227,7 +227,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
     final int percentCompleted;
 
     if (appState.isParent) {
-      percentCompleted = goal.progress;
+      percentCompleted = parseProgress(goal.progress)[1];
     } else {
       final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
       percentCompleted = goalDetails.studentsTotal != 0
@@ -296,7 +296,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
                         ),
                         addHorizontalSpace(16),
                         TextButton(
-                          onPressed: () => _navigateToDetailedGoalScreen(goal),
+                          onPressed: () => goalAlert(context, null, goal),
                           style: TextButton.styleFrom(
                             backgroundColor: colorGreyLight.withAlpha(180),
                             foregroundColor: colorBlack,
@@ -307,8 +307,9 @@ class _GoalDashboardState extends State<GoalDashboard> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("See More", style: textTheme.labelMedium),
-                              Icon(Icons.chevron_right, size: 16),
+                              Text("Log", style: textTheme.labelMedium),
+                              addHorizontalSpace(4),
+                              Icon(Icons.edit, size: 16),
                             ],
                           ),
                         )

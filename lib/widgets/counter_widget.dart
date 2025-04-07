@@ -4,27 +4,28 @@ import 'package:flutter/material.dart';
 
 class CounterWidget extends StatefulWidget {
   final ChildGoal goal;
-  const CounterWidget({super.key, required this.goal});
+  final TextEditingController controller;
+  const CounterWidget({super.key, required this.goal, required this.controller});
 
   @override
   State<CounterWidget> createState() => _CounterWidgetState();
 }
 
 class _CounterWidgetState extends State<CounterWidget> {
-  late TextEditingController _textEditingController;
   late ChildGoal goal;
   late int count;
+  late TextEditingController controller;
 
   @override
   void initState() {
     super.initState();
     goal = widget.goal;
     count = goal.progress;
-    _textEditingController = TextEditingController(text: count.toString());
+    controller = widget.controller;
   }
 
   void updateTextField() {
-    _textEditingController.text = count.toString();
+    controller.text = count.toString();
   }
 
   @override
@@ -39,7 +40,7 @@ class _CounterWidgetState extends State<CounterWidget> {
         children: [
           Expanded(
             child: TextFormField(
-              controller: _textEditingController,
+              controller: controller,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 border: InputBorder.none,
@@ -56,6 +57,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               onChanged: (value) {
                 setState(() {
                   count = int.tryParse(value) ?? 0;
+                  updateTextField();
                 });
               },
             ),
