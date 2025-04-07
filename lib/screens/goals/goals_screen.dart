@@ -244,7 +244,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Edit", style: TextStyle(color: colorGreyDark)),
+                      Text(goal.goalType == "Classroom" || goal.goalType == "ClassroomAggregate" 
+                        ? "Log" :"Edit", 
+                        style: TextStyle(color: colorGreyDark)
+                      ),
                       addHorizontalSpace(6),
                       Icon(Icons.edit, color: colorGreyDark)
                     ],

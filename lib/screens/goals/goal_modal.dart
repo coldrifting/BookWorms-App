@@ -110,98 +110,100 @@ class _GoalModalState extends State<GoalModal> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextFormField(
-                  controller: titleController,
-                  decoration: InputDecoration(
-                    labelText: "Goal Title",
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                    prefixIcon: Icon(Icons.star, color: colorYellow),
+                if (goal.goalType != "Classroom" && goal.goalType != "ClassroomAggregate") ...[
+                  TextFormField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      labelText: "Goal Title",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: Icon(Icons.star, color: colorYellow),
+                    ),
+                    validator: (value) => value == null || value.isEmpty ? 'Please input a goal title' : null,
                   ),
-                  validator: (value) => value == null || value.isEmpty ? 'Please input a goal title' : null,
-                ),
-                addVerticalSpace(16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: startDateController,
-                        readOnly: true,
-                        onTap: () => selectDate(startDateController, convertStringToDate(startDateController.text)),
-                        decoration: InputDecoration(
-                          labelText: "Start Date",
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          prefixIcon: Icon(Icons.calendar_today, color: Colors.green),
-                        ),
-                      ),
-                    ),
-                    addHorizontalSpace(4),
-                    Expanded(
-                      child: TextFormField(
-                        controller: dueDateController,
-                        readOnly: true,
-                        onTap: () => selectDate(dueDateController, convertStringToDate(dueDateController.text)),
-                        decoration: InputDecoration(
-                          labelText: "Due Date",
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          prefixIcon: Icon(Icons.calendar_today, color: Colors.green),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                   addVerticalSpace(16),
-                  if (goal == null) ...[
-                    Text("Metric Type", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
-                    ToggleButtons(
-                      isSelected: [!isNumBooksMetric, isNumBooksMetric],
-                      onPressed: (index) {
-                        setState(() {
-                          isNumBooksMetric = index == 1;
-                          selectedMetric = isNumBooksMetric ? "BooksRead" : "Completion";
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      constraints: BoxConstraints(minWidth: 130, minHeight: 40),
-                      children: [Text("Completion"), Text("Number-Read")],
-                    ),
-                    addVerticalSpace(8),
-                  if (!isNumBooksMetric)
-                    Text(
-                      "ⓘ Measure progress by the portion of a book or task completed.", 
-                      style: TextStyle(color: Colors.grey[800], fontSize: 13),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: startDateController,
+                          readOnly: true,
+                          onTap: () => selectDate(startDateController, convertStringToDate(startDateController.text)),
+                          decoration: InputDecoration(
+                            labelText: "Start Date",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            prefixIcon: Icon(Icons.calendar_today, color: Colors.green),
+                          ),
+                        ),
+                      ),
+                      addHorizontalSpace(4),
+                      Expanded(
+                        child: TextFormField(
+                          controller: dueDateController,
+                          readOnly: true,
+                          onTap: () => selectDate(dueDateController, convertStringToDate(dueDateController.text)),
+                          decoration: InputDecoration(
+                            labelText: "Due Date",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                            prefixIcon: Icon(Icons.calendar_today, color: Colors.green),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  ],
+                addVerticalSpace(16),
+                if (goal == null) ...[
+                  Text("Metric Type", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
+                  ToggleButtons(
+                    isSelected: [!isNumBooksMetric, isNumBooksMetric],
+                    onPressed: (index) {
+                      setState(() {
+                        isNumBooksMetric = index == 1;
+                        selectedMetric = isNumBooksMetric ? "BooksRead" : "Completion";
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    constraints: BoxConstraints(minWidth: 130, minHeight: 40),
+                    children: [Text("Completion"), Text("Number-Read")],
+                  ),
+                  addVerticalSpace(8),
+                if (!isNumBooksMetric)
+                  Text(
+                    "ⓘ Measure progress by the portion of a book or task completed.", 
+                    style: TextStyle(color: Colors.grey[800], fontSize: 13),
+                    textAlign: TextAlign.center, 
+                  ),
+                if (isNumBooksMetric) ...[
+                  Text(
+                      "ⓘ Track the total number of books, chapters, or minutes read.", 
+                      style: TextStyle(color: Colors.grey[800], fontSize: 13), 
                       textAlign: TextAlign.center, 
                     ),
-                  if (isNumBooksMetric) ...[
-                    Text(
-                        "ⓘ Track the total number of books, chapters, or minutes read.", 
-                        style: TextStyle(color: Colors.grey[800], fontSize: 13), 
-                        textAlign: TextAlign.center, 
-                      ),
-                    addVerticalSpace(8),
-                    TextFormField(
-                      controller: booksReadController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: InputDecoration(
-                        labelText: "Number-Read Target",
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        prefixIcon: Icon(Icons.insert_chart_outlined_rounded, color: Colors.purple),
-                      ),
-                      validator: (value) => value == null || value.isEmpty ? 'Please input a reading target' : null,
+                  addVerticalSpace(8),
+                  TextFormField(
+                    controller: booksReadController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      labelText: "Number-Read Target",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: Icon(Icons.insert_chart_outlined_rounded, color: Colors.purple),
                     ),
-                  ],
-                  addVerticalSpace(16),
-                  if (!isParent)
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: isChecked,
-                          activeColor: colorGreen,
-                          onChanged: (value) => setState(() => isChecked = value!),
-                        ),
-                        Text("Class-Wide Goal", style: TextStyle(color: Colors.grey[800], fontSize: 14)),
-                      ],
-                    ),
+                    validator: (value) => value == null || value.isEmpty ? 'Please input a reading target' : null,
+                  ),
+                ],
+                addVerticalSpace(16),
+                if (!isParent)
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isChecked,
+                        activeColor: colorGreen,
+                        onChanged: (value) => setState(() => isChecked = value!),
+                      ),
+                      Text("Class-Wide Goal", style: TextStyle(color: Colors.grey[800], fontSize: 14)),
+                    ],
+                  ),
                 ],
                 if (goal != null) ...[
                   Text("Input Progress", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
