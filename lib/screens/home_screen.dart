@@ -231,7 +231,13 @@ class _HomeScreenState extends State<HomeScreen> {
         } else if (snapshot.hasError || snapshot.data!.books.isEmpty) {
           return SizedBox.shrink();
         } else {
-          existsRecommended = true;
+          if (!existsRecommended) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                existsRecommended = true;
+              });
+            });
+          }
           return Column(
             children: [
               BookshelfWidget(bookshelf: snapshot.data!),
