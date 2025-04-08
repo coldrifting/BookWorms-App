@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';

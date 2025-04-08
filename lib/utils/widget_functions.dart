@@ -1,4 +1,4 @@
-import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/models/action_result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bookworms_app/resources/colors.dart';

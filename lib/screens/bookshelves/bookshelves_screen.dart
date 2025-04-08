@@ -123,11 +123,6 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
             key: UniqueKey(),
             endActionPane: ActionPane(
               motion: const ScrollMotion(),
-              dismissible: DismissiblePane(
-                onDismissed: () {
-                  appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
-                },
-              ),
               children: [
                 SlidableAction(
                   onPressed: (BuildContext context) {

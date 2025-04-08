@@ -1,3 +1,4 @@
+import 'package:bookworms_app/models/action_result.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:bookworms_app/resources/network.dart';
@@ -10,7 +11,7 @@ class BookDifficultyService {
   BookDifficultyService({http.Client? client}) : client = client ?? http.Client();
 
   // Send the child difficulty data to the server.
-  Future<void> sendDifficulty(String bookId, String childId, int rating) async {
+  Future<Result> sendDifficulty(String bookId, String childId, int rating) async {
     final response = await client.sendRequest(
       uri: bookDifficultyUri(bookId),
       method: "POST",
@@ -21,10 +22,15 @@ class BookDifficultyService {
     );
 
     if (response.ok) {
-      return;
+      if (response.body.isEmpty) {
+        return Result(isSuccess: false, message: "Set your child's birthday first to rate this book.");
+      }
+      else {
+        return Result(isSuccess: true, message: "This book's difficulty has been successfully rated.");
+      }
     }
     else {
-      throw Exception('An error occurred when sending the review.');
+      return Result(isSuccess: false, message: "The selected child has already rated this book.");
     }
   }
 }

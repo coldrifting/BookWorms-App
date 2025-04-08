@@ -3,7 +3,7 @@ class BookSummary {
   final String id;
   final String title;
   final List<String> authors;
-  final int? level;
+  int? level;
   double? rating;
   String? imageUrl;
 

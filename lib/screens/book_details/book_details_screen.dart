@@ -1,5 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/constants.dart';
@@ -464,11 +464,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-            BookDifficultyService bookDifficultyService =
-                BookDifficultyService();
-            bookDifficultyService.sendDifficulty(bookSummary.id,
-                appState.children[appState.selectedChildID].id, index);
+          onPressed: () async {
+            Result result;
+            BookDifficultyService bookDifficultyService = BookDifficultyService();
+            result = await bookDifficultyService.sendDifficulty(bookSummary.id, appState.children[appState.selectedChildID].id, index);
+            _updateBookDetails();
+            resultAlert(context, result, false);
             Navigator.of(context, rootNavigator: true).pop();
           },
           style: ElevatedButton.styleFrom(
@@ -517,18 +518,21 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     pushScreen(
         context,
         CreateReviewWidget(
-            bookId: bookSummary.id, updateReviews: _updateReviews));
+            bookId: bookSummary.id, updateReviews: _updateBookDetails));
   }
 
-  Future<void> _updateReviews() async {
+  Future<void> _updateBookDetails() async {
     BookSummaryService bookSummaryService = BookSummaryService();
-    double? updatedbookRating =
-        (await bookSummaryService.getBookSummary(bookSummary.id)).rating;
+    BookSummary updatedBookSummary = 
+        (await bookSummaryService.getBookSummary(bookSummary.id));
+    double? updatedbookRating = updatedBookSummary.rating;
+    int? updatedBookLevel = updatedBookSummary.level;
     BookDetailsService bookDetailsService = BookDetailsService();
     List<UserReview> updatedBookReviews =
         (await bookDetailsService.getBookDetails(bookSummary.id)).reviews;
     setState(() {
       bookSummary.rating = updatedbookRating;
+      bookSummary.level = updatedBookLevel;
       bookDetails.reviews = updatedBookReviews;
     });
   }
