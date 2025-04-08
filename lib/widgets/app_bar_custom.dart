@@ -29,6 +29,8 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
 
+    var changeChildWidget = ChangeChildWidget(onChildChanged: () => appState.onChangeChild());
+
     return AppBar(
         title: Text(title,
             style: TextStyle(
