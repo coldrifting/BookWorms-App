@@ -227,7 +227,10 @@ class _HomeScreenState extends State<HomeScreen> {
       future: future, 
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 64.0),
+            child: const Center(child: CircularProgressIndicator()),
+          );
         } else if (snapshot.hasError || snapshot.data!.books.isEmpty) {
           return SizedBox.shrink();
         } else {
