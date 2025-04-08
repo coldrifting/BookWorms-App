@@ -6,6 +6,7 @@ import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/announcements_widget.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/bookshelf_image_layout_widget.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         : "My"} Bookshelves";
 
     return Scaffold(
-      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true),
+      appBar: AppBarCustom(headerTitle, isLeafPage: false,isChildSwitcherEnabled: true, rightAction: AnnouncementsWidget()),
       floatingActionButton: BWShowcase(
         showcaseKey: navKeys[1],
         description: "You can even add your own custom bookshelves!",

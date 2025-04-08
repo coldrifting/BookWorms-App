@@ -10,6 +10,7 @@ import 'package:bookworms_app/services/book/book_search_service.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/announcements_widget.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
@@ -230,7 +231,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     }
 
     return Scaffold(
-      appBar: AppBarCustom("Search", isLeafPage: false),
+      appBar: AppBarCustom("Search", isLeafPage: false, isChildSwitcherEnabled: true, rightAction: AnnouncementsWidget()) ,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
