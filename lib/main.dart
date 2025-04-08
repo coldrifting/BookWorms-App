@@ -141,8 +141,10 @@ class _Navigation extends State<Navigation> {
                     children: List.generate(pages.length, (index) {
                       if (enabledDest[index].label == "Search") {
                         searchTabIndex = index;
+                        appState.searchKey = searchKey;
                       }
                       _navigatorKeys[index] = enabledDest[index].navState;
+                      appState.subNavigators[enabledDest[index].label] = enabledDest[index].navState;
                       return Navigator(
                         key: enabledDest[index].navState,
                         onGenerateRoute: (settings) {

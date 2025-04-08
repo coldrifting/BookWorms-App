@@ -7,6 +7,7 @@ import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:bookworms_app/services/account/child_goal_services.dart';
 import 'package:bookworms_app/services/account/children_services.dart';
 import 'package:bookworms_app/services/book/bookshelf_service.dart';
@@ -99,6 +100,10 @@ class AppState extends ChangeNotifier {
     try {
       await childrenServices.removeChild(childId);
       (_account as Parent).children.removeWhere((c) => c.id == childId);
+      if ((account as Parent).children[selectedChildID].id == childId) {
+        (account as Parent).selectedChildID = 0;
+        onChangeChild();
+      }
       notifyListeners();
       return Result(isSuccess: true, message: "Successfully deleted the child profile.");
     } catch (_) {
@@ -744,6 +749,30 @@ class AppState extends ChangeNotifier {
     return result;
   }
 
+  Map<String, GlobalKey<NavigatorState>> subNavigators = {};
+
+  GlobalKey<SearchScreenState>? searchKey;
+
+  void onChangeChild() {
+    subNavigators.forEach((navName, navKey) {
+      if (navName == "Profile") {
+        return;
+      }
+
+      NavigatorState? nav = navKey.currentState;
+      if (nav == null) {
+        return;
+      }
+
+      while (nav.canPop()) {
+        nav.pop();
+      }
+
+      if (searchKey != null) {
+        searchKey?.currentState?.reset();
+      }
+    });
+  }
 
   // ***** Showcase *****
 
