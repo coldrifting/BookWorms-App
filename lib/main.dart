@@ -141,8 +141,10 @@ class _Navigation extends State<Navigation> {
                     children: List.generate(pages.length, (index) {
                       if (enabledDest[index].label == "Search") {
                         searchTabIndex = index;
+                        appState.searchKey = searchKey;
                       }
                       _navigatorKeys[index] = enabledDest[index].navState;
+                      appState.subNavigators[enabledDest[index].label] = enabledDest[index].navState;
                       return Navigator(
                         key: enabledDest[index].navState,
                         onGenerateRoute: (settings) {
@@ -271,10 +273,10 @@ List<Destination> dest = [
       label: "Home",
       widget: const HomeScreen(),
       icon: Icons.home_outlined,
-      showcaseDescription: "First: See upcoming goals, a progress summary, and more on the Home screen\n(Try it!)",
+      showcaseDescription: "Starting on the Home screen: This is where you'll see upcoming goals, a progress summary, and more",
       selectedIcon: Icons.home),
   Destination(
-      label: "Bookshelf",
+      label: "Bookshelves",
       widget: const BookshelvesScreen(),
       icon: Icons.collections_bookmark_outlined,
       selectedIcon: Icons.collections_bookmark_rounded,
@@ -304,6 +306,6 @@ List<Destination> dest = [
       label: "Profile",
       widget: const ProfileScreen(),
       icon: Icons.account_circle_outlined,
-      showcaseDescription: "Next up: Customize and manage your account on the Profile screen",
+      showcaseDescription: "Next up: Customize and manage your account on the Profile screen.\nClick the tab to go there!",
       selectedIcon: Icons.account_circle_rounded)
 ];

@@ -45,9 +45,7 @@ class ChildSelectionListWidget extends StatelessWidget {
                     Navigator.pop(context);
 
                     // Function to be called when changing the selected child.
-                    if (onChildChanged != null) {
-                      onChildChanged!();
-                    }
+                    onChildChanged?.call();
                   },
                   selected: index == Provider.of<AppState>(context).selectedChildID,
                 ),

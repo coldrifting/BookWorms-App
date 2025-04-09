@@ -29,6 +29,8 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     AppState appState = Provider.of<AppState>(context);
 
+    var changeChildWidget = ChangeChildWidget(onChildChanged: () => appState.onChangeChild());
+
     return AppBar(
         title: Text(title,
             style: TextStyle(
@@ -50,28 +52,18 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                 })
             : null,
     actions: [
-      isChildSwitcherEnabled && appState.isParent
-          ? homePageShowcaseKey != null
-              ? BWShowcase(
-                  showcaseKey: homePageShowcaseKey!,
-                  description: "You can switch to a different child by tapping your child's profile picture",
-                  targetShapeBorder: CircleBorder(),
-                  child: ChangeChildWidget(
-                      onChildChanged: () {
-                        while (Navigator.of(context).canPop()) {
-                          Navigator.of(context).pop();
-                        }
-                      })
-                )
-              : ChangeChildWidget(
-                    onChildChanged: () {
-                      while (Navigator.of(context).canPop()) {
-                        Navigator.of(context).pop();
-                      }
-                    })
-          : rightAction != null && appState.isParent
-            ? rightAction!
-            : SizedBox.shrink()
+      if (rightAction != null && appState.isParent)
+        rightAction!,
+      if (isChildSwitcherEnabled && appState.isParent)
+        if (homePageShowcaseKey != null)
+          BWShowcase(
+            showcaseKey: homePageShowcaseKey!,
+            description: "You can switch to a different child by tapping your child's profile picture",
+            targetShapeBorder: CircleBorder(),
+            child: changeChildWidget
+          )
+        else
+          changeChildWidget
     ]);
   }
 

@@ -1,5 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
