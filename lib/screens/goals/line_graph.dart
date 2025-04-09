@@ -57,18 +57,20 @@ class _LineGraphState extends State<LineGraph> {
     );
   }
 
-  void _getCompletionDates() {
+  void _getCompletionDates() async {
     AppState appState = Provider.of<AppState>(context, listen: false);
     final bookshelves = appState.children[appState.selectedChildID].bookshelves;
 
     if (bookshelves.isEmpty) return;
 
-    final completedShelf = bookshelves.firstWhere((b) => b.type == BookshelfType.completed);
+    final index = bookshelves.indexWhere((b) => b.type == BookshelfType.completed);
+    Bookshelf completedShelf = await appState.getChildBookshelf(appState.selectedChildID, index);
+    completedList.clear();
     if (completedShelf.completedDates != null) {
       setState(() {
         for (Completion data in completedShelf.completedDates!) {
           final date = data.completedDate;
-          int dateDay = getDayFromDateString(date);
+          int dateDay = getMonthFromDateString(date);
           completedList[dateDay] = (completedList[dateDay] ?? 0) + 1;
         }
       });
@@ -96,9 +98,7 @@ class _LineGraphState extends State<LineGraph> {
     }
 
     // Once bookshelves are initialized, retrieve the completion dates.
-    if (completedList.isEmpty) {
-      _getCompletionDates();
-    }
+    _getCompletionDates();
 
     return Container(
       decoration: BoxDecoration(
@@ -230,9 +230,9 @@ class _Chart extends StatelessWidget {
     final maxX = (baselineX + visibleWindowSize).clamp(0.0, numXLabels.toDouble() - 1);
 
     final List<FlSpot> allSpots = [];
-    int monthIndex = DateTime.now().month - 1;
-    for (int day = 0; day <= monthIndex; day++) {
-      allSpots.add(FlSpot(day.toDouble(), booksRead[day] == null ? 0 : booksRead[day]!.toDouble()));
+    int monthIndex = DateTime.now().month;
+    for (int month = 0; month < monthIndex; month++) {
+      allSpots.add(FlSpot(month.toDouble(), booksRead[month+1] == null ? 0 : booksRead[month+1]!.toDouble()));
     }
 
     final visibleSpots =
@@ -312,8 +312,21 @@ class _Chart extends StatelessWidget {
 FlSpot _getInterpolatedSpot(double x, Map<int, int> data, int numXLabels) {
   int low = x.floor();
   int high = x.ceil();
-  if (high >= numXLabels) high = numXLabels - 1;
 
-  double y = (data[low] ?? 0) + (x - low) * ((data[high] ?? 0) - (data[low] ?? 0));
+  // Clamp to valid range.
+  if (high >= numXLabels) high = numXLabels - 1;
+  if (low < 0) low = 0;
+
+  // +1 since the data starts with Jan (1).
+  double yLow = data[low + 1]?.toDouble() ?? 0.0;
+  double yHigh = data[high + 1]?.toDouble() ?? 0.0;
+
+  if (low == high) {
+    return FlSpot(x, yLow);
+  }
+
+  double weight = (x - low) / (high - low);
+  double y = yLow + weight * (yHigh - yLow);
+
   return FlSpot(x, y);
 }

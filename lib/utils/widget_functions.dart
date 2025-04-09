@@ -196,7 +196,7 @@ DateTime convertStringToDate(String str) {
   return DateTime.parse(convertStringToDateString(str));
 }
 
-int getDayFromDateString(String str) {
+int getMonthFromDateString(String str) {
   return int.parse(str.substring(5,7));
 }
 
