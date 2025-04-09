@@ -123,7 +123,7 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.bar_chart_sharp, color: colorGreen, size: 24),
+              Icon(Icons.bar_chart_rounded, color: colorGreen, size: 24),
               addHorizontalSpace(8),
               Text(
                 "Reading Stats",

@@ -1,6 +1,8 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
@@ -76,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
                 child: _displayGoalProgress(textTheme)
               ),
+              _displayClassroomOverview(),
               BWShowcase(
                 showcaseKey: isParent ? navKeys[2] : navKeys[1],
                 description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
@@ -86,6 +89,193 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget _displayClassroomOverview() {
+    AppState appState = Provider.of<AppState>(context);
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    List<Classroom> classrooms = appState.children[appState.selectedChildID].classrooms;
+
+    // Check if there are any classrooms
+    if (classrooms.isEmpty) {
+      return Container(
+        color: colorWhite,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 24.0),
+            child: Container(
+              width: 355,
+              height: 180,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: colorGreen, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorBlack.withValues(alpha: 0.1),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(8),
+                color: colorGreenGradTop,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.school,
+                    color: colorWhite,
+                    size: 40,
+                  ),
+                  addVerticalSpace(4),
+                  Text(
+                    "No Classrooms to Show",
+                    style: textTheme.titleSmallWhite
+                  ),
+                  addVerticalSpace(4),
+                  Text(
+                    "Join a classroom to start learning!",
+                    style: textTheme.bodyMediumWhite,
+                    textAlign: TextAlign.center,
+                  ),
+                  addVerticalSpace(8),
+                  FractionallySizedBox(
+                    widthFactor: 0.5,
+                    child: TextButton(
+                      onPressed: () => _joinNewClassroom(),
+                      style: TextButton.styleFrom(
+                        backgroundColor: colorGreen,
+                        foregroundColor: colorWhite,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text("Join Classroom"),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // If there are classrooms, display them
+    return Container(
+      color: colorWhite,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 24.0),
+          child: Container(
+            width: 355,
+            height: 150,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(color: colorGreenDark, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: colorBlack.withOpacity(0.1),
+                  spreadRadius: 2,
+                  blurRadius: 8,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(12),
+              color: colorGreenGradTop,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Classroom Overview",
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorWhite,
+                  ),
+                ),
+                addVerticalSpace(8),
+                ListView.builder(
+                  itemCount: classrooms.length,
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      width: 100,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              // TODO: Handle classroom selection
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: colorGreyDark, width: 1.5),
+                              ),
+                              child: CircleAvatar(
+                                backgroundColor: colorWhite,
+                                maxRadius: 45, 
+                                child: Icon(
+                                  size: 50, 
+                                  Icons.school,
+                                  color: classroomColors[classrooms[index].classIcon]
+                                ),
+                              ),
+                            ),
+                          ),
+                          addVerticalSpace(8),
+                          SizedBox(
+                            width: 100,
+                            height: 40,
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                classrooms[index].classroomName,
+                                style: textTheme.titleSmall, 
+                                maxLines: 2, 
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+// Function to handle the "Join New Classroom" button
+void _joinNewClassroom() {
+  // Example: You can navigate to another screen or show a dialog for joining a classroom
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text("Join New Classroom"),
+        content: Text("Enter the classroom code or choose from a list of available classrooms."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Handle the join action, e.g., join a classroom
+              Navigator.pop(context); // Close the dialog
+            },
+            child: Text("Join"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
 
   // Displays goal progress of students or current child.
   Widget _displayGoalProgress(TextTheme textTheme) {
