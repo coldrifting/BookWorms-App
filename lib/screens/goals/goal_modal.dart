@@ -100,7 +100,7 @@ class _GoalModalState extends State<GoalModal> {
           children: [
             Icon(Icons.school, color: colorGreen),
             Text(
-              "${goal == null ? "Add" : "Edit"} Classroom Goal",
+              "${goal == null ? "Add" : "Edit"} ${isParent ? "" : "Classroom"}Goal",
               style: textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold),
             ),
             Divider(color: colorGrey),

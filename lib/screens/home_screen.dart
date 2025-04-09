@@ -95,31 +95,29 @@ class _HomeScreenState extends State<HomeScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     List<Classroom> classrooms = appState.children[appState.selectedChildID].classrooms;
 
-    // Check if there are any classrooms
-    if (classrooms.isEmpty) {
-      return Container(
-        color: colorWhite,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 24.0),
-            child: Container(
-              width: 355,
-              height: 180,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: colorGreen, width: 3),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorBlack.withValues(alpha: 0.1),
-                    spreadRadius: 2,
-                    blurRadius: 8,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(8),
-                color: colorGreenGradTop,
-              ),
-              child: Column(
+    return Container(
+      color: colorWhite,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 24.0),
+          child: Container(
+            height: 180,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(color: colorGreen, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: colorBlack.withValues(alpha: 0.1),
+                  spreadRadius: 2,
+                  blurRadius: 8,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(8),
+              color: colorGreenGradTop,
+            ),
+            child: classrooms.isEmpty
+            ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
@@ -154,37 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    // If there are classrooms, display them
-    return Container(
-      color: colorWhite,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 24.0),
-          child: Container(
-            width: 355,
-            height: 150,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(color: colorGreenDark, width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: colorBlack.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 8,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-              borderRadius: BorderRadius.circular(12),
-              color: colorGreenGradTop,
-            ),
-            child: Column(
+              )
+            : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
