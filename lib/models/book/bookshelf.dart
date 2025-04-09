@@ -26,7 +26,12 @@ class Bookshelf {
       name: json['name'],
       books: (json['books'] as List)
         .map((reviewJson) => BookSummary.fromJson(reviewJson))
-        .toList()
+        .toList(),
+      completedDates: json['completions'] != null
+        ? (json['completions'] as List)
+          .map((dateJson) => Completion.fromJson(dateJson))
+          .toList()
+        : null
     );
   }
 }

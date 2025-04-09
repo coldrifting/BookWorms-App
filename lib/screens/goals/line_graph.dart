@@ -1,8 +1,12 @@
-import 'dart:math';
+import 'dart:collection';
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LineGraph extends StatefulWidget {
   const LineGraph({super.key});
@@ -12,16 +16,19 @@ class LineGraph extends StatefulWidget {
 }
 
 class _LineGraphState extends State<LineGraph> {
-  double baselineX = 0.0;
-  double baselineY = 0.0;
+  late double baselineX;
+  late double baselineY;
+  late Map<int, int> completedList = HashMap();
 
-  final List<int> booksRead = List.generate(30, (_) => Random().nextInt(11));
-  final List<String> graphSwitch = ["By Day", "By Month"];
-  int graphIndex = 0;
+  final visibleWindowSize = 4;
+  final numXLabels = 12;
+
+  final graphSwitch = ["By Day", "By Month"];
+  var graphIndex = 1;
 
   void _handlePan(double dx) {
     setState(() {
-      baselineX = (baselineX - dx * 0.04).clamp(0.0, 20.0);
+      baselineX = (baselineX - dx * 0.04).clamp(0.0, (numXLabels - visibleWindowSize).toDouble());
     });
   }
 
@@ -50,9 +57,48 @@ class _LineGraphState extends State<LineGraph> {
     );
   }
 
+  void _getCompletionDates() {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    final bookshelves = appState.children[appState.selectedChildID].bookshelves;
+
+    if (bookshelves.isEmpty) return;
+
+    final completedShelf = bookshelves.firstWhere((b) => b.type == BookshelfType.completed);
+    if (completedShelf.completedDates != null) {
+      setState(() {
+        for (Completion data in completedShelf.completedDates!) {
+          final date = data.completedDate;
+          int dateDay = getDayFromDateString(date);
+          completedList[dateDay] = (completedList[dateDay] ?? 0) + 1;
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    baselineX = (DateTime.now().month - 4).clamp(0, 12 - visibleWindowSize).toDouble();
+    baselineY = 0.0;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getCompletionDates());
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final appState = Provider.of<AppState>(context);
+  
+    final selectedChild = appState.children[appState.selectedChildID];
+
+    // Return loading screen if bookshelves are yet to be initialized.
+    if (selectedChild.bookshelves.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Once bookshelves are initialized, retrieve the completion dates.
+    if (completedList.isEmpty) {
+      _getCompletionDates();
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -116,7 +162,9 @@ class _LineGraphState extends State<LineGraph> {
                         baselineX: baselineX,
                         baselineY: baselineY,
                         onPan: _handlePan,
-                        booksRead: booksRead,
+                        booksRead: completedList,
+                        visibleWindowSize: visibleWindowSize,
+                        numXLabels: numXLabels
                       ),
                     ),
                   ],
@@ -135,26 +183,28 @@ class _Chart extends StatelessWidget {
   final double baselineX;
   final double baselineY;
   final void Function(double delta) onPan;
-  final List<int> booksRead;
+  final Map<int, int> booksRead;
+  final int visibleWindowSize;
+  final int numXLabels;
 
   const _Chart({
     required this.baselineX,
     required this.baselineY,
     required this.onPan,
     required this.booksRead,
+    required this.visibleWindowSize,
+    required this.numXLabels
   });
+  
 
   Widget _horizontalLabels(double value, TitleMeta meta) {
-    final minX = baselineX;
-    final maxX = baselineX + 10;
-    double endOfX = baselineX + maxX - minX;
-
-    if ((value - baselineX).abs() == 0 || (value - endOfX).abs() == 0) {
-      return SizedBox.shrink();
-    }
+    const monthLabels = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
 
     return Text(
-      value.toStringAsFixed(0),
+      monthLabels[value.toInt()],
       style: const TextStyle(color: colorGrey, fontSize: 12),
     );
   }
@@ -177,23 +227,24 @@ class _Chart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final minX = baselineX;
-    final maxX = baselineX + 10;
+    final maxX = (baselineX + visibleWindowSize).clamp(0.0, numXLabels.toDouble() - 1);
 
-    final List<FlSpot> allSpots = List.generate(
-      booksRead.length,
-      (i) => FlSpot(i.toDouble(), booksRead[i].toDouble()),
-    );
+    final List<FlSpot> allSpots = [];
+    int monthIndex = DateTime.now().month - 1;
+    for (int day = 0; day <= monthIndex; day++) {
+      allSpots.add(FlSpot(day.toDouble(), booksRead[day] == null ? 0 : booksRead[day]!.toDouble()));
+    }
 
     final visibleSpots =
-        allSpots.where((s) => s.x >= minX && s.x <= maxX).toList();
+        allSpots.where((s) => s.x > minX && s.x <= maxX).toList();
 
     double chartRange = maxX - minX;
     double endOfX = baselineX + chartRange;
 
     List<FlSpot> points = [
-      _getInterpolatedSpot(baselineX, booksRead), 
+      _getInterpolatedSpot(baselineX, booksRead, numXLabels), 
       ...visibleSpots, 
-      if (endOfX < booksRead.length - 1) ...[_getInterpolatedSpot(endOfX, booksRead)]
+      if (endOfX < booksRead.length - 1) _getInterpolatedSpot(endOfX, booksRead, numXLabels)
     ];
 
     return GestureDetector(
@@ -203,7 +254,7 @@ class _Chart extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               spots: points,
-              color: colorGreen,
+              color: colorGreen.withAlpha(baselineX <= DateTime.now().month - 1 ? 255 : 0),
               barWidth: 3,
               belowBarData: BarAreaData(
                 show: true,
@@ -258,11 +309,11 @@ class _Chart extends StatelessWidget {
 
 
 // Retrieves the first and last cut-off points of the graph.
-FlSpot _getInterpolatedSpot(double x, List<int> data) {
+FlSpot _getInterpolatedSpot(double x, Map<int, int> data, int numXLabels) {
   int low = x.floor();
   int high = x.ceil();
-  if (high >= data.length) high = data.length - 1;
+  if (high >= numXLabels) high = numXLabels - 1;
 
-  double y = data[low] + (x - low) * (data[high] - data[low]);
+  double y = (data[low] ?? 0) + (x - low) * ((data[high] ?? 0) - (data[low] ?? 0));
   return FlSpot(x, y);
 }
