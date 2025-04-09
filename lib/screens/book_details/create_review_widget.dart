@@ -31,7 +31,7 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
     if (_formKey.currentState?.validate() ?? false) {
       BookReviewsService bookReviewsService = BookReviewsService();
       await bookReviewsService.sendReview(widget.bookId, _content, _rating);
-      await widget.updateReviews();
+      widget.updateReviews();
       if (mounted) {
         Navigator.of(context).pop();
       } 

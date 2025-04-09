@@ -10,6 +10,7 @@ import 'package:bookworms_app/services/book/book_search_service.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/announcements_widget.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
@@ -230,7 +231,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     }
 
     return Scaffold(
-      appBar: AppBarCustom("Search", isLeafPage: false),
+      appBar: AppBarCustom("Search", isLeafPage: false, isChildSwitcherEnabled: true, rightAction: AnnouncementsWidget()) ,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
@@ -532,10 +533,10 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                                 colors: [
-                                  Colors.white.withAlpha(255),
-                                  Colors.white.withAlpha(0),
-                                  Colors.white.withAlpha(0),
-                                  Colors.white.withAlpha(255),
+                                  Color.fromRGBO(247, 251, 241, 1.0),
+                                  Color.fromRGBO(247, 251, 241, 0.0),
+                                  Color.fromRGBO(247, 251, 241, 0.0),
+                                  Color.fromRGBO(247, 251, 241, 1.0),
                                 ],
                                 stops: [0.0, 0.05, 0.95, 1.0],
                               ),
@@ -591,10 +592,10 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                                 colors: [
-                                  Colors.white.withAlpha(255),
-                                  Colors.white.withAlpha(0),
-                                  Colors.white.withAlpha(0),
-                                  Colors.white.withAlpha(255),
+                                  Color.fromRGBO(247, 251, 241, 1.0),
+                                  Color.fromRGBO(247, 251, 241, 0.0),
+                                  Color.fromRGBO(247, 251, 241, 0.0),
+                                  Color.fromRGBO(247, 251, 241, 1.0),
                                 ],
                                 stops: [0.0, 0.05, 0.95, 1.0],
                               ),

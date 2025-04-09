@@ -1,5 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/Result.dart';
+import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/constants.dart';
@@ -36,10 +36,6 @@ class BookDetailsScreen extends StatefulWidget {
 
 /// The state of the [BookDetailsScreen].
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
-  late ScrollController _scrollController; // Sets initial screen offset.
-  final GlobalKey _parentKey = GlobalKey();
-  final GlobalKey _imageKey = GlobalKey();
-
   late BookSummary bookSummary;
   late BookDetails bookDetails;
   late CachedNetworkImage image;
@@ -50,10 +46,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setScrollOffset();
-    });
     bookSummary = widget.summaryData;
     bookDetails = widget.detailsData;
     image = CachedNetworkImage(
@@ -62,30 +54,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       errorWidget: (context, url, error) =>
           Image.asset("assets/images/book_cover_unavailable.jpg"),
     );
-  }
-
-  // Set the offset of the scroll controller.
-  void _setScrollOffset() {
-    final RenderBox? imageRenderBox =
-        _imageKey.currentContext?.findRenderObject() as RenderBox?;
-    final RenderBox? parentRenderBox =
-        _parentKey.currentContext?.findRenderObject() as RenderBox?;
-
-    if (imageRenderBox != null &&
-        parentRenderBox != null &&
-        imageRenderBox.hasSize &&
-        parentRenderBox.hasSize) {
-      double imageWidth = imageRenderBox.size.width;
-      double imageHeight = imageRenderBox.size.height;
-
-      double aspectRatio = imageWidth / imageHeight;
-      double newImageWidth = parentRenderBox.size.width;
-      double newImageHeight = newImageWidth / aspectRatio;
-
-      // Calculate the new scroll offset
-      double offset = newImageHeight - 200;
-      _scrollController.jumpTo(offset > 0 ? offset : newImageHeight);
-    }
   }
 
   /// The entire book details page, containing book image, details, action buttons,
@@ -99,25 +67,11 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     NavigatorState navState = Navigator.of(context);
 
     return Scaffold(
-      key: _parentKey,
       // Book details app bar
       appBar: AppBarCustom(bookSummary.title),
       // Book details content
-      body: ListView(controller: _scrollController, children: [
-        SizedBox(
-          width: double.infinity,
-          child: FittedBox(
-            fit: BoxFit.cover,
-            child: CachedNetworkImage(
-              key: _imageKey,
-              imageUrl: bookSummary.imageUrl!,
-              placeholder: (context, url) =>
-                  Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) =>
-                  Image.asset("assets/images/book_cover_unavailable.jpg"),
-            ),
-          ),
-        ),
+      body: ListView(
+       children: [
         _bookDetails(textTheme),
         Container(
           color: const Color.fromARGB(255, 239, 239, 239),
@@ -156,59 +110,82 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Book title
-          Text(
-            style: textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-            bookSummary.title,
-          ),
-          // Book author(s)
-          Text(
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-                fontSize: 18),
-            textAlign: TextAlign.center,
-            bookSummary.authors.isNotEmpty
-                ? bookSummary.authors.map((author) => author).join('\n')
-                : "Unknown Author(s)",
-          ),
-          // Book difficulty and rating
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  style: textTheme.bodyLarge,
-                  "Level $difficulty",
-                ),
-                RawMaterialButton(
-                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(4.0),
-                  constraints: BoxConstraints(
-                    maxWidth: 40,
+                // Book cover image
+                  SizedBox(
+                    width: 150,
+                    child: image,
                   ),
-                  child: const Icon(
-                    Icons.help_outline,
-                    color: colorBlack,
-                    size: 20
-                  )
+                addHorizontalSpace(12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Book title
+                      Text(
+                        style: textTheme.headlineSmall,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                        bookSummary.title,
+                      ),
+                      // Book author(s)
+                      Text(
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 18),
+                        textAlign: TextAlign.center,
+                        bookSummary.authors.isNotEmpty
+                            ? bookSummary.authors.map((author) => author).join('\n')
+                            : "Unknown Author(s)",
+                      ),
+                      // Book difficulty and rating
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              style: textTheme.bodyLarge,
+                              "Level $difficulty",
+                            ),
+                            RawMaterialButton(
+                              onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(4.0),
+                              constraints: BoxConstraints(
+                                maxWidth: 40,
+                              ),
+                              child: const Icon(
+                                Icons.help_outline,
+                                color: colorBlack,
+                                size: 20
+                              )
+                            ),
+                            Container(
+                              height: 30,
+                              width: 1,
+                              color: Colors.black,
+                            ),
+                            addHorizontalSpace(12),
+                            Text(
+                              style: textTheme.bodyLarge,
+                              rating,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                Container(
-                  height: 40,
-                  width: 1,
-                  color: Colors.black,
-                ),
-                addHorizontalSpace(16),
-                Text(
-                  style: textTheme.bodyLarge,
-                  rating,
-                )
               ],
             ),
           ),
+          addVerticalSpace(16),
           // Book description (including extra book details)
           _description(textTheme),
           // "Expand" icon
@@ -487,11 +464,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-            BookDifficultyService bookDifficultyService =
-                BookDifficultyService();
-            bookDifficultyService.sendDifficulty(bookSummary.id,
-                appState.children[appState.selectedChildID].id, index);
+          onPressed: () async {
+            Result result;
+            BookDifficultyService bookDifficultyService = BookDifficultyService();
+            result = await bookDifficultyService.sendDifficulty(bookSummary.id, appState.children[appState.selectedChildID].id, index);
+            _updateBookDetails();
+            resultAlert(context, result, false);
             Navigator.of(context, rootNavigator: true).pop();
           },
           style: ElevatedButton.styleFrom(
@@ -540,18 +518,21 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     pushScreen(
         context,
         CreateReviewWidget(
-            bookId: bookSummary.id, updateReviews: _updateReviews));
+            bookId: bookSummary.id, updateReviews: _updateBookDetails));
   }
 
-  Future<void> _updateReviews() async {
+  Future<void> _updateBookDetails() async {
     BookSummaryService bookSummaryService = BookSummaryService();
-    double? updatedbookRating =
-        (await bookSummaryService.getBookSummary(bookSummary.id)).rating;
+    BookSummary updatedBookSummary = 
+        (await bookSummaryService.getBookSummary(bookSummary.id));
+    double? updatedbookRating = updatedBookSummary.rating;
+    int? updatedBookLevel = updatedBookSummary.level;
     BookDetailsService bookDetailsService = BookDetailsService();
     List<UserReview> updatedBookReviews =
         (await bookDetailsService.getBookDetails(bookSummary.id)).reviews;
     setState(() {
       bookSummary.rating = updatedbookRating;
+      bookSummary.level = updatedBookLevel;
       bookDetails.reviews = updatedBookReviews;
     });
   }

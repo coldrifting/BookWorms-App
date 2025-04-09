@@ -6,6 +6,7 @@ import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/announcements_widget.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
         : "My"} Dashboard";
 
     return Scaffold(
-      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true, homePageShowcaseKey: navKeys[0]),
+      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true, rightAction: AnnouncementsWidget(), homePageShowcaseKey: navKeys[0]),
       body: SingleChildScrollView(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,11 +227,20 @@ class _HomeScreenState extends State<HomeScreen> {
       future: future, 
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 64.0),
+            child: const Center(child: CircularProgressIndicator()),
+          );
         } else if (snapshot.hasError || snapshot.data!.books.isEmpty) {
           return SizedBox.shrink();
         } else {
-          existsRecommended = true;
+          if (!existsRecommended) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                existsRecommended = true;
+              });
+            });
+          }
           return Column(
             children: [
               BookshelfWidget(bookshelf: snapshot.data!),

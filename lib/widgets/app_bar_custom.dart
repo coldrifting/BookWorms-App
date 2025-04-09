@@ -52,18 +52,18 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                 })
             : null,
     actions: [
-      isChildSwitcherEnabled && appState.isParent
-          ? homePageShowcaseKey != null
-              ? BWShowcase(
-                  showcaseKey: homePageShowcaseKey!,
-                  description: "You can switch to a different child by tapping your child's profile picture",
-                  targetShapeBorder: CircleBorder(),
-                  child: changeChildWidget
-                )
-              : changeChildWidget
-          : rightAction != null && appState.isParent
-            ? rightAction!
-            : SizedBox.shrink()
+      if (rightAction != null && appState.isParent)
+        rightAction!,
+      if (isChildSwitcherEnabled && appState.isParent)
+        if (homePageShowcaseKey != null)
+          BWShowcase(
+            showcaseKey: homePageShowcaseKey!,
+            description: "You can switch to a different child by tapping your child's profile picture",
+            targetShapeBorder: CircleBorder(),
+            child: changeChildWidget
+          )
+        else
+          changeChildWidget
     ]);
   }
 
