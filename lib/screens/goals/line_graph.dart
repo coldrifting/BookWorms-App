@@ -23,66 +23,11 @@ class _LineGraphState extends State<LineGraph> {
   final visibleWindowSize = 4;
   final numXLabels = 12;
 
-  final graphSwitch = ["By Day", "By Month"];
-  var graphIndex = 1;
-
-  void _handlePan(double dx) {
-    setState(() {
-      baselineX = (baselineX - dx * 0.04).clamp(0.0, (numXLabels - visibleWindowSize).toDouble());
-    });
-  }
-
-  Widget _yAxisLabel() {
-  return RotatedBox(
-    quarterTurns: 3,
-    child: Text(
-      'Books Read',
-      style: TextStyle(
-        color: colorGrey,
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
-}
-
-  Widget _xAxisLabel() {
-    return Text(
-      graphIndex == 0 ? 'Days' : 'Months',
-      style: TextStyle(
-        color: colorGrey,
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  void _getCompletionDates() async {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    final bookshelves = appState.children[appState.selectedChildID].bookshelves;
-
-    if (bookshelves.isEmpty) return;
-
-    final index = bookshelves.indexWhere((b) => b.type == BookshelfType.completed);
-    Bookshelf completedShelf = await appState.getChildBookshelf(appState.selectedChildID, index);
-    completedList.clear();
-    if (completedShelf.completedDates != null) {
-      setState(() {
-        for (Completion data in completedShelf.completedDates!) {
-          final date = data.completedDate;
-          int dateDay = getMonthFromDateString(date);
-          completedList[dateDay] = (completedList[dateDay] ?? 0) + 1;
-        }
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     baselineX = (DateTime.now().month - 4).clamp(0, 12 - visibleWindowSize).toDouble();
     baselineY = 0.0;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getCompletionDates());
   }
 
   @override
@@ -98,7 +43,9 @@ class _LineGraphState extends State<LineGraph> {
     }
 
     // Once bookshelves are initialized, retrieve the completion dates.
-    _getCompletionDates();
+    if (completedList.isEmpty) {
+      _getCompletionDates();
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -131,23 +78,19 @@ class _LineGraphState extends State<LineGraph> {
                     ),
                   ),
                   Spacer(),
-                  SizedBox(
-                    height: 24,
-                    width: 76,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          graphIndex = graphIndex == 0 ? 1 : 0;
-                        });
-                      }, 
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorGreyLight,
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Text(graphSwitch[graphIndex], style: textTheme.labelSmall!.copyWith(color: colorGreyDark))
-                    ),
-                  ),
-                  addHorizontalSpace(8)
+                  // SizedBox(
+                  //   height: 24,
+                  //   width: 76,
+                  //   child: ElevatedButton(
+                  //     onPressed: () { }, 
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: colorGreyLight,
+                  //       padding: EdgeInsets.zero,
+                  //     ),
+                  //     child: Text("Scatterplot", style: textTheme.labelSmall!.copyWith(color: colorGreyDark))
+                  //   ),
+                  // ),
+                  // addHorizontalSpace(8)
                 ],
               ),
               addVerticalSpace(8),
@@ -177,6 +120,34 @@ class _LineGraphState extends State<LineGraph> {
       ),
     );
   }
+
+  // Sets the offset of the graph scroll.
+  void _handlePan(double dx) {
+    setState(() {
+      baselineX = (baselineX - dx * 0.04).clamp(0.0, (numXLabels - visibleWindowSize).toDouble());
+    });
+  }
+
+  // Parses the completion data to obtain a count of book completions per month.
+  void _getCompletionDates() async {
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    final bookshelves = appState.children[appState.selectedChildID].bookshelves;
+
+    if (bookshelves.isEmpty) return;
+
+    final index = bookshelves.indexWhere((b) => b.type == BookshelfType.completed);
+    Bookshelf completedShelf = await appState.getChildBookshelf(appState.selectedChildID, index);
+    completedList.clear();
+    if (completedShelf.completedDates != null) {
+      setState(() {
+        for (Completion data in completedShelf.completedDates!) {
+          final date = data.completedDate;
+          int dateDay = getMonthFromDateString(date);
+          completedList[dateDay] = (completedList[dateDay] ?? 0) + 1;
+        }
+      });
+    }
+  }
 }
 
 class _Chart extends StatelessWidget {
@@ -195,34 +166,6 @@ class _Chart extends StatelessWidget {
     required this.visibleWindowSize,
     required this.numXLabels
   });
-  
-
-  Widget _horizontalLabels(double value, TitleMeta meta) {
-    const monthLabels = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-
-    return Text(
-      monthLabels[value.toInt()],
-      style: const TextStyle(color: colorGrey, fontSize: 12),
-    );
-  }
-
-  Widget _verticalLabels(double value, TitleMeta meta) {
-    return Text(
-      meta.formattedValue,
-      style: const TextStyle(color: colorGrey, fontSize: 12),
-    );
-  }
-
-  FlLine _gridLine() {
-    return FlLine(
-      color: colorGrey.withAlpha(75),
-      strokeWidth: 1,
-      dashArray: [4, 4],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -307,6 +250,59 @@ class _Chart extends StatelessWidget {
   }
 }
 
+// Labels for the y-axis (num books read).
+Widget _yAxisLabel() {
+  return RotatedBox(
+    quarterTurns: 3,
+    child: Text(
+      'Books Read',
+      style: TextStyle(
+        color: colorGrey,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}
+
+// Labels for the x-asis (months).
+Widget _xAxisLabel() {
+  return Text(
+    'Months',
+    style: TextStyle(
+      color: colorGrey,
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+}
+
+Widget _horizontalLabels(double value, TitleMeta meta) {
+  const monthLabels = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+
+  return Text(
+    monthLabels[value.toInt()],
+    style: const TextStyle(color: colorGrey, fontSize: 12),
+  );
+}
+
+Widget _verticalLabels(double value, TitleMeta meta) {
+  return Text(
+    meta.formattedValue,
+    style: const TextStyle(color: colorGrey, fontSize: 12),
+  );
+}
+
+FlLine _gridLine() {
+  return FlLine(
+    color: colorGrey.withAlpha(75),
+    strokeWidth: 1,
+    dashArray: [4, 4],
+  );
+}
 
 // Retrieves the first and last cut-off points of the graph.
 FlSpot _getInterpolatedSpot(double x, Map<int, int> data, int numXLabels) {

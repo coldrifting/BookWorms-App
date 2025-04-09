@@ -1,7 +1,10 @@
+import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/goals/line_graph.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProgressOverviewScreen extends StatefulWidget {
   const ProgressOverviewScreen({super.key});
@@ -16,18 +19,89 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
   int goalsCompletedMonthCount = 0;
   int goalsCompletedYearCount = 0;
 
+  bool _statsCalculated = false;
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          addVerticalSpace(16),
-          const LineGraph(),
-          addVerticalSpace(16),
-          _readingStats()
-        ],
-      )
+    return Consumer<AppState>(
+      builder: (context, appState, child) {
+        final childData = appState.children[appState.selectedChildID];
+
+        // Show loading until bookshelves are loaded.
+        if (childData.bookshelves.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!_statsCalculated) {
+          _calculateStats(appState, childData);
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              addVerticalSpace(16),
+              const LineGraph(),
+              addVerticalSpace(16),
+              _readingStats(),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  Future<void> _calculateStats(AppState appState, childData) async {
+    final booksCompleted = await _getBooksCompleted(appState, childData);
+    final goalsCompleted = await _getGoalsCompleted(childData);
+
+    if (!mounted) return;
+
+    setState(() {
+      booksReadYearCount = booksCompleted[0];
+      booksReadMonthCount = booksCompleted[1];
+      goalsCompletedYearCount = goalsCompleted[0];
+      goalsCompletedMonthCount = goalsCompleted[1];
+      _statsCalculated = true;
+    });
+  }
+
+  Future<List<int>> _getBooksCompleted(AppState appState, childData) async {
+    final bookshelves = childData.bookshelves;
+    final index = bookshelves.indexWhere((b) => b.type == BookshelfType.completed);
+    final completedShelf = await appState.getChildBookshelf(appState.selectedChildID, index);
+
+    int currYear = DateTime.now().year;
+    int currMonth = DateTime.now().month;
+    int yearCount = 0;
+    int monthCount = 0;
+
+    if (completedShelf.completedDates != null) {
+      for (var bookCompletion in completedShelf.completedDates!) {
+        String date = bookCompletion.completedDate;
+        if (getYearFromDateString(date) == currYear) yearCount++;
+        if (getMonthFromDateString(date) == currMonth) monthCount++;
+      }
+    }
+
+    return [yearCount, monthCount];
+  }
+
+  Future<List<int>> _getGoalsCompleted(childData) async {
+    final goals = childData.goals;
+
+    int currYear = DateTime.now().year;
+    int currMonth = DateTime.now().month;
+    int yearCount = 0;
+    int monthCount = 0;
+
+    for (var goal in goals) {
+      if (goal.goalMetric == "BooksRead" && goal.progress == goal.target) {
+        if (getYearFromDateString(goal.endDate) == currYear) yearCount++;
+        if (getMonthFromDateString(goal.endDate) == currMonth) monthCount++;
+      }
+    }
+
+    return [yearCount, monthCount];
   }
 
   Widget _readingStats() {
