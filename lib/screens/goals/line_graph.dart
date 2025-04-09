@@ -190,6 +190,16 @@ class _Chart extends StatelessWidget {
       if (endOfX < booksRead.length - 1) _getInterpolatedSpot(endOfX, booksRead, numXLabels)
     ];
 
+    double maxY = allSpots.isNotEmpty
+      ? allSpots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b)
+      : 0;
+
+    double padding = maxY * 0.1;
+
+    if (padding == 0) {
+      padding = 1;
+    }
+
     return GestureDetector(
       onHorizontalDragUpdate: (details) => onPan(details.delta.dx),
       child: LineChart(
@@ -208,7 +218,7 @@ class _Chart extends StatelessWidget {
           minX: minX,
           maxX: maxX,
           minY: 0,
-          maxY: 10,
+          maxY: (maxY + padding).ceil().toDouble(),
           gridData: FlGridData(
             show: true,
             drawHorizontalLine: true,
