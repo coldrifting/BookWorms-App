@@ -17,6 +17,7 @@ import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spell_checker/flutter_spell_checker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 
 /// The [SearchScreen] consists of a search bar and a sub-widget (either browse, recents, or results).
@@ -122,7 +123,9 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
         // Check the query for typos (any found will be suggested to user)
-        await _spellcheckQuery(query);
+        if (!kIsWeb) {
+          await _spellcheckQuery(query);
+        }
 
         List<BookSummary> results = await _search(query);
 
