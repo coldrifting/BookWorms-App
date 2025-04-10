@@ -70,27 +70,42 @@ class _HomeScreenState extends State<HomeScreen> {
         : "My"} Dashboard";
 
     return Scaffold(
-      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true, rightAction: AnnouncementsWidget(), homePageShowcaseKey: navKeys[0]),
+      appBar: AppBarCustom(
+          headerTitle,
+          isLeafPage: false,
+          isChildSwitcherEnabled: true,
+          rightAction: BWShowcase(
+            showcaseKey: navKeys[3],
+            description: "Announcements from your child's teacher(s) can be viewed here",
+            child: AnnouncementsWidget()
+          ),
+          homePageShowcaseKey: navKeys[0]
+      ),
       body: SingleChildScrollView(
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BWShowcase(
+              showcaseKey: isParent ? navKeys[1] : navKeys[0],
+              description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
+              child: _displayGoalProgress(textTheme)
+            ),
+            if (appState.isParent)
               BWShowcase(
-                showcaseKey: isParent ? navKeys[1] : navKeys[0],
-                description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
-                child: _displayGoalProgress(textTheme)
-              ),
-              if (appState.isParent)
-                _displayClassroomOverview(),
-              BWShowcase(
-                showcaseKey: isParent ? navKeys[2] : navKeys[1],
-                description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
+                showcaseKey: navKeys[2],
+                description: "Classes that your child has joined will be listed here",
                 tooltipPosition: TooltipPosition.top,
-                scrollAlignment: -0.5,
-                child: _displayBookshelves(textTheme)
+                child: _displayClassroomOverview()
               ),
-            ],
-          ),
+            BWShowcase(
+              showcaseKey: isParent ? navKeys[4] : navKeys[1],
+              description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
+              tooltipPosition: TooltipPosition.top,
+              scrollAlignment: -0.5,
+              child: _displayBookshelves(textTheme)
+            ),
+          ],
+        ),
       ),
     );
   }
