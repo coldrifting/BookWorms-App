@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
-dynamic joinClassDialog(BuildContext context, TextTheme textThemee, int childId) {
+dynamic joinClassDialog(BuildContext context, TextTheme textTheme, int childId) {
     AppState appState = Provider.of<AppState>(context, listen: false);
     TextEditingController textEditingController = TextEditingController();
 
@@ -22,13 +22,13 @@ dynamic joinClassDialog(BuildContext context, TextTheme textThemee, int childId)
           title: Center(
             child: Column(
               children: [
-                Icon(Icons.school, color: Colors.teal, size: 36),
+                Icon(Icons.school, color: colorGreen, size: 36),
                 Text(
                   'Join Class',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: Colors.teal),
+                      color: colorGreen),
                 ),
               ],
             ),
@@ -47,16 +47,16 @@ dynamic joinClassDialog(BuildContext context, TextTheme textThemee, int childId)
                   animationType: AnimationType.fade,
                   enableActiveFill: false,
                   autoFocus: true,
-                  cursorColor: Colors.teal,
-                  pastedTextStyle: TextStyle(color: Colors.teal[800], fontWeight: FontWeight.bold),
+                  cursorColor: colorGreen,
+                  pastedTextStyle: TextStyle(color: colorGreenDark, fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                     shape: PinCodeFieldShape.box,
                     borderRadius: BorderRadius.circular(10),
                     fieldHeight: 40,
                     fieldWidth: 35,
-                    inactiveColor: Colors.teal[300],
-                    activeColor: Colors.teal,
-                    selectedColor: Colors.teal,
+                    inactiveColor: colorGreenLessLight,
+                    activeColor: colorGreen,
+                    selectedColor: colorGreen,
                   ),
                 ),
                 Text("Need help? Ask your teacher!")
