@@ -74,11 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
           headerTitle,
           isLeafPage: false,
           isChildSwitcherEnabled: true,
-          rightAction: BWShowcase(
-            showcaseKey: navKeys[3],
-            description: "Announcements from your child's teacher(s) can be viewed here",
-            child: AnnouncementsWidget()
-          ),
+          rightAction: isParent
+              ? BWShowcase(
+                  showcaseKey: navKeys[3],
+                  description: "Announcements from your child's teacher(s) can be viewed here",
+                  targetShapeBorder: CircleBorder(),
+                  child: AnnouncementsWidget()
+                )
+              : null,
           homePageShowcaseKey: navKeys[0]
       ),
       body: SingleChildScrollView(
@@ -101,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
               showcaseKey: isParent ? navKeys[4] : navKeys[1],
               description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
               tooltipPosition: TooltipPosition.top,
-              scrollAlignment: -0.5,
+              scrollAlignment: isParent ? -0.5 : -15,
               child: _displayBookshelves(textTheme)
             ),
           ],
