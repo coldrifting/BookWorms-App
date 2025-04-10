@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/announcement.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/announcements/announcements_modify_screen.dart';
 import 'package:bookworms_app/screens/announcements/announcements_entry_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -38,38 +38,60 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
       }
     }
 
-    SingleChildScrollView body = SingleChildScrollView(
+    Widget noAnnouncements = Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.notifications_off_outlined,
+              size: 50.0,
+              color: context.colors.grey
+            ),
+            addVerticalSpace(8),
+            Text(
+              "No Announcements",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: context.colors.grey,
+              ),
+            )
+          ],
+        ));
+
+    Widget announcementList = SingleChildScrollView(
         child: Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
       child: Column(
+        spacing: 4,
         children: [
-          addVerticalSpace(8),
-          if (!appState.isParent)...[
+          addVerticalSpace(16),
+          if (!appState.isParent) ...[
             _addClassAnnouncementButton(),
             addVerticalSpace(12),
+            if (announcements.isEmpty)
+              addVerticalSpace(128),
           ],
           if (announcements.isEmpty)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("No Announcements Found", style: TextStyle(fontSize: 16))
-              ],
-            ),
-          for (Announcement announcement in announcements) ... [
+            noAnnouncements,
+          for (Announcement announcement in announcements) ...[
             if (appState.isParent)
-              _announcementListItem(context, announcement, appState.isParent, announcementToClassNameMap)
+              _announcementListItem(context, announcement, appState.isParent,
+                  announcementToClassNameMap)
             else
-              _announcementListItemSlidable(context, announcement, appState.deleteAnnouncement),
+              _announcementListItemSlidable(
+                  context, announcement, appState.deleteAnnouncement),
             addVerticalSpace(8)
           ],
         ],
       ),
-    )
-    );
+    ));
 
     return appState.isParent
-        ? Scaffold(appBar: AppBarCustom("All Announcements"), body: body)
-        : body;
+        ? Scaffold(
+            appBar: AppBarCustom("All Announcements"),
+            body: announcements.isEmpty ? noAnnouncements : announcementList)
+        : announcementList;
   }
 
   Widget _addClassAnnouncementButton() {
@@ -77,19 +99,13 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
       widthFactor: 0.55,
       child: TextButton(
         onPressed: () => pushScreen(context, AnnouncementsModifyScreen(Announcement(announcementId: "-1", title: "", body: "", time: DateTime.now()))),
-        style: TextButton.styleFrom(
-          backgroundColor: colorGreen,
-          foregroundColor: colorWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
+        style: smallButtonStyle,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("Add New Announcement"),
             addHorizontalSpace(8),
-            Icon(Icons.announcement, color: colorWhite),
+            Icon(Icons.announcement),
           ],
         ),
       ),
@@ -118,7 +134,7 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
                         ' titled:\r\n'
                         '${announcement.title}?',
                     confirmText: 'Delete',
-                    confirmColor: colorRed);
+                    confirmColor: context.colors.delete);
                 if (result) {
                   await deleteAction.call(announcement.announcementId);//appState
                      // .deleteAnnouncement(announcement.announcementId);
@@ -128,8 +144,8 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
                   }
                 }
               },
-              backgroundColor: colorRed,
-              foregroundColor: colorWhite,
+              backgroundColor: context.colors.delete,
+              foregroundColor: context.colors.onSurface,
               borderRadius: BorderRadius.circular(4),
               icon: Icons.delete,
               label: 'Delete',
@@ -141,12 +157,7 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
 
   Widget _announcementListItem(BuildContext context, Announcement announcement, bool isParent, [Map<String, String>? announcementToClassNameMap]) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: colorWhite,
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
-      ),
+    return CardCustom(
       child: InkWell(
         onTap: () => pushScreen(context, AnnouncementsEntryScreen(announcement.announcementId)),
         child: Padding(
@@ -165,12 +176,12 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
                     ),
                   ),
                   Icon(Icons.arrow_forward_rounded,
-                      size: 24, color: colorGreyDark),
+                      size: 24, color: context.colors.onSurfaceVariant),
                 ],
               ),
               if (announcementToClassNameMap != null)
                 Text(announcementToClassNameMap[announcement.announcementId] ?? "",
-                style: TextStyle(color: colorGreenDark, fontStyle: FontStyle.italic),),
+                style: TextStyle(color: context.colors.highlight, fontStyle: FontStyle.italic),),
               addVerticalSpace(8),
               Text(announcement.body,
                   style: textTheme.bodyMedium,
@@ -184,7 +195,7 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
                       style: textTheme.bodySmall),
 
                   if (isParent && !announcement.isRead)
-                    Text("Unread", style: textTheme.bodySmall!.copyWith(color: colorRed))
+                    Text("Unread", style: textTheme.bodySmall!.copyWith(color: context.colors.unread))
                 ],
               )
             ],

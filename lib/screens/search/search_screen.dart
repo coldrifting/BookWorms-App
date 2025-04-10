@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bookworms_app/models/book/book_summary.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
 import 'package:bookworms_app/screens/search/recents_screen.dart';
@@ -300,10 +300,10 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     return Center(
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.w300,
-            color: colorBlack
+            color: context.colors.onPrimary
           ),
           children: <TextSpan>[
             TextSpan(text: "Did you mean: "),
@@ -338,7 +338,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
         return Column(
           children: [
             BookSummaryWidget(book: _searchResults[index]),
-            const Divider(color: colorGrey)
+            Divider(color: context.colors.grey)
           ],
         );
       }
@@ -367,7 +367,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                   child: Tab(text: "Advanced Search")
               ),
             ],
-            unselectedLabelColor: colorGrey,
+            unselectedLabelColor: context.colors.grey,
           ),
           Expanded(
             child: TabBarView(
@@ -390,6 +390,8 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
     final ratings = [Text('4.5+'), Text('4.0+'), Text('3.5+'), Text('3.0+'), Text('2.5+'), Text('2.0+')];
     final genres = [Text('Fantasy'), Text('Adventure'), Text('Mystery'), Text('Historical Fiction'), Text('Science Fiction'), Text('Fairy Tales')];
     final topics = [Text('Friendship'), Text('Family'), Text('Magic'), Text('Love'), Text('Manners'), Text('Animals')];
+
+    var fadeColor = context.colors.surfaceBackground.withAlpha(0);
 
     return ListView(
       children: [
@@ -416,7 +418,6 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                         ),
                         child: const Icon(
                           Icons.help_outline,
-                          color: colorBlack,
                           size: 20
                         )
                       ),
@@ -533,10 +534,10 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                                 colors: [
-                                  Color.fromRGBO(247, 251, 241, 1.0),
-                                  Color.fromRGBO(247, 251, 241, 0.0),
-                                  Color.fromRGBO(247, 251, 241, 0.0),
-                                  Color.fromRGBO(247, 251, 241, 1.0),
+                                  context.colors.surfaceBackground,
+                                  fadeColor,
+                                  fadeColor,
+                                  context.colors.surfaceBackground,
                                 ],
                                 stops: [0.0, 0.05, 0.95, 1.0],
                               ),
@@ -592,10 +593,10 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                                 colors: [
-                                  Color.fromRGBO(247, 251, 241, 1.0),
-                                  Color.fromRGBO(247, 251, 241, 0.0),
-                                  Color.fromRGBO(247, 251, 241, 0.0),
-                                  Color.fromRGBO(247, 251, 241, 1.0),
+                                  context.colors.surfaceBackground,
+                                  fadeColor,
+                                  fadeColor,
+                                  context.colors.surfaceBackground,
                                 ],
                                 stops: [0.0, 0.05, 0.95, 1.0],
                               ),
@@ -615,14 +616,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
                       onPressed: () {
                         _advancedSearch();                 
                       },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: colorWhite,
-                        backgroundColor: colorGreen,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        minimumSize: Size(double.infinity, 64), 
-                      ),
+                      style: largeButtonStyle,
                       child: Text('Search'),
                     ),
                   ),

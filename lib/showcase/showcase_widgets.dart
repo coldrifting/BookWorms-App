@@ -1,4 +1,4 @@
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -50,7 +50,7 @@ class _BWShowcaseState extends State<BWShowcase> {
       key: widget.showcaseKey,
       title: widget.title,
       description: widget.description,
-      descTextStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+      descTextStyle: TextStyle(color: context.colors.onSurface, fontSize: 15, fontWeight: FontWeight.w500),
       descriptionTextAlign: TextAlign.center,
       targetPadding: widget.targetPadding ?? EdgeInsets.zero,
       targetShapeBorder: widget.targetShapeBorder,
@@ -68,6 +68,7 @@ class _BWShowcaseState extends State<BWShowcase> {
           position: TooltipActionPosition.outside,
           gapBetweenContentAndAction: 6
         ),
+      tooltipBackgroundColor: context.colors.surface,
       tooltipPosition: widget.tooltipPosition,
       disableMovingAnimation: widget.disableMovingAnimation,
       showArrow: widget.showArrow,
@@ -113,7 +114,7 @@ class _BWShowcaseState extends State<BWShowcase> {
             )
         ),
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-        backgroundColor: colorGreen,
+        backgroundColor: context.colors.primary,
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: showcaseController.next
     );
@@ -149,7 +150,7 @@ class _BWShowcaseState extends State<BWShowcase> {
             )
         ),
         padding: const EdgeInsets.fromLTRB(0, 5, 4, 5),
-        backgroundColor: colorGreen,
+        backgroundColor: context.colors.primary,
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
           if (toScreen != null) showcaseController.goToScreen(toScreen);
@@ -170,7 +171,7 @@ class _BWShowcaseState extends State<BWShowcase> {
             )
         ),
         padding: const EdgeInsets.fromLTRB(0, 5, 4, 5),
-        backgroundColor: colorGreen,
+        backgroundColor: context.colors.primary,
         textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         onTap: () {
           if (toScreen != null) {

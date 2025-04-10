@@ -1,6 +1,6 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 
 /// The [OptionWidget] displays a selectable box with an icon and name.
@@ -20,18 +20,10 @@ class OptionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: colorBlack,
-        backgroundColor: colorWhite,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-        ),
-        side: BorderSide(color: colorGreyDark),
-        padding: EdgeInsets.all(16.0),
-      ),
+      style: profileButtonStyle(context),
       child: Row(
         children: [
-          Icon(size: 48, icon, color: colorBlack),
+          Icon(size: 48, icon, color: context.colors.onSurface),
           addHorizontalSpace(16),
           Text(
             name,

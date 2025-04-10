@@ -1,7 +1,7 @@
 import 'package:bookworms_app/models/action_result.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:bookworms_app/resources/colors.dart';
 
 // Creates a SizedBox widget with specified height.
 Widget addVerticalSpace(double height) {
@@ -19,8 +19,8 @@ Future<bool> showConfirmDialog(
     String message,
     {String confirmText = "Confirm",
     String cancelText = "Cancel",
-    Color confirmColor = colorGreen,
-    Color cancelColor = colorGreyDark,
+    Color? confirmColor,
+    Color? cancelColor,
     bool showCancelButton = true}) async {
   var result = await showDialog<bool>(
       context: context,
@@ -28,15 +28,17 @@ Future<bool> showConfirmDialog(
       builder: (BuildContext context) {
         var confirmButton =
               dialogButton(
+                  context,
                   confirmText,
                   () => Navigator.of(context, rootNavigator: true).pop(true),
-                  foregroundColor: colorWhite,
-                  backgroundColor: confirmColor);
+                  foregroundColor: context.colors.onPrimary,
+                  backgroundColor: confirmColor ?? context.colors.primary);
 
         var cancelButton = dialogButton(
+                  context,
                   cancelText,
                   () => Navigator.of(context, rootNavigator: true).pop(false),
-                  foregroundColor: cancelColor,
+                  foregroundColor: cancelColor ?? context.colors.grey,
                   isElevated: false);
 
         return AlertDialog(
@@ -54,7 +56,7 @@ Future<String?> showTextEntryDialog(
     BuildContext context, String title, String hint,
     {String confirmText = "Confirm",
     String cancelText = "Cancel",
-    Color confirmColor = colorGreen}) async {
+    Color? confirmColor}) async {
   var result = await showDialog<String>(
       context: context,
       useRootNavigator: true,
@@ -77,15 +79,17 @@ Future<String?> showTextEntryDialog(
             ),
             actions: [
               dialogButton(
+                  context,
                   cancelText,
                   () => Navigator.of(context, rootNavigator: true).pop(null),
-                  foregroundColor: colorGreyDark,
+                  foregroundColor: context.colors.grey,
                   isElevated: false),
               dialogButton(
+                  context,
                   confirmText,
                   input.isEmpty ? null : () => Navigator.of(context, rootNavigator: true).pop(input),
-                  foregroundColor: colorWhite,
-                  backgroundColor: confirmColor),
+                  foregroundColor: context.colors.onPrimary,
+                  backgroundColor: confirmColor ?? context.colors.primary),
             ],
           );
         });
@@ -104,7 +108,7 @@ void confirmExitWithoutSaving(
         "Unsaved Changes",
         "Are you sure you want to continue?",
         confirmText: "Discard Changes",
-        confirmColor: colorRed);
+        confirmColor: context.colors.delete);
     if (result) {
       navState.pop();
     }
@@ -113,9 +117,9 @@ void confirmExitWithoutSaving(
   }
 }
 
-Widget dialogButton(String label, Function()? onPressed,
-    {Color foregroundColor = colorWhite,
-    Color backgroundColor = colorGreen,
+Widget dialogButton(BuildContext context, String label, Function()? onPressed,
+    {Color? foregroundColor,
+    Color? backgroundColor,
     bool isElevated = true}) {
   var text = Text(label);
 
@@ -123,28 +127,21 @@ Widget dialogButton(String label, Function()? onPressed,
     return ElevatedButton(
         onPressed: onPressed,
         style: getCommonButtonStyle(
-            primaryColor: onPressed != null ? backgroundColor : colorGreyDark,
-            secondaryColor: onPressed != null ? foregroundColor : colorWhite),
+            primaryColor: onPressed != null ? backgroundColor ?? context.colors.primary : context.colors.grey,
+            secondaryColor: onPressed != null ? foregroundColor ?? context.colors.onPrimary : context.colors.onPrimary),
         child: text);
   }
   return TextButton(
       onPressed: onPressed,
-      style: getCommonButtonStyle(primaryColor: foregroundColor, isElevated: false),
+      style: getCommonButtonStyle(primaryColor: foregroundColor ?? context.colors.primary, isElevated: false),
       child: text);
 }
 
-ButtonStyle getCommonButtonStyle({Color primaryColor = colorGreen, Color? secondaryColor = colorWhite, bool isElevated = true}) {
-  return ElevatedButton.styleFrom(
-          backgroundColor: isElevated ? primaryColor : Colors.transparent,
-          foregroundColor: isElevated ? secondaryColor : primaryColor,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)));
-}
 
-FloatingActionButton floatingActionButtonWithText(String label, IconData icon, Function() action) {
+FloatingActionButton floatingActionButtonWithText(BuildContext context, String label, IconData icon, Function() action) {
   return FloatingActionButton.extended(
-        foregroundColor: colorWhite,
-        backgroundColor: colorGreen,
+        foregroundColor: context.colors.onPrimary,
+        backgroundColor: context.colors.primary,
         label: Text(label),
         icon: Icon(icon),
         onPressed: action);
@@ -169,10 +166,10 @@ String printFirstAuthors(var authorList, int count) {
     : "${authors.join(", ")}, and more";
 }
 
-SystemUiOverlayStyle defaultOverlay([Color? color, bool light = true]) {
+SystemUiOverlayStyle defaultOverlay(BuildContext context, [Color? color, bool light = true]) {
   return SystemUiOverlayStyle(
     // Status bar color
-    statusBarColor: color ?? colorGreen,
+    statusBarColor: color ?? context.colors.primary,
 
     // Status bar icon brightness
     // For Android
@@ -200,7 +197,7 @@ dynamic resultAlert(BuildContext context, Result result, [bool pop=true]) {
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: result.color ?? (result.isSuccess ? colorGreenDark : colorRed),
+        backgroundColor: result.color ?? (result.isSuccess ? context.colors.primaryVariant : context.colors.delete),
         content: Row(
           children: [
             Text(

@@ -1,3 +1,4 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // Callback for when an error is recieved during sign in.
+  // Callback for when an error is received during sign in.
   // Sets the state of validation errors.
   void _handleValidationErrors(String error) {
     setState(() {
@@ -73,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
+        value: Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         child: SetupBackdropWidget(
           childWidget: SafeArea(child: _loginWidget(textTheme)),
         ),
@@ -132,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       loginError,
-                      style: TextStyle(color: Colors.red),
+                      style: errorTextStyle(context),
                     ),
                   ),
                 addVerticalSpace(loginError.isEmpty ? 32 : 16),

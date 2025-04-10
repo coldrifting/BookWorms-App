@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:bookworms_app/screens/setup/login_screen.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/screens/setup/register_screen.dart';
@@ -53,9 +52,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             onPressed: () {
                               pushScreen(context, const LoginScreen(), replace: true);
                             },
-                            style: TextButton.styleFrom(
-                              foregroundColor: colorWhite,
-                            ),
+                            style: welcomeTextButtonStyle,
                             child: const Text("SIGN IN")
                           ),
                           addHorizontalSpace(32),
@@ -63,9 +60,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             onPressed: () {
                               pushScreen(context, const RegisterScreen());
                             },
-                            style: TextButton.styleFrom(
-                              backgroundColor: colorWhite,
-                            ),
+                            style: welcomeElevatedButtonStyle,
                             child: const Text("SIGN UP"),
                           ),
                         ],

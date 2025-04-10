@@ -1,5 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/change_child_widget.dart';
@@ -35,14 +35,14 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
         title: Text(title,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: colorWhite,
+                color: context.colors.onPrimary,
                 overflow: TextOverflow.ellipsis)),
         centerTitle: centerTitle,
-        backgroundColor: colorGreen,
-        systemOverlayStyle: defaultOverlay(),
+        backgroundColor: context.colors.primary,
+        systemOverlayStyle: defaultOverlay(context),
         leading: isLeafPage
             ? IconButton(
-                color: colorWhite,
+                color: context.colors.onPrimary,
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   onBackBtnPressed?.call();

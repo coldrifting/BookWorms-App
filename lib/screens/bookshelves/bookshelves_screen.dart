@@ -1,7 +1,7 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
 import 'package:bookworms_app/showcase/showcase_widgets.dart';
@@ -44,7 +44,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
         description: "You can even add your own custom bookshelves!",
         targetPadding: EdgeInsets.all(6),
         tooltipBorderRadius: BorderRadius.circular(16),
-        child: floatingActionButtonWithText("Add Bookshelf", Icons.add, () async {
+        child: floatingActionButtonWithText(context, "Add Bookshelf", Icons.add, () async {
           String? newBookshelfName = await showTextEntryDialog(context, "Create New Bookshelf", "Bookshelf Name");
           if (newBookshelfName != null) {
             appState.addChildBookshelf(appState.selectedChildID,
@@ -107,7 +107,7 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
     bool? shouldDelete = await showConfirmDialog(context,
         "Delete Bookshelf",
         'Are you sure you want to permanently delete the bookshelf titled "${bookshelf.name}?"',
-        confirmColor: colorRed);
+        confirmColor: context.colors.delete);
     if (shouldDelete == true) {
       appState.deleteChildBookshelf(appState.selectedChildID, bookshelf);
     }
@@ -128,28 +128,28 @@ class _BookshelvesScreenState extends State<BookshelvesScreen> {
                   onPressed: (BuildContext context) {
                     _deleteBookshelf(bookshelf);
                   },
-                  backgroundColor: colorRed,
-                  foregroundColor: colorWhite,
+                  backgroundColor: context.colors.delete,
+                  foregroundColor: context.colors.surface,
                   borderRadius: BorderRadius.circular(4),
                   icon: Icons.delete,
                   label: 'Delete',
                 ),
               ],
             ),
-            child: _bookshelfContent(textTheme, bookshelf))
-        : _bookshelfContent(textTheme, bookshelf, isLocked: true);
+            child: _bookshelfContent(context, textTheme, bookshelf))
+        : _bookshelfContent(context, textTheme, bookshelf, isLocked: true);
   }
 }
 
 /// The content of the bookshelf (images, title, authors, rating, level).
-Widget _bookshelfContent(TextTheme textTheme, Bookshelf bookshelf,
+Widget _bookshelfContent(BuildContext context, TextTheme textTheme, Bookshelf bookshelf,
     {bool isLocked = false}) {
   var authors = bookshelf.books.expand((book) => book.authors);
 
   return Container(
     decoration: BoxDecoration(
-      color: bookshelf.type.color[200],
-      border: Border.all(color: bookshelf.type.color[700]!),
+      color: getBookshelfColor(context, bookshelf.type),
+      border: Border.all(color: getBookshelfColor(context, bookshelf.type, isForeground: true)),
       borderRadius: BorderRadius.circular(4),
     ),
     child: Stack(children: [
@@ -160,7 +160,7 @@ Widget _bookshelfContent(TextTheme textTheme, Bookshelf bookshelf,
               bookshelf.type.name == "InProgress"
                   ? "In Progress"
                   : bookshelf.type.name,
-              style: TextStyle(color: bookshelf.type.color[700]!))),
+              style: TextStyle(color: getBookshelfColor(context, bookshelf.type, isForeground: true)))),
       Row(
         children: [
           Padding(

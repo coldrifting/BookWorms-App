@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +19,12 @@ class AnnouncementsWidget extends StatelessWidget {
       onPressed: () {
         pushScreen(context, AnnouncementsAllScreen());
       },
-      color: colorWhite,
+      color: context.colors.onPrimary,
       icon: Badge(
         isLabelVisible: showAnnouncementBadge,
         label: null,
         smallSize: 12,
-        backgroundColor: colorRed,
+        backgroundColor: context.colors.unread,
         child: const Icon(Icons.notifications),
       )
     );

@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +31,7 @@ class _LineGraphState extends State<LineGraph> {
     child: Text(
       'Books Read',
       style: TextStyle(
-        color: colorGrey,
+        color: context.colors.grey,
         fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
@@ -43,7 +43,7 @@ class _LineGraphState extends State<LineGraph> {
     return Text(
       graphIndex == 0 ? 'Days' : 'Months',
       style: TextStyle(
-        color: colorGrey,
+        color: context.colors.grey,
         fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
@@ -56,10 +56,10 @@ class _LineGraphState extends State<LineGraph> {
 
     return Container(
       decoration: BoxDecoration(
-        color: colorWhite,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: 0.2),
+            color: context.colors.surfaceBorder,
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),
@@ -75,12 +75,12 @@ class _LineGraphState extends State<LineGraph> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.auto_graph_rounded, color: colorGreen, size: 24),
+                  Icon(Icons.auto_graph_rounded, color: context.colors.primary, size: 24),
                   addHorizontalSpace(8),
                   Text(
                     "Reading Activity",
                     style: textTheme.titleMedium!.copyWith(
-                      color: colorGreen,
+                      color: context.colors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -95,10 +95,10 @@ class _LineGraphState extends State<LineGraph> {
                         });
                       }, 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: colorGreyLight,
+                        backgroundColor: context.colors.onSurfaceDim,
                         padding: EdgeInsets.zero,
                       ),
-                      child: Text(graphSwitch[graphIndex], style: textTheme.labelSmall!.copyWith(color: colorGreyDark))
+                      child: Text(graphSwitch[graphIndex], style: textTheme.labelSmall!.copyWith(color: context.colors.greyDark))
                     ),
                   ),
                   addHorizontalSpace(8)
@@ -144,7 +144,7 @@ class _Chart extends StatelessWidget {
     required this.booksRead,
   });
 
-  Widget _horizontalLabels(double value, TitleMeta meta) {
+  Widget _horizontalLabels(BuildContext context, double value, TitleMeta meta) {
     final minX = baselineX;
     final maxX = baselineX + 10;
     double endOfX = baselineX + maxX - minX;
@@ -155,20 +155,20 @@ class _Chart extends StatelessWidget {
 
     return Text(
       value.toStringAsFixed(0),
-      style: const TextStyle(color: colorGrey, fontSize: 12),
+      style: TextStyle(color: context.colors.grey, fontSize: 12),
     );
   }
 
-  Widget _verticalLabels(double value, TitleMeta meta) {
+  Widget _verticalLabels(BuildContext context, double value, TitleMeta meta) {
     return Text(
       meta.formattedValue,
-      style: const TextStyle(color: colorGrey, fontSize: 12),
+      style: TextStyle(color: context.colors.grey, fontSize: 12),
     );
   }
 
-  FlLine _gridLine() {
+  FlLine _gridLine(BuildContext context) {
     return FlLine(
-      color: colorGrey.withAlpha(75),
+      color: context.colors.grey.withAlpha(75),
       strokeWidth: 1,
       dashArray: [4, 4],
     );
@@ -203,11 +203,11 @@ class _Chart extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               spots: points,
-              color: colorGreen,
+              color: context.colors.primary,
               barWidth: 3,
               belowBarData: BarAreaData(
                 show: true,
-                color: colorGreen.withAlpha(75),
+                color: context.colors.primary.withAlpha(75),
               ),
             ),
           ],
@@ -219,15 +219,15 @@ class _Chart extends StatelessWidget {
             show: true,
             drawHorizontalLine: true,
             drawVerticalLine: true,
-            getDrawingHorizontalLine: (_) => _gridLine(),
-            getDrawingVerticalLine: (_) => _gridLine(),
+            getDrawingHorizontalLine: (_) => _gridLine(context),
+            getDrawingVerticalLine: (_) => _gridLine(context),
           ),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 32,
-                getTitlesWidget: _verticalLabels,
+                getTitlesWidget: (value, meta) => _verticalLabels(context, value, meta)
               ),
             ),
             bottomTitles: AxisTitles(
@@ -235,7 +235,7 @@ class _Chart extends StatelessWidget {
                 showTitles: true,
                 reservedSize: 32,
                 interval: 1,
-                getTitlesWidget: _horizontalLabels,
+                getTitlesWidget: (value, meta) => _horizontalLabels(context, value, meta)
               ),
             ),
             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -244,9 +244,9 @@ class _Chart extends StatelessWidget {
           lineTouchData: LineTouchData(enabled: false),
           borderData: FlBorderData(
             show: true,
-            border: const Border(
-              left: BorderSide(color: colorGreyDark),
-              bottom: BorderSide(color: colorGreyDark),
+            border: Border(
+              left: BorderSide(color: context.colors.greyDark),
+              bottom: BorderSide(color: context.colors.greyDark),
             ),
           ),
         ),

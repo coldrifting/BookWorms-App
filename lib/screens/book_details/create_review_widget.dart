@@ -1,9 +1,9 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'package:bookworms_app/services/book/book_reviews_service.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 
 /// A widget that allows students to provide structured feedback on a book.
@@ -49,9 +49,9 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _reviewStarRating(),
+              _reviewStarRating(context),
               addVerticalSpace(16),
-              _reviewContent(),
+              _reviewContent(context),
               addVerticalSpace(16),
               FilledButton(
                 onPressed: _saveReview, 
@@ -65,19 +65,19 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
   }
 
   /// Allows students to rate the book from 0.5 to 5 stars.
-  Widget _reviewStarRating() {
+  Widget _reviewStarRating(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorGreen.withAlpha(10),
+        color: context.colors.primary.withAlpha(10),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorGreen, width: 2),
+        border: Border.all(color: context.colors.primary, width: 2),
       ),
       child: Column(
         children: [
           Text(
             "Rate the book:", 
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: colorGreenDark)
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: context.colors.primary)
           ),
           addVerticalSpace(8),
           RatingBar.builder(
@@ -87,9 +87,9 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
             minRating: 0.5,
             itemCount: 5,
             itemPadding: const EdgeInsets.symmetric(horizontal: 3.0),
-            itemBuilder: (context, _) => const Icon(
+            itemBuilder: (context, _) => Icon(
               Icons.star,
-              color: colorYellow,
+              color: context.colors.star
             ),
             onRatingUpdate: (rating) {  
               setState(() {
@@ -103,18 +103,18 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
   }
 
   /// Provides a text field for students to write their book review.
-  Widget _reviewContent() {
+  Widget _reviewContent(BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
         hintText: 'Leave a review',
         border: OutlineInputBorder(
-          borderSide: BorderSide(color: colorGreen, width: 2.0),
+          borderSide: BorderSide(color: context.colors.primary, width: 2.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: colorGreen, width: 2.0),
+          borderSide: BorderSide(color: context.colors.primary, width: 2.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: colorGreen, width: 2.0),
+          borderSide: BorderSide(color: context.colors.primary, width: 2.0),
         ),
       ),
       maxLines: 10,

@@ -84,7 +84,7 @@ class _AddFirstChildState extends State<AddFirstChild> {
           addVerticalSpace(32),
           FractionallySizedBox(
             widthFactor: 1,
-            child: dialogButton("Save and Continue", () {
+            child: dialogButton(context, "Save and Continue", () {
               if (_formKey.currentState?.validate() ?? false) {
                 final childName = _childNameController.text;
                 addChild(childName);

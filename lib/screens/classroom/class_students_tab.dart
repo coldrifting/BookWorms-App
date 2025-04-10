@@ -1,6 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
@@ -72,31 +71,25 @@ class _StudentsScreenState extends State<StudentsScreen> {
                       EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                     ),
                     elevation: const WidgetStatePropertyAll(0),
-                    backgroundColor: WidgetStatePropertyAll(colorGreyLight),
+                    backgroundColor: WidgetStatePropertyAll(context.colors.surface),
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                      side: BorderSide(color: colorGreyDark, width: 2),
+                      side: BorderSide(color: context.colors.surfaceBorder, width: 2),
                     )),
-                    leading: Icon(Icons.search, color: colorGreyDark),
+                    leading: Icon(Icons.search, color: context.colors.surfaceBorder),
                   ),
                 ),
               ),
               addHorizontalSpace(8),
               TextButton(
                 onPressed: () => _showClassroomCode(textTheme),
-                style: TextButton.styleFrom(
-                  backgroundColor: colorGreen,
-                  foregroundColor: colorWhite,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
+                style: smallButtonStyle,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Invite"),
                     addHorizontalSpace(8),
-                    Icon(Icons.person_add_alt_1_rounded, color: colorWhite),
+                    Icon(Icons.person_add_alt_1_rounded),
                   ],
                 ),
               ),
@@ -107,11 +100,11 @@ class _StudentsScreenState extends State<StudentsScreen> {
         Expanded(
           child: students.isNotEmpty
           ? _studentsGrid(textTheme)
-          : const Center(
+          : Center(
               child: Text(
                 "No students in the classroom.\nUse the invite button above!",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: colorGreyDark)
+                style: TextStyle(color: context.colors.surfaceBorder)
               ),
             ),
         ),
@@ -140,13 +133,13 @@ class _StudentsScreenState extends State<StudentsScreen> {
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
-          color: colorWhite,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withAlpha(20),
-              blurRadius: 4,
-              spreadRadius: 2,
+              color: context.colors.surfaceBorder,
+              blurRadius: 2,
+              spreadRadius: 1,
             )
           ],
         ),
@@ -191,10 +184,10 @@ class _StudentsScreenState extends State<StudentsScreen> {
         title: Center(
           child: Column(
             children: [
-              Icon(Icons.school, color: colorGreen, size: 36),
+              Icon(Icons.school, color: context.colors.primary, size: 36),
               Text(
                 'Classroom Code',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: colorGreen),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: context.colors.primary),
               ),
             ],
           ),
@@ -205,9 +198,9 @@ class _StudentsScreenState extends State<StudentsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorGreen.withAlpha(10),
+                color: context.colors.primary.withAlpha(10),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colorGreen, width: 2),
+                border: Border.all(color: context.colors.primary, width: 2),
               ),
               child: SelectableText(
                 classroomCode,
@@ -225,8 +218,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
         actions: [
           TextButton(
             style: TextButton.styleFrom(
-                foregroundColor: colorGreen,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                backgroundColor: context.colors.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
             ),
             onPressed: () {
@@ -249,10 +241,7 @@ class _StudentsScreenState extends State<StudentsScreen> {
           ),
           addVerticalSpace(12),
           TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: colorGreen,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
+            style: smallButtonStyle,
             onPressed: () {
               String subject = "${appState.classroom!.classroomName} Classroom Access Code";
               String body = "Use the following code to join ${appState.account.lastName}'s Classroom in the BookWorms App: \r\n ${appState.classroom!.classCode}";

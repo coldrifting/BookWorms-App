@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +37,8 @@ class ChildSelectionListWidget extends StatelessWidget {
                     child: UserIcons.getIcon(child.profilePictureIndex)
                   ),
                   title: Text(child.name),
-                  selectedColor: colorWhite,
-                  selectedTileColor: colorGreen,
+                  selectedColor: context.colors.onPrimary,
+                  selectedTileColor: context.colors.primary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   onTap: () {
                     Provider.of<AppState>(context, listen: false).setSelectedChild(index);

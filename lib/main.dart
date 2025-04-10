@@ -1,5 +1,4 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelves_screen.dart';
 import 'package:bookworms_app/screens/classroom/classroom_screen.dart';
@@ -40,6 +39,8 @@ class BookWorms extends StatelessWidget {
                 navigatorKey: navigatorKey,
                 title: 'BookWorms',
                 theme: appTheme,
+                darkTheme: appThemeDark.copyWith(extensions: [darkAppColors]),
+                themeMode: ThemeMode.system,
                 home: const SplashScreen(),
                 scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
                   PointerDeviceKind.touch,
@@ -207,11 +208,12 @@ class _Navigation extends State<Navigation> {
               ),
             ),
             bottomNavigationBar: NavigationBar(
-                backgroundColor: colorGreen,
+                backgroundColor: context.colors.primary,
+                indicatorColor: context.colors.onPrimary,
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                 selectedIndex: selectedIndex,
                 onDestinationSelected: onBottomNavItemTapped,
-                destinations: getDestWidgets(isParent, navKeys)
+                destinations: getDestWidgets(context, isParent, navKeys)
             )
         )
     );
@@ -248,7 +250,7 @@ List<Destination> getDest(bool isParent) {
   return list;
 }
 
-List<Widget> getDestWidgets(bool isParent, List<GlobalKey> navKeys) {
+List<Widget> getDestWidgets(BuildContext context, bool isParent, List<GlobalKey> navKeys) {
   return getDest(isParent)
       .mapIndexed((index, dest) =>
         BWShowcase(
@@ -260,8 +262,8 @@ List<Widget> getDestWidgets(bool isParent, List<GlobalKey> navKeys) {
               : TooltipActionSet.basic,
           tooltipBorderRadius: BorderRadius.circular(6),
           child: NavigationDestination(
-              selectedIcon: Icon(dest.selectedIcon, color: colorGreenDark),
-              icon: Icon(dest.icon, color: colorWhite),
+              selectedIcon: Icon(dest.selectedIcon, color: context.colors.primaryVariant),
+              icon: Icon(dest.icon, color: context.colors.onPrimary),
               label: dest.label
           ),
         )

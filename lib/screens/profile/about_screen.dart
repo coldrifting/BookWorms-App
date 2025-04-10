@@ -1,4 +1,4 @@
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +11,7 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom("About"),
-      body: Padding(
-        padding: const EdgeInsets.all(48.0),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -27,7 +26,7 @@ class AboutScreen extends StatelessWidget {
             addVerticalSpace(16),
             Text(
               "BookWorms", 
-              style: TextStyle(color: colorGreen, fontSize: 32, fontWeight: FontWeight.bold)
+              style: TextStyle(color: context.colors.primary, fontSize: 32, fontWeight: FontWeight.bold)
             ),
             addVerticalSpace(16),
             Text(
@@ -37,7 +36,7 @@ class AboutScreen extends StatelessWidget {
             ),
             addVerticalSpace(16),
             Text(
-              "Created by Aiden Van Dyke, Braden Fiedel, Caden Erickson, and Josie Fiedel", 
+              "Created by Aiden Van Dyke, Braden Fiedel, \n Caden Erickson, and Josie Fiedel",
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             )

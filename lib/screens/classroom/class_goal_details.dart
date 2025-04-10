@@ -3,7 +3,7 @@ import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
 import 'package:bookworms_app/models/goals/student_goal_details.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
@@ -45,7 +45,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
     return Scaffold(
       appBar: AppBarCustom(goal.title),
       body: Container(
-        color: colorGreyLight,
+        color: context.colors.surfaceBackground,
         child: ListView.builder(
           itemCount: goalDetails.studentGoalDetails!.length + 1,
           itemBuilder: (context, index) {
@@ -55,9 +55,9 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: colorWhite,
+                      color: context.colors.surface,
                       border: Border(
-                        bottom: BorderSide(color: colorGrey),
+                        bottom: BorderSide(color: context.colors.surfaceBorder),
                       ),
                     ),
                     child: Padding(
@@ -84,7 +84,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
                                     SizedBox(
                                       height: 40,
                                       child: VerticalDivider(
-                                        color: Colors.black,
+                                        color: context.colors.onSurfaceDim,
                                         thickness: 1,
                                         width: 20,
                                       ),
@@ -129,14 +129,11 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
             // Student list.
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Container(
-                color: colorWhite,
-                child: Column(
-                  children: [
-                    _studentItem(textTheme, goal, goalDetails.studentGoalDetails![index - 1]),
-                    if (goalDetails.studentGoalDetails!.length != index) Divider(color: colorGreyLight)
-                  ],
-                ),
+              child: Column(
+                children: [
+                  _studentItem(textTheme, goal, goalDetails.studentGoalDetails![index - 1]),
+                  if (goalDetails.studentGoalDetails!.length != index) Divider(color: context.colors.onSurfaceDim)
+                ],
               ),
             );
           },
@@ -165,7 +162,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
             Text(
               "${studentGoalDetails.progress}/${goal.target} read", 
               style: TextStyle(
-                color: goal.target <= studentGoalDetails.progress ? colorGreen : colorRed, 
+                color: goal.target <= studentGoalDetails.progress ? context.colors.primary : context.colors.delete,
                 fontWeight: FontWeight.bold
               )
             ),
@@ -173,7 +170,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
             Text(
               "${studentGoalDetails.progress}%", 
               style: TextStyle(
-                color: studentGoalDetails.progress == 100 ? colorGreen : colorRed, 
+                color: studentGoalDetails.progress == 100 ? context.colors.primary : context.colors.delete,
                 fontWeight: FontWeight.bold
               )
             )
@@ -206,12 +203,12 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
           },
           child: Row(
             children: [
-              Icon(Icons.delete_forever, color: colorRed, size: 20),
+              Icon(Icons.delete_forever, color: context.colors.delete, size: 20),
               addHorizontalSpace(8),
               Text(
                 'Delete Goal',
                 style: textTheme.bodyMedium?.copyWith(
-                  color: colorRed,
+                  color: context.colors.delete,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -220,7 +217,7 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
         ),
       ],
       style: MenuStyle(
-        backgroundColor: WidgetStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(context.colors.surface),
         shape: WidgetStateProperty.all(RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         )),
@@ -229,36 +226,27 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
   }
 
   /// Confirmation dialog to confirm the deletion of the classroom.
-  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
+  Future<void> _showDeleteConfirmationDialog(TextTheme textTheme) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Delete Goal')),
-          content: const Text('Are you sure you want to permanently delete this goal?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                Result result;
-                if (appState.isParent) {
-                  result = await appState.deleteChildGoal(appState.children[appState.selectedChildID], goal.goalId!);
-                } else {
-                  result = await appState.deleteClassroomGoal(goal.goalId);
-                }
-                // TODO: Navigate out
-                resultAlert(context, result);
-              },
-              child: Text('Delete', style: TextStyle(color: colorRed)),
-            ),
-          ],
-        );
-      },
-    );
+
+    bool shouldDelete = await showConfirmDialog(
+        context,
+        'Delete Goal',
+        'Are you sure you want to permanently delete this goal?',
+        confirmColor: context.colors.delete,
+        confirmText: "Delete");
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    Result result;
+    if (appState.isParent) {
+      result = await appState.deleteChildGoal(appState.children[appState.selectedChildID], goal.goalId!);
+    } else {
+      result = await appState.deleteClassroomGoal(goal.goalId);
+    }
+
+    resultAlert(context, result);
   }
 }

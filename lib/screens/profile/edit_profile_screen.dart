@@ -5,7 +5,6 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/account/account.dart';
 import 'package:bookworms_app/screens/setup/welcome_screen.dart';
 import 'package:bookworms_app/services/account/delete_account_service.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -104,8 +103,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(100, 0),
-                      backgroundColor: _hasChanges ? colorGreen : colorGreyLight, 
-                      foregroundColor: _hasChanges ? colorWhite : colorBlack, 
+                      backgroundColor: _hasChanges ? context.colors.primary : context.colors.grey,
+                      foregroundColor: _hasChanges ? context.colors.onPrimary : context.colors.greyDark,
                       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
@@ -138,8 +137,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: colorRed,
-                      foregroundColor: colorWhite,
+                      backgroundColor: context.colors.delete,
+                      foregroundColor: context.colors.onPrimary,
                       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
@@ -151,7 +150,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           "Delete Account",
                           "Deleting your account cannot be undone. Are you sure you want to continue?",
                           confirmText: "Delete",
-                          confirmColor: colorRed);
+                          confirmColor: context.colors.delete);
 
                       if (result) {
                         _deleteAccount();
@@ -204,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             left: 70,
             child: RawMaterialButton(
               onPressed: () => changeIconDialog(textTheme),
-              fillColor: colorWhite,
+              fillColor: context.colors.surface,
               constraints: const BoxConstraints(minWidth: 0.0),
               padding: const EdgeInsets.all(5.0),
               shape: const CircleBorder(),
@@ -248,11 +247,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           title: const Center(child: Text('Change Profile Icon')),
           content: _getIconList(),
           actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              style: getCommonButtonStyle(primaryColor: colorGreyDark, isElevated: false),
-              child: Text('Cancel'),
-            ),
+            dialogButton(
+                context,
+                "Cancel",
+                () => Navigator.of(context).pop(),
+                isElevated: false,
+                foregroundColor: context.colors.grey)
           ],
         ),
     );

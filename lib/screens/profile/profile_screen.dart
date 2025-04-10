@@ -1,5 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/profile/about_screen.dart';
 import 'package:bookworms_app/screens/profile/edit_profile_screen.dart';
 import 'package:bookworms_app/screens/profile/manage_children_screen.dart';
@@ -123,11 +123,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _signOutWidget(TextTheme textTheme) {
     return ElevatedButton(
       onPressed: signOut,
-      style: getCommonButtonStyle(primaryColor: colorGreenDark),
+      style: getCommonButtonStyle(primaryColor: context.colors.primaryVariant),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(size: 32, Icons.logout_outlined, color: colorWhite),
+          Icon(size: 32, Icons.logout_outlined),
           addHorizontalSpace(8),
           Text("Sign Out", style: TextStyle(fontSize: 18)),
         ],

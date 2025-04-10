@@ -1,5 +1,5 @@
 import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/setup/connection_error_screen.dart';
 import 'package:bookworms_app/services/account/ping_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Container(
                 decoration: splashGradient(),
                 child: Center(
-                    child: CircularProgressIndicator(color: colorWhite)))));
+                    child: CircularProgressIndicator(color: context.colors.onPrimary)))));
   }
 
   // Attempts to fetch a JWT from secure storage.

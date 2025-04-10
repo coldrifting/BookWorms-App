@@ -1,5 +1,5 @@
 import 'package:bookworms_app/models/goals/child_goal.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 
 class CounterWidget extends StatefulWidget {
@@ -33,7 +33,7 @@ class _CounterWidgetState extends State<CounterWidget> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        border: Border.all(color: colorGrey),
+        border: Border.all(color: context.colors.grey),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -66,7 +66,7 @@ class _CounterWidgetState extends State<CounterWidget> {
             width: 40,
             decoration: BoxDecoration(
               border: Border(
-                left: BorderSide(color: colorGrey),
+                left: BorderSide(color: context.colors.grey),
               ),
             ),
             child: Column(
@@ -117,7 +117,7 @@ class _CounterWidgetState extends State<CounterWidget> {
       child: IconButton(
         padding: EdgeInsets.zero,
         iconSize: 18,
-        icon: Icon(icon, color: onPressed == null ? colorGrey : colorGreen),
+        icon: Icon(icon, color: onPressed == null ? context.colors.grey : context.colors.primary),
         onPressed: onPressed,
       ),
     );

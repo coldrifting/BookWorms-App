@@ -1,6 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
@@ -98,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
           stops: [0, 0.4],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [colorGreenGradTop, colorWhite],
+          colors: [context.colors.gradTop, context.colors.surface],
         )
       ),
       child: Column(
@@ -111,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.sunny, color: colorWhite),
+                    Icon(Icons.sunny, color: context.colors.surface),
                     addHorizontalSpace(8),
                     Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
                   ],
@@ -145,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
         stops: [0, 0.005, 0.005],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [colorGreen, colorGreen, colorGreenGradTop],
+        colors: [context.colors.primary, context.colors.primary, context.colors.gradTop],
       )
     ),
       child: Column(
@@ -158,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.bookmark, color: colorWhite),
+                    Icon(Icons.bookmark, color: context.colors.surface),
                     addHorizontalSpace(8),
                     Text("Recommended for me", style: textTheme.titleMediumWhite),
                   ],
@@ -193,14 +192,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: colorBlack.withValues(alpha: 0.2),
+                          color: context.colors.surfaceBorder,
                           spreadRadius: 1,
                           blurRadius: 6,
                           offset: const Offset(0, 4),
                         ),
                       ],
                       borderRadius: BorderRadius.circular(4.0),
-                      color: colorWhite,
+                      color: context.colors.surface,
                     ),
                     margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
                     padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),

@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 
@@ -108,7 +107,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         left: 70,
                         child: RawMaterialButton(
                           onPressed: () => _changeChildIconDialog(textTheme),
-                          fillColor: colorWhite,
+                          fillColor: context.colors.surface,
                           constraints: const BoxConstraints(minWidth: 0.0),
                           padding: const EdgeInsets.all(5.0),
                           shape: const CircleBorder(),
@@ -136,7 +135,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
                     ),
                     child: const Icon(
                       Icons.help_outline,
-                      color: colorBlack,
                       size: 20
                     )
                   ),
@@ -158,9 +156,9 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         builder: (context, child) {
                           return Theme(
                             data: Theme.of(context).copyWith(
-                              primaryColor: colorGreen,
+                              primaryColor: context.colors.primary,
                               textButtonTheme: TextButtonThemeData(
-                                style: getCommonButtonStyle(primaryColor: colorGreen, isElevated: false)
+                                style: getCommonButtonStyle(primaryColor: context.colors.primary, isElevated: false)
                               )
                             ),
                             child: child!
@@ -193,8 +191,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(100, 0),
-                      backgroundColor: _hasChanges ? colorGreen : colorGreyLight, 
-                      foregroundColor: _hasChanges ? colorWhite : colorBlack, 
+                      backgroundColor: _hasChanges ? context.colors.primary : context.colors.grey,
+                      foregroundColor: _hasChanges ? context.colors.onPrimary : context.colors.greyDark,
                       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
@@ -218,27 +216,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                                 appState.children[widget.childID].name;
                           });
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: colorGreenDark,
-                                content: Row(
-                                  children: [
-                                    Text(
-                                      'Child Details Updated',
-                                      style: TextStyle(color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const Spacer(),
-                                    Icon(
-                                        Icons.check_circle_outline_rounded,
-                                        color: Colors.white
-                                    )
-                                  ],
-                                ),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
+                            resultAlert(context, Result(isSuccess: true, message: "Child Details Updated"));
                           }
                           Navigator.of(context).pop();
                         }
@@ -275,8 +253,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
         Container(
           height: 175, 
           decoration: BoxDecoration(
-            color: colorGreyLight,
-            border: Border.all(color: colorGreyDark),
+            color: context.colors.surface,
+            border: Border.all(color: context.colors.surfaceBorder),
             borderRadius: BorderRadius.circular(6),
           ),
           child: ListView.builder(
@@ -298,12 +276,12 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark, width: 1.5),
+                            border: Border.all(color: context.colors.surfaceBorder, width: 1.5),
                           ),
                           child: CircleAvatar(
                             maxRadius: 45, 
-                            backgroundColor: colorGreyLight,
-                            child: Icon(size: 40, Icons.add, color: colorGreyDark),
+                            backgroundColor: context.colors.surfaceVariant,
+                            child: Icon(size: 40, Icons.add, color: context.colors.greyDark),
                           ),
                         ),
                         addVerticalSpace(8),
@@ -340,10 +318,10 @@ class _EditChildScreenState extends State<EditChildScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark, width: 1.5),
+                            border: Border.all(color: context.colors.surfaceBorder, width: 1.5),
                           ),
                           child: CircleAvatar(
-                            backgroundColor: colorWhite,
+                            backgroundColor: context.colors.surfaceVariant,
                             maxRadius: 45, 
                             child: Icon(
                               size: 50, 
@@ -395,13 +373,13 @@ class _EditChildScreenState extends State<EditChildScreen> {
           title: Center(
             child: Column(
               children: [
-                Icon(Icons.school, color: colorGreen, size: 36),
+                Icon(Icons.school, color: context.colors.primary, size: 36),
                 Text(
                   'Join Class',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: colorGreen),
+                      color: context.colors.primary),
                 ),
               ],
             ),
@@ -420,16 +398,16 @@ class _EditChildScreenState extends State<EditChildScreen> {
                   animationType: AnimationType.fade,
                   enableActiveFill: false,
                   autoFocus: true,
-                  cursorColor: colorGreen,
-                  pastedTextStyle: TextStyle(color: colorGreenDark, fontWeight: FontWeight.bold),
+                  cursorColor: context.colors.primary,
+                  pastedTextStyle: TextStyle(color: context.colors.primaryVariant, fontWeight: FontWeight.bold),
                   pinTheme: PinTheme(
                     shape: PinCodeFieldShape.box,
                     borderRadius: BorderRadius.circular(10),
                     fieldHeight: 40,
                     fieldWidth: 35,
-                    inactiveColor: colorGreenGradTop,
-                    activeColor: colorGreen,
-                    selectedColor: colorGreen,
+                    inactiveColor: context.colors.gradTop,
+                    activeColor: context.colors.primary,
+                    selectedColor: context.colors.primary,
                   ),
                 ),
                 Text("Need help? Ask your teacher!")
@@ -438,11 +416,13 @@ class _EditChildScreenState extends State<EditChildScreen> {
           ),
           actions: [
             dialogButton(
+                context,
                 "Cancel",
                 () => Navigator.of(context).pop(),
-                foregroundColor: colorGreyDark,
+                foregroundColor: context.colors.grey,
                 isElevated: false),
             dialogButton(
+                context,
                 "Join",
                 textEditingController.value.text.length != 6 ? null : () async {
                 Result result = await appState.joinChildClassroom(
@@ -481,8 +461,8 @@ class _EditChildScreenState extends State<EditChildScreen> {
   Widget _deleteChildButton(TextTheme textTheme, NavigatorState navState) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: colorRed,
-        foregroundColor: colorWhite,
+        backgroundColor: context.colors.delete,
+        foregroundColor: context.colors.onPrimary,
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
@@ -498,7 +478,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
               "Are you sure you want to delete the child profile of ${widget
                   .child.name}?",
               confirmText: "Delete",
-              confirmColor: colorRed);
+              confirmColor: context.colors.delete);
 
           if (dialogResult && mounted) {
             Result result = await appState.removeChild(widget.child.id);
@@ -531,13 +511,12 @@ class _EditChildScreenState extends State<EditChildScreen> {
           title: const Center(child: Text('Change Child Icon')),
           content: _getIconList(),
           actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: Text(
-                'Cancel',
-                style: textTheme.titleSmall
-              ),
-            ),
+            dialogButton(
+                context,
+                "Cancel",
+                () => Navigator.of(context).pop(),
+                isElevated: false,
+                foregroundColor: context.colors.grey)
           ],
         ),
     );

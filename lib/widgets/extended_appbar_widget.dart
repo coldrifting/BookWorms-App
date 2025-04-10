@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 
@@ -24,10 +23,10 @@ class ExtendedAppBar extends StatelessWidget {
       height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: colorGreen,
+        color: context.colors.primary,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: 0.4),
+            color: context.colors.greyDark.withValues(alpha: 0.4),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 3),

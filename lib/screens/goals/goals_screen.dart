@@ -1,7 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
 import 'package:bookworms_app/screens/goals/goal_modal.dart';
@@ -112,7 +111,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
         if (displayedGoals.isEmpty) ...[
           addVerticalSpace(16),
           Center(
-            child: Text("No Goals to be Shown", style: TextStyle(color: colorGreyDark)),
+            child: Text("No Goals to be Shown", style: TextStyle(color: context.colors.greyDark)),
           )
         ]
       ],
@@ -130,8 +129,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
       }),
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected ? colorGreenGradTop : colorWhite,
-          border: Border.all(color: colorGreen, width: isSelected ? 4 : 3),
+          color: isSelected ? context.colors.gradTop : context.colors.surface,
+          border: Border.all(color: context.colors.primary, width: isSelected ? 4 : 3),
           borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected
             ? []
@@ -144,22 +143,22 @@ class _GoalsScreenState extends State<GoalsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: isSelected ? colorWhite : colorGreen, size: 28),
+              Icon(icon, color: isSelected ? context.colors.onPrimary : context.colors.primary, size: 28),
               addVerticalSpace(4),
               Text(
                 title, 
                 style: isSelected 
                   ? textTheme.titleMediumWhite
-                  : textTheme.titleMedium!.copyWith(color: colorGreen), 
+                  : textTheme.titleMedium!.copyWith(color: context.colors.primary),
                 textAlign: TextAlign.center
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Divider(color: !isSelected ? colorGreen : colorWhite),
+                child: Divider(color: !isSelected ? context.colors.primary : context.colors.onPrimary),
               ),
               Text(
                 "${goals.length} goal${goals.length == 1 ? "" : "s"}",
-                style: !isSelected ? textTheme.bodyMediumWhite.copyWith(color: colorGreen) : textTheme.bodyMediumWhite, 
+                style: !isSelected ? textTheme.bodyMediumWhite.copyWith(color: context.colors.primary) : textTheme.bodyMediumWhite,
                 textAlign: TextAlign.center
               )
             ],
@@ -176,19 +175,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
         onPressed: () { 
           goalAlert(context, _organizeGoals);
         },
-        style: TextButton.styleFrom(
-          backgroundColor: colorGreen,
-          foregroundColor: colorWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
+        style: smallButtonStyle,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("Add New Goal"),
             addHorizontalSpace(8),
-            Icon(Icons.add_chart, color: colorWhite),
+            Icon(Icons.add_chart),
           ],
         ),
       ),
@@ -200,8 +193,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: colorWhite,
-        border: Border.all(color: Colors.grey[300]!),
+        color: context.colors.surface,
+        border: Border.all(color: context.colors.surfaceBorder),
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
@@ -224,7 +217,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     ),
                   ),
                   if (!appState.isParent)
-                    Icon(Icons.arrow_forward_rounded, size: 24, color: colorGreyDark),
+                    Icon(Icons.arrow_forward_rounded, size: 24, color: context.colors.onSurfaceDim),
                 ],
               ),
               addVerticalSpace(8),
@@ -234,22 +227,16 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 TextButton.icon(
                   onPressed: () {
                     goalAlert(context, _organizeGoals, goal);
-                  }, 
-                    style: TextButton.styleFrom(
-                    backgroundColor: colorGreyLight,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
+                  },
+                  style: buttonStyle(context, context.colors.secondary, context.colors.onSurface, radius: 8),
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(goal.goalType == "Classroom" || goal.goalType == "ClassroomAggregate" 
-                        ? "Log" :"Edit", 
-                        style: TextStyle(color: colorGreyDark)
+                        ? "Log" :"Edit",
                       ),
                       addHorizontalSpace(6),
-                      Icon(Icons.edit, color: colorGreyDark)
+                      Icon(Icons.edit)
                     ],
                   )
                 )
@@ -271,7 +258,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
           style: textTheme.bodyMedium
         ),
         addVerticalSpace(8),
-        completionBarWidget(goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
+        completionBarWidget(context, goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
         addVerticalSpace(12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -297,7 +284,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
               SizedBox(
                 height: 40,
                 child: VerticalDivider(
-                  color: Colors.black,
+                  color: context.colors.onSurfaceDim,
                   thickness: 1,
                   width: 20,
                 ),
@@ -315,7 +302,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             SizedBox(
               height: 40,
               child: VerticalDivider(
-                color: Colors.black,
+                color: context.colors.onSurfaceDim,
                 thickness: 1,
                 width: 20,
               ),
@@ -352,12 +339,12 @@ class _GoalsScreenState extends State<GoalsScreen> {
         if (goal.goalMetric == "BooksRead") ... [
           Text("Progress: $progress/${goal.target} read", style: textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
           addVerticalSpace(8),
-          completionBarWidget(goal.progress, goal.target),
+          completionBarWidget(context, goal.progress, goal.target),
         ],
         if (goal.goalMetric == "Completion") ...[
           Text("Progress: $progress%", style: textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
           addVerticalSpace(8),
-          completionBarWidget(progress, 100),
+          completionBarWidget(context, progress, 100),
         ],
         addVerticalSpace(12),
         Row(
@@ -374,7 +361,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
               SizedBox(
                 height: 40,
                 child: VerticalDivider(
-                  color: Colors.black,
                   thickness: 1,
                   width: 20,
                 ),
@@ -389,7 +375,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
             SizedBox(
               height: 40,
               child: VerticalDivider(
-                color: Colors.black,
                 thickness: 1,
                 width: 20,
               ),
@@ -430,7 +415,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             SizedBox(
               height: 40,
               child: VerticalDivider(
-                color: Colors.black,
+                color: context.colors.onSurfaceDim,
                 thickness: 1,
                 width: 20,
               ),
@@ -455,10 +440,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
   Future<void> _navigateToGoalDetails(BuildContext context, AppState appState, ClassroomGoal goal) async {
     ClassroomGoal detailedGoal = await appState.getDetailedClassroomGoalDetails(goal.goalId!);
     if (context.mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ClassGoalDetails(goal: detailedGoal)),
-      );
+      pushScreen(context, ClassGoalDetails(goal: detailedGoal));
     }
   }
 

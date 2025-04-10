@@ -1,5 +1,5 @@
 import 'package:bookworms_app/models/book/book_summary.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/search/no_results_screen.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
@@ -41,7 +41,7 @@ class _AdvancedSearchResultsScreenState extends State<AdvancedSearchResultsScree
           return Column(
             children: [
               BookSummaryWidget(book: bookSummaries[index]),
-              const Divider(color: colorGrey)
+              Divider(color: context.colors.grey)
             ],
           );
         }

@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/goals/goals_screen.dart';
 import 'package:bookworms_app/screens/goals/progress_overview_screen.dart';
 import 'package:bookworms_app/showcase/showcase_controller.dart';
@@ -30,8 +30,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
     AppState appState = Provider.of<AppState>(context);
     Child selectedChild = appState.children[appState.selectedChildID];
 
@@ -50,7 +48,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverDelegate(
-                child: _pinnedHeader(textTheme, selectedChild)
+                child: _pinnedHeader(context, selectedChild)
               ),
             ),
 
@@ -61,9 +59,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
               delegate: _SliverDelegate(
                 child: TabBar(
                   labelStyle: textTheme.labelLarge,
-                  labelColor: colorGreen,
+                  labelColor: context.colors.primary,
                   unselectedLabelColor: Colors.grey,
-                  indicatorColor: colorGreen,
+                  indicatorColor: context.colors.primary,
                   tabs: [
                     BWShowcase(
                       showcaseKey: navKeys[0],
@@ -93,7 +91,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _pinnedHeader(TextTheme textTheme, Child selectedChild) {
+  Widget _pinnedHeader(BuildContext context, Child selectedChild) {
     return Column(
       children: [
         addVerticalSpace(4),
@@ -122,9 +120,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   shape: const CircleBorder(),
                   constraints: const BoxConstraints.tightFor(width: 30, height: 30),
                   padding: EdgeInsets.zero,
-                  child: const Icon(
+                  child: Icon(
                     Icons.help_outline,
-                    color: colorBlack,
+                    color: context.colors.greyDark,
                     size: 18,
                   ),
                 ),
@@ -141,7 +139,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     Child selectedChild = appState.children[appState.selectedChildID];
 
     return Container(
-      color: colorWhite,
+      color: context.colors.surface,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
@@ -159,7 +157,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          border: Border.all(color: colorGreyDark, width: 2)
+                          border: Border.all(color: context.colors.greyDark, width: 2)
                         ),
                         child: UserIcons.getIcon(selectedChild.profilePictureIndex, 100),
                       ),
@@ -201,7 +199,7 @@ class _SliverDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Material(
-      color: colorWhite,
+      color: context.colors.surface,
       elevation: 1,
       child: child,
     );
