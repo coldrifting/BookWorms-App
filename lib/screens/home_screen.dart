@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
           height: classrooms.isEmpty ? 180 : 220,
           padding: const EdgeInsets.only(top: 12, bottom: 12),
           decoration: BoxDecoration(
-            border: Border.symmetric(horizontal: BorderSide(color: Colors.teal, width: 2)),
+            border: Border.symmetric(horizontal: BorderSide(color: colorYellowDark, width: 2)),
             boxShadow: [
               BoxShadow(
                 color: colorBlack.withValues(alpha: 0.1),
@@ -114,18 +114,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 offset: const Offset(0, 6),
               ),
             ],
-            color: Colors.teal[300],
+            color: colorYellow,
           ),
           child: classrooms.isEmpty
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(
-                  children: [
-                    Icon(Icons.school, color: colorWhite),
-                    addHorizontalSpace(8),
-                    Text("Classroom Overview", style: textTheme.titleMediumWhite),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Row(
+                    children: [
+                      Icon(Icons.school, color: colorWhite),
+                      addHorizontalSpace(8),
+                      Text("Classroom Overview", style: textTheme.titleMediumWhite),
+                    ],
+                  ),
                 ),
                 Spacer(),
                 Text(
@@ -139,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextButton(
                     onPressed: () => _joinNewClassroom(),
                     style: TextButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: colorYellowDark,
                       foregroundColor: colorWhite,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -173,8 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 6.0),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.teal[200],
-                          border: Border.all(color: Colors.teal, width: 3),
+                          color: colorYellowLight,
+                          border: Border.all(color: colorYellow, width: 3),
                           borderRadius: BorderRadius.circular(8)
                         ),
                         width: 125,
@@ -185,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ? Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.teal, width: 2)
+                                  border: Border.all(color: colorYellow, width: 2)
                                 ),
                                 child: CircleAvatar(
                                   backgroundColor: colorWhite,
@@ -270,10 +273,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          stops: [0, 0.4],
+          stops: [0, 0.45],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [colorGreenGradTop, colorWhite],
+          colors: [colorGreenLessDark, colorWhite],
         )
       ),
       child: Column(
@@ -293,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Text(
                   "Check out an overview of ${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "your students'"} progress",
-                  style: textTheme.bodyMediumWhite
+                  style: textTheme.titleSmallWhite
                 ),
                 addVerticalSpace(24),
               ],
@@ -320,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
         stops: [0, 0.005, 0.005],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [colorGreen, colorGreen, colorGreenGradTop],
+        colors: [colorBlueDark, colorBlueDark, colorBlue],
       )
     ),
       child: Column(

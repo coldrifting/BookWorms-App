@@ -98,7 +98,6 @@ class _GoalModalState extends State<GoalModal> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Column(
           children: [
-            Icon(Icons.school, color: colorGreen),
             Text(
               "${goal == null ? "Add" : "Edit"} ${isParent ? "" : "Classroom"}Goal",
               style: textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold),
@@ -118,7 +117,7 @@ class _GoalModalState extends State<GoalModal> {
                     decoration: InputDecoration(
                       labelText: "Goal Title",
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: Icon(Icons.star, color: colorYellow),
+                      prefixIcon: Icon(Icons.star, color: colorAmber),
                     ),
                     validator: (value) => value == null || value.isEmpty ? 'Please input a goal title' : null,
                   ),

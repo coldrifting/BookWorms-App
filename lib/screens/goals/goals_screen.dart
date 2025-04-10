@@ -130,7 +130,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
       }),
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected ? colorGreenGradTop : colorWhite,
+          color: isSelected ? colorGreenLessDark : colorWhite,
           border: Border.all(color: colorGreen, width: isSelected ? 4 : 3),
           borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected
@@ -214,17 +214,22 @@ class _GoalsScreenState extends State<GoalsScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
+                  if (appState.isParent && goal.goalType == "Classroom") ...[
+                    Icon(Icons.school),
+                    addHorizontalSpace(8),
+                  ],
+                  Expanded(
                     child: Text(
                       goal.title, 
                       style: textTheme.titleSmall,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (!appState.isParent)
+                  if (!appState.isParent) ...[
+                    Spacer(),
                     Icon(Icons.arrow_forward_rounded, size: 24, color: colorGreyDark),
+                  ]
                 ],
               ),
               addVerticalSpace(8),
@@ -262,17 +267,20 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   Widget _classGoalDetails(dynamic goal) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context);
     DateTime endDate = DateTime.parse(goal.endDate);
 
     return Column(
       children: [
-        Text(
-          "Completed by ${goal.classGoalDetails.studentsCompleted}/${goal.classGoalDetails.studentsTotal} students", 
-          style: textTheme.bodyMedium
-        ),
-        addVerticalSpace(8),
-        completionBarWidget(goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
-        addVerticalSpace(12),
+        if (!appState.isParent) ...[
+          Text(
+            "Completed by ${goal.classGoalDetails.studentsCompleted}/${goal.classGoalDetails.studentsTotal} students", 
+            style: textTheme.bodyMedium
+          ),
+          addVerticalSpace(8),
+          completionBarWidget(goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
+          addVerticalSpace(12),
+        ],
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

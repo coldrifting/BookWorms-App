@@ -339,8 +339,8 @@ class _GoalDashboardState extends State<GoalDashboard> {
           ),
         ],
         borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: isSelected ? colorGreen : colorGreenGradTop, width: 3),
-        color: isSelected ? colorGreenGradTop : colorWhite,
+        border: Border.all(color: isSelected ? colorGreen : colorGreenLessDark, width: 3),
+        color: isSelected ? colorGreenLessDark : colorWhite,
       ),
       child: Center(
         child: Column(
@@ -379,7 +379,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
             PieChartSectionData(
               value: percentCompleted,
               title: "",
-              color: colorGreenGradTop,
+              color: colorGreenLessDark,
               radius: constraints.maxHeight * 0.1
             ),
           ], centerSpaceRadius: constraints.maxHeight * 0.4

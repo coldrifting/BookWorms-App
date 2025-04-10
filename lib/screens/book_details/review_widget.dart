@@ -59,7 +59,7 @@ class ReviewWidget extends StatelessWidget {
   Widget _buildStarRating(double rating) {
     // The star size and color is reused, but the icon differs.
     Widget buildStarIcon(IconData data) {
-      return Icon(data, size: 14, color: colorYellow);
+      return Icon(data, size: 14, color: colorAmber);
     }
 
     return Row(children: 
