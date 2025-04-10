@@ -325,7 +325,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: SizedBox(
                       height: 100,
                       child: Center(
-                        child: Text("No classrooms to show.\nCreate one now!", textAlign: TextAlign.center)
+                        child: Text(
+                          "You don't have a classroom yet.\nVisit the classroom tab to create one!",
+                          textAlign: TextAlign.center
+                        )
                       ),
                     )
                   ),
