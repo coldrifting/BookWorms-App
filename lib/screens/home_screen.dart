@@ -14,6 +14,7 @@ import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/widgets/join_classroom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the
@@ -84,6 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
               BWShowcase(
                 showcaseKey: isParent ? navKeys[2] : navKeys[1],
                 description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
+                tooltipPosition: TooltipPosition.top,
+                scrollAlignment: -0.5,
                 child: _displayBookshelves(textTheme)
               ),
             ],
