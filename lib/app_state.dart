@@ -306,11 +306,15 @@ class AppState extends ChangeNotifier {
     if (!bookshelves[index].books.any((b) => b.id == book.id)) {
       // Add the book server-side.
       try {
-        await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
+        Bookshelf newBookshelf = await bookshelvesService.addBookToBookshelf(guid, bookshelf.name, book.id);
         if (index != -1) {
-          (_account as Parent).children[childId].bookshelves[index].books.add(book);
-          var bookIds = await bookImagesService.getBookImages([book.id]);
-          book.imageUrl = bookIds[0];
+          (_account as Parent).children[childId].bookshelves[index] = newBookshelf;
+          var bookIds = await bookImagesService.getBookImages(newBookshelf.books.map((book) => book.id).toList());
+          int count = 0;
+          for (BookSummary book in newBookshelf.books) {
+            book.imageUrl = bookIds[count];
+            count++;
+          }
           notifyListeners();
         }
         return Result(isSuccess: true, message: "Successfully added the book to the bookshelf.");

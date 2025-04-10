@@ -9,7 +9,7 @@ Widget completionBarWidget(int numStudentsCompleted, int numTotalStudents) {
     if (percentCompleted < 0.5) {
       barColor = colorRed;
     } else if (percentCompleted < 0.9) {
-      barColor = colorYellow;
+      barColor = colorAmber;
     } else {
       barColor = colorGreen;
     }

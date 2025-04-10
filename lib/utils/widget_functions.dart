@@ -196,6 +196,14 @@ DateTime convertStringToDate(String str) {
   return DateTime.parse(convertStringToDateString(str));
 }
 
+int getMonthFromDateString(String str) {
+  return int.parse(str.substring(5,7));
+}
+
+int getYearFromDateString(String str) {
+  return int.parse(str.substring(0,4));
+}
+
 dynamic resultAlert(BuildContext context, Result result, [bool pop=true]) {
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(

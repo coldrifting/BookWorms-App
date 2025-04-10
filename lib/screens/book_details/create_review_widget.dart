@@ -89,7 +89,7 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
             itemPadding: const EdgeInsets.symmetric(horizontal: 3.0),
             itemBuilder: (context, _) => const Icon(
               Icons.star,
-              color: colorYellow,
+              color: colorAmber,
             ),
             onRatingUpdate: (rating) {  
               setState(() {
