@@ -84,7 +84,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ],
           body: TabBarView(
             children: [
-              ProgressOverviewScreen(),
+              ProgressOverviewScreen(selectedChild: selectedChild),
               GoalsScreen()
             ],
           ),
@@ -153,15 +153,18 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Container(
-                        width: 115,
-                        height: 115,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          border: Border.all(color: colorGreyDark, width: 2)
+                      InkWell(
+                        onTap: () => showChildSelection(selectedChild),
+                        child: Container(
+                          width: 115,
+                          height: 115,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            border: Border.all(color: colorGreyDark, width: 2)
+                          ),
+                          child: UserIcons.getIcon(selectedChild.profilePictureIndex, 100),
                         ),
-                        child: UserIcons.getIcon(selectedChild.profilePictureIndex, 100),
                       ),
                     ],
                   ),

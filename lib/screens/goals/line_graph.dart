@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -9,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LineGraph extends StatefulWidget {
-  const LineGraph({super.key});
+  final Child selectedChild;
+  const LineGraph({super.key, required this.selectedChild});
 
   @override
   State<LineGraph> createState() => _LineGraphState();
@@ -19,6 +21,7 @@ class _LineGraphState extends State<LineGraph> {
   late double baselineX;
   late double baselineY;
   late Map<int, int> completedList = HashMap();
+  late Child selectedChild;
 
   final visibleWindowSize = 4;
   final numXLabels = 12;
@@ -28,15 +31,19 @@ class _LineGraphState extends State<LineGraph> {
     super.initState();
     baselineX = (DateTime.now().month - 4).clamp(0, 12 - visibleWindowSize).toDouble();
     baselineY = 0.0;
+    selectedChild = widget.selectedChild;
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final appState = Provider.of<AppState>(context);
-  
-    final selectedChild = appState.children[appState.selectedChildID];
+    AppState appState = Provider.of<AppState>(context);
 
+    if (selectedChild != appState.children[appState.selectedChildID]) {
+      selectedChild = appState.children[appState.selectedChildID];
+      completedList.clear();
+    }
+  
     // Return loading screen if bookshelves are yet to be initialized.
     if (selectedChild.bookshelves.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -44,7 +51,7 @@ class _LineGraphState extends State<LineGraph> {
 
     // Once bookshelves are initialized, retrieve the completion dates.
     if (completedList.isEmpty) {
-      _getCompletionDates();
+      _getCompletionDates(selectedChild);
     }
 
     return Container(
@@ -78,19 +85,6 @@ class _LineGraphState extends State<LineGraph> {
                     ),
                   ),
                   Spacer(),
-                  // SizedBox(
-                  //   height: 24,
-                  //   width: 76,
-                  //   child: ElevatedButton(
-                  //     onPressed: () { }, 
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: colorGreyLight,
-                  //       padding: EdgeInsets.zero,
-                  //     ),
-                  //     child: Text("Scatterplot", style: textTheme.labelSmall!.copyWith(color: colorGreyDark))
-                  //   ),
-                  // ),
-                  // addHorizontalSpace(8)
                 ],
               ),
               addVerticalSpace(8),
@@ -129,9 +123,9 @@ class _LineGraphState extends State<LineGraph> {
   }
 
   // Parses the completion data to obtain a count of book completions per month.
-  void _getCompletionDates() async {
+  void _getCompletionDates(Child selectedChild) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    final bookshelves = appState.children[appState.selectedChildID].bookshelves;
+    final bookshelves = selectedChild.bookshelves;
 
     if (bookshelves.isEmpty) return;
 

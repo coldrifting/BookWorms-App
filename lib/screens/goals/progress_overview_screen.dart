@@ -1,4 +1,5 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/goals/line_graph.dart';
@@ -7,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProgressOverviewScreen extends StatefulWidget {
-  const ProgressOverviewScreen({super.key});
+  final Child selectedChild;
+  const ProgressOverviewScreen({super.key, required this.selectedChild});
 
   @override
   State<ProgressOverviewScreen> createState() => _ProgressOverviewScreenState();
@@ -18,29 +20,39 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
   int booksReadYearCount = 0;
   int goalsCompletedMonthCount = 0;
   int goalsCompletedYearCount = 0;
-
   bool _statsCalculated = false;
+
+  late Child selectedChild;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedChild = widget.selectedChild;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AppState>(
       builder: (context, appState, child) {
-        final childData = appState.children[appState.selectedChildID];
+        if (selectedChild != appState.children[appState.selectedChildID]) {
+          selectedChild = appState.children[appState.selectedChildID];
+          _statsCalculated = false;
+        }
 
         // Show loading until bookshelves are loaded.
-        if (childData.bookshelves.isEmpty) {
+        if (selectedChild.bookshelves.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
         if (!_statsCalculated) {
-          _calculateStats(appState, childData);
+          _calculateStats(appState, selectedChild);
         }
 
         return SingleChildScrollView(
           child: Column(
             children: [
               addVerticalSpace(16),
-              const LineGraph(),
+              LineGraph(selectedChild: appState.children[appState.selectedChildID]),
               addVerticalSpace(16),
               _readingStats(),
             ],
