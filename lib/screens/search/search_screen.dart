@@ -303,7 +303,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
           style: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.w300,
-            color: context.colors.onPrimary
+            color: context.colors.onSurface
           ),
           children: <TextSpan>[
             TextSpan(text: "Did you mean: "),
