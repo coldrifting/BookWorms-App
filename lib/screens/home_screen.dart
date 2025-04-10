@@ -79,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
                 child: _displayGoalProgress(textTheme)
               ),
-              _displayClassroomOverview(),
+              if (appState.isParent)
+                _displayClassroomOverview(),
               BWShowcase(
                 showcaseKey: isParent ? navKeys[2] : navKeys[1],
                 description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
