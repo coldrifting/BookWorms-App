@@ -57,6 +57,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    _organizeGoals();
 
     return Column(
       children: [
@@ -75,7 +76,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     _goalItem(
                       textTheme, 
                       goal,
-                      _getGoalDetailsCallback(goal, selectedGoalsTitle)
+                      _getGoalDetailsCallback(goal, selectedGoalsTitle),
+                      selectedGoalsTitle
                     ),
                     addVerticalSpace(16),
                   ],
@@ -174,7 +176,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
       widthFactor: 0.4,
       child: TextButton(
         onPressed: () { 
-          goalAlert(context, _organizeGoals);
+          goalAlert(context, "", _organizeGoals);
         },
         style: TextButton.styleFrom(
           backgroundColor: colorGreen,
@@ -195,7 +197,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
     );
   }
 
-  Widget _goalItem(TextTheme textTheme, dynamic goal, Widget Function(dynamic) getGoalDetailsWidget) {
+  Widget _goalItem(TextTheme textTheme, dynamic goal, Widget Function(dynamic) getGoalDetailsWidget, String goalTitle) {
     AppState appState = Provider.of<AppState>(context);
 
     return Container(
@@ -235,10 +237,11 @@ class _GoalsScreenState extends State<GoalsScreen> {
               addVerticalSpace(8),
               getGoalDetailsWidget(goal),
               addVerticalSpace(8),
-              if (appState.isParent)
+              if ((appState.isParent && goalTitle != "Upcoming") || 
+                (goal.goalType != "Classroom" && goal.goalType != "ClassroomAggregate"))
                 TextButton.icon(
                   onPressed: () {
-                    goalAlert(context, _organizeGoals, goal);
+                    goalAlert(context, goalTitle, _organizeGoals, goal);
                   }, 
                     style: TextButton.styleFrom(
                     backgroundColor: colorGreyLight,
@@ -288,15 +291,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (goal.goalMetric == "Completion") ...[
-                  Text("Average Time", style: textTheme.bodyMedium),
-                  Text(goal.progress.toString(), // TODO
+                  Text("${appState.isParent ? "" : "Average "}Progress", style: textTheme.bodyMedium),
+                  Text("${goal.progress.toString()}%", // TODO
                     //? "${goal.progress.toString().substring(3)} min." 
                     //: "--", 
                     style: textTheme.labelLarge
                   ),
                 ],
                 if (goal.goalMetric == "BooksRead") ...[
-                  Text("Avg. Books Read", style: textTheme.bodyMedium),
+                  Text("${appState.isParent ? "" : "Avg. "}Books Read", style: textTheme.bodyMedium),
                   Text(goal.progress.toString(), style: textTheme.labelLarge),
                 ]
               ],
