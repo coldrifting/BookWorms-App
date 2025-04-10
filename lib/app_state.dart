@@ -163,6 +163,23 @@ class AppState extends ChangeNotifier {
     return Result(isSuccess: false, message: "This classroom does not exist.");
   }
 
+  Future<Result> leaveChildClassroom(int childId, String classCode) async {
+    ChildrenServices childrenServices = ChildrenServices();
+    String guid = children[childId].id;
+    
+    try {
+      bool result = await childrenServices.leaveChildClassroom(guid, classCode);
+      if (result) {
+        (_account as Parent).children[childId].classrooms.removeWhere((c) => c.classCode == classCode);
+        notifyListeners();
+        return Result(isSuccess: true, message: "Successfully left the classroom.");
+      }
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to leave the classroom.");
+    }
+    return Result(isSuccess: false, message: "Unexpected error occurred while leaving the classroom.");
+  }
+
   // ***** Bookshelves *****
 
   BookshelfService bookshelvesService = BookshelfService();
