@@ -60,6 +60,10 @@ Uri childJoinClassroomUri(String childId, String classCode) {
   return Uri.parse("$serverBaseUri/children/$childId/classrooms/$classCode/join");
 }
 
+Uri childLeaveClassroomUri(String childId, String classCode) {
+  return Uri.parse("$serverBaseUri/children/$childId/classrooms/$classCode/leave");
+}
+
 // ***** Books *****
 
 Uri bookDetailsUri(String bookId) {

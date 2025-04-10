@@ -163,6 +163,23 @@ class AppState extends ChangeNotifier {
     return Result(isSuccess: false, message: "This classroom does not exist.");
   }
 
+  Future<Result> leaveChildClassroom(int childId, String classCode) async {
+    ChildrenServices childrenServices = ChildrenServices();
+    String guid = children[childId].id;
+    
+    try {
+      bool result = await childrenServices.leaveChildClassroom(guid, classCode);
+      if (result) {
+        (_account as Parent).children[childId].classrooms.removeWhere((c) => c.classCode == classCode);
+        notifyListeners();
+        return Result(isSuccess: true, message: "Successfully left the classroom.");
+      }
+    } catch (_) {
+      return Result(isSuccess: false, message: "Failed to leave the classroom.");
+    }
+    return Result(isSuccess: false, message: "Unexpected error occurred while leaving the classroom.");
+  }
+
   // ***** Bookshelves *****
 
   BookshelfService bookshelvesService = BookshelfService();
@@ -572,15 +589,15 @@ class AppState extends ChangeNotifier {
     return childGoal;
   }
 
-  Future<bool> logChildGoalProgress(Child child, String goalId, int progress) async {
+  Future<Result> logChildGoalProgress(Child child, String goalId, int progress) async {
     try {
       await childGoalService.logChildGoal(child.id, goalId, progress);
       int index = child.goals.indexWhere((g) => g.goalId == goalId);
       child.goals[index].progress = progress;
       notifyListeners();
-      return true;
+      return Result(isSuccess: true, message: "Successfully logged the goal progress.");
     } catch (_) {
-      return false;
+      return Result(isSuccess: false, message: "Failed to log the goal progress.");
     }
     
   }
@@ -589,17 +606,14 @@ class AppState extends ChangeNotifier {
     try {
       ChildGoal childGoal = await childGoalService.editChildGoal(child.id, goalId, title, startDate, dueDate);
       int index = child.goals.indexWhere((g) => g.goalId == goalId);
-      bool success = await logChildGoalProgress(child, goalId, progress);
-      if (success) {
-        childGoal.progress = progress;
-        child.goals[index] = childGoal;
-        notifyListeners();
-        return Result(isSuccess: true, message: "Successfully edited the goal.");
-      }
+      await logChildGoalProgress(child, goalId, progress);
+      childGoal.progress = progress;
+      child.goals[index] = childGoal;
+      notifyListeners();
+      return Result(isSuccess: true, message: "Successfully edited the goal.");
     } catch (_) {
       return Result(isSuccess: false, message: "Failed to edit the goal.");
     }
-    return Result(isSuccess: false, message: "Failed to log the goal progress.");
   }
 
   Future<Result> deleteChildGoal(Child child, String goalId) async {
