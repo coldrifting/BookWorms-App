@@ -109,7 +109,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             children: [
               // Centered reading level text
               Text(
-                "Reading Level: ${selectedChild.readingLevel}",
+                "Reading Level: ${selectedChild.readingLevel ?? "N/A "}",
                 style: textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
