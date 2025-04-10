@@ -106,7 +106,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           ),
         ),
 
-        // Invisible element for showing showcase welcome
+        // Invisible element for showing existing classroom
         Positioned(
           top: 250,
           left: 0,
