@@ -67,7 +67,7 @@ class ChildGoalService {
     );
     
     if (response.ok) {
-      return jsonDecode(response.body);
+      return response.body == "true";
     } else {
       throw Exception('An error occurred when logging the child\'s progress.');
     }
