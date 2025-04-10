@@ -12,6 +12,7 @@ import 'package:bookworms_app/widgets/bookshelf_widget.dart';
 import 'package:bookworms_app/widgets/classroom_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the
@@ -67,25 +68,45 @@ class _HomeScreenState extends State<HomeScreen> {
         : "My"} Dashboard";
 
     return Scaffold(
-      appBar: AppBarCustom(headerTitle, isLeafPage: false, isChildSwitcherEnabled: true, rightAction: AnnouncementsWidget(), homePageShowcaseKey: navKeys[0]),
+      appBar: AppBarCustom(
+          headerTitle,
+          isLeafPage: false,
+          isChildSwitcherEnabled: true,
+          rightAction: isParent
+              ? BWShowcase(
+                  showcaseKey: navKeys[3],
+                  description: "Announcements from your child's teacher(s) can be viewed here",
+                  targetShapeBorder: CircleBorder(),
+                  child: AnnouncementsWidget()
+                )
+              : null,
+          homePageShowcaseKey: navKeys[0]
+      ),
       body: SingleChildScrollView(
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BWShowcase(
+              showcaseKey: isParent ? navKeys[1] : navKeys[0],
+              description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
+              child: _displayGoalProgress(textTheme)
+            ),
+            if (appState.isParent)
               BWShowcase(
-                showcaseKey: isParent ? navKeys[1] : navKeys[0],
-                description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
-                child: _displayGoalProgress(textTheme)
+                showcaseKey: navKeys[2],
+                description: "Classes that your child has joined will be listed here",
+                tooltipPosition: TooltipPosition.top,
+                child: ClassroomListWidget()
               ),
-              if (appState.isParent)
-                ClassroomListWidget(),
-              BWShowcase(
-                showcaseKey: isParent ? navKeys[2] : navKeys[1],
-                description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
-                child: _displayBookshelves(textTheme)
-              ),
-            ],
-          ),
+            BWShowcase(
+              showcaseKey: isParent ? navKeys[4] : navKeys[1],
+              description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
+              tooltipPosition: TooltipPosition.top,
+              scrollAlignment: isParent ? -0.5 : -15,
+              child: _displayBookshelves(textTheme)
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -151,7 +172,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: SizedBox(
                       height: 100,
                       child: Center(
-                        child: Text("No classrooms to show.\nCreate one now!", textAlign: TextAlign.center)
+                        child: Text(
+                          "You don't have a classroom yet.\nVisit the classroom tab to create one!",
+                          textAlign: TextAlign.center
+                        )
                       ),
                     )
                   ),

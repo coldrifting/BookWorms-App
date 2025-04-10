@@ -16,6 +16,7 @@ class BWShowcase extends StatefulWidget {
   final TooltipActionSet tooltipActions;
   final MainAxisAlignment? tooltipAlignment;
   final TooltipPosition? tooltipPosition;
+  final double scrollAlignment;
   final int? toScreen;
 
   const BWShowcase({
@@ -34,6 +35,7 @@ class BWShowcase extends StatefulWidget {
     this.tooltipActions = TooltipActionSet.basic,
     this.tooltipAlignment,
     this.tooltipPosition,
+    this.scrollAlignment = 0.5,
     this.toScreen
   });
 
@@ -71,6 +73,7 @@ class _BWShowcaseState extends State<BWShowcase> {
       tooltipPosition: widget.tooltipPosition,
       disableMovingAnimation: widget.disableMovingAnimation,
       showArrow: widget.showArrow,
+      scrollAlignment: widget.scrollAlignment,
       child: widget.child,
     );
   }

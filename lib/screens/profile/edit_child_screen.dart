@@ -125,7 +125,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 children: [
                   Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
                   RawMaterialButton(
-                    onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
+                    onPressed: () => pushScreen(context, const ReadingLevelInfoWidget(forBook: false)),
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(8.0),
                     constraints: BoxConstraints(
