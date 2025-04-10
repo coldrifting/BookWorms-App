@@ -70,7 +70,6 @@ class _SplashScreenState extends State<SplashScreen> {
       await appState.loadAccountDetails();
       await appState.loadAccountSpecifics();
     } on UnauthorizedException {
-      deleteToken();
       SharedPreferences preferences = await SharedPreferences.getInstance();
       await preferences.remove('recentBookIds');
 

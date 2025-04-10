@@ -1,14 +1,11 @@
 import 'package:bookworms_app/models/action_result.dart';
-import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
+import 'package:bookworms_app/widgets/classroom_list_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
-
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
@@ -127,7 +124,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 children: [
                   Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
                   RawMaterialButton(
-                    onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
+                    onPressed: () => pushScreen(context, const ReadingLevelInfoWidget(forBook: false)),
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(8.0),
                     constraints: BoxConstraints(
@@ -183,7 +180,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
               addVerticalSpace(16),
               if (appState.children.length > widget.childID 
                 && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) >= 0)
-                _classroomList(textTheme),
+                ClassroomListWidget(),
               addVerticalSpace(32),  
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -234,207 +231,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
       ),
       )
     );
-  }
-
-  Widget _classroomList(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context);
-    Child child = appState.children[widget.childID];
-    List<Classroom> classrooms = child.classrooms;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Manage Classrooms", style: textTheme.titleLarge),
-          ],
-        ),
-        addVerticalSpace(8),
-        Container(
-          height: 175, 
-          decoration: BoxDecoration(
-            color: context.colors.surface,
-            border: Border.all(color: context.colors.surfaceBorder),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: classrooms.length + 1,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: index == classrooms.length 
-                ? SizedBox(
-                  width: 100,
-                  child: GestureDetector(
-                    onTap: () {
-                      _joinClassDialog(textTheme);
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: context.colors.surfaceBorder, width: 1.5),
-                          ),
-                          child: CircleAvatar(
-                            maxRadius: 45, 
-                            backgroundColor: context.colors.surfaceVariant,
-                            child: Icon(size: 40, Icons.add, color: context.colors.greyDark),
-                          ),
-                        ),
-                        addVerticalSpace(8),
-                        SizedBox(
-                          width: 100,
-                          height: 40,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              "Join Class",
-                              style: textTheme.titleSmall, 
-                              maxLines: 2, 
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                : SizedBox(
-                  width: 100,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // TODO
-                        },
-                        onLongPress: (){
-
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: context.colors.surfaceBorder, width: 1.5),
-                          ),
-                          child: CircleAvatar(
-                            backgroundColor: context.colors.surfaceVariant,
-                            maxRadius: 45, 
-                            child: Icon(
-                              size: 50, 
-                              Icons.school,
-                              color: classroomColors[classrooms[index].classIcon]
-                            ),
-                          ),
-                        ),
-                      ),
-                      addVerticalSpace(8),
-                      SizedBox(
-                        width: 100,
-                        height: 40,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            classrooms[index].classroomName,
-                            style: textTheme.titleSmall, 
-                            maxLines: 2, 
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          ),
-        ),
-      ],
-    );
-  }
-
-  dynamic _joinClassDialog(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-    TextEditingController textEditingController = TextEditingController();
-
-    return showDialog(
-        context: context,
-        builder: (BuildContext context)
-    {
-
-      return StatefulBuilder(builder: (context, setState) {
-        return AlertDialog(
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Center(
-            child: Column(
-              children: [
-                Icon(Icons.school, color: context.colors.primary, size: 36),
-                Text(
-                  'Join Class',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: context.colors.primary),
-                ),
-              ],
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text("Enter your 6-digit classroom code:"),
-                addVerticalSpace(8),
-                PinCodeTextField(
-                  appContext: context,
-                  length: 6,
-                  controller: textEditingController,
-                  keyboardType: TextInputType.text,
-                  animationType: AnimationType.fade,
-                  enableActiveFill: false,
-                  autoFocus: true,
-                  cursorColor: context.colors.primary,
-                  pastedTextStyle: TextStyle(color: context.colors.primaryVariant, fontWeight: FontWeight.bold),
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(10),
-                    fieldHeight: 40,
-                    fieldWidth: 35,
-                    inactiveColor: context.colors.gradTop,
-                    activeColor: context.colors.primary,
-                    selectedColor: context.colors.primary,
-                  ),
-                ),
-                Text("Need help? Ask your teacher!")
-              ],
-            ),
-          ),
-          actions: [
-            dialogButton(
-                context,
-                "Cancel",
-                () => Navigator.of(context).pop(),
-                foregroundColor: context.colors.grey,
-                isElevated: false),
-            dialogButton(
-                context,
-                "Join",
-                textEditingController.value.text.length != 6 ? null : () async {
-                Result result = await appState.joinChildClassroom(
-                    widget.childID, textEditingController.value.text);
-                if (context.mounted) {
-                  resultAlert(context, result);
-                }
-              })
-          ],
-        );
-      });
-    });
   }
 
   // Text form field input and title.

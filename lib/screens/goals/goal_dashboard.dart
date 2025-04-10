@@ -202,7 +202,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
     return FractionallySizedBox(
       widthFactor: 0.5,
       child: TextButton(
-        onPressed: () => goalAlert(context),
+        onPressed: () => goalAlert(context, ""),
         style: smallButtonStyle,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -218,15 +218,19 @@ class _GoalDashboardState extends State<GoalDashboard> {
 
   Widget _goalItem(TextTheme textTheme, dynamic goal, DateTime date) {
     final appState = Provider.of<AppState>(context);
-    final int percentCompleted;
+    final double percentCompleted;
 
-    if (appState.isParent) {
-      percentCompleted = parseProgress(goal.progress)[1];
-    } else {
+    if (appState.isParent && goal.goalMetric == "BooksRead") {
+      double progress = ((goal.progress / goal.target) * 100).toInt().toDouble();
+      percentCompleted = progress > 100 ? 100 : progress;
+    } else if (appState.isParent && goal.goalMetric == "Completion") {
+      double progress = parseProgress(goal.progress)[1].toDouble();
+      percentCompleted = progress > 100 ? 100 : progress;
+    }  else {
       final ClassroomGoalDetails goalDetails = goal.classGoalDetails!;
       percentCompleted = goalDetails.studentsTotal != 0
-          ? ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt()
-          : 0;
+        ? ((goalDetails.studentsCompleted / goalDetails.studentsTotal) * 100).toInt().toDouble()
+        : 0;
     }
 
     final selectedDate = DateTime(date.year, date.month, date.day);
@@ -266,14 +270,19 @@ class _GoalDashboardState extends State<GoalDashboard> {
                         child: Stack(children: [
                           pieChartWidget(percentCompleted.toDouble()),
                           Positioned(
-                            top: 45,
-                            left: 40,
-                            child: Column(
-                              children: [
-                                Text("$percentCompleted%", style: textTheme.headlineLarge!.copyWith(color: context.colors.primary)),
-                                Text("Completion", style: textTheme.labelLarge!.copyWith(color: context.colors.primary))
-                              ],
+                            top: 50,
+                            left: -20,
+                            child: SizedBox(
+                              width: 200,
+                              child: Center(
+                                child: Text("$percentCompleted%", style: textTheme.headlineLarge!.copyWith(color: colorGreen))
+                                )
                             )
+                          ),
+                          Positioned(
+                            top: 90,
+                            left: 40,
+                            child: Text("Completion", style: textTheme.labelLarge!.copyWith(color: context.colors.primary))
                           ),
                         ]
                       )
@@ -290,7 +299,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
                         ),
                         addHorizontalSpace(16),
                         TextButton(
-                          onPressed: () => goalAlert(context, null, goal),
+                          onPressed: () => goalAlert(context, "", null, goal),
                           style: TextButton.styleFrom(
                             backgroundColor: context.colors.secondary,
                             foregroundColor: context.colors.onSurface,
@@ -365,7 +374,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
         PieChartData(
           sections: [
             PieChartSectionData(
-              value: 100 - percentCompleted,
+              value: (100 - percentCompleted) < 0 ? 0 : 100 - percentCompleted,
               title: "",
               color: Colors.grey[400],
               radius: constraints.maxHeight * 0.1

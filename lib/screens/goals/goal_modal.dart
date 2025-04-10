@@ -9,19 +9,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-Future<void> goalAlert(BuildContext context, [void Function()? callback, dynamic goal]) {
+Future<void> goalAlert(BuildContext context, String goalTitle, [void Function()? callback, dynamic goal]) {
   return showDialog(
     context: context,
     barrierDismissible: false,
-    builder: (context) => GoalModal(callback: callback, goal: goal),
+    builder: (context) => GoalModal(callback: callback, goal: goal, goalTitle: goalTitle)
   );
 }
 
 class GoalModal extends StatefulWidget {
   final void Function()? callback;
   final dynamic goal;
+  final String goalTitle;
 
-  const GoalModal({super.key, this.callback, this.goal});
+  const GoalModal({super.key, this.callback, this.goal, required this.goalTitle});
 
   @override
   State<GoalModal> createState() => _GoalModalState();
@@ -91,6 +92,7 @@ class _GoalModalState extends State<GoalModal> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     var isParent = appState.isParent;
     dynamic goal = widget.goal;
+    String goalTitle = widget.goalTitle;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),  // Prevents unintentional focus loss.
@@ -98,9 +100,8 @@ class _GoalModalState extends State<GoalModal> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Column(
           children: [
-            Icon(Icons.school, color: context.colors.primary),
             Text(
-              "${goal == null ? "Add" : "Edit"} Classroom Goal",
+              "${goal == null ? "Add" : "Edit"} ${isParent ? "" : "Classroom"}Goal",
               style: textTheme.headlineSmall?.copyWith(color: context.colors.primary, fontWeight: FontWeight.bold),
             ),
             Divider(color: context.colors.grey),
@@ -207,8 +208,9 @@ class _GoalModalState extends State<GoalModal> {
                     ],
                   ),
                 ],
-                if (goal != null) ...[
+                if (goal != null && goalTitle != "Upcoming") ...[
                   Text("Input Progress", style: textTheme.titleMedium!.copyWith(color: context.colors.greyDark)),
+                  addVerticalSpace(4),
                   CounterWidget(goal: goal, controller: inputProgressController)
                 ]
               ],
@@ -243,6 +245,13 @@ class _GoalModalState extends State<GoalModal> {
                       widget.callback!();
                     }
                   });
+                } else if (goal.goalType == "Classroom") {
+                  Child selectedChild = appState.children[appState.selectedChildID];
+                  result = await appState.logChildGoalProgress(
+                    selectedChild,
+                    goal.goalId,
+                    int.parse(inputProgressController.text)
+                  );
                 } else {
                   Child selectedChild = appState.children[appState.selectedChildID];
                   result = await appState.editChildGoal(

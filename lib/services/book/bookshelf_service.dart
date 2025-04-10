@@ -39,7 +39,11 @@ class BookshelfService {
       final data = jsonDecode(response.body);
       return Bookshelf.fromJson(data);
     } else {
-      throw Exception("An error occurred when fetching the child's bookshelf.");
+      return Bookshelf(
+        name: "",
+        type: bookshelf.type,
+        books: [],
+      );
     }
   }
 
@@ -116,12 +120,15 @@ class BookshelfService {
     }
   }
 
-  Future<void> addBookToBookshelf(String guid, String bookshelfName, String bookId) async {
+  Future<Bookshelf> addBookToBookshelf(String guid, String bookshelfName, String bookId) async {
     final response = await client.sendRequest(
         uri: bookshelvesInsertUri(guid, bookshelfName, bookId),
         method: "PUT");
 
-    if (!response.ok) {
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Bookshelf.fromJson(data);
+    } else {
       throw Exception('An error occurred when trying to add a book to the bookshelf.');
     }
   }

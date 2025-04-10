@@ -88,7 +88,7 @@ class ShowcaseState {
 
   static const Map<String, Map<String, int>> _elementsPerScreen = {
     'parent': {
-      'home': 3,
+      'home': 5,
       'bookshelves': 2,
       'search': 2,
       'progress': 2,

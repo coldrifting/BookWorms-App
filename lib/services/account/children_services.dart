@@ -98,4 +98,17 @@ class ChildrenServices {
       return null;
     }
   }
+
+   Future<bool> leaveChildClassroom(String childId, String classCode) async {
+    final response = await client.sendRequest(
+        uri: childLeaveClassroomUri(childId, classCode),
+        method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 }

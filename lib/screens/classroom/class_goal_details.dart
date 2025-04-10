@@ -168,9 +168,9 @@ class _ClassGoalDetailsState extends State<ClassGoalDetails> {
             ),
           if (goal.goalMetric == "Completion")
             Text(
-              "${studentGoalDetails.progress}%", 
+              "${parseProgress(studentGoalDetails.progress)[1]}%",
               style: TextStyle(
-                color: studentGoalDetails.progress == 100 ? context.colors.primary : context.colors.delete,
+                color: parseProgress(studentGoalDetails.progress)[1] == 100 ? context.colors.primary : context.colors.delete,
                 fontWeight: FontWeight.bold
               )
             )

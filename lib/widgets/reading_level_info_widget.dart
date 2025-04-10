@@ -4,7 +4,12 @@ import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 
 class ReadingLevelInfoWidget extends StatelessWidget {
-  const ReadingLevelInfoWidget({super.key});
+  final bool forBook;
+
+  const ReadingLevelInfoWidget({
+    super.key,
+    this.forBook = true
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +20,11 @@ class ReadingLevelInfoWidget extends StatelessWidget {
           addVerticalSpace(24),
           Padding(
             padding: const EdgeInsets.all(32.0),
-            child: const Text(
-              "Reading levels are a way to measure the difficulty of a book. The following table shows the different reading levels and their corresponding Lexile, Fountas & Pinnell (F&P), and Advantage-TASA Open Standard (ATOS) levels:",
+            child: Text(
+              "Reading levels are a way to measure the difficulty of a book. "
+              "${forBook ? "" : "We use the same levels to estimate a child's reading level. "}"
+              "The following table shows the different reading levels and their "
+              "corresponding Lexile, Fountas & Pinnell (F&P), and Advantage-TASA Open Standard (ATOS) levels:",
               textAlign: TextAlign.justify,
               style: TextStyle(fontSize: 16),
             ),

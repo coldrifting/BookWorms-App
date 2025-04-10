@@ -157,8 +157,8 @@ Widget _bookshelfContent(BuildContext context, TextTheme textTheme, Bookshelf bo
           top: 10,
           right: 10,
           child: Text(
-              bookshelf.type.name == "InProgress"
-                  ? "In Progress"
+              bookshelf.type.name == "InProgress" || bookshelf.type.name == "Completed"
+                  ? ""
                   : bookshelf.type.name,
               style: TextStyle(color: getBookshelfColor(context, bookshelf.type, isForeground: true)))),
       Row(

@@ -48,7 +48,8 @@ class BookWorms extends StatelessWidget {
                   PointerDeviceKind.stylus,
                   PointerDeviceKind.trackpad,
                 })
-            )
+            ),
+          enableAutoScroll: true,
         )
     );
   }

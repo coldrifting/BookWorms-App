@@ -44,18 +44,19 @@ class _GoalsScreenState extends State<GoalsScreen> {
         activeGoals.add(goal);
       }
     }
-    displayedGoals = activeGoals;
   }
 
   @override
   void initState() {
     super.initState();
     _organizeGoals();
+    displayedGoals = activeGoals;
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    _organizeGoals();
 
     return Column(
       children: [
@@ -74,7 +75,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     _goalItem(
                       textTheme, 
                       goal,
-                      _getGoalDetailsCallback(goal, selectedGoalsTitle)
+                      _getGoalDetailsCallback(goal, selectedGoalsTitle),
+                      selectedGoalsTitle
                     ),
                     addVerticalSpace(16),
                   ],
@@ -173,7 +175,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
       widthFactor: 0.4,
       child: TextButton(
         onPressed: () { 
-          goalAlert(context, _organizeGoals);
+          goalAlert(context, "", _organizeGoals);
         },
         style: smallButtonStyle,
         child: Row(
@@ -188,7 +190,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
     );
   }
 
-  Widget _goalItem(TextTheme textTheme, dynamic goal, Widget Function(dynamic) getGoalDetailsWidget) {
+  Widget _goalItem(TextTheme textTheme, dynamic goal, Widget Function(dynamic) getGoalDetailsWidget, String goalTitle) {
     AppState appState = Provider.of<AppState>(context);
 
     return Container(
@@ -207,29 +209,35 @@ class _GoalsScreenState extends State<GoalsScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
+                  if (appState.isParent && goal.goalType == "Classroom") ...[
+                    Icon(Icons.school),
+                    addHorizontalSpace(8),
+                  ],
+                  Expanded(
                     child: Text(
                       goal.title, 
                       style: textTheme.titleSmall,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (!appState.isParent)
+                  if (!appState.isParent) ...[
+                    Spacer(),
                     Icon(Icons.arrow_forward_rounded, size: 24, color: context.colors.onSurfaceDim),
+                  ]
                 ],
               ),
               addVerticalSpace(8),
               getGoalDetailsWidget(goal),
               addVerticalSpace(8),
-              if (appState.isParent)
+              if ((appState.isParent && goalTitle != "Upcoming") ||
+                (goal.goalType != "Classroom" && goal.goalType != "ClassroomAggregate"))
                 TextButton.icon(
                   onPressed: () {
-                    goalAlert(context, _organizeGoals, goal);
-                  },
-                  style: buttonStyle(context, context.colors.secondary, context.colors.onSurface, radius: 8),
-                  label: Row(
+                    goalAlert(context, goalTitle, _organizeGoals, goal);
+                  }, 
+                    style: buttonStyle(context, context.colors.secondary, context.colors.onSurface, radius: 8),
+                    label: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(goal.goalType == "Classroom" || goal.goalType == "ClassroomAggregate" 
@@ -249,17 +257,20 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   Widget _classGoalDetails(dynamic goal) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context);
     DateTime endDate = DateTime.parse(goal.endDate);
 
     return Column(
       children: [
-        Text(
-          "Completed by ${goal.classGoalDetails.studentsCompleted}/${goal.classGoalDetails.studentsTotal} students", 
-          style: textTheme.bodyMedium
-        ),
-        addVerticalSpace(8),
-        completionBarWidget(context, goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
-        addVerticalSpace(12),
+        if (!appState.isParent) ...[
+          Text(
+            "Completed by ${goal.classGoalDetails.studentsCompleted}/${goal.classGoalDetails.studentsTotal} students",
+            style: textTheme.bodyMedium
+          ),
+          addVerticalSpace(8),
+          completionBarWidget(context, goal.classGoalDetails.studentsCompleted, goal.classGoalDetails.studentsTotal),
+          addVerticalSpace(12),
+        ],
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -267,15 +278,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (goal.goalMetric == "Completion") ...[
-                  Text("Average Time", style: textTheme.bodyMedium),
-                  Text(goal.progress.toString(), // TODO
+                  Text("${appState.isParent ? "" : "Average "}Progress", style: textTheme.bodyMedium),
+                  Text("${goal.progress.toString()}%", // TODO
                     //? "${goal.progress.toString().substring(3)} min." 
                     //: "--", 
                     style: textTheme.labelLarge
                   ),
                 ],
                 if (goal.goalMetric == "BooksRead") ...[
-                  Text("Avg. Books Read", style: textTheme.bodyMedium),
+                  Text("${appState.isParent ? "" : "Avg. "}Books Read", style: textTheme.bodyMedium),
                   Text(goal.progress.toString(), style: textTheme.labelLarge),
                 ]
               ],

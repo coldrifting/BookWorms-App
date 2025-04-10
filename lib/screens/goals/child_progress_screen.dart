@@ -65,7 +65,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   tabs: [
                     BWShowcase(
                       showcaseKey: navKeys[0],
-                      description: "[Description of Overall Progress]",
+                      description: "Visit \"Overall Progress\" to see your child's reading progress over time",
                       targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
                       child: Tab(text: "Overall Progress")
                     ),
@@ -82,7 +82,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ],
           body: TabBarView(
             children: [
-              ProgressOverviewScreen(),
+              ProgressOverviewScreen(selectedChild: selectedChild),
               GoalsScreen()
             ],
           ),
@@ -107,7 +107,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             children: [
               // Centered reading level text
               Text(
-                "Reading Level: ${selectedChild.readingLevel}",
+                "Reading Level: ${selectedChild.readingLevel ?? "N/A "}",
                 style: textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -116,7 +116,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Positioned(
                 right: -5,
                 child: RawMaterialButton(
-                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
+                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget(forBook: false)),
                   shape: const CircleBorder(),
                   constraints: const BoxConstraints.tightFor(width: 30, height: 30),
                   padding: EdgeInsets.zero,
@@ -151,15 +151,18 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Container(
-                        width: 115,
-                        height: 115,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          border: Border.all(color: context.colors.greyDark, width: 2)
+                      InkWell(
+                        onTap: () => showChildSelection(selectedChild),
+                        child: Container(
+                          width: 115,
+                          height: 115,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            border: Border.all(color: context.colors.greyDark, width: 2)
+                          ),
+                          child: UserIcons.getIcon(selectedChild.profilePictureIndex, 100),
                         ),
-                        child: UserIcons.getIcon(selectedChild.profilePictureIndex, 100),
                       ),
                     ],
                   ),
