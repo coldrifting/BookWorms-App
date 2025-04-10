@@ -1,10 +1,8 @@
-import 'dart:math';
 import 'package:bookworms_app/resources/theme.dart';
 import 'dart:collection';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -94,7 +92,7 @@ class _LineGraphState extends State<LineGraph> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _yAxisLabel(),
+                    _yAxisLabel(context),
                     addHorizontalSpace(8),
                     Expanded(
                       child: _Chart(
@@ -109,7 +107,7 @@ class _LineGraphState extends State<LineGraph> {
                   ],
                 ),
               ),
-              _xAxisLabel()
+              _xAxisLabel(context)
             ],
           ),
         ),
@@ -291,14 +289,14 @@ Widget _horizontalLabels(BuildContext context, double value, TitleMeta meta) {
 
   return Text(
     monthLabels[value.toInt()],
-    style: const TextStyle(color: context.colors.grey, fontSize: 12),
+    style: TextStyle(color: context.colors.grey, fontSize: 12),
   );
 }
 
 Widget _verticalLabels(BuildContext context, double value, TitleMeta meta) {
   return Text(
     meta.formattedValue,
-    style: const TextStyle(color: context.colors.grey, fontSize: 12),
+    style: TextStyle(color: context.colors.grey, fontSize: 12),
   );
 }
 

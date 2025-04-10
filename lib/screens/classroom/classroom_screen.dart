@@ -13,8 +13,6 @@ import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/screens/classroom/create_classroom_screen.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 
 class ClassroomScreen extends StatefulWidget {
@@ -61,80 +59,75 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     // Set the classroom icon.
     selectedIconIndex = appState.classroom!.classIcon;
 
-    return Stack(
-      children: [
-        DefaultTabController(
+    return Stack(children: [
+      DefaultTabController(
           length: 4,
           child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              // Classroom header.
-              SliverToBoxAdapter(child: _classroomHeader(textTheme, classroom)),
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    // Classroom header.
+                    SliverToBoxAdapter(
+                        child: _classroomHeader(textTheme, classroom)),
 
-          // Pinned classroom header.
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _SliverDelegate(
-              child: _pinnedClassroomHeader(textTheme, classroom),
-              elevation: 1
-            ),
-          ),
+                    // Pinned classroom header.
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverDelegate(
+                          child: _pinnedClassroomHeader(textTheme, classroom),
+                          elevation: 1),
+                    ),
 
-          // Pinned TabBar.
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _SliverDelegate(
-              elevation: 1,
-              child: TabBar(
-                labelStyle: textTheme.labelLarge,
-                labelColor: context.colors.primary,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: context.colors.primary,
-                tabs: const [
-                  Tab(icon: Icon(Icons.groups), text: "Students"),
-                  Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
-                  Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Shelves"),
-                  Tab(icon: Icon(Icons.announcement_outlined), text: "Announce"),
+                    // Pinned TabBar.
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverDelegate(
+                        elevation: 1,
+                        child: TabBar(
+                          labelStyle: textTheme.labelLarge,
+                          labelColor: context.colors.primary,
+                          unselectedLabelColor: Colors.grey,
+                          indicatorColor: context.colors.primary,
+                          tabs: const [
+                            Tab(icon: Icon(Icons.groups), text: "Students"),
+                            Tab(
+                                icon: Icon(Icons.insert_chart_outlined_sharp),
+                                text: "Goals"),
+                            Tab(
+                                icon: Icon(Icons.collections_bookmark_rounded),
+                                text: "Shelves"),
+                            Tab(
+                                icon: Icon(Icons.announcement_outlined),
+                                text: "Announce"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+              body: TabBarView(
+                children: [
+                  StudentsScreen(),
+                  GoalsScreen(),
+                  ClassBookshelves(),
+                  AnnouncementsAllScreen(),
                 ],
-              ),
-            ),
-          ),
-        ],
-        body: TabBarView(
-          children: [
-            StudentsScreen(),
-            GoalsScreen(),
-            ClassBookshelves(),
-            AnnouncementsAllScreen(),
-          ],
-        ),
+              ))),
 
-        // Invisible element for showing existing classroom
-        Positioned(
+      // Invisible element for showing existing classroom
+      Positioned(
           top: 250,
           left: 0,
           right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BWShowcase(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            BWShowcase(
                 showcaseKey: navKeys[0],
                 title: "Welcome to your classroom!!",
-                description:
-                  "Classrooms have many exciting features. "
-                  "You can create class lists, set class goals and reading assignments, "
-                  "and even send notifications to parents of students in your class.",
+                description: "Classrooms have many exciting features. "
+                    "You can create class lists, set class goals and reading assignments, "
+                    "and even send notifications to parents of students in your class.",
                 disableMovingAnimation: true,
                 showArrow: false,
-                child: SizedBox(
-                    width: 0,
-                    height: 0
-                )
-              )
-            ]
-          ),
-        ),
-      ]
-    );
+                child: SizedBox(width: 0, height: 0))
+          ]))
+    ]);
   }
 
   /// Classroom information (icon, name, number of students).

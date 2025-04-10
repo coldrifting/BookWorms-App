@@ -1,7 +1,6 @@
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/goals/line_graph.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';

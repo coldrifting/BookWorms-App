@@ -275,7 +275,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
                             child: SizedBox(
                               width: 200,
                               child: Center(
-                                child: Text("$percentCompleted%", style: textTheme.headlineLarge!.copyWith(color: colorGreen))
+                                child: Text("$percentCompleted%", style: textTheme.headlineLarge!.copyWith(color: context.colors.primary))
                                 )
                             )
                           ),

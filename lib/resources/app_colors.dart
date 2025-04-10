@@ -21,6 +21,11 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.progressMedium,
     required this.progressComplete,
     required this.progressBackground,
+    required this.classroom,
+    required this.classroomLight,
+    required this.classroomDark,
+    required this.recommended,
+    required this.onRecommended,
     required this.roleParent,
     required this.roleTeacher,
     required this.grey,
@@ -47,6 +52,11 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color progressMedium;
   final Color progressComplete;
   final Color progressBackground;
+  final Color classroom;
+  final Color classroomLight;
+  final Color classroomDark;
+  final Color recommended;
+  final Color onRecommended;
   final Color roleParent;
   final Color roleTeacher;
   final Color grey;
@@ -74,6 +84,11 @@ class AppColors extends ThemeExtension<AppColors> {
    Color? progressMedium,
    Color? progressComplete,
    Color? progressBackground,
+   Color? classroom,
+   Color? classroomLight,
+   Color? classroomDark,
+   Color? recommended,
+   Color? onRecommended,
    Color? roleParent,
    Color? roleTeacher,
    Color? grey,
@@ -100,6 +115,11 @@ class AppColors extends ThemeExtension<AppColors> {
       progressMedium: progressMedium ?? this.progressMedium,
       progressComplete: progressComplete ?? this.progressComplete,
       progressBackground: progressBackground ?? this.progressBackground,
+      classroom: classroom ?? this.classroom,
+      classroomLight: classroomLight ?? this.classroomLight,
+      classroomDark: classroomDark ?? this.classroomDark,
+      recommended: recommended ?? this.recommended,
+      onRecommended: onRecommended ?? this.onRecommended,
       roleParent: roleParent ?? this.roleParent,
       roleTeacher: roleTeacher ?? this.roleTeacher,
       grey: grey ?? this.grey,
@@ -133,6 +153,11 @@ class AppColors extends ThemeExtension<AppColors> {
       progressMedium: Color.lerp(progressMedium, other.progressMedium, t) ?? Colors.transparent,
       progressComplete: Color.lerp(progressComplete, other.progressComplete, t) ?? Colors.transparent,
       progressBackground: Color.lerp(progressBackground, other.progressBackground, t) ?? Colors.transparent,
+      classroom: Color.lerp(classroom, other.classroom, t) ?? Colors.transparent,
+      classroomLight: Color.lerp(classroomLight, other.classroomLight, t) ?? Colors.transparent,
+      classroomDark: Color.lerp(classroomDark, other.classroomDark, t) ?? Colors.transparent,
+      recommended: Color.lerp(recommended, other.recommended, t) ?? Colors.transparent,
+      onRecommended: Color.lerp(onRecommended, other.onRecommended, t) ?? Colors.transparent,
       roleParent: Color.lerp(roleParent, other.roleParent, t) ?? Colors.transparent,
       roleTeacher: Color.lerp(roleTeacher, other.roleTeacher, t) ?? Colors.transparent,
       grey: Color.lerp(grey, other.grey, t) ?? Colors.transparent,

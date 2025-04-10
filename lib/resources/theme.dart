@@ -8,12 +8,33 @@ const _colorGreyDark = Color(0xff616161);
 const _colorGrey = Colors.grey;
 const _colorGreyLight = Color(0xFFEEEEEE);
 const _colorWhite = Colors.white;
-const _colorYellow = Colors.amber;
 const _colorRed = Color(0xFFD32F2F);
 const _colorGreenDark = Color(0xff1B5E20);
 const _colorGreen = Color(0xff2E7D32);
 const _colorGreenGradTop = Color(0xFF80BC81);
 const _colorGreenLight = Color(0xffc1e8c1);
+
+const _colorBlue = Color(0xFF7D8DB3);
+const _colorBlueLight = Color(0xFFAEBFE8);
+const _colorBlueLightest = Color(0xFFBBCBF2);
+const _colorBlueDark = Color(0xFF566587);
+
+const _colorPink = Color.fromARGB(255, 7, 1, 4);
+const _colorPinkLight = Color(0xFFD49FB4);
+const _colorPinkLightest = Color(0xFFDEB4C4);
+const _colorPinkDark = Color(0xFF9C5D77);
+
+const _colorBrown = Color(0xFFB3A37D);
+const _colorBrownLight = Color(0xFFCFC09F);
+const _colorBrownLightest = Color(0xFFD9CDB0);
+const _colorBrownDark = Color(0xFF9C8B64);
+
+const _colorYellow = Color(0xFFE6A939);
+const _colorYellowLight = Color(0xFFF5BF5D);
+const _colorYellowDark = Color(0xFFD49420);
+
+
+const test = Color(0xFFEBB85B);
 
 const _teacherRoleColor = Color(0xffe63961);
 const _parentRoleColor = Color(0xff308860);
@@ -92,6 +113,11 @@ var lightAppColors = AppColors(
     progressMedium: _colorYellow,
     progressComplete: _colorGreen,
     progressBackground: Colors.grey[350]!,
+    classroom: _colorYellow,
+    classroomLight: _colorYellowLight,
+    classroomDark: _colorYellowDark,
+    recommended: _colorBlueDark,
+    onRecommended: _colorBlue,
     roleParent: _parentRoleColor,
     roleTeacher: _teacherRoleColor,
     grey: Colors.grey[800]!,
@@ -119,6 +145,11 @@ var darkAppColors = AppColors(
     progressMedium: _colorYellow,
     progressComplete: _colorGreen,
     progressBackground: Color(0xFF333333),
+    classroom: _colorYellow,
+    classroomLight: _colorYellowLight,
+    classroomDark: _colorYellowDark,
+    recommended: _colorBlueDark,
+    onRecommended: _colorBlue,
     roleParent: _parentRoleColor,
     roleTeacher: _teacherRoleColor,
     grey: Colors.grey[200]!,

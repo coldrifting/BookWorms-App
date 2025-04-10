@@ -51,8 +51,9 @@ class _BWShowcaseState extends State<BWShowcase> {
     return Showcase(
       key: widget.showcaseKey,
       title: widget.title,
+      titleTextStyle: TextStyle(color: context.colors.primary, fontWeight: FontWeight.bold, fontSize: 19),
       description: widget.description,
-      descTextStyle: TextStyle(color: context.colors.onSurface, fontSize: 15, fontWeight: FontWeight.w500),
+      descTextStyle: TextStyle(color: context.colors.onSurface, fontSize: 15, fontWeight: FontWeight.w400),
       descriptionTextAlign: TextAlign.center,
       targetPadding: widget.targetPadding ?? EdgeInsets.zero,
       targetShapeBorder: widget.targetShapeBorder,

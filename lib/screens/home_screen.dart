@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.sunny, color: context.colors.surface),
+                    Icon(Icons.sunny, color: context.colors.onPrimary),
                     addHorizontalSpace(8),
                     Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
                   ],
@@ -156,14 +156,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: colorBlack.withValues(alpha: 0.2),
+                          color: context.colors.surfaceBorder.withValues(alpha: 0.2),
                           spreadRadius: 1,
                           blurRadius: 6,
                           offset: const Offset(0, 4),
                         ),
                       ],
                       borderRadius: BorderRadius.circular(4.0),
-                      color: colorWhite,
+                      color: context.colors.surface,
                     ),
                     margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
                     padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -199,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
         stops: [0, 0.005, 0.005],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [colorBlueDark, colorBlueDark, colorBlue],
+        colors: [context.colors.recommended, context.colors.recommended, context.colors.onRecommended],
       )
     ),
       child: Column(
@@ -212,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.bookmark, color: context.colors.surface),
+                    Icon(Icons.bookmark, color: context.colors.onPrimary),
                     addHorizontalSpace(8),
                     Text("Recommended for me", style: textTheme.titleMediumWhite),
                   ],

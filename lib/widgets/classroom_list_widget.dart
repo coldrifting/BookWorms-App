@@ -1,7 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -25,7 +24,7 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
     List<Classroom> classrooms = appState.children[appState.selectedChildID].classrooms;
 
     return Container(
-      color: colorWhite,
+      color: context.colors.surface,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 24.0),
@@ -33,16 +32,16 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
           height: classrooms.isEmpty ? 180 : 220,
           padding: const EdgeInsets.only(top: 12, bottom: 12),
           decoration: BoxDecoration(
-            border: Border.symmetric(horizontal: BorderSide(color: colorYellowDark, width: 2)),
+            border: Border.symmetric(horizontal: BorderSide(color: context.colors.classroomDark, width: 2)),
             boxShadow: [
               BoxShadow(
-                color: colorBlack.withValues(alpha: 0.1),
+                color: context.colors.surfaceBorder.withValues(alpha: 0.1),
                 spreadRadius: 2,
                 blurRadius: 8,
                 offset: const Offset(0, 6),
               ),
             ],
-            color: colorYellow,
+            color: context.colors.classroom,
           ),
           child: classrooms.isEmpty
           ? Column(
@@ -52,7 +51,7 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
                   padding: const EdgeInsets.only(left: 16.0),
                   child: Row(
                     children: [
-                      Icon(Icons.school, color: colorWhite),
+                      Icon(Icons.school, color: context.colors.onPrimary),
                       addHorizontalSpace(8),
                       Text("Classroom Overview", style: textTheme.titleMediumWhite),
                     ],
@@ -69,13 +68,7 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
                   widthFactor: 0.5,
                   child: TextButton(
                     onPressed: () => joinClassDialog(context, textTheme, appState.selectedChildID),
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorYellowDark,
-                      foregroundColor: colorWhite,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
+                    style: buttonStyle(context, context.colors.classroomDark, context.colors.onPrimary),
                     child: const Text("Join Classroom"),
                   ),
                 ),
@@ -88,7 +81,7 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
               Row(
                 children: [
                   addHorizontalSpace(12),
-                  Icon(Icons.school, color: colorWhite),
+                  Icon(Icons.school, color: context.colors.onPrimary),
                   addHorizontalSpace(8),
                   Text("Classroom Overview", style: textTheme.titleMediumWhite),
                 ],
@@ -104,8 +97,8 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
                       padding: const EdgeInsets.symmetric(horizontal: 6.0),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: colorYellowLight,
-                          border: Border.all(color: colorYellow, width: 3),
+                          color: context.colors.classroomLight,
+                          border: Border.all(color: context.colors.classroom, width: 3),
                           borderRadius: BorderRadius.circular(8)
                         ),
                         width: 125,
@@ -118,7 +111,7 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
                                 bool? shouldLeave = await showConfirmDialog(context,
                                   "Leave Classroom",
                                   'Are you sure you want to leave "${classrooms[index].classroomName}?"',
-                                  confirmColor: colorRed);
+                                  confirmColor: context.colors.delete);
                                   if (shouldLeave == true) {
                                     Result result = await appState.leaveChildClassroom(appState.selectedChildID, classrooms[index].classCode);
                                     resultAlert(context, result, false);
@@ -127,10 +120,10 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: colorYellow, width: 2)
+                                    border: Border.all(color: context.colors.classroom, width: 2)
                                   ),
                                   child: CircleAvatar(
-                                    backgroundColor: colorWhite,
+                                    backgroundColor: context.colors.surfaceVariant,
                                     maxRadius: 35,
                                     child: Icon(
                                       size: 50,
@@ -149,7 +142,7 @@ class _ClassroomListWidgetState extends State<ClassroomListWidget> {
                                 children: [
                                   Text("Join\nClassroom", style: textTheme.titleSmallWhite, textAlign: TextAlign.center),
                                   addVerticalSpace(4),
-                                  Icon(Icons.add, color: colorWhite)
+                                  Icon(Icons.add, color: context.colors.onPrimary)
                                 ],
                               ),
                             ),
