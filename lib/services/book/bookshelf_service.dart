@@ -39,7 +39,11 @@ class BookshelfService {
       final data = jsonDecode(response.body);
       return Bookshelf.fromJson(data);
     } else {
-      throw Exception("An error occurred when fetching the child's bookshelf.");
+      return Bookshelf(
+        name: "",
+        type: bookshelf.type,
+        books: [],
+      );
     }
   }
 
