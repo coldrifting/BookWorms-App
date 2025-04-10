@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 FractionallySizedBox(
                   widthFactor: 0.5,
                   child: TextButton(
-                    onPressed: () => _joinNewClassroom(),
+                    onPressed: () => joinClassDialog(context, textTheme, appState.selectedChildID),
                     style: TextButton.styleFrom(
                       backgroundColor: colorYellowDark,
                       foregroundColor: colorWhite,
@@ -240,29 +240,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  // Function to handle the "Join New Classroom" button
-  void _joinNewClassroom() {
-    // Example: You can navigate to another screen or show a dialog for joining a classroom
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Join New Classroom"),
-          content: Text("Enter the classroom code or choose from a list of available classrooms."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Handle the join action, e.g., join a classroom
-                Navigator.pop(context); // Close the dialog
-              },
-              child: Text("Join"),
-            ),
-          ],
-        );
-      },
     );
   }
 
