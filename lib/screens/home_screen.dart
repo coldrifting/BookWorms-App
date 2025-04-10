@@ -274,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          stops: [0, 0.45],
+          stops: [0, !isParent && appState.classroom == null ? 0.8 : 0.45],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [colorGreenLessDark, colorWhite],
@@ -303,12 +303,40 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          // Parent -- Child data.
-          if (isParent || (!isParent && appState.classroom != null)) ...[
-            GoalDashboard(),
-          ],
+          isParent || appState.classroom != null
+          ? GoalDashboard()
+          : Center(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorBlack.withValues(alpha: 0.2),
+                          spreadRadius: 1,
+                          blurRadius: 6,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: colorWhite,
+                    ),
+                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    width: 355,
+                    child: SizedBox(
+                      height: 100,
+                      child: Center(
+                        child: Text("No classrooms to show.\nCreate one now!", textAlign: TextAlign.center)
+                      ),
+                    )
+                  ),
+                  addVerticalSpace(32),
+                ],
+              ),
+            )
         ],
-      ),
+      )
     );
   }
 
