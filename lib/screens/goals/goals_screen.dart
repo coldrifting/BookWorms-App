@@ -45,13 +45,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
         activeGoals.add(goal);
       }
     }
-    displayedGoals = activeGoals;
   }
 
   @override
   void initState() {
     super.initState();
     _organizeGoals();
+    displayedGoals = activeGoals;
   }
 
   @override
