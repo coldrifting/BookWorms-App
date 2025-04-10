@@ -118,7 +118,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Positioned(
                 right: -5,
                 child: RawMaterialButton(
-                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
+                  onPressed: () => pushScreen(context, const ReadingLevelInfoWidget(forBook: false)),
                   shape: const CircleBorder(),
                   constraints: const BoxConstraints.tightFor(width: 30, height: 30),
                   padding: EdgeInsets.zero,
