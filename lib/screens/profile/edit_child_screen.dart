@@ -1,9 +1,7 @@
 import 'package:bookworms_app/models/action_result.dart';
-import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
-import 'package:bookworms_app/widgets/join_classroom_dialog.dart';
+import 'package:bookworms_app/widgets/classroom_list_widget.dart';
 import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -184,7 +182,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
               addVerticalSpace(16),
               if (appState.children.length > widget.childID 
                 && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) >= 0)
-                _classroomList(textTheme),
+                ClassroomListWidget(),
               addVerticalSpace(32),  
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -254,122 +252,6 @@ class _EditChildScreenState extends State<EditChildScreen> {
         ),
       ),
       )
-    );
-  }
-
-  Widget _classroomList(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context);
-    Child child = appState.children[widget.childID];
-    List<Classroom> classrooms = child.classrooms;
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Manage Classrooms", style: textTheme.titleLarge),
-          ],
-        ),
-        addVerticalSpace(8),
-        Container(
-          height: 175, 
-          decoration: BoxDecoration(
-            color: colorGreyLight,
-            border: Border.all(color: colorGreyDark),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: classrooms.length + 1,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: index == classrooms.length 
-                ? SizedBox(
-                  width: 100,
-                  child: GestureDetector(
-                    onTap: () => joinClassDialog(context, textTheme, widget.childID),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark, width: 1.5),
-                          ),
-                          child: CircleAvatar(
-                            maxRadius: 45, 
-                            backgroundColor: colorGreyLight,
-                            child: Icon(size: 40, Icons.add, color: colorGreyDark),
-                          ),
-                        ),
-                        addVerticalSpace(8),
-                        SizedBox(
-                          width: 100,
-                          height: 40,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              "Join Class",
-                              style: textTheme.titleSmall, 
-                              maxLines: 2, 
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                : SizedBox(
-                  width: 100,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // TODO
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: colorGreyDark, width: 1.5),
-                          ),
-                          child: CircleAvatar(
-                            backgroundColor: colorWhite,
-                            maxRadius: 45, 
-                            child: Icon(
-                              size: 50, 
-                              Icons.school,
-                              color: classroomColors[classrooms[index].classIcon]
-                            ),
-                          ),
-                        ),
-                      ),
-                      addVerticalSpace(8),
-                      SizedBox(
-                        width: 100,
-                        height: 40,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            classrooms[index].classroomName,
-                            style: textTheme.titleSmall, 
-                            maxLines: 2, 
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          ),
-        ),
-      ],
     );
   }
 
