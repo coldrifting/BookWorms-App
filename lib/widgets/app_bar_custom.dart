@@ -39,7 +39,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                 overflow: TextOverflow.ellipsis)),
         centerTitle: centerTitle,
         backgroundColor: context.colors.primary,
-        systemOverlayStyle: defaultOverlay(context),
+        systemOverlayStyle: defaultOverlay(context, null, false),
         leading: isLeafPage
             ? IconButton(
                 color: context.colors.onPrimary,
