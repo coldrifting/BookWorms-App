@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/announcement.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/announcements/announcements_modify_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
@@ -42,6 +42,7 @@ class _AnnouncementsEntryScreenState extends State<AnnouncementsEntryScreen> {
     FloatingActionButton? fab = appState.isParent
         ? null
         : floatingActionButtonWithText(
+            context,
             "Edit Announcement",
             Icons.edit,
             () => pushScreen(context, AnnouncementsModifyScreen(announcement)));
@@ -71,8 +72,8 @@ Widget announcementViewPageBody(Announcement announcement) {
             Container(
                 width: MediaQuery.sizeOf(context).width,
                 decoration: BoxDecoration(
-                    color: colorWhite,
-                    border: Border.all(color: Colors.grey[300]!),
+                    color: context.colors.surface,
+                    border: Border.all(color: context.colors.surfaceBorder),
                     borderRadius: BorderRadius.circular(8)),
                 child: Padding(
                     padding: const EdgeInsets.all(12),

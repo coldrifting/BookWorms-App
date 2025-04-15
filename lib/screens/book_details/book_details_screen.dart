@@ -3,6 +3,7 @@ import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/book/user_review.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/services/book/book_difficulty_service.dart';
 import 'package:bookworms_app/services/book/book_summary_service.dart';
@@ -16,7 +17,6 @@ import 'package:bookworms_app/screens/book_details/create_review_widget.dart';
 import 'package:bookworms_app/screens/book_details/review_widget.dart';
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 
@@ -74,17 +74,18 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
        children: [
         _bookDetails(textTheme),
         Container(
-          color: const Color.fromARGB(255, 239, 239, 239),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                addVerticalSpace(5),
-                _actionButtons(textTheme, bookSummary, navState),
-                addVerticalSpace(15),
-                _reviewList(textTheme),
-              ],
-            ),
+          decoration: BoxDecoration(
+            color: context.colors.surfaceBackground,
+            boxShadow: [BoxShadow(color: context.colors.surfaceBorder, blurRadius: 1)]
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              addVerticalSpace(5),
+              _actionButtons(textTheme, bookSummary, navState),
+              addVerticalSpace(15),
+              _reviewList(textTheme),
+            ],
           ),
         ),
       ]),
@@ -105,7 +106,15 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       });
     }
 
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+          color: context.colors.surface,
+          boxShadow: [
+            BoxShadow(
+              color: context.colors.surfaceBorder,
+              spreadRadius: 1,
+              blurRadius: 2)
+          ]),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -160,16 +169,16 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                               constraints: BoxConstraints(
                                 maxWidth: 40,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.help_outline,
-                                color: colorBlack,
+                                color: context.colors.onSurface,
                                 size: 20
                               )
                             ),
                             Container(
                               height: 30,
                               width: 1,
-                              color: Colors.black,
+                              color: context.colors.onSurface,
                             ),
                             addHorizontalSpace(12),
                             Text(
@@ -189,12 +198,14 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           // Book description (including extra book details)
           _description(textTheme),
           // "Expand" icon
-          IconButton(
-            icon: Icon(_isExpanded
-                ? Icons.keyboard_arrow_up_sharp
-                : Icons.keyboard_arrow_down_sharp),
-            onPressed: toggleExpansion,
-          ),
+          ElevatedButton.icon(
+              onPressed: toggleExpansion,
+              style: buttonStyle(context, context.colors.surfaceVariant, context.colors.onSurface),
+              icon: Icon(_isExpanded
+                  ? Icons.keyboard_arrow_up_sharp
+                  : Icons.keyboard_arrow_down_sharp),
+              label: Text(
+                  _isExpanded ? "Collapse Description" : "Expand Description")),
         ],
       ),
     );
@@ -274,26 +285,20 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           icon: const Icon(Icons.bookmark),
           onPressed: (() => {_saveToBookshelfModal(textTheme, book, navState)}),
           label: const Text("Save"),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-          ),
+          style: buttonStyle(context, context.colors.primary, context.colors.onPrimary)
         ),
         ElevatedButton.icon(
           icon: const Icon(Icons.edit_note_sharp),
           onPressed: _addReview,
           label: const Text("Review"),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-          ),
+          style: buttonStyle(context, context.colors.primary, context.colors.onPrimary)
         ),
         if (appState.isParent) ...[
           ElevatedButton.icon(
             icon: const Icon(Icons.fitness_center),
             onPressed: (() => {_rateBookDifficultyDialog(textTheme)}),
             label: const Text("Rate"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-            ),
+            style: buttonStyle(context, context.colors.primary, context.colors.onPrimary)
           ),
         ]
       ],
@@ -325,12 +330,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: Size(200, 38),
-                          textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          iconSize: 26,
-                          foregroundColor: colorWhite,
-                          backgroundColor: colorGreen),
+                      style: mediumButtonStyle,
                       onPressed: () async {
                         String? newBookshelfName = await showTextEntryDialog(
                             context,
@@ -375,9 +375,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                       InkWell(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: bookshelf.type.color[200],
+                            color: getBookshelfColor(context, bookshelf.type),
                             border:
-                                Border.all(color: bookshelf.type.color[700]!),
+                                Border.all(color: getBookshelfColor(context, bookshelf.type, isForeground: true)),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(

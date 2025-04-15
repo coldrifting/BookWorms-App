@@ -2,7 +2,7 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/child/child.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/counter_widget.dart';
 import 'package:flutter/material.dart';
@@ -102,9 +102,9 @@ class _GoalModalState extends State<GoalModal> {
           children: [
             Text(
               "${goal == null ? "Add" : "Edit"} ${isParent ? "" : "Classroom"}Goal",
-              style: textTheme.headlineSmall?.copyWith(color: colorGreen, fontWeight: FontWeight.bold),
+              style: textTheme.headlineSmall?.copyWith(color: context.colors.primary, fontWeight: FontWeight.bold),
             ),
-            Divider(color: colorGrey),
+            Divider(color: context.colors.grey),
           ],
         ),
         content: SingleChildScrollView(
@@ -119,7 +119,7 @@ class _GoalModalState extends State<GoalModal> {
                     decoration: InputDecoration(
                       labelText: "Goal Title",
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: Icon(Icons.star, color: colorAmber),
+                      prefixIcon: Icon(Icons.star, color: context.colors.star),
                     ),
                     validator: (value) => value == null || value.isEmpty ? 'Please input a goal title' : null,
                   ),
@@ -156,7 +156,7 @@ class _GoalModalState extends State<GoalModal> {
                   ],
                 addVerticalSpace(16),
                 if (goal == null) ...[
-                  Text("Metric Type", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
+                  Text("Metric Type", style: textTheme.titleMedium!.copyWith(color: context.colors.greyDark)),
                   ToggleButtons(
                     isSelected: [!isNumBooksMetric, isNumBooksMetric],
                     onPressed: (index) {
@@ -173,13 +173,13 @@ class _GoalModalState extends State<GoalModal> {
                 if (!isNumBooksMetric)
                   Text(
                     "ⓘ Measure progress by the portion of a book or task completed.", 
-                    style: TextStyle(color: Colors.grey[800], fontSize: 13),
+                    style: TextStyle(color: context.colors.grey, fontSize: 13),
                     textAlign: TextAlign.center, 
                   ),
                 if (isNumBooksMetric) ...[
                   Text(
                       "ⓘ Track the total number of books, chapters, or minutes read.", 
-                      style: TextStyle(color: Colors.grey[800], fontSize: 13), 
+                      style: TextStyle(color: context.colors.grey, fontSize: 13),
                       textAlign: TextAlign.center, 
                     ),
                   addVerticalSpace(8),
@@ -201,15 +201,15 @@ class _GoalModalState extends State<GoalModal> {
                     children: [
                       Checkbox(
                         value: isChecked,
-                        activeColor: colorGreen,
+                        activeColor: context.colors.primary,
                         onChanged: (value) => setState(() => isChecked = value!),
                       ),
-                      Text("Class-Wide Goal", style: TextStyle(color: Colors.grey[800], fontSize: 14)),
+                      Text("Class-Wide Goal", style: TextStyle(color: context.colors.grey, fontSize: 14)),
                     ],
                   ),
                 ],
                 if (goal != null && goalTitle != "Upcoming") ...[
-                  Text("Input Progress", style: textTheme.titleMedium!.copyWith(color: colorGreyDark)),
+                  Text("Input Progress", style: textTheme.titleMedium!.copyWith(color: context.colors.greyDark)),
                   addVerticalSpace(4),
                   CounterWidget(goal: goal, controller: inputProgressController)
                 ]
@@ -218,12 +218,8 @@ class _GoalModalState extends State<GoalModal> {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text("Cancel", style: TextStyle(color: colorRed)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
+          dialogButton(context, "Cancel", () => Navigator.of(context).pop(), foregroundColor: context.colors.delete, isElevated: false),
+          dialogButton(context, goal != null ? "Submit": "Add Goal", () async {
               if (formKey.currentState?.validate() ?? false) {
                 Result result;
                 if (goal == null) {
@@ -252,8 +248,8 @@ class _GoalModalState extends State<GoalModal> {
                 } else if (goal.goalType == "Classroom") {
                   Child selectedChild = appState.children[appState.selectedChildID];
                   result = await appState.logChildGoalProgress(
-                    selectedChild, 
-                    goal.goalId, 
+                    selectedChild,
+                    goal.goalId,
                     int.parse(inputProgressController.text)
                   );
                 } else {
@@ -269,13 +265,8 @@ class _GoalModalState extends State<GoalModal> {
                 }
                 resultAlert(context, result);
               }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: colorGreen,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: Text(goal != null ? "Submit": "Add Goal", style: TextStyle(color: Colors.white)),
-          ),
+            }
+          )
         ],
       ),
     );

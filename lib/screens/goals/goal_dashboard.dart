@@ -1,7 +1,7 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal_details.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/class_goal_details.dart';
 import 'package:bookworms_app/screens/goals/goal_modal.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -170,14 +170,14 @@ class _GoalDashboardState extends State<GoalDashboard> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: 0.2),
+            color: context.colors.surfaceBorder,
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
         ],
         borderRadius: BorderRadius.circular(4.0),
-        color: colorWhite,
+        color: context.colors.surface,
       ),
       margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0, bottom: 28.0),
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -203,19 +203,13 @@ class _GoalDashboardState extends State<GoalDashboard> {
       widthFactor: 0.5,
       child: TextButton(
         onPressed: () => goalAlert(context, ""),
-        style: TextButton.styleFrom(
-          backgroundColor: colorGreen,
-          foregroundColor: colorWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
+        style: smallButtonStyle,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("Add New Goal"),
             addHorizontalSpace(8),
-            Icon(Icons.add_chart, color: colorWhite),
+            Icon(Icons.add_chart),
           ],
         ),
       ),
@@ -248,14 +242,14 @@ class _GoalDashboardState extends State<GoalDashboard> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: 0.2),
+            color: context.colors.surfaceBorder,
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
         ],
         borderRadius: BorderRadius.circular(4.0),
-        color: colorWhite,
+        color: context.colors.surface,
       ),
       margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -265,7 +259,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(goal.title, style: textTheme.titleMedium!.copyWith(color: colorGreen), overflow: TextOverflow.ellipsis),
+              Text(goal.title, style: textTheme.titleMedium!.copyWith(color: context.colors.primary), overflow: TextOverflow.ellipsis),
               addVerticalSpace(4),
               Column(
                 children: [
@@ -281,14 +275,14 @@ class _GoalDashboardState extends State<GoalDashboard> {
                             child: SizedBox(
                               width: 200,
                               child: Center(
-                                child: Text("$percentCompleted%", style: textTheme.headlineLarge!.copyWith(color: colorGreen))
+                                child: Text("$percentCompleted%", style: textTheme.headlineLarge!.copyWith(color: context.colors.primary))
                                 )
                             )
                           ),
                           Positioned(
                             top: 90,
                             left: 40,
-                            child: Text("Completion", style: textTheme.labelLarge!.copyWith(color: colorGreen))
+                            child: Text("Completion", style: textTheme.labelLarge!.copyWith(color: context.colors.primary))
                           ),
                         ]
                       )
@@ -307,8 +301,8 @@ class _GoalDashboardState extends State<GoalDashboard> {
                         TextButton(
                           onPressed: () => goalAlert(context, "", null, goal),
                           style: TextButton.styleFrom(
-                            backgroundColor: colorGreyLight.withAlpha(180),
-                            foregroundColor: colorBlack,
+                            backgroundColor: context.colors.secondary,
+                            foregroundColor: context.colors.onSurface,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                             minimumSize: Size(0, 0)
@@ -316,7 +310,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("Log", style: textTheme.labelMedium),
+                              Text("Log", style: textTheme.labelMedium?.copyWith(color: context.colors.onSurface)),
                               addHorizontalSpace(4),
                               Icon(Icons.edit, size: 16),
                             ],
@@ -341,15 +335,15 @@ class _GoalDashboardState extends State<GoalDashboard> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: isSelected ? 0 : 0.2),
+            color: context.colors.greyDark.withValues(alpha: isSelected ? 0 : 0.2),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
         ],
         borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: isSelected ? colorGreen : colorGreenLessDark, width: 3),
-        color: isSelected ? colorGreenLessDark : colorWhite,
+        border: Border.all(color: isSelected ? context.colors.primary : context.colors.gradTop, width: 3),
+        color: isSelected ? context.colors.gradTop : context.colors.surface,
       ),
       child: Center(
         child: Column(
@@ -357,16 +351,16 @@ class _GoalDashboardState extends State<GoalDashboard> {
           children: [
             Text(
               "${_getMonthName(date.month)}\n${date.day.toString()}",
-              style: textTheme.labelLarge!.copyWith(color: isSelected ? colorWhite : colorGreenDark),
+              style: textTheme.labelLarge!.copyWith(color: isSelected ? context.colors.onPrimary : context.colors.primaryVariant),
               textAlign: TextAlign.center,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Divider(color: isSelected ? colorWhite : colorGreenDark),
+              child: Divider(color: isSelected ? context.colors.onPrimary : context.colors.primaryVariant),
             ),
             Text(
               "$numGoalsDue Goal${numGoalsDue == 1 ? "" : "s"} Due",
-              style: textTheme.bodySmall!.copyWith(color: isSelected ? colorWhite : colorGreenDark)
+              style: textTheme.bodySmall!.copyWith(color: isSelected ? context.colors.onPrimary : context.colors.primaryVariant)
             )
           ],
         ),
@@ -388,7 +382,7 @@ class _GoalDashboardState extends State<GoalDashboard> {
             PieChartSectionData(
               value: percentCompleted,
               title: "",
-              color: colorGreenLessDark,
+              color: context.colors.gradTop,
               radius: constraints.maxHeight * 0.1
             ),
           ], centerSpaceRadius: constraints.maxHeight * 0.4

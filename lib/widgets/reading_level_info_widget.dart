@@ -1,3 +1,4 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class ReadingLevelInfoWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Table(
-              border: TableBorder.all(),
+              border: TableBorder.all(color: context.colors.onSurface),
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
               columnWidths: const {
                 0: FixedColumnWidth(70),

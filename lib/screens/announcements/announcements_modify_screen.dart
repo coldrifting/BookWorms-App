@@ -1,6 +1,6 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/classroom/announcement.dart';
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
@@ -89,9 +89,9 @@ class _AnnouncementsModifyScreenState
                               Container(
                                   padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                      color: colorWhite,
+                                      color: context.colors.surface,
                                       border:
-                                          Border.all(color: Colors.grey[300]!),
+                                          Border.all(color: context.colors.surfaceBorder),
                                       borderRadius: BorderRadius.circular(8)),
                                   child: Column(
                                       crossAxisAlignment:
@@ -103,7 +103,8 @@ class _AnnouncementsModifyScreenState
                                                 fontWeight: FontWeight.bold),
                                             decoration: InputDecoration(
                                                 filled: true,
-                                                fillColor: Color(0xFFF7F7F7),
+                                                fillColor: context.colors.surfaceVariant,
+                                                hintStyle: TextStyle(color: context.colors.onSurfaceDim),
                                                 hintText: "Announcement Title"),
                                             controller: _titleTextController,
                                             onChanged: (text) => {_checkForChanges()}),
@@ -112,9 +113,9 @@ class _AnnouncementsModifyScreenState
                               Container(
                                   padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                      color: colorWhite,
+                                      color: context.colors.surface,
                                       border:
-                                          Border.all(color: Colors.grey[300]!),
+                                          Border.all(color: context.colors.surfaceBorder),
                                       borderRadius: BorderRadius.circular(8)),
                                   child: Column(
                                       crossAxisAlignment:
@@ -127,7 +128,8 @@ class _AnnouncementsModifyScreenState
                                             maxLines: null,
                                             decoration: InputDecoration(
                                                 filled: true,
-                                                fillColor: Color(0xFFF7F7F7),
+                                                fillColor: context.colors.surfaceVariant,
+                                                hintStyle: TextStyle(color: context.colors.onSurfaceDim),
                                                 hintText: "Announcement Body"),
                                             controller: _bodyTextController,
                                             onChanged: (text) => {_checkForChanges()}),
@@ -147,36 +149,10 @@ class _AnnouncementsModifyScreenState
                                   _announcementId,
                                   _titleTextController.text.trim(),
                                   _bodyTextController.text.trim());
-                          if (result && context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: colorGreenDark,
-                                content: Row(
-                                  children: [
-                                    Text(isNewAnnouncement
-                                        ? "Successfully Added Announcement"
-                                        : "Successfully Updated Announcement"),
-                                    Spacer(),
-                                    Icon(Icons.check, color: colorWhite)
-                                  ],
-                                ),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
 
-                            Navigator.of(context).pop();
-                            if (!isNewAnnouncement) {
-                              Navigator.of(context).pop();
-                            }
-                          }
+                          resultAlert(context, result);
                         },
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: Size(200, 38),
-                            textStyle: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                            iconSize: 26,
-                            foregroundColor: colorWhite,
-                            backgroundColor: colorGreen),
+                        style: mediumButtonStyle,
                         child: Text(isNewAnnouncement ? "Post Announcement" : "Update Announcement"))
                   ],
                 ))));

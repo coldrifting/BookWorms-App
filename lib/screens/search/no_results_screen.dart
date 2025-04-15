@@ -1,4 +1,4 @@
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 
@@ -16,18 +16,18 @@ class NoResultsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.search_off,
             size: 50.0,
-            color: colorGrey,
+            color: context.colors.grey,
           ),
           addVerticalSpace(8),
-          const Text(
+          Text(
             "No Results",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: colorGrey,
+              color: context.colors.grey,
             ),
           ),
         ],

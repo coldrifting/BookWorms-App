@@ -1,3 +1,4 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,6 @@ import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/setup/add_first_child.dart';
 import 'package:bookworms_app/screens/setup/login_screen.dart';
 import 'package:bookworms_app/services/account/register_service.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/login_register_widget.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
@@ -89,7 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
+        value: context.theme.brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         child: SetupBackdropWidget(
           childWidget: SafeArea(child: _createAccountWidget()),
         ),
@@ -202,7 +202,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ChoiceChip(
                       label: const Text('Parent'),
                       selected: _isParent,
-                      selectedColor: colorGreenLight,
+                      selectedColor: context.colors.secondary,
                       onSelected: (selected) {
                         setState(() {
                           _isParent = true;
@@ -213,7 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ChoiceChip(
                       label: const Text('Teacher'),
                       selected: !_isParent,
-                      selectedColor: colorGreenLight,
+                      selectedColor: context.colors.secondary,
                       onSelected: (selected) {
                         setState(() {
                           _isParent = false;

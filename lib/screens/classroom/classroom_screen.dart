@@ -1,8 +1,8 @@
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/announcements/announcements_all_screen.dart';
 import 'package:bookworms_app/screens/classroom/class_bookshelves_tab.dart';
 import 'package:bookworms_app/screens/classroom/class_students_tab.dart';
@@ -59,86 +59,81 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     // Set the classroom icon.
     selectedIconIndex = appState.classroom!.classIcon;
 
-    return Stack(
-      children: [
-        DefaultTabController(
+    return Stack(children: [
+      DefaultTabController(
           length: 4,
           child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              // Classroom header.
-              SliverToBoxAdapter(child: _classroomHeader(textTheme, classroom)),
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    // Classroom header.
+                    SliverToBoxAdapter(
+                        child: _classroomHeader(textTheme, classroom)),
 
-              // Pinned classroom header.
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverDelegate(
-                  child: _pinnedClassroomHeader(textTheme, classroom),
-                ),
-              ),
+                    // Pinned classroom header.
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverDelegate(
+                          child: _pinnedClassroomHeader(textTheme, classroom),
+                          elevation: 1),
+                    ),
 
-              // Pinned TabBar.
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverDelegate(
-                  child: TabBar(
-                    labelStyle: textTheme.labelLarge,
-                    labelColor: colorGreen,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorColor: colorGreen,
-                    tabs: const [
-                      Tab(icon: Icon(Icons.groups), text: "Students"),
-                      Tab(icon: Icon(Icons.insert_chart_outlined_sharp), text: "Goals"),
-                      Tab(icon: Icon(Icons.collections_bookmark_rounded), text: "Shelves"),
-                      Tab(icon: Icon(Icons.announcement_outlined), text: "Announce"),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-            body: TabBarView(
-              children: [
-                StudentsScreen(),
-                GoalsScreen(),
-                ClassBookshelves(),
-                AnnouncementsAllScreen(),
-              ],
-            ),
-          ),
-        ),
+                    // Pinned TabBar.
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverDelegate(
+                        elevation: 1,
+                        child: TabBar(
+                          labelStyle: textTheme.labelLarge,
+                          labelColor: context.colors.primary,
+                          unselectedLabelColor: Colors.grey,
+                          indicatorColor: context.colors.primary,
+                          tabs: const [
+                            Tab(icon: Icon(Icons.groups), text: "Students"),
+                            Tab(
+                                icon: Icon(Icons.insert_chart_outlined_sharp),
+                                text: "Goals"),
+                            Tab(
+                                icon: Icon(Icons.collections_bookmark_rounded),
+                                text: "Shelves"),
+                            Tab(
+                                icon: Icon(Icons.announcement_outlined),
+                                text: "Announce"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+              body: TabBarView(
+                children: [
+                  StudentsScreen(),
+                  GoalsScreen(),
+                  ClassBookshelves(),
+                  AnnouncementsAllScreen(),
+                ],
+              ))),
 
-        // Invisible element for showing existing classroom
-        Positioned(
+      // Invisible element for showing existing classroom
+      Positioned(
           top: 250,
           left: 0,
           right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BWShowcase(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            BWShowcase(
                 showcaseKey: navKeys[0],
                 title: "Welcome to your classroom!!",
-                description:
-                  "Classrooms have many exciting features. "
-                  "You can create class lists, set class goals and reading assignments, "
-                  "and even send notifications to parents of students in your class.",
+                description: "Classrooms have many exciting features. "
+                    "You can create class lists, set class goals and reading assignments, "
+                    "and even send notifications to parents of students in your class.",
                 disableMovingAnimation: true,
                 showArrow: false,
-                child: SizedBox(
-                    width: 0,
-                    height: 0
-                )
-              )
-            ]
-          ),
-        ),
-      ]
-    );
+                child: SizedBox(width: 0, height: 0))
+          ]))
+    ]);
   }
 
   /// Classroom information (icon, name, number of students).
   Widget _classroomHeader(TextTheme textTheme, Classroom classroom) {
     return Container(
-      color: colorWhite,
+      color: context.colors.surface,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
@@ -156,8 +151,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         height: 115,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey[350]!, width: 2)
+                          color: context.colors.surface,
+                          border: Border.all(color: context.colors.surfaceBorder, width: 2)
                         ),
                         child: Center(
                           child: Icon(
@@ -179,7 +174,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         right: 125,
                         child: RawMaterialButton(
                           onPressed: () => _changeClassIconDialog(textTheme),
-                          fillColor: colorWhite,
+                          fillColor: context.colors.surface,
                           constraints: const BoxConstraints(minWidth: 0.0),
                           padding: const EdgeInsets.all(5.0),
                           shape: const CircleBorder(),
@@ -242,9 +237,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           },
           child: Row(
             children: [
-              Icon(Icons.refresh, color: colorGreen, size: 20),
+              Icon(Icons.refresh, color: context.colors.primary, size: 20),
               addHorizontalSpace(8),
-              Text('Refresh', style: textTheme.labelLarge?.copyWith(color: colorGreen)),
+              Text('Refresh', style: textTheme.labelLarge?.copyWith(color: context.colors.primary)),
             ],
           ),
         ),
@@ -268,12 +263,12 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           },
           child: Row(
             children: [
-              Icon(Icons.delete_forever, color: colorRed, size: 20),
+              Icon(Icons.delete_forever, color: context.colors.delete, size: 20),
               addHorizontalSpace(8),
               Text(
                 'Delete Classroom',
                 style: textTheme.bodyMedium?.copyWith(
-                  color: colorRed,
+                  color: context.colors.delete,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -282,7 +277,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         )
       ],
       style: MenuStyle(
-        backgroundColor: WidgetStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(context.colors.surface),
         shape: WidgetStateProperty.all(RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         )),
@@ -292,76 +287,38 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
 
   /// Confirmation dialog to confirm the deletion of the classroom.
-  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
+  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Delete Classroom')),
-          content: const Text('Are you sure you want to permanently delete this classroom?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Result result = await appState.deleteClassroom();
-                resultAlert(context, result);
-              },
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
+
+    bool? shouldDelete = await showConfirmDialog(
+        context,
+        'Delete Classroom',
+        'Are you sure you want to permanently delete this classroom?',
+        confirmColor: context.colors.delete,
+        confirmText: "Delete");
+
+    if (shouldDelete) {
+      Result result = await appState.deleteClassroom();
+      resultAlert(context, result, false);
+    }
   }
 
-  Future<void> _showEditClassNameDialog(TextTheme textTheme) {
-    TextEditingController controller = TextEditingController();
+  Future<void> _showEditClassNameDialog(TextTheme textTheme) async {
+    AppState appState = Provider.of<AppState>(context, listen: false);
 
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Rename Your Classroom')),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  hintText: "Enter a new classroom name",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: colorGreyDark)),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (controller.text.trim().isNotEmpty) {
-                  Result result = await Provider.of<AppState>(context, listen: false).renameClassroom(controller.text.trim());
-                  resultAlert(context, result);
-                }
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: colorGreen,
-                foregroundColor: colorWhite
-              ),
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
+    String? newClassName = await showTextEntryDialog(
+        context,
+        'Rename Your Classroom',
+        "Enter a new classroom name",
+        confirmText: "Save");
+
+    if (newClassName == null) {
+      return;
+    }
+
+    Result result = await appState.renameClassroom(newClassName);
+    resultAlert(context, result, false);
   }
-
 
   /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeClassIconDialog(TextTheme textTheme) {
@@ -411,15 +368,15 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 side: BorderSide(
                   color: selectedIconIndex == index
                       ? Colors.grey[400]!
-                      : Colors.grey[300]!,
+                      : Colors.grey[300]!
                 ),
               ),
               shadowColor: selectedIconIndex == index
-                  ? Colors.black
+                  ? context.colors.surfaceBorder
                   : Colors.transparent,
               elevation: selectedIconIndex == index ? 4 : 2,
               child: CircleAvatar(
-                backgroundColor: Colors.grey[100],
+                backgroundColor: context.colors.surface,
                 child: Icon(
                   Icons.school,
                   size: 50,
@@ -439,8 +396,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 // height, and ensuring that they remain pinned at the top of the screen.
 class _SliverDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
+  final double elevation;
 
-  _SliverDelegate({required this.child});
+  _SliverDelegate({required this.child, this.elevation = 0});
 
   @override
   double get minExtent => child is TabBar ? (child as TabBar).preferredSize.height : 75.0;
@@ -450,9 +408,10 @@ class _SliverDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Material(
-      color: Colors.white,
-      elevation: 1,
-      child: child,
+      elevation: elevation,
+      color: context.colors.surface,
+      shadowColor: context.colors.surfaceBorder,
+      child: child
     );
   }
 

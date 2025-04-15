@@ -1,5 +1,6 @@
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/screens/bookshelves/bookshelf_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
@@ -7,7 +8,6 @@ import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
-import 'package:bookworms_app/resources/colors.dart';
 
 /// The [BookshelfWidget] displays an overview of a user's bookshelf. It
 /// includes a short display of book covers, the bookshelf title, and some
@@ -41,12 +41,12 @@ class _BookshelfWidget extends State<BookshelfWidget> {
     return Container(
       // Bookshelf shadow
       decoration: BoxDecoration(
-        color: colorWhite,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: 0.2),
-            spreadRadius: 1,
-            blurRadius: 6,
+            color: context.colors.surfaceBorder.withAlpha(64),
+            spreadRadius: 2,
+            blurRadius: 2,
             offset: const Offset(0, 4),
           ),
         ],
@@ -65,10 +65,10 @@ class _BookshelfWidget extends State<BookshelfWidget> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: colorWhite,
+                  color: context.colors.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: colorGreyLight,
+                      color: context.colors.surfaceBorder.withAlpha(128),
                       blurRadius: 2,
                       offset: Offset(0, 3),
                     ),
@@ -86,7 +86,7 @@ class _BookshelfWidget extends State<BookshelfWidget> {
                         ),
                         Positioned(
                           right: 10,
-                          child: Icon(Icons.arrow_forward, color: colorBlack)
+                          child: Icon(Icons.arrow_forward, color: context.colors.greyDark)
                         )
                       ]
                     ),
@@ -117,10 +117,10 @@ class _BookshelfWidget extends State<BookshelfWidget> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: colorWhite,
+                  color: context.colors.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: colorGreyLight,
+                      color: context.colors.surfaceBorder.withAlpha(128),
                       blurRadius: 2,
                       offset: Offset(0, -2),
                     ),

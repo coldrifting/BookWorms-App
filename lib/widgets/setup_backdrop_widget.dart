@@ -1,3 +1,4 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,17 +38,29 @@ class SetupBackdropWidget extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 children: [
                   SizedBox(
-                    height: 155,
-                    child: SvgPicture.asset(
-                      'assets/images/setup_curve_top.svg',
-                    ),
-                  ),
+                      height: 155,
+                      child: Stack(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/setup_curve_top_bg.svg',
+                            colorFilter: Theme.of(context).brightness == Brightness.dark
+                                ? ColorFilter.mode(context.colors.primaryVariant, BlendMode.srcIn)
+                                : null
+                          ),
+                          SvgPicture.asset(
+                            'assets/images/setup_curve_top_fg.svg',
+                            colorFilter: Theme.of(context).brightness == Brightness.dark
+                                ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
+                                : null
+                          ),
+                        ],
+                      )),
                   SizedBox(
                     height: 200,
                     child: SvgPicture.asset(
                       'assets/images/bookworms_logo.svg',
                       width: 125,
-                      semanticsLabel: "BookWorms Logo",
+                      semanticsLabel: "BookWorms Logo"
                     ),
                   ),
                 ],
@@ -57,8 +70,21 @@ class SetupBackdropWidget extends StatelessWidget {
               Spacer(),
               SizedBox(
                 height: 155,
-                child: SvgPicture.asset(
-                  'assets/images/setup_curve_bottom.svg',
+                child: Stack(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/images/setup_curve_bottom_fg.svg',
+                      colorFilter: Theme.of(context).brightness == Brightness.dark
+                          ? ColorFilter.mode(context.colors.primaryVariant, BlendMode.srcIn)
+                          : null
+                    ),
+                    SvgPicture.asset(
+                      'assets/images/setup_curve_bottom_bg.svg',
+                      colorFilter: Theme.of(context).brightness == Brightness.dark
+                          ? ColorFilter.mode(context.colors.primary, BlendMode.srcIn)
+                          : null,
+                  )
+                  ],
                 ),
               ),
               // Move Button into view when soft keyboard is shown

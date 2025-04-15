@@ -1,4 +1,4 @@
-import 'package:bookworms_app/resources/colors.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/resources/network.dart';
 import 'package:bookworms_app/screens/setup/splash_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -29,7 +29,7 @@ class _ConnectionErrorScreen extends State<ConnectionErrorScreen> {
             "If URL appears valid, \r\ncheck console for CORS issues.",
         confirmText: "Retry",
         cancelText: "Exit",
-        cancelColor: colorRed);
+        cancelColor: context.colors.delete);
 
     if (result) {
       pushScreen(context, const SplashScreen(), replace: true);

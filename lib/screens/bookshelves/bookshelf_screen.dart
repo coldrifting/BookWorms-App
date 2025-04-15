@@ -3,8 +3,8 @@ import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/book/book_details.dart';
 import 'package:bookworms_app/models/book/book_summary.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
 import 'package:bookworms_app/services/book/book_details_service.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -43,7 +43,6 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
     AppState appState = Provider.of<AppState>(context);
     List<BookSummary> books = bookshelf.books;
 
@@ -67,7 +66,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                       Spacer(),
                       if (bookshelf.type != BookshelfType.recommended || bookshelf.type == BookshelfType.custom
                           || (!appState.isParent && bookshelf.type == BookshelfType.classroom))
-                        _dropDownMenu(textTheme, appState),
+                        _dropDownMenu(context, appState),
                     ],
                   ),
                 ],
@@ -91,7 +90,9 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
     );
   }
 
-  Widget _dropDownMenu(TextTheme textTheme, AppState appState) {
+  Widget _dropDownMenu(BuildContext context, AppState appState) {
+    var surfColor = context.colors.surface;
+
     return MenuAnchor(
       controller: _menuController,
       builder: (BuildContext context, MenuController controller, Widget? child) {
@@ -115,12 +116,12 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           },
           child: Row(
             children: [
-              Icon(Icons.delete_forever, color: colorRed, size: 20),
+              Icon(Icons.delete_forever, color: context.colors.delete, size: 20),
               addHorizontalSpace(8),
               Text(
                 'Delete Bookshelf',
                 style: textTheme.bodyMedium?.copyWith(
-                  color: colorRed,
+                  color: context.colors.delete,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -134,12 +135,11 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
           },
           child: Row(
             children: [
-              Icon(Icons.edit, color: colorGreyDark, size: 20),
+              Icon(Icons.edit, size: 20),
               addHorizontalSpace(8),
               Text(
                 'Rename Bookshelf',
                 style: textTheme.bodyMedium?.copyWith(
-                  color: colorGreyDark,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -148,7 +148,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
         )
       ],
       style: MenuStyle(
-        backgroundColor: WidgetStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(surfColor),
         shape: WidgetStateProperty.all(RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         )),
@@ -174,7 +174,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
         "Delete Bookshelf",
         "Are you sure you want to permanently delete this bookshelf?",
         confirmText: "Delete",
-        confirmColor: colorRed);
+        confirmColor: context.colors.delete);
 
     if (shouldDeleteBookshelf) {
       _deleteBookshelf();
@@ -264,8 +264,8 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
               });
               resultAlert(context, result);
             },
-            backgroundColor: colorRed,
-            foregroundColor: colorWhite,
+            backgroundColor: context.colors.delete,
+            foregroundColor: context.colors.surface,
             borderRadius: BorderRadius.circular(4),
             icon: Icons.delete,
             label: 'Delete',
@@ -282,8 +282,8 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: colorGreenLight,
-        border: Border.all(color: colorGreen),
+        color: context.colors.secondary,
+        border: Border.all(color: context.colors.primary),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -307,7 +307,7 @@ class _BookshelfScreenState extends State<BookshelfScreen> {
                     child: CachedNetworkImage(
                       imageUrl: book.imageUrl!,
                       placeholder: (context, url) =>
-                          Center(child: CircularProgressIndicator(color: colorGreen)),
+                          Center(child: CircularProgressIndicator(color: context.colors.primary)),
                       errorWidget: (context, url, error) =>
                           Image.asset("assets/images/book_cover_unavailable.jpg"),
                     ),

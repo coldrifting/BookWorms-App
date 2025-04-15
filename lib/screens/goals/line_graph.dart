@@ -1,8 +1,8 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'dart:collection';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -43,7 +43,7 @@ class _LineGraphState extends State<LineGraph> {
       selectedChild = appState.children[appState.selectedChildID];
       completedList.clear();
     }
-  
+
     // Return loading screen if bookshelves are yet to be initialized.
     if (selectedChild.bookshelves.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -56,10 +56,10 @@ class _LineGraphState extends State<LineGraph> {
 
     return Container(
       decoration: BoxDecoration(
-        color: colorWhite,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: 0.2),
+            color: context.colors.surfaceBorder,
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 4),
@@ -75,12 +75,12 @@ class _LineGraphState extends State<LineGraph> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.auto_graph_rounded, color: colorGreen, size: 24),
+                  Icon(Icons.auto_graph_rounded, color: context.colors.primary, size: 24),
                   addHorizontalSpace(8),
                   Text(
                     "Reading Activity",
                     style: textTheme.titleMedium!.copyWith(
-                      color: colorGreen,
+                      color: context.colors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -92,7 +92,7 @@ class _LineGraphState extends State<LineGraph> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _yAxisLabel(),
+                    _yAxisLabel(context),
                     addHorizontalSpace(8),
                     Expanded(
                       child: _Chart(
@@ -107,7 +107,7 @@ class _LineGraphState extends State<LineGraph> {
                   ],
                 ),
               ),
-              _xAxisLabel()
+              _xAxisLabel(context)
             ],
           ),
         ),
@@ -179,7 +179,7 @@ class _Chart extends StatelessWidget {
     double endOfX = baselineX + chartRange;
 
     List<FlSpot> points = [
-      _getInterpolatedSpot(baselineX, booksRead, numXLabels), 
+      _getInterpolatedSpot(baselineX, booksRead, numXLabels),
       ...visibleSpots, 
       if (endOfX < booksRead.length - 1) _getInterpolatedSpot(endOfX, booksRead, numXLabels)
     ];
@@ -201,11 +201,11 @@ class _Chart extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               spots: points,
-              color: colorGreen.withAlpha(baselineX <= DateTime.now().month - 1 ? 255 : 0),
+              color: context.colors.primary.withAlpha(baselineX <= DateTime.now().month - 1 ? 255 : 0),
               barWidth: 3,
               belowBarData: BarAreaData(
                 show: true,
-                color: colorGreen.withAlpha(75),
+                color: context.colors.primary.withAlpha(75),
               ),
             ),
           ],
@@ -217,15 +217,15 @@ class _Chart extends StatelessWidget {
             show: true,
             drawHorizontalLine: true,
             drawVerticalLine: true,
-            getDrawingHorizontalLine: (_) => _gridLine(),
-            getDrawingVerticalLine: (_) => _gridLine(),
+            getDrawingHorizontalLine: (_) => _gridLine(context),
+            getDrawingVerticalLine: (_) => _gridLine(context),
           ),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 32,
-                getTitlesWidget: _verticalLabels,
+                getTitlesWidget: (value, meta) => _verticalLabels(context, value, meta)
               ),
             ),
             bottomTitles: AxisTitles(
@@ -233,7 +233,7 @@ class _Chart extends StatelessWidget {
                 showTitles: true,
                 reservedSize: 32,
                 interval: 1,
-                getTitlesWidget: _horizontalLabels,
+                getTitlesWidget: (value, meta) => _horizontalLabels(context, value, meta)
               ),
             ),
             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -242,9 +242,9 @@ class _Chart extends StatelessWidget {
           lineTouchData: LineTouchData(enabled: false),
           borderData: FlBorderData(
             show: true,
-            border: const Border(
-              left: BorderSide(color: colorGreyDark),
-              bottom: BorderSide(color: colorGreyDark),
+            border: Border(
+              left: BorderSide(color: context.colors.greyDark),
+              bottom: BorderSide(color: context.colors.greyDark),
             ),
           ),
         ),
@@ -255,13 +255,13 @@ class _Chart extends StatelessWidget {
 }
 
 // Labels for the y-axis (num books read).
-Widget _yAxisLabel() {
+Widget _yAxisLabel(BuildContext context) {
   return RotatedBox(
     quarterTurns: 3,
     child: Text(
       'Books Read',
       style: TextStyle(
-        color: colorGrey,
+        color: context.colors.grey,
         fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
@@ -270,18 +270,18 @@ Widget _yAxisLabel() {
 }
 
 // Labels for the x-asis (months).
-Widget _xAxisLabel() {
+Widget _xAxisLabel(BuildContext context) {
   return Text(
     'Months',
     style: TextStyle(
-      color: colorGrey,
+      color: context.colors.grey,
       fontSize: 14,
       fontWeight: FontWeight.bold,
     ),
   );
 }
 
-Widget _horizontalLabels(double value, TitleMeta meta) {
+Widget _horizontalLabels(BuildContext context, double value, TitleMeta meta) {
   const monthLabels = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -289,20 +289,20 @@ Widget _horizontalLabels(double value, TitleMeta meta) {
 
   return Text(
     monthLabels[value.toInt()],
-    style: const TextStyle(color: colorGrey, fontSize: 12),
+    style: TextStyle(color: context.colors.grey, fontSize: 12),
   );
 }
 
-Widget _verticalLabels(double value, TitleMeta meta) {
+Widget _verticalLabels(BuildContext context, double value, TitleMeta meta) {
   return Text(
     meta.formattedValue,
-    style: const TextStyle(color: colorGrey, fontSize: 12),
+    style: TextStyle(color: context.colors.grey, fontSize: 12),
   );
 }
 
-FlLine _gridLine() {
+FlLine _gridLine(BuildContext context) {
   return FlLine(
-    color: colorGrey.withAlpha(75),
+    color: context.colors.grey.withAlpha(75),
     strokeWidth: 1,
     dashArray: [4, 4],
   );

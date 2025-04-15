@@ -1,8 +1,8 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/widgets/book_summary_widget.dart';
 
 /// The [RecentsScreen] displays a scrollable list of recently searched books.
@@ -28,8 +28,8 @@ class _RecentsScreenState extends State<RecentsScreen> {
             BookSummaryWidget(
               book: recentlySearchedBooks[recentlySearchedBooks.length - index - 1], 
             ),
-            const Divider(
-              color: colorGrey,
+            Divider(
+              color: context.colors.grey,
             )
           ],
         );

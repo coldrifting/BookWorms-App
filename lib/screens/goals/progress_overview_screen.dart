@@ -1,6 +1,6 @@
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/child/child.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/goals/line_graph.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -120,10 +120,10 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
     final textTheme = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
-        color: colorWhite,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
-            color: colorBlack.withValues(alpha: 0.2),
+            color: context.colors.surfaceBorder,
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -135,12 +135,12 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.bar_chart_rounded, color: colorGreen, size: 24),
+              Icon(Icons.bar_chart_rounded, color: context.colors.primary, size: 24),
               addHorizontalSpace(8),
               Text(
                 "Reading Stats",
                 style: textTheme.titleMedium?.copyWith(
-                  color: colorGreen,
+                  color: context.colors.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -171,8 +171,8 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
       width: 182,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorGreyLight,
-        border: Border.all(width: 1.5, color: colorGreen),
+        color: context.colors.surfaceVariant,
+        border: Border.all(width: 1.5, color: context.colors.primary),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -186,7 +186,7 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
           addVerticalSpace(8),
           Text(
             value,
-            style: textTheme.titleMedium!.copyWith(color: colorGreenDark),
+            style: textTheme.titleMedium!.copyWith(color: context.colors.primaryVariant),
             textAlign: TextAlign.center,
           ),
         ],

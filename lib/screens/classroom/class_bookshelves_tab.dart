@@ -2,7 +2,6 @@ import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/book/bookshelf.dart';
 import 'package:bookworms_app/models/classroom/classroom.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -43,20 +42,14 @@ class _ClassBookshelvesState extends State<ClassBookshelves> {
     return FractionallySizedBox(
       widthFactor: 0.45,
       child: TextButton(
-        onPressed: () => _addClassBookshelfAlert(textTheme),
-        style: TextButton.styleFrom(
-          backgroundColor: colorGreen,
-          foregroundColor: colorWhite,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
+        onPressed: () => _addClassBookshelfAlert(),
+        style: smallButtonStyle,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("Add New Bookshelf"),
             addHorizontalSpace(8),
-            Icon(Icons.bookmark, color: colorWhite),
+            Icon(Icons.bookmark),
           ],
         ),
       ),
@@ -64,45 +57,19 @@ class _ClassBookshelvesState extends State<ClassBookshelves> {
   }
 
   // Dialog for creating a new bookshelf.
-  void _addClassBookshelfAlert(TextTheme textTheme) {
+  Future<void> _addClassBookshelfAlert() async {
     AppState appState = Provider.of<AppState>(context, listen: false);
-    showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController controller = TextEditingController();
-        return AlertDialog(
-          title: Text('Create New Bookshelf'),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: 'Bookshelf Name',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(foregroundColor: colorGreyDark),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                String name = controller.text.trim();
-                if (name.isNotEmpty) {
-                  Result result = await appState.createClassroomBookshelf(Bookshelf(type: BookshelfType.classroom, name: name, books: []));
-                  resultAlert(context, result);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorGreen,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: Text('Create', style: textTheme.titleSmallWhite),
-            ),
-          ],
-        );
-      },
-    );
+    String? newBookshelfName = await showTextEntryDialog(
+        context,
+        'Create New Bookshelf',
+        'Bookshelf Name',
+        confirmText: 'Create');
+
+    if (newBookshelfName == null) {
+      return;
+    }
+
+    Result result = await appState.createClassroomBookshelf(Bookshelf(type: BookshelfType.classroom, name: newBookshelfName, books: []));
+    resultAlert(context, result, false);
   }
 }

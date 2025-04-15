@@ -5,7 +5,6 @@ import 'package:bookworms_app/models/classroom/classroom.dart';
 import 'package:bookworms_app/models/goals/child_goal.dart';
 import 'package:bookworms_app/models/goals/classroom_goal.dart';
 import 'package:bookworms_app/models/goals/goal.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/resources/constants.dart';
 import 'package:bookworms_app/screens/search/search_screen.dart';
 import 'package:bookworms_app/services/account/child_goal_services.dart';
@@ -339,7 +338,7 @@ class AppState extends ChangeNotifier {
         return Result(isSuccess: false, message: "Failed to add the book to the bookshelf.");
       }
     }
-    return Result(isSuccess: false, message: "This book is already in ${bookshelf.name}.", color: colorGreyDark);
+    return Result(isSuccess: false, message: "This book is already in ${bookshelf.name}.", color: Colors.grey[800]);
   }
 
 
@@ -474,7 +473,7 @@ class AppState extends ChangeNotifier {
         return Result(isSuccess: false, message: "Failed to add the book to the bookshelf.");
       }
     }
-    return Result(isSuccess: false, message: "This book already exists in the bookshelf.", color: colorGreyDark);
+    return Result(isSuccess: false, message: "This book already exists in the bookshelf.", color: Colors.grey[800]);
   }
 
   Future<Result> removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
@@ -493,7 +492,7 @@ class AppState extends ChangeNotifier {
     } catch (_) {
       return Result(isSuccess: false, message: "Failed to delete the book from the bookshelf.");
     }
-    return Result(isSuccess: false, message: "This book does not exist in the bookshelf.", color: colorGreyDark);
+    return Result(isSuccess: false, message: "This book does not exist in the bookshelf.", color: Colors.grey[800]);
   }
 
   Future<Result> deleteStudentFromClassroom(String studentId) async {
@@ -718,17 +717,16 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  Future<bool> addAnnouncement(String title, String body) async {
+  Future<Result> addAnnouncement(String title, String body) async {
     Announcement? result = await classroomService.addAnnouncement(title, body);
     if (result != null) {
       classroom!.announcements.add(result);
       notifyListeners();
-      return true;
     }
-    return false;
+    return Result(isSuccess: result != null, message: result != null ? "Successfully added an announcement" : "Unable to add a new announcement");
   }
 
-  Future<bool> editAnnouncement(String announcementId, String title, String body) async {
+  Future<Result> editAnnouncement(String announcementId, String title, String body) async {
     bool result = await classroomService.editAnnouncement(announcementId, title, body);
     if (result) {
       Announcement announcement = classroom!.announcements
@@ -739,7 +737,7 @@ class AppState extends ChangeNotifier {
 
       notifyListeners();
     }
-    return result;
+    return Result(isSuccess: result, message: result ? "Successfully updated the announcement" : "Unable to update the announcement");
   }
 
   Future<bool> deleteAnnouncement(String announcementId) async {

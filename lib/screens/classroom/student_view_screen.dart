@@ -4,7 +4,6 @@ import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
-import 'package:bookworms_app/resources/colors.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
@@ -41,8 +40,8 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
             addVerticalSpace(16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: colorRed,
-                foregroundColor: colorWhite,
+                backgroundColor: context.colors.delete,
+                foregroundColor: context.colors.surface,
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -54,7 +53,7 @@ class _StudentViewScreenState extends State<StudentViewScreen> {
                     "Remove Student from Class",
                     "Removing this student cannot be undone. Are you sure you want to continue?",
                     confirmText: "Remove",
-                    confirmColor: colorRed);
+                    confirmColor: context.colors.delete);
 
                 if (result) {
                   _removeStudent();
