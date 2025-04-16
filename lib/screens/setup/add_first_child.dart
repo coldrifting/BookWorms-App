@@ -65,6 +65,8 @@ class _AddFirstChildState extends State<AddFirstChild> {
             child: TextFormField(
               controller: _childNameController,
                 decoration: const InputDecoration(labelText: "Child's Name"),
+                textInputAction: TextInputAction.go,
+                onFieldSubmitted: (_) => validateChildName(),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a name';
@@ -77,14 +79,18 @@ class _AddFirstChildState extends State<AddFirstChild> {
           FractionallySizedBox(
             widthFactor: 1,
             child: dialogButton(context, "Save and Continue", () {
-              if (_formKey.currentState?.validate() ?? false) {
-                final childName = _childNameController.text;
-                addChild(childName);
-              }
+              validateChildName();
             })
           ),
         ],
       ),
     );
+  }
+
+  void validateChildName() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final childName = _childNameController.text;
+      addChild(childName);
+    }
   }
 }

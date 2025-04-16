@@ -107,6 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // Username text field
                 TextFormField(
                   controller: _usernameController,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Username',
                     errorText: fieldErrors["Username"],
@@ -125,6 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       width: MediaQuery.of(context).size.width / 2 - 40,
                       child: TextFormField(
                         controller: _passwordController,
+                        textInputAction: TextInputAction.next,
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'Password',
@@ -144,6 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       width: MediaQuery.of(context).size.width / 2 - 40,
                       child: TextFormField(
                         controller: _confirmPasswordController,
+                        textInputAction: TextInputAction.next,
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
@@ -170,6 +173,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   width: MediaQuery.of(context).size.width / 2 - 40,
                   child: TextFormField(
                     controller: _firstNameController,
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: 'First Name',
                       errorText: fieldErrors["FirstName"],
@@ -188,6 +192,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   width: MediaQuery.of(context).size.width / 2 - 40,
                   child: TextFormField(
                     controller: _lastNameController,
+                    textInputAction: TextInputAction.go,
+                    onFieldSubmitted: (_) => validateRegister(),
                     decoration: InputDecoration(
                       labelText: 'Last Name',
                       errorText: fieldErrors["LastName"],
@@ -240,13 +246,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 addVerticalSpace(32),
                 LoginRegisterWidget(
                   onSignUp: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      final username = _usernameController.text;
-                      final password = _passwordController.text;
-                      final firstName = _firstNameController.text;
-                      final lastName = _lastNameController.text;
-                      register(username, password, firstName, lastName, _isParent);
-                    }
+                    validateRegister;
                   },
                   onSignIn: () {
                     pushScreen(context, const LoginScreen(), replace: true);
@@ -259,5 +259,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ],
     );
+  }
+
+  void validateRegister() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final username = _usernameController.text;
+      final password = _passwordController.text;
+      final firstName = _firstNameController.text;
+      final lastName = _lastNameController.text;
+      register(username, password, firstName, lastName, _isParent);
+    }
   }
 }

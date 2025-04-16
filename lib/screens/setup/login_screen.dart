@@ -99,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _usernameController,
                   decoration: const InputDecoration(labelText: 'Username'),
+                  textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
@@ -112,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   onFieldSubmitted: (value) => attemptLogin(),
                   decoration: const InputDecoration(labelText: 'Password'),
+                  textInputAction: TextInputAction.go,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
