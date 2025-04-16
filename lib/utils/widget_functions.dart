@@ -173,7 +173,7 @@ SystemUiOverlayStyle defaultOverlay(BuildContext context, [Color? color, bool li
 
     // Status bar icon brightness
     // For Android
-    statusBarIconBrightness: light == true ? Brightness.light : Brightness.dark,
+    statusBarIconBrightness: light == true ? Brightness.dark : Brightness.light,
 
     // For iOS
     statusBarBrightness:  light == true ? Brightness.light : Brightness.dark,
