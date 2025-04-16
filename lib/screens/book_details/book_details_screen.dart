@@ -67,29 +67,48 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     NavigatorState navState = Navigator.of(context);
 
     return Scaffold(
-      // Book details app bar
-      appBar: AppBarCustom(bookSummary.title),
-      // Book details content
-      body: ListView(
-       children: [
-        _bookDetails(textTheme),
-        Container(
+        appBar: AppBarCustom(bookSummary.title),
+        body: Container(
+          // Make scroll edges consistent with content at edges
           decoration: BoxDecoration(
-            color: context.colors.surfaceBackground,
-            boxShadow: [BoxShadow(color: context.colors.surfaceBorder, blurRadius: 1)]
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                context.colors.surface,
+                context.colors.surfaceBackground,
+              ],
+              stops: [0.49, 0.51],
+            ),
           ),
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              addVerticalSpace(5),
-              _actionButtons(textTheme, bookSummary, navState),
-              addVerticalSpace(15),
-              _reviewList(textTheme),
-            ],
-          ),
-        ),
-      ]),
-    );
+          child: ListView(children: [
+            Container(
+              color: context.colors.surfaceBackground,
+              child: Column(
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                          color: context.colors.surface,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(0, 4),
+                                color: context.colors.surfaceBorder
+                                    .withValues(alpha: 0.5),
+                                spreadRadius: 2,
+                                blurRadius: 2)
+                          ]),
+                      child: _bookDetails(textTheme)),
+                  addVerticalSpace(16),
+                  _actionButtons(textTheme, bookSummary, navState),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: _reviewList(textTheme),
+                  )
+                ],
+              ),
+            ),
+          ]),
+        ));
   }
 
   /// Sub-section containing book information such as title, author, rating,
@@ -107,14 +126,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     }
 
     return Container(
-      decoration: BoxDecoration(
-          color: context.colors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: context.colors.surfaceBorder,
-              spreadRadius: 1,
-              blurRadius: 2)
-          ]),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -523,7 +534,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   Future<void> _updateBookDetails() async {
     BookSummaryService bookSummaryService = BookSummaryService();
-    BookSummary updatedBookSummary = 
+    BookSummary updatedBookSummary =
         (await bookSummaryService.getBookSummary(bookSummary.id));
     double? updatedbookRating = updatedBookSummary.rating;
     int? updatedBookLevel = updatedBookSummary.level;

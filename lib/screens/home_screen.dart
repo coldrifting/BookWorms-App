@@ -81,7 +81,20 @@ class _HomeScreenState extends State<HomeScreen> {
               : null,
           homePageShowcaseKey: navKeys[0]
       ),
-      body: SingleChildScrollView(
+      body: Container(
+          // Make scroll edges consistent with content at edges
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                context.colors.gradTop,
+                context.colors.onRecommended,
+              ],
+              stops: [0.49, 0.51],
+            ),
+          ),
+          child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -107,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+      )
     );
   }
 
