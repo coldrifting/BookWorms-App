@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
@@ -40,21 +39,14 @@ class _AddFirstChildState extends State<AddFirstChild> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        child: SetupBackdropWidget(
-          childWidget: SafeArea(child: _addChildWidget(textTheme)),
-        ),
-      ),
-    );
+    return SetupBackdropWidget(childWidget: _addChildWidget(textTheme));
   }
 
   Widget _addChildWidget(TextTheme textTheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             "Add a Child",

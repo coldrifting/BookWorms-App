@@ -1,7 +1,6 @@
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
@@ -86,15 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 // There is an alternative option to navigate to the login screen.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: context.theme.brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        child: SetupBackdropWidget(
-          childWidget: SafeArea(child: _createAccountWidget()),
-        ),
-      ),
-    );
+    return SetupBackdropWidget(childWidget: _createAccountWidget());
   }
 
   // Sub-widget containing text forms for providing account information.
@@ -127,65 +118,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
-                // Password text field
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    errorText: fieldErrors["Password"],
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    return null;
-                  },
+                Row(
+                  children: [
+                    // Password text field
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2 - 40,
+                      child: TextFormField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          errorText: fieldErrors["Password"],
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a password';
+                          }
+                          return null;
+                        },
+                      )
+                    ),
+                    addHorizontalSpace(16),
+                    // Confirm password text field
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2 - 40,
+                      child: TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Confirm Password',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 // Confirm password text field
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
                 // First name text field
-                TextFormField(
-                  controller: _firstNameController,
-                  decoration: InputDecoration(
-                    labelText: 'First Name',
-                    errorText: fieldErrors["FirstName"],
+                Row(
+                  children: [
+
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 2 - 40,
+                  child: TextFormField(
+                    controller: _firstNameController,
+                    decoration: InputDecoration(
+                      labelText: 'First Name',
+                      errorText: fieldErrors["FirstName"],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your first name';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your first name';
-                    }
-                    return null;
-                  },
                 ),
+                addHorizontalSpace(16),
                 // Last name text field
-                TextFormField(
-                  controller: _lastNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Last Name',
-                    errorText: fieldErrors["LastName"],
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 2 - 40,
+                  child: TextFormField(
+                    controller: _lastNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Last Name',
+                      errorText: fieldErrors["LastName"],
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your last name';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your last name';
-                    }
-                    return null;
-                  },
+                ),
+                  ]
                 ),
                 addVerticalSpace(16),
                 Row(

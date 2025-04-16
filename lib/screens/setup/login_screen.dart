@@ -1,6 +1,5 @@
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bookworms_app/app_state.dart';
@@ -71,15 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 // There is an alternative option to navigate to the register screen.
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        child: SetupBackdropWidget(
-          childWidget: SafeArea(child: _loginWidget(textTheme)),
-        ),
-      ),
-    );
+    return SetupBackdropWidget(childWidget: _loginWidget(textTheme));
   }
 
   void attemptLogin() {

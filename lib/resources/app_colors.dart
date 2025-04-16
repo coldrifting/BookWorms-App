@@ -13,6 +13,10 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.onSurfaceVariant,
     required this.surfaceBorder,
     required this.gradTop,
+    required this.swoopTopFg,
+    required this.swoopTopBg,
+    required this.swoopBottomFg,
+    required this.swoopBottomBg,
     required this.delete,
     required this.highlight,
     required this.unread,
@@ -44,6 +48,10 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color onSurfaceVariant;
   final Color surfaceBorder;
   final Color gradTop;
+  final Color swoopTopFg;
+  final Color swoopTopBg;
+  final Color swoopBottomFg;
+  final Color swoopBottomBg;
   final Color delete;
   final Color highlight;
   final Color unread;
@@ -76,6 +84,10 @@ class AppColors extends ThemeExtension<AppColors> {
    Color? onSurfaceVariant,
    Color? surfaceBorder,
    Color? gradTop,
+   Color? swoopTopFg,
+   Color? swoopTopBg,
+   Color? swoopBottomFg,
+   Color? swoopBottomBg,
    Color? delete,
    Color? highlight,
    Color? unread,
@@ -107,6 +119,10 @@ class AppColors extends ThemeExtension<AppColors> {
       onSurfaceVariant: onSurfaceVariant ?? this.onSurfaceVariant,
       surfaceBorder: surfaceBorder ?? this.surfaceBorder,
       gradTop: gradTop ?? this.gradTop,
+      swoopTopFg: swoopTopFg ?? this.swoopTopFg,
+      swoopTopBg: swoopTopBg ?? this.swoopTopBg,
+      swoopBottomFg: swoopBottomFg ?? this.swoopBottomFg,
+      swoopBottomBg: swoopBottomBg ?? this.swoopBottomBg,
       delete: delete ?? this.delete,
       highlight: highlight ?? this.highlight,
       unread: unread ?? this.unread,
@@ -145,6 +161,10 @@ class AppColors extends ThemeExtension<AppColors> {
       onSurfaceVariant: Color.lerp(onSurfaceVariant, other.onSurfaceVariant, t) ?? Colors.transparent,
       surfaceBorder: Color.lerp(surfaceBorder, other.surfaceBorder, t) ?? Colors.transparent,
       gradTop: Color.lerp(gradTop, other.gradTop, t) ?? Colors.transparent,
+      swoopTopFg: Color.lerp(swoopTopFg, other.swoopTopFg, t) ?? Colors.transparent,
+      swoopTopBg: Color.lerp(swoopTopBg, other.swoopTopBg, t) ?? Colors.transparent,
+      swoopBottomFg: Color.lerp(swoopBottomFg, other.swoopBottomFg, t) ?? Colors.transparent,
+      swoopBottomBg: Color.lerp(swoopBottomBg, other.swoopBottomBg, t) ?? Colors.transparent,
       delete: Color.lerp(delete, other.delete, t) ?? Colors.transparent,
       highlight: Color.lerp(highlight, other.highlight, t) ?? Colors.transparent,
       unread: Color.lerp(unread, other.unread, t) ?? Colors.transparent,
