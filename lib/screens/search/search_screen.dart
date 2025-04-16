@@ -341,7 +341,7 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
         return Column(
           children: [
             BookSummaryWidget(book: _searchResults[index]),
-            Divider(color: context.colors.grey)
+            Divider(color: context.colors.greyDark)
           ],
         );
       }

@@ -29,7 +29,7 @@ class _RecentsScreenState extends State<RecentsScreen> {
               book: recentlySearchedBooks[recentlySearchedBooks.length - index - 1], 
             ),
             Divider(
-              color: context.colors.grey,
+              color: context.colors.greyDark,
             )
           ],
         );
