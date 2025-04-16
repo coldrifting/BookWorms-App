@@ -376,8 +376,8 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
             child: TabBarView(
               controller: _tabController,
               children: [
-                Center(child: RecentsScreen()),
-                Center(child: _advancedSearchScreen()),
+                RecentsScreen(),
+                _advancedSearchScreen(),
               ],
             ),
           ),
@@ -390,246 +390,264 @@ class SearchScreenState extends State<SearchScreen> with SingleTickerProviderSta
   Widget _advancedSearchScreen() {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
-    final ratings = [Text('4.5+'), Text('4.0+'), Text('3.5+'), Text('3.0+'), Text('2.5+'), Text('2.0+')];
-    final genres = [Text('Fantasy'), Text('Adventure'), Text('Mystery'), Text('Historical Fiction'), Text('Science Fiction'), Text('Fairy Tales')];
-    final topics = [Text('Friendship'), Text('Family'), Text('Magic'), Text('Love'), Text('Manners'), Text('Animals')];
+    final ratings = [
+      Text('4.5+'),
+      Text('4.0+'),
+      Text('3.5+'),
+      Text('3.0+'),
+      Text('2.5+'),
+      Text('2.0+')
+    ];
+    final genres = [
+      Text('Fantasy'),
+      Text('Adventure'),
+      Text('Mystery'),
+      Text('Historical Fiction'),
+      Text('Science Fiction'),
+      Text('Fairy Tales')
+    ];
+    final topics = [
+      Text('Friendship'),
+      Text('Family'),
+      Text('Magic'),
+      Text('Love'),
+      Text('Manners'),
+      Text('Animals')
+    ];
 
     var fadeColor = context.colors.surfaceBackground.withAlpha(0);
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Reading Level',
-                        style: textTheme.titleMedium
-                      ),
-                      RawMaterialButton(
-                        onPressed: () => pushScreen(context, const ReadingLevelInfoWidget()),
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(8.0),
-                        constraints: BoxConstraints(
-                          maxWidth: 40,
-                        ),
-                        child: const Icon(
-                          Icons.help_outline,
-                          size: 20
-                        )
-                      ),
-                    ],
-                  ),
-                  addVerticalSpace(8),
-                  Row(
-                    children: [
-                      Text('0'),
-                      Expanded(
-                        child: RangeSlider(
-                          values: _selectedLevelRange,
-                          max: 100,
-                          divisions: 10,
-                          labels: RangeLabels(
-                            _selectedLevelRange.start.round().toString(),
-                            _selectedLevelRange.end.round().toString(),
-                          ),
-                          onChanged: (RangeValues values) {
-                            setState(() {
-                              _selectedLevelRange = values;
-                            });
-                          },
-                        ),
-                      ),
-                      Text('100')
-                    ],
-                  )
-                ],
-              ),
-              addVerticalSpace(16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Average User Rating',
-                    style: textTheme.titleMedium
-                  ),
-                  addVerticalSpace(8),
-                  SizedBox(
-                    height: 50,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      physics: BouncingScrollPhysics(),
+    return Column(children: [
+      Container(
+        height: MediaQuery.of(context).size.height - 445,
+        padding: const EdgeInsets.all(12.0),
+        child: SingleChildScrollView(
+          child: Column(children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        SizedBox(width: 10),
-                        ToggleButtons(
-                          onPressed: (int index) {
-                            setState(() {
-                              for (int i = 0; i < _selectedRating.length; i++) {
-                                if (i != index) {
-                                  _selectedRating[i] = false;
-                                } else {
-                                  _selectedRating[i] = !_selectedRating[i];
-                                }
-                              }
-                            });
-                          },
-                          isSelected: _selectedRating,
-                          children: ratings.map((level) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: level,
-                            );
-                          }).toList(),
-                        ),
-                        addHorizontalSpace(10),
+                        Text('Reading Level', style: textTheme.titleMedium),
+                        RawMaterialButton(
+                            onPressed: () => pushScreen(
+                                context, const ReadingLevelInfoWidget()),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8.0),
+                            constraints: BoxConstraints(
+                              maxWidth: 40,
+                            ),
+                            child: const Icon(Icons.help_outline, size: 20)),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              addVerticalSpace(16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Genres',
-                    style: textTheme.titleMedium,
-                  ),
-                  addVerticalSpace(8),
-                  Stack(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          physics: BouncingScrollPhysics(),
-                          children: [
-                            SizedBox(width: 12),
-                            ToggleButtons(
-                              onPressed: (int index) {
-                                setState(() {
-                                  _selectedGenres[index] = !_selectedGenres[index];
-                                });
-                              },
-                              isSelected: _selectedGenres,
-                              children: genres.map((level) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: level,
-                                );
-                              }).toList(),
+                    //addVerticalSpace(8),
+                    Row(
+                      children: [
+                        Text('0'),
+                        Expanded(
+                          child: RangeSlider(
+                            values: _selectedLevelRange,
+                            max: 100,
+                            divisions: 10,
+                            labels: RangeLabels(
+                              _selectedLevelRange.start.round().toString(),
+                              _selectedLevelRange.end.round().toString(),
                             ),
-                            SizedBox(width: 12),
-                          ],
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [
-                                  context.colors.surfaceBackground,
-                                  fadeColor,
-                                  fadeColor,
-                                  context.colors.surfaceBackground,
-                                ],
-                                stops: [0.0, 0.05, 0.95, 1.0],
-                              ),
-                            ),
+                            onChanged: (RangeValues values) {
+                              setState(() {
+                                _selectedLevelRange = values;
+                              });
+                            },
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              addVerticalSpace(16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Topics',
-                    style: textTheme.titleMedium,
-                  ),
-                  addVerticalSpace(8),
-                  Stack(
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          physics: BouncingScrollPhysics(),
-                          children: [
-                            SizedBox(width: 12),
-                            ToggleButtons(
-                              onPressed: (int index) {
-                                setState(() {
-                                  _selectedTopics[index] = !_selectedTopics[index];
-                                });
-                              },
-                              isSelected: _selectedTopics,
-                              children: topics.map((level) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: level,
-                                );
-                              }).toList(),
-                            ),
-                            SizedBox(width: 12),
-                          ],
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [
-                                  context.colors.surfaceBackground,
-                                  fadeColor,
-                                  fadeColor,
-                                  context.colors.surfaceBackground,
-                                ],
-                                stops: [0.0, 0.05, 0.95, 1.0],
-                              ),
-                            ),
+                        Text('100')
+                      ],
+                    )
+                  ],
+                ),
+                addVerticalSpace(4),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Average User Rating', style: textTheme.titleMedium),
+                    addVerticalSpace(8),
+                    SizedBox(
+                      height: 46,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        children: [
+                          SizedBox(width: 10),
+                          ToggleButtons(
+                            onPressed: (int index) {
+                              setState(() {
+                                for (int i = 0;
+                                    i < _selectedRating.length;
+                                    i++) {
+                                  if (i != index) {
+                                    _selectedRating[i] = false;
+                                  } else {
+                                    _selectedRating[i] = !_selectedRating[i];
+                                  }
+                                }
+                              });
+                            },
+                            isSelected: _selectedRating,
+                            children: ratings.map((level) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: level,
+                              );
+                            }).toList(),
                           ),
-                        ),
+                          addHorizontalSpace(10),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              addVerticalSpace(64),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _advancedSearch();                 
-                      },
-                      style: largeButtonStyle,
-                      child: Text('Search'),
                     ),
-                  ),
-                ],
-              ),  
-            ],
-          ),
+                  ],
+                ),
+                addVerticalSpace(12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Genres',
+                      style: textTheme.titleMedium,
+                    ),
+                    addVerticalSpace(8),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: 46,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            children: [
+                              SizedBox(width: 12),
+                              ToggleButtons(
+                                onPressed: (int index) {
+                                  setState(() {
+                                    _selectedGenres[index] =
+                                        !_selectedGenres[index];
+                                  });
+                                },
+                                isSelected: _selectedGenres,
+                                children: genres.map((level) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: level,
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(width: 12),
+                            ],
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    context.colors.surfaceBackground,
+                                    fadeColor,
+                                    fadeColor,
+                                    context.colors.surfaceBackground,
+                                  ],
+                                  stops: [0.0, 0.05, 0.95, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                addVerticalSpace(12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Topics',
+                      style: textTheme.titleMedium,
+                    ),
+                    addVerticalSpace(8),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: 46,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            children: [
+                              SizedBox(width: 12),
+                              ToggleButtons(
+                                onPressed: (int index) {
+                                  setState(() {
+                                    _selectedTopics[index] =
+                                        !_selectedTopics[index];
+                                  });
+                                },
+                                isSelected: _selectedTopics,
+                                children: topics.map((level) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: level,
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(width: 12),
+                            ],
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    context.colors.surfaceBackground,
+                                    fadeColor,
+                                    fadeColor,
+                                    context.colors.surfaceBackground,
+                                  ],
+                                  stops: [0.0, 0.05, 0.95, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ]),
         ),
-      ]
-    );
+      ),
+      Spacer(),
+      addVerticalSpace(8),
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: ElevatedButton(
+            onPressed: () => _advancedSearch(),
+            style: largeButtonStyle,
+            child: Text('Search')),
+      ),
+      addVerticalSpace(24)
+    ]);
   }
 }
 
