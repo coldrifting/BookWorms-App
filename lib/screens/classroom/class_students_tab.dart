@@ -1,9 +1,11 @@
 import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/action_result.dart';
 import 'package:bookworms_app/models/classroom/student.dart';
 import 'package:bookworms_app/resources/theme.dart';
 import 'package:bookworms_app/screens/classroom/student_view_screen.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -156,13 +158,13 @@ class _StudentsScreenState extends State<StudentsScreen> {
                   },
                   // Student icon.
                   child: SizedBox(
-                    width: 90,
-                    height: 90,
+                    width: 85,
+                    height: 85,
                     child: UserIcons.getIcon(filteredStudents[index].profilePictureIndex)),
                 ),
                 addVerticalSpace(4),
                 // Student name.
-                Text(style: textTheme.titleSmall, filteredStudents[index].name),
+                Text(style: textTheme.titleSmall, truncate(filteredStudents[index].name)),
               ],
             ),
           ),
@@ -198,13 +200,24 @@ class _StudentsScreenState extends State<StudentsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: context.colors.primary.withAlpha(10),
+                color: context.colors.primary,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: context.colors.primary, width: 2),
               ),
-              child: SelectableText(
-                classroomCode,
-                style: textTheme.headlineMediumGreenDark.copyWith(fontWeight: FontWeight.bold),
+              child: CupertinoTheme(data: CupertinoThemeData(primaryColor: context.colors.grey.withAlpha(128)),
+                child: Theme(
+                  data: ThemeData(
+                      textSelectionTheme: TextSelectionThemeData(
+                      selectionColor: context.colors.grey.withAlpha(128),
+                      selectionHandleColor: context.colors.surface,
+                    )
+                  ),
+                  child: SelectableText(
+                    classroomCode.replaceFirst(' ', ''),
+                    cursorColor: context.colors.surface,
+                    style: textTheme.headlineMediumWhite.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
             ),
             addVerticalSpace(12),
@@ -217,12 +230,10 @@ class _StudentsScreenState extends State<StudentsScreen> {
         ),
         actions: [
           TextButton(
-            style: TextButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))
-            ),
+            style: smallButtonStyle,
             onPressed: () {
               Clipboard.setData(ClipboardData(text: classroomCode.replaceFirst(' ', '')));
+              resultAlert(context, Result(isSuccess: true, message: "Class Code Copied!"), false);
               Navigator.pop(context);
             },
             child: Center(
@@ -275,4 +286,11 @@ class _StudentsScreenState extends State<StudentsScreen> {
       ),
     );
   }
+}
+
+String truncate(String text, { length = 7, omission = '...' }) {
+  if (length >= text.length) {
+    return text;
+  }
+  return text.replaceRange(length, text.length, omission);
 }
