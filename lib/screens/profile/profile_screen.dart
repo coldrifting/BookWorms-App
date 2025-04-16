@@ -10,6 +10,7 @@ import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/app_bar_custom.dart';
+import 'package:bookworms_app/widgets/extended_appbar_compact_widget.dart';
 import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
 import 'package:bookworms_app/widgets/option_widget.dart';
 import 'package:flutter/material.dart';
@@ -52,67 +53,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBarCustom(headerTitle, isLeafPage: false, centerTitle: true),
       body: Column(
         children: [
-          ExtendedAppBar(
-            name: "${appState.firstName} ${appState.lastName}",
-            username: appState.username,
-            icon: UserIcons.getIcon(appState.account.profilePictureIndex),
-          ),
+          if (MediaQuery.of(context).size.height <= 875)
+            ExtendedAppBarCompact(
+              name: "${appState.firstName} ${appState.lastName}",
+              username: appState.username,
+              icon: UserIcons.getIcon(appState.account.profilePictureIndex))
+          else
+            ExtendedAppBar(
+              name: "${appState.firstName} ${appState.lastName}",
+              username: appState.username,
+              icon: UserIcons.getIcon(appState.account.profilePictureIndex)),
           Expanded(
-            child: ListView(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
-              children: [
-                addVerticalSpace(10),
-                BWShowcase(
-                  showcaseKey: navKeys[0],
-                  description: "Edit your account details",
-                  tooltipBorderRadius: BorderRadius.circular(6),
-                  child: OptionWidget(
-                      name: "Edit Profile",
-                      icon: Icons.account_circle,
-                      onTap: () {
-                        pushScreen(context, EditProfileScreen(account: appState.account));
-                      }),
-                ),
-                addVerticalSpace(10),
-                if (isParent) ...[
+              child: Column(
+                children: [
                   BWShowcase(
-                    showcaseKey: navKeys[1],
-                    description: "Manage your children, including adding them to classrooms",
+                    showcaseKey: navKeys[0],
+                    description: "Edit your account details",
                     tooltipBorderRadius: BorderRadius.circular(6),
                     child: OptionWidget(
-                        name: "Manage Children",
-                        icon: Icons.groups_rounded,
+                        name: "Edit Profile",
+                        icon: Icons.account_circle,
                         onTap: () {
-                          pushScreen(context, const ManageChildrenScreen());
+                          pushScreen(context, EditProfileScreen(account: appState.account));
                         }),
                   ),
                   addVerticalSpace(10),
-                ],
-                OptionWidget(
-                  name: "About",
-                  icon: Icons.info,
-                  onTap: () => pushScreen(context, const AboutScreen()),
-                ),
-                addVerticalSpace(10),
-                BWShowcase(
-                  showcaseKey: isParent ? navKeys[2] : navKeys[1],
-                  description: "View this tutorial again",
-                  tooltipBorderRadius: BorderRadius.circular(6),
-                  tooltipPosition: TooltipPosition.top,
-                  child: OptionWidget(
-                      name: "Tutorial",
-                      icon: Icons.help,
-                      onTap:() {
-                        showcaseController.goToScreen(0);
-                        showcaseController.start();
-                      }
+                  if (isParent) ...[
+                    BWShowcase(
+                      showcaseKey: navKeys[1],
+                      description: "Manage your children, including adding them to classrooms",
+                      tooltipBorderRadius: BorderRadius.circular(6),
+                      child: OptionWidget(
+                          name: "Manage Children",
+                          icon: Icons.groups_rounded,
+                          onTap: () {
+                            pushScreen(context, const ManageChildrenScreen());
+                          }),
+                    ),
+                    addVerticalSpace(10),
+                  ],
+                  OptionWidget(
+                    name: "About",
+                    icon: Icons.info,
+                    onTap: () => pushScreen(context, const AboutScreen()),
                   ),
-                ),
-                addVerticalSpace(10),
-                const Divider(),
-                addVerticalSpace(10),
-                _signOutWidget(textTheme)
-              ],
+                  addVerticalSpace(10),
+                  BWShowcase(
+                    showcaseKey: isParent ? navKeys[2] : navKeys[1],
+                    description: "View this tutorial again",
+                    tooltipBorderRadius: BorderRadius.circular(6),
+                    tooltipPosition: TooltipPosition.top,
+                    child: OptionWidget(
+                        name: "Tutorial",
+                        icon: Icons.help,
+                        onTap:() {
+                          showcaseController.goToScreen(0);
+                          showcaseController.start();
+                        }
+                    ),
+                  ),
+                  addVerticalSpace(10),
+                  const Divider(),
+                  addVerticalSpace(10),
+                  _signOutWidget(textTheme)
+                ],
+              )
             ),
           ),
         ],
