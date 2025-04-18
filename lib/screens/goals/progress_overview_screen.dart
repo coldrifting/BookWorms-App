@@ -147,19 +147,23 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
               const Spacer(),
             ],
           ),
-          addVerticalSpace(16),
-          Center(
-            child: Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                _statCard("Books Finished\n(This Year)", booksReadYearCount.toString()),
-                _statCard("Books Finished\n(This Month)", booksReadMonthCount.toString()),
-                _statCard("Goals Completed\n(This Year)", goalsCompletedYearCount.toString()),
-                _statCard("Goals Completed\n(This Month)", goalsCompletedMonthCount.toString()),
-              ],
+          addVerticalSpace(8),
+          SizedBox(
+              height: MediaQuery.of(context).size.width - 125,
+              child: GridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.4,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _statCard("Books Finished\n(This Year)", booksReadYearCount.toString()),
+                  _statCard("Books Finished\n(This Month)", booksReadMonthCount.toString()),
+                  _statCard("Goals Completed\n(This Year)", goalsCompletedYearCount.toString()),
+                  _statCard("Goals Completed\n(This Month)", goalsCompletedMonthCount.toString()),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -168,7 +172,6 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
   Widget _statCard(String label, String value) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
-      width: 182,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: context.colors.surfaceVariant,

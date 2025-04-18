@@ -171,8 +171,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
   }
 
   Widget _addGoalButton(TextTheme textTheme) {
-    return FractionallySizedBox(
-      widthFactor: 0.4,
+    return SizedBox(
+      width: 180,
       child: TextButton(
         onPressed: () { 
           goalAlert(context, "", _organizeGoals);

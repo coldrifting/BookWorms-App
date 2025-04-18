@@ -39,8 +39,8 @@ class _ClassBookshelvesState extends State<ClassBookshelves> {
   }
 
   Widget _addClassBookshelfButton(TextTheme textTheme) {
-    return FractionallySizedBox(
-      widthFactor: 0.45,
+    return SizedBox(
+      width: 200,
       child: TextButton(
         onPressed: () => _addClassBookshelfAlert(),
         style: smallButtonStyle,

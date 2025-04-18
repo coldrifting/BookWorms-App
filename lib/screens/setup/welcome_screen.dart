@@ -58,7 +58,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           addHorizontalSpace(32),
                           TextButton(
                             onPressed: () {
-                              pushScreen(context, const RegisterScreen());
+                              pushScreen(context, const RegisterScreen(), replace: true);
                             },
                             style: welcomeElevatedButtonStyle,
                             child: const Text("SIGN UP"),

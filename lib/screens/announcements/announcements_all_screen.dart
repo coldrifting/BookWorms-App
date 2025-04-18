@@ -95,8 +95,8 @@ class _AnnouncementsAllScreenState extends State<AnnouncementsAllScreen> {
   }
 
   Widget _addClassAnnouncementButton() {
-    return FractionallySizedBox(
-      widthFactor: 0.55,
+    return SizedBox(
+      width: 250,
       child: TextButton(
         onPressed: () => pushScreen(context, AnnouncementsModifyScreen(Announcement(announcementId: "-1", title: "", body: "", time: DateTime.now()))),
         style: smallButtonStyle,
