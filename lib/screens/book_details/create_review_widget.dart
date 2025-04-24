@@ -118,6 +118,8 @@ class _CreateReviewWidgetState extends State<CreateReviewWidget> {
         ),
       ),
       maxLines: 10,
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.done,
       onChanged: (value) {
         setState(() {
           _content = value;
