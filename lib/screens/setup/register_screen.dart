@@ -246,7 +246,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 addVerticalSpace(32),
                 LoginRegisterWidget(
                   onSignUp: () {
-                    validateRegister;
+                    validateRegister();
                   },
                   onSignIn: () {
                     pushScreen(context, const LoginScreen(), replace: true);
