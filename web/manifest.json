@@ -1,11 +1,11 @@
 {
-    "name": "bookworms_app",
-    "short_name": "bookworms_app",
+    "name": "BookWorms",
+    "short_name": "BookWorms",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#2E7D32",
     "theme_color": "#2E7D32",
-    "description": "Bookworms App",
+    "description": "BookWorms",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
