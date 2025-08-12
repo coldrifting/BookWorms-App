@@ -233,3 +233,6 @@ windows/flutter/CMakeLists.txt
 windows/flutter/generated_*
 linux/flutter/generated*
 macos/Flutter/Generated*
+
+# MacOS
+.DS_Store
