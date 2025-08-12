@@ -1,6 +1,7 @@
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/resources/theme.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class LoginRegisterWidget extends StatelessWidget {
   final VoidCallback onSignIn;
@@ -18,7 +19,7 @@ class LoginRegisterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _activeButton(signIn ? "SIGN IN" : "SIGN UP", signIn ? onSignIn : onSignUp),
+        _activeButton(context, signIn ? "SIGN IN" : "SIGN UP", signIn ? onSignIn : onSignUp),
         addVerticalSpace(12),
         Row(
           children: [
@@ -44,19 +45,19 @@ class LoginRegisterWidget extends StatelessWidget {
           ],
         ),
         addVerticalSpace(12),
-        _inactiveButton(signIn ? "SIGN UP" : "SIGN IN", signIn ? onSignUp : onSignIn),
+        _inactiveButton(context, signIn ? "SIGN UP" : "SIGN IN", signIn ? onSignUp : onSignIn),
       ],
     );
   }
 
-  Widget _activeButton(String text, VoidCallback action) {
+  Widget _activeButton(BuildContext context, String text, VoidCallback action) {
     return FractionallySizedBox(
       widthFactor: 1,
       child: ElevatedButton(
         onPressed: action,
         style: TextButton.styleFrom(
-          backgroundColor: colorGreen,
-          foregroundColor: colorWhite,
+          backgroundColor: context.colors.primary,
+          foregroundColor: context.colors.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
           ),
@@ -66,17 +67,17 @@ class LoginRegisterWidget extends StatelessWidget {
     );
   }
 
-  Widget _inactiveButton(String text, VoidCallback action) {
+  Widget _inactiveButton(BuildContext context, String text, VoidCallback action) {
     return FractionallySizedBox(
       widthFactor: 1,
       child: OutlinedButton(
         onPressed: action,
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: colorGrey),
+          side: BorderSide(color: context.colors.grey),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
           ),
-          foregroundColor: colorGrey,
+          foregroundColor: context.colors.grey,
         ),
         child: Text(text),
       ),

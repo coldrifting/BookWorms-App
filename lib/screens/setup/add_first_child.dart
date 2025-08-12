@@ -1,10 +1,10 @@
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/main.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/main.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
 
 class AddFirstChild extends StatefulWidget {
   const AddFirstChild({super.key});
@@ -32,28 +32,21 @@ class _AddFirstChildState extends State<AddFirstChild> {
   void addChild(String childName) async {
     await Provider.of<AppState>(context, listen: false).addChild(childName);
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Navigation()),
-      );
+      pushScreen(context, const Navigation(), replace: true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: SetupBackdropWidget(childWidget: _addChildWidget(textTheme))),
-    );
+    return SetupBackdropWidget(childWidget: _addChildWidget(textTheme));
   }
 
   Widget _addChildWidget(TextTheme textTheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             "Add a Child",
@@ -72,6 +65,8 @@ class _AddFirstChildState extends State<AddFirstChild> {
             child: TextFormField(
               controller: _childNameController,
                 decoration: const InputDecoration(labelText: "Child's Name"),
+                textInputAction: TextInputAction.go,
+                onFieldSubmitted: (_) => validateChildName(),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a name';
@@ -83,25 +78,19 @@ class _AddFirstChildState extends State<AddFirstChild> {
           addVerticalSpace(32),
           FractionallySizedBox(
             widthFactor: 1,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  final childName = _childNameController.text;
-                  addChild(childName);
-                }
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: colorGreen,
-                foregroundColor: colorWhite,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              child: Text("Save and Continue"),
-            ),
+            child: dialogButton(context, "Save and Continue", () {
+              validateChildName();
+            })
           ),
         ],
       ),
     );
+  }
+
+  void validateChildName() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final childName = _childNameController.text;
+      addChild(childName);
+    }
   }
 }

@@ -1,13 +1,13 @@
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/account.dart';
-import 'package:bookworms_app/screens/setup/welcome_screen.dart';
-import 'package:bookworms_app/services/account/delete_account_service.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/theme/theme.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/account/account.dart';
+import 'package:bookworms_app/screens/setup/welcome_screen.dart';
+import 'package:bookworms_app/services/account/delete_account_service.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class EditProfileScreen extends StatefulWidget {
 
@@ -25,26 +25,48 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
-  late TextEditingController _usernameController;
   final _formKey = GlobalKey<FormState>();
 
   late int _selectedIconIndex;
 
+  // Used to determine if any changes have been made to the account details.
+  late String _initialFirstName;
+  late String _initialLastName;
+  late int _initialIconIndex;
+  late bool _hasChanges;
+
   @override
   void initState() {
     super.initState();
-    _firstNameController = TextEditingController(text: widget.account.firstName);
-    _lastNameController = TextEditingController(text: widget.account.lastName);
-    _usernameController = TextEditingController(text: widget.account.username);
-    _selectedIconIndex = widget.account.profilePictureIndex;
+
+    _initialFirstName = widget.account.firstName;
+    _initialLastName = widget.account.lastName;
+    _initialIconIndex = widget.account.profilePictureIndex;
+
+    _firstNameController = TextEditingController(text: _initialFirstName);
+    _firstNameController.addListener(_checkForChanges);
+    _lastNameController = TextEditingController(text: _initialLastName);
+    _lastNameController.addListener(_checkForChanges);
+
+    _selectedIconIndex = _initialIconIndex;
+    _hasChanges = false;
   }
 
   @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _usernameController.dispose();
     super.dispose();
+  }
+
+  
+  // Used to check if a change to the account details has been made.
+  void _checkForChanges() {
+    setState(() {
+      _hasChanges = _firstNameController.text.trim() != _initialFirstName 
+        || _lastNameController.text.trim() != _initialLastName
+        || _selectedIconIndex != _initialIconIndex;
+    });
   }
 
   @override
@@ -53,24 +75,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     AppState appState = Provider.of<AppState>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Edit Profile", 
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+      appBar: AppBarCustom("Edit Profile", onBackBtnPressed: () async =>
+          confirmExitWithoutSaving(context, Navigator.of(context), _hasChanges)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -78,74 +84,86 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             children: [
               _profileIcon(textTheme),
-              addHorizontalSpace(16),
+              addVerticalSpace(16),
               _textFieldWidget(
                 textTheme, 
                 _firstNameController, 
                 "Edit First Name", 
-                appState.firstName, 
-                () => appState.editAccountInfo(firstName: _firstNameController.text)
               ),
               addVerticalSpace(32),
               _textFieldWidget(
                 textTheme, 
                 _lastNameController, 
                 "Edit Last Name", 
-                appState.lastName,
-                () => appState.editAccountInfo(lastName: _lastNameController.text)
               ),
               addVerticalSpace(32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colorRed,
-                  foregroundColor: colorWhite,
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 0),
+                      backgroundColor: _hasChanges ? context.colors.primary : context.colors.grey,
+                      foregroundColor: _hasChanges ? context.colors.onPrimary : context.colors.greyDark,
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: _hasChanges
+                      ? () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          appState.editAccountInfo(
+                            firstName: _firstNameController.text,
+                            lastName: _lastNameController.text,
+                            profilePictureIndex: _selectedIconIndex
+                          );
+                          setState(() {
+                            _hasChanges = false;
+                            _initialFirstName = _firstNameController.text;
+                            _initialLastName = _lastNameController.text;
+                            _initialIconIndex = _selectedIconIndex;
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      } : null,
+                    child: Text(
+                      'Save Changes',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold, 
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
-                ),
-                onPressed: () => _showDeleteConfirmationDialog(textTheme),
-                child: Text(
-                  'Delete Account',
-                  style: textTheme.titleSmallWhite,
-                ),
-              )
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.colors.delete,
+                      foregroundColor: context.colors.onPrimary,
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: () async {
+                      bool result = await showConfirmDialog(
+                          context,
+                          "Delete Account",
+                          "Deleting your account cannot be undone. Are you sure you want to continue?",
+                          confirmText: "Delete",
+                          confirmColor: context.colors.delete);
+
+                      if (result) {
+                        _deleteAccount();
+                      }
+                    },
+                    child: Text('Delete Account', style: textTheme.titleSmallWhite),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  // UI for showing deletion confirmation. If user clicks "Delete", then try
-  // to delete the account.
-  Future<dynamic> _showDeleteConfirmationDialog(TextTheme textTheme) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Center(child: Text('Delete Account')),
-          content: const Text('Deleting your account cannot be undone. Are you sure you want to continue?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _deleteAccount();
-              },
-              child: Text(
-                'Delete',
-                style: TextStyle(color: colorRed),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -159,17 +177,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (status) {
       // Clear navigation stack and navigate to the welcome screen.
       if (mounted) {
-        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-          (route) => false,
-        );
+        pushScreen(context, const WelcomeScreen(), root: true, replace: true);
       }
     }
   }
 
   // The account profile icon along with modification functionality.
   Widget _profileIcon(TextTheme textTheme) {
-    AppState appState = Provider.of<AppState>(context);
     return Center(
       child: Stack(
         children: [
@@ -179,7 +193,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               maxRadius: 50,
               child: SizedBox.expand(
                 child: FittedBox(
-                  child: UserIcons.getIcon(appState.account.profilePictureIndex),
+                  child: UserIcons.getIcon(_selectedIconIndex),
                 ),
               ),
             ),
@@ -189,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             left: 70,
             child: RawMaterialButton(
               onPressed: () => changeIconDialog(textTheme),
-              fillColor: colorWhite,
+              fillColor: context.colors.surface,
               constraints: const BoxConstraints(minWidth: 0.0),
               padding: const EdgeInsets.all(5.0),
               shape: const CircleBorder(),
@@ -204,45 +218,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // Text form field input, title, and save.
-  Widget _textFieldWidget(
-    TextTheme textTheme, 
-    TextEditingController controller, 
-    String title, 
-    String text,
-    Function onSave) {
+  // Text form field input and title.
+  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title) {
     return Column(
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: textTheme.titleMedium,
-          ),
+          child: Text(title, style: textTheme.titleMedium),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: controller,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a value';
-                  }
-                  return null;
-                },
-              )
-            ),
-            addHorizontalSpace(16),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  onSave();
-                }
-              },
-              child: const Text("Save")
-            )
-          ],
+        TextFormField(
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a value';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -256,13 +247,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           title: const Center(child: Text('Change Profile Icon')),
           content: _getIconList(),
           actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: Text(
-                'Cancel',
-                style: textTheme.titleSmall
-              ),
-            ),
+            dialogButton(
+                context,
+                "Cancel",
+                () => Navigator.of(context).pop(),
+                isElevated: false,
+                foregroundColor: context.colors.grey)
           ],
         ),
     );
@@ -270,8 +260,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // Displays the icon list for the account.
   Widget _getIconList() {
-    AppState appState = Provider.of<AppState>(context, listen: false);
-
     return SizedBox(
         width: double.maxFinite,
         height: 400,
@@ -288,7 +276,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 // Change selected color and exit popup.
                 setState(() {
                   _selectedIconIndex = index;
-                  appState.editAccountInfo(profilePictureIndex: index);
+                  _checkForChanges();
                 });
                 Navigator.of(context).pop();
               },

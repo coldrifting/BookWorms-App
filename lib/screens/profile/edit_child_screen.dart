@@ -1,9 +1,15 @@
-import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/models/child.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:bookworms_app/models/action_result.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
+import 'package:bookworms_app/widgets/classroom_list_widget.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/child/child.dart';
+import 'package:bookworms_app/utils/user_icons.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
 
 class EditChildScreen extends StatefulWidget {
   final int childID;
@@ -20,14 +26,31 @@ class EditChildScreen extends StatefulWidget {
 }
 
 class _EditChildScreenState extends State<EditChildScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  // Used to determine if any changes have been made to the account details.
+  late String _initialName;
+  late int _initialIconIndex;
+  late String? _initialDOB;
+  late bool _hasChanges;
+
   late TextEditingController _childNameController;
   late int _selectedIconIndex;
+  late String? _selectedDOB;
 
   @override
   void initState() {
     super.initState();
+
+    _initialName = widget.child.name;
+    _initialIconIndex = widget.child.profilePictureIndex;
+    _initialDOB = widget.child.dob;
+    _hasChanges = false;
+
     _childNameController = TextEditingController(text: widget.child.name);
+    _childNameController.addListener(_checkForChanges);
     _selectedIconIndex = widget.child.profilePictureIndex;
+    _selectedDOB = widget.child.dob;
   }
 
   @override
@@ -36,113 +59,247 @@ class _EditChildScreenState extends State<EditChildScreen> {
     super.dispose();
   }
 
+  // Used to check if a change to the account details has been made.
+  void _checkForChanges() {
+    setState(() {
+      _hasChanges = _childNameController.text.trim() != _initialName ||
+          _selectedIconIndex != _initialIconIndex ||
+          _selectedDOB != _initialDOB;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
+    AppState appState = Provider.of<AppState>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Edit Child", 
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: colorWhite, 
-            overflow: TextOverflow.ellipsis
-          )
-        ),
-        backgroundColor: colorGreen,
-        leading: IconButton(
-          color: colorWhite,
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: Padding(
+      appBar: AppBarCustom("Edit Child", onBackBtnPressed: () async =>
+          confirmExitWithoutSaving(context, Navigator.of(context), _hasChanges)),
+      body: SingleChildScrollView(
+    child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Stack(
-                  children: [
-                    IconButton(
-                      onPressed: () =>_changeChildIconDialog(textTheme),
-                      icon: CircleAvatar(
-                        maxRadius: 50,
-                        child: SizedBox.expand(
-                          child: FittedBox(
-                            child: UserIcons.getIcon(widget.child.profilePictureIndex),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 70,
-                      left: 70,
-                      child: RawMaterialButton(
-                        onPressed: () => _changeChildIconDialog(textTheme),
-                        fillColor: colorWhite,
-                        constraints: const BoxConstraints(minWidth: 0.0),
-                        padding: const EdgeInsets.all(5.0),
-                        shape: const CircleBorder(),
-                        child: const Icon(
-                          Icons.mode_edit_outline_sharp,
-                          size: 15,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Stack(
                     children: [
-                      const Text(
-                        "Edit Name",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
+                      IconButton(
+                        onPressed: () => _changeChildIconDialog(textTheme),
+                        icon: CircleAvatar(
+                          maxRadius: 50,
+                          child: SizedBox.expand(
+                            child: FittedBox(
+                              child: UserIcons.getIcon(_selectedIconIndex),
+                            ),
+                          ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _childNameController
-                            )
-                          ),
-                          const SizedBox(width: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              Provider.of<AppState>(context, listen: false).editChildName(widget.childID, _childNameController.text);
-                            },
-                            child: const Text("Save")
-                          )
-                        ],
+                      Positioned(
+                        top: 70,
+                        left: 70,
+                        child: RawMaterialButton(
+                          onPressed: () => _changeChildIconDialog(textTheme),
+                          fillColor: context.colors.surface,
+                          constraints: const BoxConstraints(minWidth: 0.0),
+                          padding: const EdgeInsets.all(5.0),
+                          shape: const CircleBorder(),
+                          child: const Icon(Icons.mode_edit_outline_sharp, size: 15),
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Provider.of<AppState>(context, listen: false).removeChild(widget.childID);
-                Navigator.of(context).pop();
-              },
-              child: const Text("Delete Child")
-            )
-          ],
+                  addHorizontalSpace(16),
+                  Expanded(
+                    child: _textFieldWidget(textTheme, _childNameController, "Edit Name")
+                  ),
+                ],
+              ),
+              addVerticalSpace(16),
+              Row(
+                children: [
+                  Text("Reading Level: ${widget.child.readingLevel ?? "N/A"}", style: textTheme.titleMedium),
+                  RawMaterialButton(
+                    onPressed: () => pushScreen(context, const ReadingLevelInfoWidget(forBook: false)),
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8.0),
+                    constraints: BoxConstraints(
+                      maxWidth: 40,
+                    ),
+                    child: const Icon(
+                      Icons.help_outline,
+                      size: 20
+                    )
+                  ),
+                ],
+              ),
+              addVerticalSpace(16),
+              Row(
+                children: [
+                  Text("Date of Birth:", style: textTheme.titleMedium),
+                  addHorizontalSpace(16),
+                  OutlinedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: () async {
+                      final DateTime? pickedDate = await showDatePicker(
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              primaryColor: context.colors.primary,
+                              textButtonTheme: TextButtonThemeData(
+                                style: getCommonButtonStyle(primaryColor: context.colors.primary, isElevated: false)
+                              )
+                            ),
+                            child: child!
+                          );
+                        },
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          _selectedDOB = DateFormat('yyyy-MM-dd').format(pickedDate);
+                          _checkForChanges();
+                        });
+                      }
+                    },
+                    child: Text(_selectedDOB ?? "Set Date", style: textTheme.titleMedium),
+                  )
+                ],
+              ),
+              addVerticalSpace(16),
+              if (appState.children.length > widget.childID 
+                && appState.children.indexWhere((c) => c.id == appState.children[widget.childID].id) >= 0)
+                ClassroomListWidget(),
+              addVerticalSpace(32),  
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 0),
+                      backgroundColor: _hasChanges ? context.colors.primary : context.colors.grey,
+                      foregroundColor: _hasChanges ? context.colors.onPrimary : context.colors.greyDark,
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: _hasChanges
+                      ? () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          setState(() {
+                            _hasChanges = false;
+                            appState.editChildProfileInfo(
+                                widget.childID,
+                                newName: _childNameController.text,
+                                profilePictureIndex: _selectedIconIndex,
+                                newDOB: _selectedDOB
+                            );
+                            _initialIconIndex =
+                                appState.children[widget.childID]
+                                    .profilePictureIndex;
+                            _initialName =
+                                appState.children[widget.childID].name;
+                          });
+                          if (context.mounted) {
+                            resultAlert(context, Result(isSuccess: true, message: "Child Details Updated"));
+                          }
+                          Navigator.of(context).pop();
+                        }
+                        } : null,
+                    child: Text(
+                      'Save Changes',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ),
+                _deleteChildButton(textTheme, Navigator.of(context)),
+              ]),
+            ],
+          ),
         ),
+      ),
+      )
+    );
+  }
+
+  // Text form field input and title.
+  Widget _textFieldWidget(TextTheme textTheme, TextEditingController controller, String title) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(title, style: textTheme.titleMedium),
+        ),
+        TextFormField(
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a value';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _deleteChildButton(TextTheme textTheme, NavigatorState navState) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: context.colors.delete,
+        foregroundColor: context.colors.onPrimary,
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      onPressed: () async {
+        AppState appState = Provider.of<AppState>(context, listen: false);
+
+        if (appState.children.length > 1) {
+          bool dialogResult = await showConfirmDialog(
+              context,
+              "Delete Child Profile",
+              "Are you sure you want to delete the child profile of ${widget
+                  .child.name}?",
+              confirmText: "Delete",
+              confirmColor: context.colors.delete);
+
+          if (dialogResult && mounted) {
+            Result result = await appState.removeChild(widget.child.id);
+            if (mounted) {
+              resultAlert(context, result);
+            }
+          }
+        }
+        else {
+          await showConfirmDialog(
+              context,
+              "Delete Child Profile",
+              "You cannot delete all child profiles from your account.",
+              confirmText: "Okay",
+              showCancelButton: false);
+        }
+      },
+      child: Text(
+        'Delete Child',
+        style: textTheme.titleSmallWhite,
       ),
     );
   }
 
-   /// Dialog to change the class icon to a specific color.
+  /// Dialog to change the class icon to a specific color.
   Future<dynamic> _changeChildIconDialog(TextTheme textTheme) {
     return showDialog(
       context: context, 
@@ -150,13 +307,12 @@ class _EditChildScreenState extends State<EditChildScreen> {
           title: const Center(child: Text('Change Child Icon')),
           content: _getIconList(),
           actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: Text(
-                'Cancel',
-                style: textTheme.titleSmall
-              ),
-            ),
+            dialogButton(
+                context,
+                "Cancel",
+                () => Navigator.of(context).pop(),
+                isElevated: false,
+                foregroundColor: context.colors.grey)
           ],
         ),
     );
@@ -179,8 +335,7 @@ class _EditChildScreenState extends State<EditChildScreen> {
                 // Change selected color and exit popup.
                 setState(() {
                   _selectedIconIndex = index;
-
-                  Provider.of<AppState>(context, listen: false).setChildIconIndex(widget.childID, _selectedIconIndex);
+                  _checkForChanges();
                 });
                 Navigator.of(context).pop();
               },

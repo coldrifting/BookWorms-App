@@ -1,13 +1,17 @@
-//import 'package:bookworms_app/models/BookSummary.dart';
 import 'package:bookworms_app/app_state.dart';
-import 'package:bookworms_app/widgets/bookshelf_widget.dart';
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/goals/goal_dashboard.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:bookworms_app/widgets/change_child_widget.dart';
+import 'package:bookworms_app/widgets/announcements_widget.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
+import 'package:bookworms_app/widgets/bookshelf_widget.dart';
+import 'package:bookworms_app/widgets/classroom_list_widget.dart';
 import 'package:flutter/material.dart';
-// Books used for the demo
-import 'package:bookworms_app/demo_books.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 /// The [HomeScreen] contains an overview of the selected child's app data.
 /// Specifically, it displays curated and personal bookshelves, as well as the
@@ -21,89 +25,298 @@ class HomeScreen extends StatefulWidget {
 
 /// The state of the [HomeScreen].
 class _HomeScreenState extends State<HomeScreen> {
+  late final Future<Bookshelf> _recommendedAuthorsBookshelf;
+  late final Future<Bookshelf> _recommendedDescriptionsBookshelf;
+  late final Future<Bookshelf> _readAgainBookshelf;
+  late bool existsRecommended;
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('home');
+
+  @override
+  void initState() {
+    super.initState();
+
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    var isParent = appState.isParent;
+    existsRecommended = false;
+
+    int? childId = isParent ? appState.selectedChildID : null;
+    _recommendedAuthorsBookshelf = appState.getRecommendedAuthorsBookshelf(childId);
+    _recommendedDescriptionsBookshelf = appState.getRecommendedDescriptionsBookshelf(childId);
+    _readAgainBookshelf = appState.getPositivelyReviewedBookshelf(childId);
+
+    // Start showcase when Home Screen loads,
+    //  but only if this is the first time launching the app
+    appState.isFirstLaunch().then((isFirstLaunch) {
+      if (isFirstLaunch) {
+        WidgetsBinding.instance.addPostFrameCallback(
+                (_) => showcaseController.start()
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-
     AppState appState = Provider.of<AppState>(context);
     var isParent = appState.isParent;
-    //var selectedChild = appState.children[appState.selectedChildID].name;
 
-    return SafeArea(
-      child: Scaffold(
-        // Home app bar
-        appBar: AppBar(
-          title: Text(
-            "${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "My"} Home",
-            style: const TextStyle(
-              color: colorWhite
-            )
+    String headerTitle = "${isParent
+        ? "${appState.children[appState.selectedChildID].name}'s"
+        : "My"} Dashboard";
+
+    return Scaffold(
+      appBar: AppBarCustom(
+          headerTitle,
+          isLeafPage: false,
+          isChildSwitcherEnabled: true,
+          rightAction: isParent
+              ? BWShowcase(
+                  showcaseKey: navKeys[3],
+                  description: "Announcements from your child's teacher(s) can be viewed here",
+                  targetShapeBorder: CircleBorder(),
+                  child: AnnouncementsWidget()
+                )
+              : null,
+          homePageShowcaseKey: navKeys[0]
+      ),
+      body: Container(
+          // Make scroll edges consistent with content at edges
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                context.colors.gradTop,
+                context.colors.onRecommended,
+              ],
+              stops: [0.49, 0.51],
+            ),
           ),
-          backgroundColor: colorGreen,
-          actions: isParent ? const [
-            ChangeChildWidget()
-          ] : [],
-        ),
-        // Bookshelves list
-        body: ListView(
+          child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            addVerticalSpace(16),
-            BookshelfWidget(name: "Recommended", images: [Demo.image1, Demo.image2, Demo.image3, Demo.image4], books: [Demo.book1, Demo.book2, Demo.book3, Demo.book4]),
-            addVerticalSpace(24),
-            if (isParent) ... [
-              _progressTracker(textTheme, appState.children[appState.selectedChildID].name),
-              addVerticalSpace(24),
-            ],
-            BookshelfWidget(name: "Animals", images: [Demo.image2, Demo.image5, Demo.image6, Demo.image7], books: [Demo.book2, Demo.book5, Demo.book6, Demo.book7]),
-            addVerticalSpace(24),
-            BookshelfWidget(name: "Fairytales", images: [Demo.image8, Demo.image9, Demo.image7, Demo.image10], books: [Demo.book8, Demo.book9, Demo.book7, Demo.book10]),
-            addVerticalSpace(16),
+            BWShowcase(
+              showcaseKey: isParent ? navKeys[1] : navKeys[0],
+              description: "View upcoming goals for your ${isParent ? "child" : "class"} here",
+              child: _displayGoalProgress(textTheme)
+            ),
+            if (appState.isParent)
+              BWShowcase(
+                showcaseKey: navKeys[2],
+                description: "Classes that your child has joined will be listed here",
+                tooltipPosition: TooltipPosition.top,
+                child: ClassroomListWidget()
+              ),
+            BWShowcase(
+              showcaseKey: isParent ? navKeys[4] : navKeys[1],
+              description: "Book lists for your ${isParent ? "child" : "class"} will appear here",
+              tooltipPosition: TooltipPosition.top,
+              scrollAlignment: isParent ? -0.5 : -15,
+              child: _displayBookshelves(textTheme)
+            ),
           ],
         ),
+      ),
+      )
+    );
+  }
+
+  // Displays goal progress of students or current child.
+  Widget _displayGoalProgress(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    var isParent = appState.isParent;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          stops: [0, !isParent && appState.classroom == null ? 0.8 : 0.45],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [context.colors.gradTop, context.colors.surface],
+        )
+      ),
+      child: Column(
+        children: [
+          addVerticalSpace(16),
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.sunny, color: context.colors.onPrimary),
+                    addHorizontalSpace(8),
+                    Text("Good Day, ${appState.firstName}!", style: textTheme.titleMediumWhite),
+                  ],
+                ),
+                Text(
+                  "Check out an overview of ${isParent ? "${appState.children[appState.selectedChildID].name}'s" : "your students'"} progress",
+                  style: textTheme.titleSmallWhite
+                ),
+                addVerticalSpace(24),
+              ],
+            ),
+          ),
+          isParent || appState.classroom != null
+          ? GoalDashboard()
+          : Center(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.colors.surfaceBorder.withValues(alpha: 0.2),
+                          spreadRadius: 1,
+                          blurRadius: 6,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: context.colors.surface,
+                    ),
+                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    width: 355,
+                    child: SizedBox(
+                      height: 100,
+                      child: Center(
+                        child: Text(
+                          "You don't have a classroom yet.\nVisit the classroom tab to create one!",
+                          textAlign: TextAlign.center
+                        )
+                      ),
+                    )
+                  ),
+                  addVerticalSpace(32),
+                ],
+              ),
+            )
+        ],
+      )
+    );
+  }
+
+  // Displays curated and "large enough" (book count >= 3) custom bookshelves.
+  Widget _displayBookshelves(TextTheme textTheme) {
+    AppState appState = Provider.of<AppState>(context);
+    List<Bookshelf> bookshelves = appState.bookshelves.where((bookshelf) => bookshelf.books.length >= 3 
+      && (bookshelf.type.name == "Custom" || bookshelf.type.name == "Classroom")).toList();
+
+    return Container(
+      decoration: BoxDecoration(
+      gradient: LinearGradient(
+        stops: [0, 0.005, 0.005],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [context.colors.recommended, context.colors.recommended, context.colors.onRecommended],
+      )
+    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.bookmark, color: context.colors.onPrimary),
+                    addHorizontalSpace(8),
+                    Text("Recommended for me", style: textTheme.titleMediumWhite),
+                  ],
+                ),
+                Text("Explore your curated and personal collections", style: textTheme.bodyMediumWhite),
+                addVerticalSpace(8),
+              ]
+            ),
+          ),
+          // Display recommended bookshelves.
+          _getRecommendedBookshelf(_recommendedDescriptionsBookshelf),
+          _getRecommendedBookshelf(_recommendedAuthorsBookshelf),
+          _getRecommendedBookshelf(_readAgainBookshelf),
+    
+          // Display custom bookshelves.
+          if (bookshelves.isNotEmpty)
+            Column(
+              children: bookshelves.map((bookshelf) {
+                return Column(
+                  children: [
+                    BookshelfWidget(bookshelf: bookshelf),
+                    addVerticalSpace(24),
+                  ],
+                );
+              }).toList(),
+            ),
+          if (!existsRecommended && bookshelves.isEmpty)
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.colors.surfaceBorder,
+                          spreadRadius: 1,
+                          blurRadius: 6,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: context.colors.surface,
+                    ),
+                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 28.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    width: 355,
+                    child: SizedBox(
+                      height: 100,
+                      child: Center(
+                        child: Text("No bookshelves to show.\nHave a nice day!", textAlign: TextAlign.center)
+                      ),
+                    )
+                  ),
+                  addVerticalSpace(32),
+                ],
+              ),
+            )
+        ],
       ),
     );
   }
 
-  /// Displays the up-to-date progress of the currently-selected child.
-  /// Empty for now.
-  Widget _progressTracker(TextTheme textTheme, String selectedChild) {
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        color: colorWhite,
-        boxShadow: [
-          BoxShadow(
-            color: colorBlack.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                style: textTheme.titleMedium,
-                "$selectedChild's Progress"
-              ),
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  style: textTheme.bodyLarge,
-                  "No progress to display"
-                ),
-              ),
-            ),
-          ]
-        ),
-      ),
+  /// Fetches and displays the recommended bookshelf (authors, descriptions).
+  Widget _getRecommendedBookshelf(Future<Bookshelf> future) {
+    return FutureBuilder(
+      future: future, 
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 64.0),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasError || snapshot.data!.books.isEmpty) {
+          return SizedBox.shrink();
+        } else {
+          if (!existsRecommended) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                existsRecommended = true;
+              });
+            });
+          }
+          return Column(
+            children: [
+              BookshelfWidget(bookshelf: snapshot.data!),
+              addVerticalSpace(24)
+            ],
+          );
+        }
+      }
     );
   }
 }

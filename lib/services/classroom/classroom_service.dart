@@ -1,0 +1,185 @@
+import 'dart:convert';
+import 'package:bookworms_app/models/book/book_summary.dart';
+import 'package:bookworms_app/models/book/bookshelf.dart';
+import 'package:bookworms_app/models/classroom/announcement.dart';
+import 'package:bookworms_app/models/classroom/classroom.dart';
+import 'package:bookworms_app/resources/network.dart';
+import 'package:bookworms_app/utils/http_helpers.dart';
+import 'package:http/http.dart' as http;
+
+class ClassroomService {
+  final http.Client client;
+
+  ClassroomService({http.Client? client}) : client = client ?? http.Client();
+
+  Future<Classroom?> getClassroomDetails() async {
+    final response = await client.sendRequest(
+      uri: classroomDetailsUri(),
+      method: "GET");
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Classroom.fromJson(data);
+    } else if (response.statusCode == 404) {
+      return null;
+    } else {
+      throw Exception('An error occurred when getting the classroom details.');
+    }
+  }
+
+  Future<Classroom> createClassroomDetails(String newClassroomName) async {
+    final response = await client.sendRequest(
+      uri: createClassroomUri(newClassroomName),
+      method: "POST");
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Classroom.fromJson(data);
+    } else {
+      throw Exception('An error occurred when creating the classroom.');
+    }
+  }
+
+  Future<void> changeClassroomIcon(int newIcon) async {
+    final response = await client.sendRequest(
+      uri: changeClassroomIconUri(newIcon),
+      method: "PUT");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when deleting the classroom.');
+    }
+  }
+
+  Future<void> changeClassroomName(String newName) async {
+    final response = await client.sendRequest(
+      uri: renameClassroomUri(newName),
+      method: "PUT");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when renaming the classroom.');
+    }
+  }
+
+  Future<void> deleteClassroom() async {
+    final response = await client.sendRequest(
+      uri: deleteClassroomUri(),
+      method: "DELETE");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when deleting the classroom.');
+    }
+  }
+
+  Future<void> createClassroomBookshelf(Bookshelf bookshelf) async {
+    final response = await client.sendRequest(
+      uri: createClassroomBookshelfUri(bookshelf.name),
+      method: "POST");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when creating a new bookshelf.');
+    }
+  }
+
+  Future<void> deleteClassroomBookshelf(Bookshelf bookshelf) async {
+    final response = await client.sendRequest(
+      uri: deleteClassroomBookshelfUri(bookshelf.name),
+      method: "DELETE");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when deleting the classroom bookshelf.');
+    }
+  }
+
+  Future<void> renameClassroomBookshelf(String oldName, String newName) async {
+    final response = await client.sendRequest(
+      uri: renameClassroomBookshelfUri(oldName, newName),
+      method: "POST");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when renaming the classroom bookshelf.');
+    }
+  }
+
+  Future<void> insertBookIntoClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+    await client.sendRequest(
+      uri: insertIntoClassroomBookshelfUri(bookshelf.name, book.id),
+      method: "PUT");
+  }
+
+  Future<void> deleteStudentFromClassroom(String childId) async {
+    final response = await client.sendRequest(
+      uri: removeStudentFromClassroomUri(childId),
+      method: "DELETE");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when deleting the child from the classroom.');
+    }
+  }
+
+  Future<void> removeBookFromClassroomBookshelf(Bookshelf bookshelf, BookSummary book) async {
+    final response = await client.sendRequest(
+      uri: removeBookFromClassroomBookshelfUri(bookshelf.name, book.id),
+      method: "DELETE");
+
+    if (!response.ok) {
+      throw Exception('An error occurred when remove the book from the bookshelf.');
+    }
+  }
+
+  Future<Announcement?> addAnnouncement(String title, String body) async {
+    final response = await client.sendRequest(
+        uri: addClassroomAnnouncementUri(),
+        method: "POST",
+        payload: {
+          "title": title,
+          "body": body
+        });
+
+    if (response.ok) {
+      final data = jsonDecode(response.body);
+      return Announcement.fromJson(data);
+    }
+
+    return null;
+  }
+
+  Future<bool> editAnnouncement(String announcementId, String title, String body) async {
+    final response = await client.sendRequest(
+        uri: editClassroomAnnouncementUri(announcementId),
+        method: "PUT",
+        payload: {
+          "title": title,
+          "body": body
+        });
+
+    if (response.ok) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> deleteAnnouncement(String announcementId) async {
+    final response = await client.sendRequest(
+        uri: removeClassroomAnnouncementUri(announcementId),
+        method: "DELETE");
+
+    if (response.ok) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> markAnnouncementRead(String announcementId, String childId) async {
+    final response = await client.sendRequest(
+        uri: markAnnouncementReadUri(announcementId, childId),
+        method: "PUT");
+
+    if (response.ok) {
+      return true;
+    }
+
+    return false;
+  }
+}

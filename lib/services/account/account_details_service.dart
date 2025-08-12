@@ -1,8 +1,10 @@
-import 'dart:convert';
-import 'package:bookworms_app/models/account_details.dart';
-import 'package:bookworms_app/services/auth_storage.dart';
-import 'package:bookworms_app/services/services_shared.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:bookworms_app/models/account/account_details.dart';
+import 'package:bookworms_app/models/error/error_basic.dart';
+import 'package:bookworms_app/services/status_code_exceptions.dart';
+import 'package:bookworms_app/resources/network.dart';
+import 'package:bookworms_app/utils/http_helpers.dart';
 
 class AccountDetailsService {
   final http.Client client;
@@ -10,18 +12,13 @@ class AccountDetailsService {
   AccountDetailsService({http.Client? client}) : client = client ?? http.Client();
 
   Future<AccountDetails> getAccountDetails() async {
-    final response = await client.get(
-      Uri.parse('http://${ServicesShared.serverAddress}/user/details'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${await getToken()}'
-      },
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return AccountDetails.fromJson(data);
+    final response = await client.sendRequest(uri: userDetailsUri, method: "GET");
+
+    if (response.ok) {
+      return AccountDetails.fromJson(readResponse(response));
     } else {
-      throw Exception('An error occurred when fetching the user details: ${response.reasonPhrase}.');
+      ErrorBasic error = ErrorBasic.fromJson(readResponse(response));
+      throw getStatusCodeException(response.statusCode, error.toString());
     }
   }
 }

@@ -1,12 +1,14 @@
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bookworms_app/app_state.dart';
 import 'package:bookworms_app/main.dart';
 import 'package:bookworms_app/screens/setup/register_screen.dart';
 import 'package:bookworms_app/utils/widget_functions.dart';
 import 'package:bookworms_app/widgets/login_register_widget.dart';
 import 'package:bookworms_app/widgets/setup_backdrop_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:bookworms_app/services/account/login_service.dart';
-import 'package:provider/provider.dart';
 
 /// The [LoginScreen] is where a user inputs their existing credentials to log into the app.
 /// There is an alternative option to navigate to the [RegisterScreen].
@@ -19,29 +21,17 @@ class LoginScreen extends StatefulWidget {
 
 /// The state of the [LoginScreen].
 class _LoginScreenState extends State<LoginScreen> {
-
-  final TextEditingController _usernameController = TextEditingController(); // Username text field
-  final TextEditingController _passwordController = TextEditingController(); // Password text field
-
+  late TextEditingController _usernameController;
+  late TextEditingController _passwordController;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> login(String username, String password) async {
-    LoginService loginService = LoginService();
+  String loginError = "";
 
-    // Attempt to log in the user with the provided credentials.
-    await loginService.loginUser(username, password);
-    if (mounted) {
-      AppState appState = Provider.of<AppState>(context, listen: false);
-      await appState.loadAccountDetails();
-      await appState.loadAccountSpecifics();
-      if (mounted) {
-        // Navigate to the home screen.
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const Navigation()),
-        );
-      }
-    }
+  @override
+  void initState() {
+    super.initState();
+    _usernameController = TextEditingController();
+    _passwordController = TextEditingController();
   }
 
   @override
@@ -51,14 +41,44 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // Callback for when an error is received during sign in.
+  // Sets the state of validation errors.
+  void _handleValidationErrors(String error) {
+    setState(() {
+      loginError = error;
+    });
+  }
+
+
+  // Attempts to log in the user.
+  Future<void> login(String username, String password) async {
+    LoginService loginService = LoginService();
+
+    final bool status = await loginService.loginUser(username, password, _handleValidationErrors);
+    if (status && mounted) {
+      AppState appState = Provider.of<AppState>(context, listen: false);
+      await appState.loadAccountDetails();
+      await appState.loadAccountSpecifics();
+      if (mounted) {
+        // Navigate to the home screen.
+        pushScreen(context, const Navigation(), replace: true);
+      }
+    }
+  }
+
+// The login screen is where a user inputs their existing credentials to log into the app.
+// There is an alternative option to navigate to the register screen.
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
-        body: SetupBackdropWidget(childWidget: _loginWidget(textTheme)),
-      ),
-    );
+    return SetupBackdropWidget(childWidget: _loginWidget(textTheme));
+  }
+
+  void attemptLogin() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final username = _usernameController.text;
+      final password = _passwordController.text;
+      login(username, password);
+    }
   }
 
   Widget _loginWidget(TextTheme textTheme) {
@@ -79,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _usernameController,
                   decoration: const InputDecoration(labelText: 'Username'),
+                  textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a username';
@@ -90,7 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   obscureText: true,
                   controller: _passwordController,
+                  onFieldSubmitted: (value) => attemptLogin(),
                   decoration: const InputDecoration(labelText: 'Password'),
+                  textInputAction: TextInputAction.go,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
@@ -98,23 +121,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                addVerticalSpace(32),
+                if (loginError.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      loginError,
+                      style: errorTextStyle(context),
+                    ),
+                  ),
+                addVerticalSpace(loginError.isEmpty ? 32 : 16),
                 LoginRegisterWidget(
-                  onSignIn: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      final username = _usernameController.text;
-                      final password = _passwordController.text;
-                      login(username, password);
-                    }
-                  },
-                  onSignUp: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                    );
-                  }, 
-                  signIn: true
-                ),
+                    onSignIn: attemptLogin,
+                    onSignUp: () {
+                      pushScreen(context, const RegisterScreen(), replace: true);
+                    },
+                    signIn: true),
               ],
             ),
           ),

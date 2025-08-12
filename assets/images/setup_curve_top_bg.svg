@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Gravit.io -->
+
+<svg
+   style="isolation:isolate"
+   viewBox="0 0 800 300"
+   width="800pt"
+   height="300pt"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="setup_curve_top_bg.svg"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt"
+     inkscape:zoom="0.77874104"
+     inkscape:cx="528.417"
+     inkscape:cy="187.48209"
+     inkscape:window-width="1800"
+     inkscape:window-height="1097"
+     inkscape:window-x="0"
+     inkscape:window-y="44"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g3" />
+  <defs
+     id="defs1">
+    <clipPath
+       id="_clipPath_XEHGGH3KFUFpi7z2s2oflkNECEh60ns7">
+      <rect
+         width="800"
+         height="300"
+         id="rect1" />
+    </clipPath>
+  </defs>
+  <g
+     clip-path="url(#_clipPath_XEHGGH3KFUFpi7z2s2oflkNECEh60ns7)"
+     id="g3">
+    <path
+       d="m 0,0 v 261 c 94.240667,-37.13533 160.24067,-60.13533 198,-69 56.639,-13.297 116.772,-19.686 242,37 125.228,56.686 135.065,59.34 208,62 48.62333,1.77333 99.29,-6.89333 152,-26 V 0 Z"
+       fill="#c6efc6"
+       id="path1"
+       style="display:inline"
+       sodipodi:nodetypes="ccsssccc" />
+  </g>
+</svg>

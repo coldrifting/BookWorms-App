@@ -1,46 +1,78 @@
-import 'package:bookworms_app/theme/colors.dart';
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/models/action_result.dart';
+import 'package:bookworms_app/models/classroom/student.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
+import 'package:flutter/material.dart';
 import 'package:bookworms_app/utils/user_icons.dart';
 import 'package:bookworms_app/widgets/extended_appbar_widget.dart';
-import 'package:flutter/material.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:provider/provider.dart';
 
 class StudentViewScreen extends StatefulWidget {
-  const StudentViewScreen({super.key});
+  final Student student;
+  const StudentViewScreen({super.key, required this.student});
 
   @override
   State<StudentViewScreen> createState() => _StudentViewScreenState();
 }
 
 class _StudentViewScreenState extends State<StudentViewScreen> {
+  late Student student;
+
+  @override
+  void initState() {
+    super.initState();
+    student = widget.student;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-            title: const Text(
-              "", 
-              style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: colorWhite, 
-                overflow: TextOverflow.ellipsis
-              )
-            ),
-            backgroundColor: colorGreen,
-            leading: IconButton(
-              color: colorWhite,
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.of(context).pop();
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    return Scaffold(
+      appBar: AppBarCustom(""),
+      body: Center(
+        child: Column(
+          children: [
+            ExtendedAppBar(
+                name: student.name,
+                icon: UserIcons.getIcon(student.profilePictureIndex)),
+            addVerticalSpace(16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: context.colors.delete,
+                foregroundColor: context.colors.surface,
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              onPressed: () async {
+                bool result = await showConfirmDialog(
+                    context,
+                    "Remove Student from Class",
+                    "Removing this student cannot be undone. Are you sure you want to continue?",
+                    confirmText: "Remove",
+                    confirmColor: context.colors.delete);
+
+                if (result) {
+                  _removeStudent();
+                }
               },
+              child: Text('Remove Student', style: textTheme.titleSmallWhite),
             ),
-          ),
-        body: Center(
-          child: Column(
-            children: [
-              ExtendedAppBar(name: "Student", username: "student", icon: UserIcons.getRandomIcon()),
-            ],
-          ),
+          ],
         ),
       ),
     );
+  }
+
+  // Deletes the user's account and navigates to homescreen.
+  Future<void> _removeStudent() async {
+    NavigatorState navState = Navigator.of(context);
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    Result result = await appState.deleteStudentFromClassroom(student.id);
+    navState.pop();
+    resultAlert(context, result);
   }
 }

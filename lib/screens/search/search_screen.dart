@@ -1,105 +1,110 @@
 import 'dart:async';
-import 'package:bookworms_app/screens/book_details/book_details_screen.dart';
-import 'package:bookworms_app/screens/search/browse_screen.dart';
-import 'package:bookworms_app/screens/search/recents_screen.dart';
-import 'package:bookworms_app/services/book_details_service.dart';
-import 'package:bookworms_app/models/book_details.dart';
-import 'package:bookworms_app/models/book_summary.dart';
-import 'package:bookworms_app/services/book_images_service.dart';
-import 'package:bookworms_app/services/book_summaries_service.dart';
-import 'package:bookworms_app/theme/colors.dart';
-import 'package:bookworms_app/utils/widget_functions.dart';
-import 'package:flutter/material.dart';
 
-/// The [SearchScreen] displays a search bar and a scrollable list of 
-/// relevant books related to the query typed in by the user.
+import 'package:bookworms_app/models/book/book_summary.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/screens/search/advanced_search_results_screen.dart';
+import 'package:bookworms_app/screens/search/no_results_screen.dart';
+import 'package:bookworms_app/screens/search/recents_screen.dart';
+import 'package:bookworms_app/services/book/book_images_service.dart';
+import 'package:bookworms_app/services/book/book_search_service.dart';
+import 'package:bookworms_app/showcase/showcase_controller.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/announcements_widget.dart';
+import 'package:bookworms_app/widgets/app_bar_custom.dart';
+import 'package:bookworms_app/widgets/book_summary_widget.dart';
+import 'package:bookworms_app/widgets/reading_level_info_widget.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_spell_checker/flutter_spell_checker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+
+/// The [SearchScreen] consists of a search bar and a sub-widget (either browse, recents, or results).
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<SearchScreen> createState() => SearchScreenState();
 }
 
 /// The state of the [SearchScreen].
-class _SearchScreenState extends State<SearchScreen> {
-  static const _defaultResultLength = 10;
-  static const _expandedResultLength = 50;
-
-  var _isInActiveSearch = false;
+class SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
+  var _isInAdvancedSearch = false; 
   var _currentQuery = "";
+  var _currentQueryCorrected = [];
   var _searchResults = [];
   Timer? _debounceTimer;
 
-  late BookSummariesService _bookSummariesService;
-  late BookDetailsService _bookDetailsService;
+  late SearchService _bookSearchService;
   late BookImagesService _bookImagesService;
-  
-  late FocusNode _focusNode;
-  late TextEditingController _textEditingcontroller;
+
+  late TextEditingController _textEditingController;
   late ScrollController _scrollController;
+  late TabController _tabController;
+
+  var _selectedLevelRange = const RangeValues(0, 100);
+  final _selectedRating = List.filled(6, false);
+  final _selectedGenres = List.filled(6, false);
+  final _selectedTopics = List.filled(6, false);
+
+  late final showcaseController = ShowcaseController();
+  late final List<GlobalKey> navKeys = showcaseController.getKeysForScreen('search');
 
   @override
   void initState() {
     super.initState();
-    _bookSummariesService = BookSummariesService();
-    _bookDetailsService = BookDetailsService();
+    _bookSearchService = SearchService();
     _bookImagesService = BookImagesService();
-    _focusNode = FocusNode();
-    _focusNode.addListener(_onSearchBarFocusChanged);
-    _textEditingcontroller = TextEditingController();
+    _textEditingController = TextEditingController();
     _scrollController = ScrollController();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    _notifyIfChanged();
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
-    _textEditingcontroller.dispose();
     _debounceTimer?.cancel();
+    _textEditingController.dispose();
+    _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
-  /// Callback for when there is a change to the search bar focus.
-  /// Sets the state of the search.
-  void _onSearchBarFocusChanged() {
+  /// Callback for when the tab is changed.
+  /// Sets the state of the tabs.
+  void _onTabChanged() {
     setState(() {
-      _isInActiveSearch = _focusNode.hasFocus;
+      _isInAdvancedSearch = _tabController.index == 1;
     });
+    _notifyIfChanged();
+  }
 
-    // Unregisters the focus listener if the search has become active.
-    if (_isInActiveSearch) {
-      _focusNode.removeListener(_onSearchBarFocusChanged);
-    }
-  } 
+  void _notifyIfChanged() {
+    // Notify main app of changes for proper reset
+    SearchModifiedNotification(isModified: _currentQuery != "" || _isInAdvancedSearch).dispatch(context);
+  }
 
-  /// Callback for when the 'Cancel' button is pressed.
-  /// Unfocuses and clears the search bar; clears the search results.
-  void _onCancelPressed() {
+  void reset() {
     setState(() {
-      if (_focusNode.hasFocus) {
-        _focusNode.unfocus();
-      }
-      // If the search bar is unfocused, the callback will not be called.
-      else {
-        _isInActiveSearch = false;
-      }
-
-      _searchResults.clear();
-      _textEditingcontroller.clear();
+      _currentQuery = "";
+      _currentQueryCorrected.clear();
+      _textEditingController.text = "";
+      _tabController.index = 0;
+      FocusManager.instance.primaryFocus?.unfocus();
     });
-
-    // Reregister the search listener.
-    _focusNode.addListener(_onSearchBarFocusChanged);
   }
 
   /// Fetches the search results and the corresponding images.
-  Future<List<BookSummary>> getResults(String query, int resultLength) async {
-    List<BookSummary> results = await _bookSummariesService.getBookSummaries(query, _defaultResultLength);
-    List<String> bookIds = results.map((bookSummary) => bookSummary.id).toList();
-    List<Image> bookImages = await _bookImagesService.getBookImages(bookIds);
-    for (int i = 0; i < results.length; i++) {
-      results[i].setImage(bookImages[i]);
+  Future<List<BookSummary>> _search(String query) async {
+    List<BookSummary> bookSummaries = await _bookSearchService.search(query);
+    List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
+    List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
+    for (int i = 0; i < bookSummaries.length; i++) {
+      bookSummaries[i].imageUrl = bookImages[i];
     }
-    return results;
+    return bookSummaries;
   }
 
   /// Callback for when the search query is changed.
@@ -112,226 +117,542 @@ class _SearchScreenState extends State<SearchScreen> {
       _debounceTimer!.cancel();
     }
 
+    _notifyIfChanged();
+
     _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
       // Only fetch results if the query is non-empty.
       if (query.isNotEmpty) {
-        List<BookSummary> results = await getResults(query, _defaultResultLength);
+        // Check the query for typos (any found will be suggested to user)
+        if (!kIsWeb) {
+          await _spellcheckQuery(query);
+        }
+
+        List<BookSummary> results = await _search(query);
 
         // Update the search results if the most recent state of the query is non-empty and the search bar is focused.
-        if (_currentQuery.isNotEmpty && _focusNode.hasFocus) {
-          setState(() {
-            _searchResults = results;
-          });
+        setState(() {
+          _searchResults = results;
+        });
 
-          // Scroll to the top of the list.
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              0.0, 
-              duration: const Duration(milliseconds: 300), 
-              curve: Curves.easeInOut
-            );
-          }
+        // Scroll to the top of the list.
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            0.0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut
+          );
         }
       } else {
         setState(() {
+          _currentQueryCorrected.clear();
           _searchResults = [];
         });
       }
     });
   }
 
-  /// Callback for when the 'Show More' button is pressed.
-  /// Fetches and appends the expanded results to the default results.
-  void _onShowMorePressed() async {
-    List<BookSummary> results = await getResults(_currentQuery, _expandedResultLength);
-    setState(() {
-      _searchResults.addAll(results);
-    });
+  /// Sets state according to the results of spellchecking the given query.
+  Future<void> _spellcheckQuery(String query) async {
+    final spellCheckResult = await FlutterSpellChecker.checkSpelling(query);
+    if (spellCheckResult.isNotEmpty) {
+      final corrections = {
+        for (var correction in spellCheckResult)
+          correction.word : correction.replacements[0]
+      };
+      _currentQueryCorrected = [
+        for (var word in _currentQuery.split(" "))
+          {
+            "word": corrections[word] ?? word,
+            "corrected": corrections[word] != null
+          }
+      ];
+    } else {
+      _currentQueryCorrected.clear();
+    }
   }
 
- /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
+  /// Fetches the advanced search results and the corresponding images.
+  void _advancedSearch() async {
+    String? currentQuery = _textEditingController.text.isEmpty ? null : _textEditingController.text;
+
+    RangeValues? selectedLevelRange = _selectedLevelRange.start == 0 && _selectedLevelRange.end == 100 ? null : _selectedLevelRange;
+
+    List<double> ratings = [4.5, 4.0, 3.5, 3.0, 2.5, 2.0];
+    double? selectedRating;
+    for (int i = 0; i < _selectedRating.length; i++) {
+      if (_selectedRating[i]) {
+        selectedRating = ratings[i];
+        break;
+      }
+    }
+
+    List<String> genres = ["Fantasy fiction", "Adventure and adventurers", "Mystery and detective stories", "Fiction, historical, general", "Science fiction", "Fairy tales"];
+    List<String>? selectedGenres = [];
+    for (int i = 0; i < _selectedGenres.length; i++) {
+      if (_selectedGenres[i]) {
+        selectedGenres.add(genres[i]);
+      }
+    }
+    if (selectedGenres.isEmpty) {
+      selectedGenres = null;
+    }
+
+    List<String> topics = ["Friendship, fiction", "Family life, fiction", "Magic, fiction", "Love, fiction", "Conduct of life", "Animals, fiction"];
+    List<String>? selectedTopics = [];
+    for (int i = 0; i < _selectedTopics.length; i++) {
+      if (_selectedTopics[i]) {
+        selectedTopics.add(topics[i]);
+      }
+    }
+    if (selectedTopics.isEmpty) {
+      selectedTopics = null;
+    }
+
+    List<BookSummary> bookSummaries = await _bookSearchService.advancedSearch(currentQuery, selectedLevelRange, selectedRating, selectedGenres, selectedTopics);
+    List<String> bookIds = bookSummaries.map((bookSummary) => bookSummary.id).toList();
+    List<String> bookImages = await _bookImagesService.getBookImages(bookIds);
+    for (int i = 0; i < bookSummaries.length; i++) {
+      bookSummaries[i].imageUrl = bookImages[i];
+    }
+
+    if (mounted) {
+      pushScreen(context, AdvancedSearchResultsScreen(bookSummaries: bookSummaries));
+    }
+  }
+
+  /// The search screen consists of a search bar and a sub-widget (either browse, recents, or results).
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
     // The sub-widget is determined by the current search status.
     Widget mainContent;
-    if (!_isInActiveSearch) {
-      mainContent = const BrowseScreen();
-    } else if (_currentQuery.isEmpty) {
-      mainContent = const RecentsScreen();
+    if (_currentQuery.isEmpty) {
+      mainContent = _recentsAdvancedSearchTabs();
     } else if (_searchResults.isNotEmpty) {
-      mainContent = _resultsScreen(textTheme);
+      mainContent = _resultsScreen();
     } else {
-      mainContent = Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.search_off,
-              size: 50.0,
-              color: colorGrey,
-            ),
-            addVerticalSpace(8),
-            const Text(
-              "No Results",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: colorGrey,
-              ),
-            ),
-          ],
-        ),
-      );
+      mainContent = NoResultsScreen();
     }
-  
-    return SafeArea(
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            children: [
-              addVerticalSpace(8),
-              searchBar(),
-              addVerticalSpace(8),
-              Expanded(
-                child: mainContent
+
+    return Scaffold(
+      appBar: AppBarCustom("Search", isLeafPage: false, isChildSwitcherEnabled: true, rightAction: AnnouncementsWidget()) ,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          children: [
+            addVerticalSpace(8),
+            _searchBar(),
+            if (_currentQueryCorrected.isNotEmpty)
+              Column(
+                children: [
+                  addVerticalSpace(8),
+                  _didYouMean(),
+                ],
               ),
-            ],
-          ),
+            addVerticalSpace(8),
+            Expanded(child: mainContent),
+          ],
         ),
       ),
     );
   }
 
   /// Search queries are entered in the search bar widget.
-  Widget searchBar() {
+  Widget _searchBar() {
     return Row(
       children: [
         Expanded(
-            child: SearchBar(
-              leading: const Icon(Icons.search),
-              hintText: "Find a book",
-              focusNode: _focusNode,
-              controller: _textEditingcontroller,
-              onChanged: _onSearchQueryChanged,
-              shape: WidgetStateProperty.all(RoundedRectangleBorder(
+          child: SearchBar(
+            leading: const Icon(Icons.search),
+            hintText: "Find a book",
+            controller: _textEditingController,
+            onChanged: !_isInAdvancedSearch ? _onSearchQueryChanged : null,
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
-              )),
-              shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+              )
             ),
-          ),
-        if (_isInActiveSearch)
-          Row(
-            children: [
-              addVerticalSpace(8),
-              TextButton(
-                onPressed: _onCancelPressed,
-                style: TextButton.styleFrom(
-                  foregroundColor: colorBlack,
+            shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+            trailing: [
+              if (_textEditingController.text.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _textEditingController.clear();
+                    _onSearchQueryChanged("");
+                  },
                 ),
-                child: const Text("Cancel"),
-              ),
             ],
           ),
+        ),
       ],
     );
   }
 
-  /// Callback for when a search result is selected.
-  /// Fetches the book's details and navigates to the book's details page.
-  void _onBookClicked(int index) async {
-    BookDetails results = await _bookDetailsService.getBookDetails(_searchResults[index].id);
-    if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookDetailsScreen(
-            summaryData: _searchResults[index],
-            detailsData: results,
-          )
+  /// The "did you mean" sub-widget is shown if typos are detected
+  Widget _didYouMean() {
+    final tapGestureRecognizer = TapGestureRecognizer()..onTap = () {
+      _notifyIfChanged();
+      setState(() {
+        var corrected = _currentQueryCorrected.map((element) => element["word"]).join(" ");
+        _textEditingController.text = corrected;
+        _currentQueryCorrected.clear();
+        _onSearchQueryChanged(corrected);
+      });
+    };
+
+    return Center(
+      child: RichText(
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w300,
+            color: context.colors.onSurface
+          ),
+          children: <TextSpan>[
+            TextSpan(text: "Did you mean: "),
+            TextSpan(
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.indigoAccent
+              ),
+              children: [
+                for (var element in _currentQueryCorrected)
+                  TextSpan(
+                    text: element["word"] + " ",
+                    recognizer: tapGestureRecognizer,
+                    style: element["corrected"]
+                      ? const TextStyle(fontStyle: FontStyle.italic)
+                      : null
+                  )
+              ]
+            )
+          ]
         )
-      );
-    }
+      )
+    );
   }
 
   /// Sub-widget containing the search results corresponding to the most recently processed search query.
-  Widget _resultsScreen(TextTheme textTheme) {
+  Widget _resultsScreen() {
     return ListView.builder(
       controller: _scrollController,
-      itemCount: _searchResults.length + 1,
+      itemCount: _searchResults.length,
       itemBuilder: (context, index) {
-        if (index != _searchResults.length) {
-          return Column(
-            children: [
-              ListTile(
-                title: TextButton(
-                  style: TextButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero
-                    ),
-                  ),
-                  child: searchResult(index, textTheme),
-                  onPressed: () { _onBookClicked(index); },
-                ),
-              ),
-              const Divider(
-                color: colorGrey,
-              )
-            ],
-          );
-        } else if (_searchResults.length == _defaultResultLength) {
-          return Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: _onShowMorePressed, 
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorGreyDark,
-                    ),
-                    child: const Text("Show More"),
-                  ),
-                ),
-              ],
-            );
-        }
-        return null;
+        return Column(
+          children: [
+            BookSummaryWidget(book: _searchResults[index]),
+            Divider(color: context.colors.greyDark)
+          ],
+        );
       }
     );
   }
 
-  /// The results corresponding to a search query are displayed in a search result widget.
-  Widget searchResult(int index, TextTheme textTheme) {
-    BookSummary searchResult = _searchResults[index];
-    Image bookImage = searchResult.image!;
-    return Row(
-      children: [
-        SizedBox(
-          width: 150,
-          child: bookImage,
-        ),
-        addHorizontalSpace(24),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                style: textTheme.titleSmall,
-                searchResult.title
+  /// Sub-widget containing the recents and advanced search tabs.
+  Widget _recentsAdvancedSearchTabs() {
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              BWShowcase(
+                  showcaseKey: navKeys[0],
+                  description: "Your recently searched books will appear under this tab",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Tab(text: "Recents")
               ),
-              Text(
-                style: textTheme.bodyMedium,
-                overflow: TextOverflow.ellipsis,
-                searchResult.authors.isNotEmpty 
-                ? searchResult.authors.map((author) => author).join(', ')
-                : "Unknown Author(s)",
+              BWShowcase(
+                  showcaseKey: navKeys[1],
+                  description: "Switch to this tab to access more search options",
+                  targetPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Tab(text: "Advanced Search")
               ),
             ],
+            unselectedLabelColor: context.colors.grey,
           ),
-        ),
-      ],
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                RecentsScreen(),
+                _advancedSearchScreen(),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
+
+  /// Sub-widget containing advanced search functionality.
+  Widget _advancedSearchScreen() {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    final ratings = [
+      Text('4.5+'),
+      Text('4.0+'),
+      Text('3.5+'),
+      Text('3.0+'),
+      Text('2.5+'),
+      Text('2.0+')
+    ];
+    final genres = [
+      Text('Fantasy'),
+      Text('Adventure'),
+      Text('Mystery'),
+      Text('Historical Fiction'),
+      Text('Science Fiction'),
+      Text('Fairy Tales')
+    ];
+    final topics = [
+      Text('Friendship'),
+      Text('Family'),
+      Text('Magic'),
+      Text('Love'),
+      Text('Manners'),
+      Text('Animals')
+    ];
+
+    var fadeColor = context.colors.surfaceBackground.withAlpha(0);
+
+    return Column(children: [
+      Container(
+        height: MediaQuery.of(context).size.height - 445,
+        padding: const EdgeInsets.all(12.0),
+        child: SingleChildScrollView(
+          child: Column(children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text('Reading Level', style: textTheme.titleMedium),
+                        RawMaterialButton(
+                            onPressed: () => pushScreen(
+                                context, const ReadingLevelInfoWidget()),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8.0),
+                            constraints: BoxConstraints(
+                              maxWidth: 40,
+                            ),
+                            child: const Icon(Icons.help_outline, size: 20)),
+                      ],
+                    ),
+                    //addVerticalSpace(8),
+                    Row(
+                      children: [
+                        Text('0'),
+                        Expanded(
+                          child: RangeSlider(
+                            values: _selectedLevelRange,
+                            max: 100,
+                            divisions: 10,
+                            labels: RangeLabels(
+                              _selectedLevelRange.start.round().toString(),
+                              _selectedLevelRange.end.round().toString(),
+                            ),
+                            onChanged: (RangeValues values) {
+                              setState(() {
+                                _selectedLevelRange = values;
+                              });
+                            },
+                          ),
+                        ),
+                        Text('100')
+                      ],
+                    )
+                  ],
+                ),
+                addVerticalSpace(4),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Average User Rating', style: textTheme.titleMedium),
+                    addVerticalSpace(8),
+                    SizedBox(
+                      height: 46,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        children: [
+                          SizedBox(width: 10),
+                          ToggleButtons(
+                            onPressed: (int index) {
+                              setState(() {
+                                for (int i = 0;
+                                    i < _selectedRating.length;
+                                    i++) {
+                                  if (i != index) {
+                                    _selectedRating[i] = false;
+                                  } else {
+                                    _selectedRating[i] = !_selectedRating[i];
+                                  }
+                                }
+                              });
+                            },
+                            isSelected: _selectedRating,
+                            children: ratings.map((level) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: level,
+                              );
+                            }).toList(),
+                          ),
+                          addHorizontalSpace(10),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                addVerticalSpace(12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Genres',
+                      style: textTheme.titleMedium,
+                    ),
+                    addVerticalSpace(8),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: 46,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            children: [
+                              SizedBox(width: 12),
+                              ToggleButtons(
+                                onPressed: (int index) {
+                                  setState(() {
+                                    _selectedGenres[index] =
+                                        !_selectedGenres[index];
+                                  });
+                                },
+                                isSelected: _selectedGenres,
+                                children: genres.map((level) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: level,
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(width: 12),
+                            ],
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    context.colors.surfaceBackground,
+                                    fadeColor,
+                                    fadeColor,
+                                    context.colors.surfaceBackground,
+                                  ],
+                                  stops: [0.0, 0.05, 0.95, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                addVerticalSpace(12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Topics',
+                      style: textTheme.titleMedium,
+                    ),
+                    addVerticalSpace(8),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          height: 46,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            children: [
+                              SizedBox(width: 12),
+                              ToggleButtons(
+                                onPressed: (int index) {
+                                  setState(() {
+                                    _selectedTopics[index] =
+                                        !_selectedTopics[index];
+                                  });
+                                },
+                                isSelected: _selectedTopics,
+                                children: topics.map((level) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: level,
+                                  );
+                                }).toList(),
+                              ),
+                              SizedBox(width: 12),
+                            ],
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    context.colors.surfaceBackground,
+                                    fadeColor,
+                                    fadeColor,
+                                    context.colors.surfaceBackground,
+                                  ],
+                                  stops: [0.0, 0.05, 0.95, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ]),
+        ),
+      ),
+      Spacer(),
+      addVerticalSpace(8),
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: ElevatedButton(
+            onPressed: () => _advancedSearch(),
+            style: largeButtonStyle,
+            child: Text('Search')),
+      ),
+      addVerticalSpace(24)
+    ]);
+  }
+}
+
+class SearchModifiedNotification extends Notification {
+  final bool isModified;
+
+  const SearchModifiedNotification({required this.isModified});
 }

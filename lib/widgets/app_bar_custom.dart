@@ -1,0 +1,73 @@
+import 'package:bookworms_app/app_state.dart';
+import 'package:bookworms_app/resources/theme.dart';
+import 'package:bookworms_app/showcase/showcase_widgets.dart';
+import 'package:bookworms_app/utils/widget_functions.dart';
+import 'package:bookworms_app/widgets/change_child_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart' show Provider;
+
+class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final bool centerTitle;
+  final bool isLeafPage;
+  final bool isChildSwitcherEnabled;
+  final GlobalKey? homePageShowcaseKey;
+  final Function()? onBackBtnPressed;
+  final Widget? rightAction;
+
+  const AppBarCustom(
+      this.title, {
+        this.isLeafPage = true,
+        this.onBackBtnPressed,
+        this.isChildSwitcherEnabled = false,
+        this.homePageShowcaseKey,
+        this.centerTitle = false,
+        this.rightAction,
+        super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    AppState appState = Provider.of<AppState>(context);
+
+    var changeChildWidget = ChangeChildWidget(onChildChanged: () => appState.onChangeChild());
+
+    return AppBar(
+        title: Text(title,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: context.colors.onPrimary,
+                overflow: TextOverflow.ellipsis)),
+        centerTitle: centerTitle,
+        scrolledUnderElevation: 0,
+        backgroundColor: context.colors.primary,
+        systemOverlayStyle: defaultOverlay(context, null, false),
+        leading: isLeafPage
+            ? IconButton(
+                color: context.colors.onPrimary,
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  onBackBtnPressed?.call();
+                  if (onBackBtnPressed == null) {
+                    Navigator.of(context).pop();
+                  }
+                })
+            : null,
+    actions: [
+      if (rightAction != null && appState.isParent)
+        rightAction!,
+      if (isChildSwitcherEnabled && appState.isParent)
+        if (homePageShowcaseKey != null)
+          BWShowcase(
+            showcaseKey: homePageShowcaseKey!,
+            description: "You can switch to a different child by tapping your child's profile picture",
+            targetShapeBorder: CircleBorder(),
+            child: changeChildWidget
+          )
+        else
+          changeChildWidget
+    ]);
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(56.0);
+}
